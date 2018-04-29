@@ -7,20 +7,33 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from pandas import read_csv
+from scipy.fftpack import fft, ifft
 
-
-# files location
+# data files location
 path_noleak_2bar = 'E://Experiment 1//pos_0m_2m//No_Leak//2_bar//Set_1//'
 path_leak_2bar = 'E://Experiment 1//pos_0m_2m//Leak//2_bar//Set_1//'
 # the sensors
-sensor_1 = 'STREAM 06.03.201820180306-143237-780_1_1048500_2096999'
-sensor_2 = 'STREAM 06.03.201820180306-143732-581_1_1048500_2096999'
+data_1 = 'STREAM 06.03.201820180306-143237-780_1_1048500_2096999'  # no leak
+data_2 = 'STREAM 06.03.201820180306-143732-581_1_1048500_2096999'  # leak
 
-data_noleak_raw = read_csv(path_noleak_2bar + sensor_1 + '.csv',
+data_noleak_raw = read_csv('dataset//' + data_1 + '.csv',
                            skiprows=12,
                            names=['Data_Point', 'Vibration_In_Volt'])
+data_leak_raw = read_csv('dataset//' + data_2 + '.csv',
+                         skiprows=12,
+                         names=['Data_Point', 'Vibration_In_Volt'])
 print(data_noleak_raw.head())
 print(data_noleak_raw.shape)
+print(data_leak_raw.head())
+print(data_leak_raw.shape)
 
+plt.figure(1)
+# no leak plot
+plt.subplot(211)
 plt.plot(data_noleak_raw['Vibration_In_Volt'])
+plt.title('No Leak (Raw Signal)')
+# leak plot
+plt.subplot(212)
+plt.plot(data_leak_raw['Vibration_In_Volt'])
+plt.title('Leak (Raw Signal)')
 plt.show()
