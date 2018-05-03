@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pandas import read_csv
 from scipy.fftpack import fft
+from scipy.signal import spectrogram
 
 # ----------------------[RAW DATA IMPORT]-------------------------
 # data files location
@@ -45,26 +46,59 @@ print(data_leak_raw.shape)
 
 
 # FAST FOURIER TRANSFORM (FFT)
-def fft_scipy(sampled_data=None):
+def fft_scipy(sampled_data=None, fs=1, visualize=True):
     '''
-    :param sampled_data: A one dimensional data, can be list or series
-    :return: amplitude and the frequency spectrum
+    :param sampled_data: A one dimensional data (Size = N), can be list or series
+    :param fs: Sampling frequency
+    :param visualize: Plot or not (Boolean)
+    :return: amplitude and the frequency spectrum (Size = N // 2)
     '''
     # Sample points and sampling frequency
     N = sampled_data.size
-    fs = 5e6
+    fs = fs
     # fft
     print('FFT with {} points...'.format(N))
-    y_fft = fft(sampled_data)
-    f_axis = np.linspace(0.0, fs/2, N//2)
     # take only half of the FFT output because it is a reflection
     # take abs because the FFT output is complex
     # divide by N to reduce the amplitude to correct one
     # times 2 to restore the discarded reflection amplitude
-    plt.plot(f_axis, (2.0/N) * np.abs(y_fft[0: N//2]))
-    # use sci. notation at the x-axis value
-    plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
-    plt.show()
+    y_fft = fft(sampled_data)
+    y_fft = (2.0/N) * np.abs(y_fft[0: N//2])
+    # x-axis - only half of N
+    f_axis = np.linspace(0.0, fs/2, N//2)
+
+    if visualize:
+        plt.plot(f_axis, y_fft)
+        # use sci. notation at the x-axis value
+        plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        # plot only 0Hz to 500kHz
+        plt.xlim((0, 500e3))
+        plt.xlabel('Frequency [Hz]')
+        plt.ylabel('Amplitude')
+        plt.title('Fast Fourier Transform')
+        plt.show()
+
+    return y_fft, f_axis
 
 
-fft_scipy(data_noleak_raw['Vibration_In_Volt'])
+fft_scipy(data_noleak_raw['Vibration_In_Volt'], fs=5e6)
+
+
+# SPECTROGRAM
+f, t, Sxx = spectrogram(data_noleak_raw['Vibration_In_Volt'],
+                        fs=5e6,
+                        scaling='density',
+                        nperseg=100000,  # Now 5kHz is sliced into 100 pcs i.e. 500Hz/pcs
+                        noverlap=1000)
+print('Time Segment....{}\n'.format(t.size), t)
+print('Frequency Segment....{}\n'.format(f.size), f)
+print('Power Density....{}\n'.format(Sxx.shape), Sxx)
+plt.pcolormesh(t, f, Sxx)
+plt.ylabel('Frequency [Hz]')
+plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+plt.xlabel('Time [Sec]')
+plt.show()
+
+
