@@ -83,12 +83,13 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True):
 
 
 fft_scipy(data_noleak_raw['Vibration_In_Volt'], fs=5e6)
+fft_scipy(data_leak_raw['Vibration_In_Volt'], fs=5e6)
 
 
 # SPECTROGRAM
-f, t, Sxx = spectrogram(data_noleak_raw['Vibration_In_Volt'],
+f, t, Sxx = spectrogram(data_leak_raw['Vibration_In_Volt'],
                         fs=5e6,
-                        scaling='density',
+                        scaling='spectrum',
                         nperseg=100000,  # Now 5kHz is sliced into 100 pcs i.e. 500Hz/pcs
                         noverlap=1000)
 print('Time Segment....{}\n'.format(t.size), t)
