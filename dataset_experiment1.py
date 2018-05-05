@@ -20,9 +20,10 @@ sensor1 = 'Sensor_1//'
 sensor2 = 'Sensor_2//'
 
 # listdir(path) will return a list of file in location specified by path
-all_file_path = [(path_noleak_2bar_set1 + sensor1 + f) for f in listdir(path_noleak_2bar_set1 + sensor1)]
+path_now = path_noleak_2bar_set1 + sensor1
+all_file_path = [(path_now + f) for f in listdir(path_now)]
 
-pb = ProgressBarForLoop('Reading CSV from', end=len(all_file_path))
+pb = ProgressBarForLoop('Reading CSV from' + path_now, end=len(all_file_path))
 for f in all_file_path:
     dataset = read_csv(f, skiprows=12, names=['Data_Point', 'Vibration_In_Volt'])
     pb.update(all_file_path.index(f))

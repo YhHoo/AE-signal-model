@@ -1,13 +1,15 @@
-from progressbar import ProgressBar, Percentage, Bar, SimpleProgress
+from progressbar import ProgressBar, Percentage, Bar, SimpleProgress, ETA
 
 
+# Try out more progressbar from https://github.com/coagulant/progressbar-python3/blob/master/examples.py
 # progress bar, maxval is like max value in a ruler, and set the progress with update()
 class ProgressBarForLoop:
     # progress bar setup, set the title and max value
     def __init__(self, title, end=100):
-        widgets = [title+' :', Percentage(), ' ',
+        print(title + ':')
+        widgets = [Percentage(), ' ',
                    Bar(marker='#', left='[', right=']'),
-                   ' ', SimpleProgress()]
+                   ' ', SimpleProgress(), ' --> ', ETA()]
         self.pbar = ProgressBar(widgets=widgets, maxval=end).start()
 
     def update(self, now):
