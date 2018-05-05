@@ -9,37 +9,12 @@ import matplotlib.pyplot as plt
 from pandas import read_csv
 from scipy.fftpack import fft
 from scipy.signal import spectrogram, decimate
+from dataset_experiment1 import AcousticEmissionDataSet
 
 # ----------------------[RAW DATA IMPORT]-------------------------
-# data files location
-path_noleak_2bar = 'E://Experiment 1//pos_0m_2m//No_Leak//2_bar//Set_1//Sensor_1//'
-path_leak_2bar = 'E://Experiment 1//pos_0m_2m//Leak//2_bar//Set_1//'
-# the sensors
-data_1 = 'STREAM 06.03.201820180306-143237-780_1_1048500_2096999'
+ae_dataset_1 = AcousticEmissionDataSet()
+no_leak = ae_dataset_1.noleak_2bar(sensor=1)
 
-data_noleak_raw_1 = read_csv(path_noleak_2bar + data_1 + '.csv',
-                             skiprows=12,
-                             names=['Data_Point', 'Vibration_In_Volt'])
-
-print('----------RAW DATA SET---------')
-
-# ----------------------[DOWN-SAMPLING]-------------------------
-# DOWNSAMPLING (sampling freq from 5MHz to 1MHz) q=scaling factor
-data_noleak_1_downsample_zerop = decimate(data_noleak_raw_1['Vibration_In_Volt'], q=5, zero_phase=True)
-data_noleak_1_downsample = decimate(data_noleak_raw_1['Vibration_In_Volt'], q=5, zero_phase=False)
-
-
-# VISUALIZE
-# plt.figure(1)
-# # no leak plot
-# plt.subplot(211)
-# plt.plot(data_noleak_1_downsample_zerop)
-# plt.title('ZERO PHASE')
-# # leak plot
-# plt.subplot(212)
-# plt.plot(data_noleak_1_downsample)
-# plt.title('NO ZERO PHASE')
-# plt.show()
 
 # ----------------------[SIGNAL TRANSFORMATION]-------------------------
 
@@ -81,21 +56,17 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True):
     return y_fft, f_axis
 
 
-fft1, faxis1 = fft_scipy(data_noleak_1_downsample_zerop, fs=1e6, visualize=False)
-fft2, faxis2 = fft_scipy(data_noleak_1_downsample, fs=1e6, visualize=False)
-
-
 # Bfore Downsample
-plt.subplot(211)
-plt.plot(faxis1, fft1)
-plt.xlim((0, 300e3))
-plt.title('ZERO PHASE')
-# After Downsample
-plt.subplot(212)
-plt.plot(faxis2, fft2)
-plt.xlim((0, 300e3))
-plt.title('NO ZERO PHASE')
-plt.show()
+# plt.subplot(211)
+# plt.plot(faxis1, fft1)
+# plt.xlim((0, 300e3))
+# plt.title('ZERO PHASE')
+# # After Downsample
+# plt.subplot(212)
+# plt.plot(faxis2, fft2)
+# plt.xlim((0, 300e3))
+# plt.title('NO ZERO PHASE')
+# plt.show()
 
 
 # SPECTROGRAM
