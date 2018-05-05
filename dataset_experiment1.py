@@ -7,7 +7,9 @@ import numpy as np
 from pandas import read_csv
 from os import listdir
 from scipy.signal import decimate
+# self library
 from utils import ProgressBarForLoop
+from dsp_tools import spectrogram_scipy
 
 
 def read_csv_from_folder(path=None):
@@ -81,7 +83,15 @@ class AcousticEmissionDataSet:
         return data_temp
 
 
+# ----------------------[DATA IMPORT]-------------------------
+ae_dataset_1 = AcousticEmissionDataSet()
 
+# testing
+data_test = ae_dataset_1.testing()
+
+# ----------------------[SIGNAL TRANSFORMATION]-------------------------
+time_step, f_band, mat = spectrogram_scipy(data_test[0], fs=1e6, visualize=False)
+_, _, _ = spectrogram_scipy(data_test[1], fs=1e6, visualize=False)
 
 
 

@@ -1,4 +1,4 @@
-# This is juz for testing out small function bfore integration on bigger one
+# This is juz for testing out small function from dsp_tools before integration on bigger one
 
 import numpy as np
 from scipy.fftpack import fft, ifft

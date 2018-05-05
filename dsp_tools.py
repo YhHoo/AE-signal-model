@@ -7,7 +7,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft
 from scipy.signal import spectrogram
-from dataset_experiment1 import AcousticEmissionDataSet
 
 
 # FAST FOURIER TRANSFORM (FFT)
@@ -72,6 +71,7 @@ def spectrogram_scipy(sampled_data=None, fs=1, visualize=True):
     if visualize:
         plt.pcolormesh(t, f, Sxx)
         plt.ylabel('Frequency [Hz]')
+        # display only 0Hz to 300kHz
         plt.ylim((0, 300e3))
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
@@ -81,14 +81,6 @@ def spectrogram_scipy(sampled_data=None, fs=1, visualize=True):
     return t, f, Sxx
 
 
-# ----------------------[DATA IMPORT]-------------------------
-ae_dataset_1 = AcousticEmissionDataSet()
-
-# testing
-data_test = ae_dataset_1.testing()
-
-# ----------------------[SIGNAL TRANSFORMATION]-------------------------
-time_step, f_band, mat = spectrogram_scipy(data_test[0], fs=1e6, visualize=False)
 
 
 
