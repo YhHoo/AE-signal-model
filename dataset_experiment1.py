@@ -76,6 +76,12 @@ class AcousticEmissionDataSet:
         print('Total Data Dim: {}'.format(data_temp.shape))
         return data_temp, data_temp.shape
 
+    def testing(self):
+        data_temp = read_csv_from_folder('dataset//')
+        return data_temp
+
+
+
 
 
 

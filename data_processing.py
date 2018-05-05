@@ -4,19 +4,10 @@
 # ------------------------------------------------------
 
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-from pandas import read_csv
 from scipy.fftpack import fft
-from scipy.signal import spectrogram, decimate
+from scipy.signal import spectrogram
 from dataset_experiment1 import AcousticEmissionDataSet
-
-# ----------------------[RAW DATA IMPORT]-------------------------
-ae_dataset_1 = AcousticEmissionDataSet()
-no_leak = ae_dataset_1.noleak_2bar(sensor=1)
-
-
-# ----------------------[SIGNAL TRANSFORMATION]-------------------------
 
 
 # FAST FOURIER TRANSFORM (FFT)
@@ -56,19 +47,6 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True):
     return y_fft, f_axis
 
 
-# Bfore Downsample
-# plt.subplot(211)
-# plt.plot(faxis1, fft1)
-# plt.xlim((0, 300e3))
-# plt.title('ZERO PHASE')
-# # After Downsample
-# plt.subplot(212)
-# plt.plot(faxis2, fft2)
-# plt.xlim((0, 300e3))
-# plt.title('NO ZERO PHASE')
-# plt.show()
-
-
 # SPECTROGRAM
 def spectrogram_scipy(sampled_data=None, fs=1, visualize=True):
     '''
@@ -77,24 +55,41 @@ def spectrogram_scipy(sampled_data=None, fs=1, visualize=True):
     :param visualize: Plot Spectrogram or not (Boolean)
     :return: time axis, frequency band and the Amplitude in 2D matrix
     '''
+    # There is a trade-off btw resolution of frequency and time due to uncertainty principle
+    # Spectrogram split input signal into segments before FFT and PSD on each seg.
+    # Adjust nperseg is adjusting segment length. Higher nperseg giv more res in Freq but
+    # lesser res in time domain.
     f, t, Sxx = spectrogram(sampled_data,
                             fs=fs,
                             scaling='spectrum',
-                            nperseg=100000,  # Now 5kHz is sliced into 100 pcs i.e. 500Hz/pcs
+                            nperseg=10000,  # Now 5kHz is sliced into 100 pcs i.e. 50Hz/pcs
                             noverlap=1000)
-    print('----------SPECTROGRAM OUTPUT---------')
+    print('\n----------SPECTROGRAM OUTPUT---------')
     print('Time Segment....{}\n'.format(t.size), t)
     print('Frequency Segment....{}\n'.format(f.size), f)
-    print('Power Density....{}\n'.format(Sxx.shape), Sxx)
+    f_res = fs / (2 * (f.size - 1))
+    print('Spectrogram Dim: {}, F-Resolution: {}Hz/Band'.format(Sxx.shape, f_res))
     if visualize:
         plt.pcolormesh(t, f, Sxx)
         plt.ylabel('Frequency [Hz]')
+        plt.ylim((0, 300e3))
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
         plt.xlabel('Time [Sec]')
         plt.show()
 
     return t, f, Sxx
+
+
+# ----------------------[DATA IMPORT]-------------------------
+ae_dataset_1 = AcousticEmissionDataSet()
+
+# testing
+data_test = ae_dataset_1.testing()
+
+# ----------------------[SIGNAL TRANSFORMATION]-------------------------
+time_step, f_band, mat = spectrogram_scipy(data_test[0], fs=1e6, visualize=False)
+
 
 
 
