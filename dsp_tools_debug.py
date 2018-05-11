@@ -26,3 +26,5 @@ plt.ylabel('Frequency [Hz]')
 plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 plt.xlabel('Time [Sec]')
 plt.show()
+
+
