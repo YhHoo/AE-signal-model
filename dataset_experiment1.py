@@ -48,7 +48,7 @@ def read_csv_from_folder(path=None):
 class AcousticEmissionDataSet:
     def __init__(self):
         print('----------RAW DATA SET IMPORT & DOWN-SAMPLE---------')
-        self.drive = 'F://'
+        self.drive = 'E://'
         self.path_noleak_2bar_set1 = self.drive + 'Experiment 1//pos_0m_2m//No_Leak//2_bar//Set_1//'
         self.path_noleak_2bar_set2 = self.drive + 'Experiment 1//pos_0m_2m//No_Leak//2_bar//Set_2//'
         self.path_noleak_2bar_set3 = self.drive + 'Experiment 1//pos_0m_2m//No_Leak//2_bar//Set_3//'
@@ -92,6 +92,9 @@ data_test = ae_dataset_1.testing()
 # ----------------------[SIGNAL TRANSFORMATION]-------------------------
 time_step, f_band, mat = spectrogram_scipy(data_test[0], fs=1e6, visualize=False)
 _, _, _ = spectrogram_scipy(data_test[1], fs=1e6, visualize=False)
+
+print(data_test.shape)
+
 
 
 
