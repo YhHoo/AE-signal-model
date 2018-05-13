@@ -17,6 +17,7 @@ from keras.utils import to_categorical
 from utils import ProgressBarForLoop
 from dsp_tools import spectrogram_scipy
 
+
 def read_csv_from_folder(path=None):
     '''
     :param path: The folder that contains all 1d csv of same sizes
