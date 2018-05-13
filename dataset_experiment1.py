@@ -1,6 +1,6 @@
 # ------------------------------------------------------
 # Grab all data set from Harddisk, downsample and return
-# as np matrix. Make sure Harddisk is E: drive
+# as np matrix. Make sure change the harddisk alphabet
 # ------------------------------------------------------
 
 import numpy as np
@@ -179,8 +179,6 @@ print('Train_Y dim: ', train_y.shape)
 print('Test_X dim: ', test_x.shape)
 print('Test_Y dim: ', test_y.shape)
 
-# time_step, f_band, mat = spectrogram_scipy(data_test[0], fs=1e6, visualize=False)
-# _, _, _ = spectrogram_scipy(data_test[1], fs=1e6, visualize=False)
 
 # l = np.array([[[1, 2, 3], [4, 5, 6]]])
 # m = np.array([[[11, 22, 33], [44, 55, 66]]])

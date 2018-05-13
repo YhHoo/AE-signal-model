@@ -1,3 +1,8 @@
+# ------------------------------------------------------
+# this CNN expecting input data of shape (3000, 100), which is basically 1s signal as
+# 1 sample.
+# ------------------------------------------------------
+
 import numpy as np
 from keras.layers import Dense, Flatten
 from keras.layers import Conv2D, MaxPooling2D

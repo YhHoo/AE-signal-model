@@ -1,6 +1,8 @@
+# ------------------------------------------------------
 # this section is for function debugging before integrate in full
 # put all into function and do not delete old fn but create another
 # version in new function
+# ------------------------------------------------------
 
 import numpy as np
 from keras.layers import Dense, Flatten
@@ -130,6 +132,7 @@ def cnn_example_1():
     plt.show()
 
 
+# for debugging only
 split_index = 10
 train_y = np.array(np.array([0] * split_index + [1] * split_index))
 train_y = to_categorical(train_y, num_classes=2)

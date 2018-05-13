@@ -1,10 +1,10 @@
+# ------------------------------------------------------
 # this model expecting the input data of 0.2 seconds with shape of (3000, 23) only.
+# ------------------------------------------------------
 
-import numpy as np
 from keras.layers import Dense, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras.models import Sequential
-from keras.utils import to_categorical
 
 
 model = Sequential()
