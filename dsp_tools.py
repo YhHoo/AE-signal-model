@@ -47,11 +47,12 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True):
 
 
 # SPECTROGRAM
-def spectrogram_scipy(sampled_data=None, fs=1, visualize=True):
+def spectrogram_scipy(sampled_data=None, fs=1, visualize=False, verbose=False):
     '''
     :param sampled_data: A one dimensional data (Size = N), can be list or series
     :param fs: Sampling frequency
     :param visualize: Plot Spectrogram or not (Boolean)
+    :param verbose: Print out the transformed data summary
     :return: time axis, frequency band and the Amplitude in 2D matrix
     '''
     # There is a trade-off btw resolution of frequency and time due to uncertainty principle
@@ -63,11 +64,16 @@ def spectrogram_scipy(sampled_data=None, fs=1, visualize=True):
                             scaling='spectrum',
                             nperseg=10000,  # Now 5kHz is sliced into 100 pcs i.e. 50Hz/pcs
                             noverlap=1000)
-    print('\n----------SPECTROGRAM OUTPUT---------')
-    print('Time Segment....{}\n'.format(t.size), t)
-    print('Frequency Segment....{}\n'.format(f.size), f)
     f_res = fs / (2 * (f.size - 1))
-    print('Spectrogram Dim: {}, F-Resolution: {}Hz/Band'.format(Sxx.shape, f_res))
+
+    # result summary
+    if verbose:
+        print('\n----------SPECTROGRAM OUTPUT---------')
+        print('Time Segment....{}\n'.format(t.size), t)
+        print('Frequency Segment....{}\n'.format(f.size), f)
+        print('Spectrogram Dim: {}, F-Resolution: {}Hz/Band'.format(Sxx.shape, f_res))
+
+    # plotting spectrogram
     if visualize:
         plt.pcolormesh(t, f, Sxx)
         plt.ylabel('Frequency [Hz]')
