@@ -7,7 +7,6 @@ from keras.layers import Dense, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras.models import Sequential
 from keras.utils import to_categorical
-from __future__ import print_function
 from keras.datasets import mnist
 import matplotlib.pyplot as plt
 import keras
@@ -69,7 +68,6 @@ def cnn_example_1():
     # load the MNIST data set, which already splits into train and test sets for us
     (x_train, y_train), (x_test, y_test) = mnist.load_data()  # x->(60000, 28, 28), y->(60000,)
 
-
     # reshape the data into a 4D tensor - (sample_number, x_img_size, y_img_size, num_channels)
     # because the MNIST is greyscale, we only have a single channel - RGB colour images would have 3
     x_train = x_train.reshape(x_train.shape[0], img_x, img_y, 1)
@@ -130,3 +128,10 @@ def cnn_example_1():
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.show()
+
+
+split_index = 10
+train_y = np.array(np.array([0] * split_index + [1] * split_index))
+train_y = to_categorical(train_y, num_classes=2)
+print(train_y)
+print(train_y.shape)
