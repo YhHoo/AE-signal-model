@@ -9,15 +9,15 @@ from keras.layers import Conv2D, MaxPooling2D
 from keras.models import Sequential
 from keras.utils import to_categorical
 
-x_train = np.random.rand(3000, 100)
-
-# reshape
-x_train = x_train.reshape((1, 3000, 100, 1))
-print(x_train.shape)
-
-y_train = 1
-y_train = to_categorical(y_train, num_classes=12).reshape((1, -1))
-print(y_train.shape)
+# x_train = np.random.rand(3000, 100)
+#
+# # reshape
+# x_train = x_train.reshape((1, 3000, 100, 1))
+# print(x_train.shape)
+#
+# y_train = 1
+# y_train = to_categorical(y_train, num_classes=12).reshape((1, -1))
+# print(y_train.shape)
 
 model = Sequential()
 # Convolutional layer 1 ------------------------------------------
@@ -48,10 +48,10 @@ model.add(Dense(150, activation='relu'))
 model.add(Dense(80, activation='relu'))
 
 # Fully connected layer 3 ----------------------------------------
-model.add(Dense(2, activation='softmax'))
+model.add(Dense(12, activation='softmax'))
 # print architecture summary
 print(model.summary())
 
 # training
-model.compile(optimizer='adam', loss='categorical_crossentropy')
-model.fit(x_train, y_train, epochs=10, verbose=2)
+# model.compile(optimizer='adam', loss='categorical_crossentropy')
+# model.fit(x_train, y_train, epochs=10, verbose=2)
