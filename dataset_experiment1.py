@@ -173,7 +173,7 @@ train_y = to_categorical(train_y, num_classes=2)
 test_y = to_categorical(test_y, num_classes=2)
 
 # data summary
-print('\n----------SIGNAL TRANSFORMATION---------')
+print('\n----------INPUT DATA DIMENSION---------')
 print('Train_X dim: ', train_x.shape)
 print('Train_Y dim: ', train_y.shape)
 print('Test_X dim: ', test_x.shape)
@@ -230,7 +230,7 @@ history = model.fit(x=train_x,
                     batch_size=10,
                     validation_data=(test_x, test_y),
                     verbose=2,
-                    epochs=10)
+                    epochs=4)
 
 # visualize of training process
 plt.plot(history.history['loss'], label='train_loss')
