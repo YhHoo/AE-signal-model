@@ -1,6 +1,8 @@
 # ------------------------------------------------------
+# DATASET: (Experiment_8_3_2018) --> in csv, each are 0.2 seconds only
 # Grab all data set from Harddisk, downsample and return
 # as np matrix. Make sure change the harddisk alphabet
+# WARNING: Do not change the code here for TDMS file, create new file
 # ------------------------------------------------------
 
 import numpy as np
@@ -55,18 +57,18 @@ class AcousticEmissionDataSet:
     def __init__(self):
         print('----------RAW DATA SET IMPORT & DOWN-SAMPLE---------')
         self.drive = 'E://'
-        self.path_noleak_2bar_set1 = self.drive + 'Experiment 1//pos_0m_2m//No_Leak//2_bar//Set_1//'
-        self.path_noleak_2bar_set2 = self.drive + 'Experiment 1//pos_0m_2m//No_Leak//2_bar//Set_2//'
-        self.path_noleak_2bar_set3 = self.drive + 'Experiment 1//pos_0m_2m//No_Leak//2_bar//Set_3//'
-        self.path_leak_2bar_set1 = self.drive + 'Experiment 1//pos_0m_2m//Leak//2_bar//Set_1//'
-        self.path_leak_2bar_set2 = self.drive + 'Experiment 1//pos_0m_2m//Leak//2_bar//Set_2//'
-        self.path_leak_2bar_set3 = self.drive + 'Experiment 1//pos_0m_2m//Leak//2_bar//Set_3//'
+        self.path_noleak_2bar_set1 = self.drive + 'Experiment_8_3_2018//pos_0m_2m//No_Leak//2_bar//Set_1//'
+        self.path_noleak_2bar_set2 = self.drive + 'Experiment_8_3_2018//pos_0m_2m//No_Leak//2_bar//Set_2//'
+        self.path_noleak_2bar_set3 = self.drive + 'Experiment_8_3_2018//pos_0m_2m//No_Leak//2_bar//Set_3//'
+        self.path_leak_2bar_set1 = self.drive + 'Experiment_8_3_2018//pos_0m_2m//Leak//2_bar//Set_1//'
+        self.path_leak_2bar_set2 = self.drive + 'Experiment_8_3_2018//pos_0m_2m//Leak//2_bar//Set_2//'
+        self.path_leak_2bar_set3 = self.drive + 'Experiment_8_3_2018//pos_0m_2m//Leak//2_bar//Set_3//'
 
     def noleak_2bar(self, sensor=1):
         '''
         :param sensor: Define the sensor no.
         :return: 2d np-array where rows = no of csv, col = len of csv
-        Source Folder = 'Experiment 1//pos_0m_2m//No_Leak//2_bar//[ALL SET]//Sensor_N//'
+        Source Folder = 'Experiment_8_3_2018//pos_0m_2m//No_Leak//2_bar//[ALL SET]//Sensor_N//'
         '''
         # define sensor number
         if sensor == 1:
@@ -91,7 +93,7 @@ class AcousticEmissionDataSet:
         '''
         :param sensor: Define the sensor no.
         :return: 2d np-array where rows = no of csv, col = len of csv
-        Source Folder = 'Experiment 1//pos_0m_2m//No_Leak//2_bar//[ALL SET]//Sensor_N//'
+        Source Folder = 'Experiment_8_3_2018//pos_0m_2m//No_Leak//2_bar//[ALL SET]//Sensor_N//'
         '''
         # define sensor number
         if sensor == 1:
@@ -134,6 +136,7 @@ pb = ProgressBarForLoop('Spectrogram Transform --> [noleak_2bar]', end=data_nole
 flag = 0
 for signal_in_time in data_noleak[:]:
     _, _, mat = spectrogram_scipy(signal_in_time, fs=1e6, visualize=False, verbose=False)
+    # take 0-300kHz only
     data_noleak_all.append(mat[:3000])
     pb.update(now=flag)
     flag += 1
@@ -146,6 +149,7 @@ pb = ProgressBarForLoop('Spectrogram Transform --> [leak_2bar]', end=data_leak.s
 flag = 0
 for signal_in_time in data_leak[:]:
     _, _, mat = spectrogram_scipy(signal_in_time, fs=1e6, visualize=False, verbose=False)
+    # take 0-300kHz only
     data_leak_all.append(mat[:3000])
     pb.update(now=flag)
     flag += 1
