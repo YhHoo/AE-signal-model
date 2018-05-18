@@ -47,7 +47,7 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True):
 
 
 # SPECTROGRAM
-def spectrogram_scipy(sampled_data=None, fs=1, visualize=False, verbose=False):
+def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, visualize=False, verbose=False):
     '''
     :param sampled_data: A one dimensional data (Size = N), can be list or series
     :param fs: Sampling frequency
@@ -62,16 +62,18 @@ def spectrogram_scipy(sampled_data=None, fs=1, visualize=False, verbose=False):
     f, t, Sxx = spectrogram(sampled_data,
                             fs=fs,
                             scaling='spectrum',
-                            nperseg=10000,  # Now 5kHz is sliced into 100 pcs i.e. 50Hz/pcs
-                            noverlap=1000)
+                            nperseg=nperseg,  # ori=10000
+                            noverlap=noverlap,  # ori=5007
+                            )
     f_res = fs / (2 * (f.size - 1))
+    t_res = (sampled_data.shape[0] / fs) / t.size
 
     # result summary
     if verbose:
         print('\n----------SPECTROGRAM OUTPUT---------')
-        print('Time Segment....{}\n'.format(t.size), t)
-        print('Frequency Segment....{}\n'.format(f.size), f)
-        print('Spectrogram Dim: {}, F-Resolution: {}Hz/Band'.format(Sxx.shape, f_res))
+        print('Time Segment....{}\nFirst 5: {}\nLast 5: {}\n'.format(t.size, t[:5], t[-5:]))
+        print('Frequency Segment....{}\nFirst 5: {}\nLast 5: {}\n'.format(f.size, f[:5], f[-5:]))
+        print('Spectrogram Dim: {}\nF-Resolution: {}Hz/Band\nT-Resolution: {}'.format(Sxx.shape, f_res, t_res))
 
     # plotting spectrogram
     if visualize:
@@ -85,6 +87,7 @@ def spectrogram_scipy(sampled_data=None, fs=1, visualize=False, verbose=False):
         plt.show()
 
     return t, f, Sxx
+
 
 
 

@@ -53,7 +53,7 @@ def read_csv_from_folder(path=None):
 # data files location options
 
 
-class AcousticEmissionDataSet:
+class AcousticEmissionDataSet_8_3_2018:
     def __init__(self):
         print('----------RAW DATA SET IMPORT & DOWN-SAMPLE---------')
         self.drive = 'E://'
@@ -120,7 +120,7 @@ class AcousticEmissionDataSet:
 
 
 # ----------------------[DATA IMPORT]-------------------------
-ae_dataset_1 = AcousticEmissionDataSet()
+ae_dataset_1 = AcousticEmissionDataSet_8_3_2018()
 
 # testing
 data_noleak = ae_dataset_1.noleak_2bar(sensor=1)
