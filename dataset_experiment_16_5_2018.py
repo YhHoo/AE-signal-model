@@ -9,7 +9,7 @@ from utils import ProgressBarForLoop
 class AccousticEmissionDataSet_16_5_2018:
     def __init__(self):
         print('----------AE DATA SET RAW [16-5-2018]---------')
-        self.drive = 'F:/'
+        self.drive = 'E:/'
         # directory
         # Pressure = 1 bar | sleak = 0.5cm Hole | distance = 0-6m
         self.path_sleak_pos0123_1bar = 'Experiment_16_5_2018/Experiment 1/pos_0_1_2_3/leak/1_bar/'
@@ -154,8 +154,8 @@ class AccousticEmissionDataSet_16_5_2018:
 
     # def noleak_1bar_7pos(self):
 
-data = AccousticEmissionDataSet_16_5_2018()
-data.sleak_1bar_7pos()
+# data = AccousticEmissionDataSet_16_5_2018()
+# data.sleak_1bar_7pos()
 
 
 # print('Reading...', end='')
