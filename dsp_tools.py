@@ -47,12 +47,17 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True):
 
 
 # SPECTROGRAM
-def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, visualize=False, verbose=False):
+def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1,
+                      visualize=False, verbose=False, save=False, save_title='Default'):
     '''
     :param sampled_data: A one dimensional data (Size = N), can be list or series
     :param fs: Sampling frequency
+    :param nperseg: if higher, f-res higher
+    :param noverlap: if higher, t-res higher
     :param visualize: Plot Spectrogram or not (Boolean)
     :param verbose: Print out the transformed data summary
+    :param save: save the spectrogram as .jpeg
+    :param save_title: title of the spectrogram to save
     :return: time axis, frequency band and the Amplitude in 2D matrix
     '''
     # There is a trade-off btw resolution of frequency and time due to uncertainty principle
@@ -75,16 +80,24 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, visualize=
         print('Frequency Segment....{}\nFirst 5: {}\nLast 5: {}\n'.format(f.size, f[:5], f[-5:]))
         print('Spectrogram Dim: {}\nF-Resolution: {}Hz/Band\nT-Resolution: {}'.format(Sxx.shape, f_res, t_res))
 
-    # plotting spectrogram
-    if visualize:
+    if save or visualize:
+        # plotting spectrogram
         plt.pcolormesh(t, f, Sxx)
         plt.ylabel('Frequency [Hz]')
         # display only 0Hz to 300kHz
         plt.ylim((0, 300e3))
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+        plt.title(save_title)
         plt.xlabel('Time [Sec]')
-        plt.show()
+
+        if save:
+            plt.savefig('result\{}.png'.format(save_title))
+
+        if visualize:
+            plt.show()
+
+        plt.close()
 
     return t, f, Sxx
 

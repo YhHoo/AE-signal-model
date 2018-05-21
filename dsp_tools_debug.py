@@ -21,14 +21,13 @@ y = np.sin(50.0 * 2.0*np.pi*x) + 0.5*np.sin(80.0 * 2.0*np.pi*x)
 print(y.size)
 
 
-
-
 # SPECTROGRAM
 f, t, Sxx = spectrogram(y, fs=800)
 plt.pcolormesh(t, f, Sxx)
 plt.ylabel('Frequency [Hz]')
 plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 plt.xlabel('Time [Sec]')
+plt.savefig('test')
 plt.show()
 
 
