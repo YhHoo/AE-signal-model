@@ -48,7 +48,8 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True):
 
 # SPECTROGRAM
 def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1,
-                      visualize=False, verbose=False, save=False, save_title='Default'):
+                      visualize=False, vis_max_freq_range=1e3, verbose=False,
+                      save=False, save_title='Default'):
     '''
     :param sampled_data: A one dimensional data (Size = N), can be list or series
     :param fs: Sampling frequency
@@ -64,6 +65,11 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1,
     # Spectrogram split input signal into segments before FFT and PSD on each seg.
     # Adjust nperseg is adjusting segment length. Higher nperseg giv more res in Freq but
     # lesser res in time domain.
+
+    # ensure it is np array
+    if isinstance(sampled_data, list):
+        sampled_data = np.array(sampled_data)
+    # begin
     f, t, Sxx = spectrogram(sampled_data,
                             fs=fs,
                             scaling='spectrum',
@@ -85,7 +91,7 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1,
         plt.pcolormesh(t, f, Sxx)
         plt.ylabel('Frequency [Hz]')
         # display only 0Hz to 300kHz
-        plt.ylim((0, 300e3))
+        plt.ylim((0, vis_max_freq_range))
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
         plt.title(save_title)
