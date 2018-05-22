@@ -11,8 +11,8 @@ from keras.utils import to_categorical
 from keras import optimizers
 from keras.callbacks import ModelCheckpoint
 
-# ----------------------------------------------------------------------------------------------TEST 1
 
+# ----------------------------------------------------------------------------------------------TEST 1
 # data set
 ae_data = AccousticEmissionDataSet_16_5_2018()
 train_x, train_y, test_x, test_y = ae_data.sleak_1bar_7pos(f_range=(0, 1000))
@@ -160,6 +160,7 @@ checkpoint = ModelCheckpoint(filepath=filepath,
                              save_best_only=True,
                              mode='min',  # for acc, it should b 'max'; for loss, 'min'
                              period=1)  # no of epoch btw checkpoints
+callback_list = [checkpoint]
 
 history = model.fit(x=train_x,
                     y=train_y,
@@ -168,6 +169,7 @@ history = model.fit(x=train_x,
                     epochs=10,
                     shuffle=True,
                     callbacks=callback_list)
+
 
 # visualize of training process
 plt.plot(history.history['loss'], label='train_loss')
@@ -183,3 +185,5 @@ model_name = 'CNN_Test_2'
 model_json = model.to_json()
 with open(model_name + '.json', 'w') as json_file:
     json_file.write(model_json)
+
+
