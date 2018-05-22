@@ -1,9 +1,6 @@
 from progressbar import ProgressBar, Percentage, Bar, SimpleProgress, ETA
 from keras.callbacks import ModelCheckpoint
 import matplotlib.pyplot as plt
-from keras import Sequential
-from keras.layers import Conv2D, MaxPooling2D
-from keras.utils import plot_model
 
 
 # Try out more progressbar from https://github.com/coagulant/progressbar-python3/blob/master/examples.py
@@ -26,7 +23,10 @@ class ProgressBarForLoop:
 
 
 class ModelLogger:
-
+    '''
+    model_name practice --> [test_no]_[architecture]_[date]
+    e.g. test2_CNN_22_5_18
+    '''
     def __init__(self, model, model_name):
         self.model = model
         self.path = 'result/' + model_name
@@ -42,9 +42,9 @@ class ModelLogger:
         print('Architecture saved -->{}.json'.format(path))
         # save the model.summary() into txt
         if save_readable:
-            path = self.path + 'txt'
+            path = self.path + '.txt'
             with open(path, 'w') as f:
-                model.summary(print_fn=lambda x: f.write(x + '\n'))
+                self.model.summary(print_fn=lambda x: f.write(x + '\n'))
 
     def save_best_weight_cheakpoint(self, monitor='val_loss', mode='min', period=1):
         '''
@@ -63,6 +63,7 @@ class ModelLogger:
         callback_list = [checkpoint]
         return callback_list
 
+    # this function use the model history returned by fit() to plot learning curve and save it
     def learning_curve(self, history, save=False, show=False, title='default'):
         plt.plot(history.history['loss'], label='train_loss')
         plt.plot(history.history['val_loss'], label='test_loss')

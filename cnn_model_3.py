@@ -6,11 +6,10 @@ from keras.layers import Dense, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras.models import Sequential
 from dataset_experiment_16_5_2018 import AccousticEmissionDataSet_16_5_2018
-import matplotlib.pyplot as plt
 from keras.utils import to_categorical
 from keras import optimizers
-from keras.callbacks import ModelCheckpoint
-
+# self defined library
+from utils import ModelLogger
 
 # ----------------------------------------------------------------------------------------------TEST 1
 # data set
@@ -56,7 +55,7 @@ model.add(Conv2D(filters=150, kernel_size=(5, 2), strides=(1, 1),
                  activation='relu'))
 model.add(MaxPooling2D(pool_size=(5, 1), strides=(2, 1)))
 
-# # Fully connected ----------------------------------------
+# Fully connected ----------------------------------------
 model.add(Flatten())
 model.add(Dense(100, activation='relu'))
 model.add(Dense(50, activation='relu'))
@@ -67,16 +66,15 @@ print(model.summary())
 adam_optimizer = optimizers.Adam(lr=0.01)
 model.compile(optimizer='adam', loss='categorical_crossentropy')
 
-# checkpoint- this will save the model during training every time the accuracy hits a new highest
-filepath = 'CNN_Test_1.h5'
-checkpoint = ModelCheckpoint(filepath=filepath,
-                             monitor='val_loss',
-                             verbose=1,
-                             save_best_only=True,
-                             mode='min',  # for acc, it should b 'max'; for loss, 'min'
-                             period=1)  # no of epoch btw checkpoints
-callback_list = [checkpoint]
 
+# save model architecture
+model_logger = ModelLogger(model, model_name='test1_CNN_22_5_18')
+model_logger.save_architecture(save_readable=True)
+
+# checkpoint
+callback_list = model_logger.save_best_weight_cheakpoint()
+
+# Model Training
 history = model.fit(x=train_x,
                     y=train_y,
                     validation_data=(test_x, test_y),
@@ -84,21 +82,8 @@ history = model.fit(x=train_x,
                     epochs=10,
                     shuffle=True,
                     callbacks=callback_list)
-
-# visualize of training process
-plt.plot(history.history['loss'], label='train_loss')
-plt.plot(history.history['val_loss'], label='test_loss')
-plt.legend()
-plt.title('F-range: 0-100kHz')
-plt.savefig('result/test_1.png')
-plt.close()
-
-# ----[Saving Model]----
-# serialize and saving the model structure to JSON
-model_name = 'CNN_Test_1'
-model_json = model.to_json()
-with open(model_name + '.json', 'w') as json_file:
-    json_file.write(model_json)
+# save the learning curve
+model_logger.learning_curve(history, save=True, title='F-range (0-100kHz)')
 
 # ----------------------------------------------------------------------------------------------TEST 2
 
@@ -153,14 +138,10 @@ print(model.summary())
 
 model.compile(optimizer='adam', loss='categorical_crossentropy')
 
-filepath = 'CNN_Test_2.h5'
-checkpoint = ModelCheckpoint(filepath=filepath,
-                             monitor='val_loss',
-                             verbose=1,
-                             save_best_only=True,
-                             mode='min',  # for acc, it should b 'max'; for loss, 'min'
-                             period=1)  # no of epoch btw checkpoints
-callback_list = [checkpoint]
+# Model logging
+model_logger = ModelLogger(model, model_name='test2_CNN_22_5_18')
+model_logger.save_architecture(save_readable=True)
+callback_list = model_logger.save_best_weight_cheakpoint()
 
 history = model.fit(x=train_x,
                     y=train_y,
@@ -170,20 +151,6 @@ history = model.fit(x=train_x,
                     shuffle=True,
                     callbacks=callback_list)
 
-
-# visualize of training process
-plt.plot(history.history['loss'], label='train_loss')
-plt.plot(history.history['val_loss'], label='test_loss')
-plt.legend()
-plt.title('F-range: 0-70kHz')
-plt.savefig('result/test_2.png')
-plt.close()
-
-# ----[Saving Model]----
-# serialize and saving the model structure to JSON
-model_name = 'CNN_Test_2'
-model_json = model.to_json()
-with open(model_name + '.json', 'w') as json_file:
-    json_file.write(model_json)
-
+# learning curve
+model_logger.learning_curve(history, save=True)
 
