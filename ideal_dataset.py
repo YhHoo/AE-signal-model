@@ -21,7 +21,7 @@ plt.plot(x, y2, color='r', label='sin(10*2*pi*x)')
 plt.plot(x, y3, color='b', label='sin(10*2*pi*x + pi)')
 plt.show()
 
-
+# https://stackoverflow.com/questions/19771328/sine-wave-that-exponentialy-changes-between-frequencies-f1-and-f2-at-given-time
 def sweep(f_start, f_end, interval, n_steps):
     b = log(f_end/f_start) / interval
     a = 2 * pi * f_start / b
