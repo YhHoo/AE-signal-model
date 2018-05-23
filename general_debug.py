@@ -67,3 +67,4 @@ def cnn_example_1():
     model.add(Dense(1000, activation='relu'))
     model.add(Dense(num_classes, activation='softmax'))
 
+

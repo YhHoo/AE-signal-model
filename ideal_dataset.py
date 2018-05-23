@@ -61,15 +61,15 @@ def sweep_exponential(f_start, f_end, interval, n_steps):
 # sweep(1, 10, 5, 1000)
 
 
-x, y, fs = sweep_linear(f_start=1, f_end=10, interval=5, n_steps=1000, amplitude=3)
+x, y, fs = sweep_linear(f_start=100, f_end=10000, interval=5, n_steps=int(100e3), amplitude=6)
 print(fs)
 spectrogram_scipy(y,
                   fs=fs,
-                  nperseg=200,
+                  nperseg=500,
                   noverlap=100,
                   verbose=True,
                   visualize=True,
-                  vis_max_freq_range=50)
+                  vis_max_freq_range=10000)
 
 # # plt.plot(x, y2, color='r', label='sin(10*2*pi*x)')
 # plt.plot(x, y, color='b', label='linear change in f')
