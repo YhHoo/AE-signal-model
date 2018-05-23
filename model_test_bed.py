@@ -37,7 +37,7 @@ print('Test_Y dim: ', test_y.shape)
 
 # time-res = 5ms per band, f-res = 100Hz per band
 model = cnn_1000_40_7class_v1()
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 print(model.summary())
 
 # save model architecture
@@ -86,7 +86,7 @@ print('Test_Y dim: ', test_y.shape)
 model = cnn_700_40_7class_v1()
 print(model.summary())
 
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Model logging
 model_logger = ModelLogger(model, model_name='test2_CNN_23_5_18')
