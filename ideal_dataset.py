@@ -62,15 +62,45 @@ def sweep_exponential(f_start, f_end, interval, n_steps):
 
 
 x, y, fs = sweep_linear(f_start=100, f_end=10000, interval=5, n_steps=int(100e3), amplitude=6)
-print(fs)
-spectrogram_scipy(y,
-                  fs=fs,
+# spectrogram_scipy(y,
+#                   fs=fs,
+#                   nperseg=500,
+#                   noverlap=100,
+#                   verbose=True,
+#                   visualize=True,
+#                   vis_max_freq_range=10000)
+
+# # plt.plot(x, y2, color='r', label='sin(10*2*pi*x)')
+# plt.plot(x, y, color='b', label='linear change in f')
+# plt.show()
+
+
+# assume this noise has freq from 20-10kHz
+# Here we let ensure the white noise is sampled at 20kHz to be able to capture 10kHz
+def white_noise(mean, std, interval, max_cap_freq):
+    '''
+    :param mean: of the white noise
+    :param std: std deviation of the noise
+    :param interval: length of the noise in time (s)
+    :param max_cap_freq: the maximum freq to be capture
+    :return:
+    '''
+    fs = max_cap_freq * 2  # (nyquist f) to able to capture 10kHz
+    sample_size = int(fs * interval)
+    white_noise = np.random.normal(mean, std, size=sample_size)
+    return white_noise, fs
+
+
+noise, noise_fs = white_noise(mean=0, std=1, interval=5, max_cap_freq=10e3)
+mixture_signal = y + noise
+plt.plot(mixture_signal)
+plt.show()
+
+
+spectrogram_scipy(mixture_signal,
+                  fs=noise_fs,
                   nperseg=500,
                   noverlap=100,
                   verbose=True,
                   visualize=True,
                   vis_max_freq_range=10000)
-
-# # plt.plot(x, y2, color='r', label='sin(10*2*pi*x)')
-# plt.plot(x, y, color='b', label='linear change in f')
-# plt.show()
