@@ -1,15 +1,12 @@
-import numpy as np
-from keras import Sequential
-from keras.models import model_from_json
 from keras.utils import to_categorical
 # self defined library
-from utils import model_loader
+from utils import model_loader, model_multiclass_evaluate
 from dataset_experiment_16_5_2018 import AccousticEmissionDataSet_16_5_2018
 
 # -------------------[LOADING DATA]----------------------------
 # data set
 ae_data = AccousticEmissionDataSet_16_5_2018()
-train_x, train_y, test_x, test_y = ae_data.sleak_1bar_7pos(f_range=(0, 1000))
+train_x, train_y, test_x, test_y = ae_data.sleak_1bar_7pos(f_range=(0, 700))
 
 # reshape to satisfy conv2d input shape
 train_x = train_x.reshape((train_x.shape[0], train_x.shape[1], train_x.shape[2], 1))
@@ -30,12 +27,11 @@ print('Test_Y dim: ', test_y.shape)
 
 # -------------------[LOADING MODEL]----------------------------
 
-model = model_loader(model_name='test2_CNN_22_5_18',
-                     dir='result/22-5-18/',
-                     loss='categorical_crossentropy',
-                     optimizer='adam')
+model = model_loader(model_name='test2_CNN_23_5_18',
+                     dir='result/23-5-18/')
+model.compile(loss='categorical_crossentropy', optimizer='adam')
+
 print('------------MODEL EVALUATION-------------')
-print(test_y[0])
-prediction = model.predict(x=test_x)
-print(prediction)
-print(np.argmax(prediction))
+model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
+
+

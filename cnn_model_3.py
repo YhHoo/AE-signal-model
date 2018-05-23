@@ -3,13 +3,14 @@
 # ------------------------------------------------------
 
 from keras.layers import Dense, Flatten
-from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Conv2D, MaxPooling2D, Dropout
 from keras.models import Sequential
 from dataset_experiment_16_5_2018 import AccousticEmissionDataSet_16_5_2018
 from keras.utils import to_categorical
 from keras import optimizers
 # self defined library
-from utils import ModelLogger
+from utils import ModelLogger, model_multiclass_evaluate
+from cnn_model_bank import cnn_1000_40_7class_v1, cnn_700_40_7class_v1
 
 # ----------------------------------------------------------------------------------------------TEST 1
 # data set
@@ -24,6 +25,8 @@ test_x = test_x.reshape((test_x.shape[0], test_x.shape[1], test_x.shape[2], 1))
 train_y = to_categorical(train_y, num_classes=7)
 test_y = to_categorical(test_y, num_classes=7)
 
+# optimizer
+adam_optimizer = optimizers.Adam(lr=0.01)
 
 # data summary
 print('\n----------INPUT DATA DIMENSION---------')
@@ -32,47 +35,17 @@ print('Train_Y dim: ', train_y.shape)
 print('Test_X dim: ', test_x.shape)
 print('Test_Y dim: ', test_y.shape)
 
-
 # time-res = 5ms per band, f-res = 100Hz per band
-model = Sequential()
-# Convolutional layer 1 ------------------------------------------
-model.add(Conv2D(filters=40, kernel_size=(5, 5), strides=(1, 1),  # kernel covers 1kHz, 25ms
-                 activation='relu', input_shape=(1000, 40, 1)))
-model.add(MaxPooling2D(pool_size=(5, 5), strides=(1, 1)))
-
-# Convolutional layer 2 ------------------------------------------
-model.add(Conv2D(filters=60, kernel_size=(5, 5), strides=(1, 1),
-                 activation='relu'))
-model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
-#
-# Convolutional layer 3 ------------------------------------------
-model.add(Conv2D(filters=108, kernel_size=(5, 5), strides=(2, 1),
-                 activation='relu'))
-model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
-
-# Convolutional layer 4 ------------------------------------------
-model.add(Conv2D(filters=150, kernel_size=(5, 2), strides=(1, 1),
-                 activation='relu'))
-model.add(MaxPooling2D(pool_size=(5, 1), strides=(2, 1)))
-
-# Fully connected ----------------------------------------
-model.add(Flatten())
-model.add(Dense(100, activation='relu'))
-model.add(Dense(50, activation='relu'))
-model.add(Dense(7, activation='softmax'))
-
+model = cnn_1000_40_7class_v1()
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
 print(model.summary())
-
-adam_optimizer = optimizers.Adam(lr=0.01)
-model.compile(optimizer='adam', loss='categorical_crossentropy')
-
 
 # save model architecture
 model_logger = ModelLogger(model, model_name='test1_CNN_22_5_18')
 model_logger.save_architecture(save_readable=True)
 
 # checkpoint
-callback_list = model_logger.save_best_weight_cheakpoint()
+callback_list = model_logger.save_best_weight_cheakpoint(monitor='val_loss', period=1)
 
 # Model Training
 history = model.fit(x=train_x,
@@ -82,8 +55,11 @@ history = model.fit(x=train_x,
                     epochs=10,
                     shuffle=True,
                     callbacks=callback_list)
+
 # save the learning curve
 model_logger.learning_curve(history, save=True, title='F-range (0-100kHz)')
+
+model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
 
 # ----------------------------------------------------------------------------------------------TEST 2
 
@@ -107,39 +83,13 @@ print('Train_Y dim: ', train_y.shape)
 print('Test_X dim: ', test_x.shape)
 print('Test_Y dim: ', test_y.shape)
 
-model = Sequential()
-# Convolutional layer 1 ------------------------------------------
-model.add(Conv2D(filters=50, kernel_size=(5, 5), strides=(1, 1),  # kernel covers 1kHz, 25ms
-                 activation='relu', input_shape=(700, 40, 1)))
-model.add(MaxPooling2D(pool_size=(5, 5), strides=(1, 1)))
-
-# Convolutional layer 2 ------------------------------------------
-model.add(Conv2D(filters=70, kernel_size=(5, 5), strides=(1, 1),
-                 activation='relu'))
-model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
-#
-# Convolutional layer 3 ------------------------------------------
-model.add(Conv2D(filters=108, kernel_size=(5, 5), strides=(1, 1),
-                 activation='relu'))
-model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
-
-# Convolutional layer 4 ------------------------------------------
-model.add(Conv2D(filters=150, kernel_size=(5, 2), strides=(1, 1),
-                 activation='relu'))
-model.add(MaxPooling2D(pool_size=(5, 1), strides=(2, 1)))
-#
-# # # Fully connected ----------------------------------------
-model.add(Flatten())
-model.add(Dense(100, activation='relu'))
-model.add(Dense(50, activation='relu'))
-model.add(Dense(7, activation='softmax'))
-
+model = cnn_700_40_7class_v1()
 print(model.summary())
 
-model.compile(optimizer='adam', loss='categorical_crossentropy')
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
 
 # Model logging
-model_logger = ModelLogger(model, model_name='test2_CNN_22_5_18')
+model_logger = ModelLogger(model, model_name='test2_CNN_23_5_18')
 model_logger.save_architecture(save_readable=True)
 callback_list = model_logger.save_best_weight_cheakpoint()
 
@@ -147,10 +97,11 @@ history = model.fit(x=train_x,
                     y=train_y,
                     validation_data=(test_x, test_y),
                     batch_size=30,
-                    epochs=10,
+                    epochs=2,
                     shuffle=True,
                     callbacks=callback_list)
 
 # learning curve
 model_logger.learning_curve(history, save=True, title='F-range (0-70kHz)')
 
+model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)

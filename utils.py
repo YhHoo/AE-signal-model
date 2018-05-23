@@ -2,6 +2,8 @@ from progressbar import ProgressBar, Percentage, Bar, SimpleProgress, ETA
 from keras.callbacks import ModelCheckpoint
 import matplotlib.pyplot as plt
 from keras.models import model_from_json
+import numpy as np
+
 
 # Try out more progressbar from https://github.com/coagulant/progressbar-python3/blob/master/examples.py
 # progress bar, maxval is like max value in a ruler, and set the progress with update()
@@ -46,7 +48,7 @@ class ModelLogger:
             with open(path, 'w') as f:
                 self.model.summary(print_fn=lambda x: f.write(x + '\n'))
 
-    def save_best_weight_cheakpoint(self, monitor='val_loss', mode='min', period=1):
+    def save_best_weight_cheakpoint(self, monitor='val_loss', period=1):
         '''
         :param monitor: value to monitor when saving
         :param mode: what value should be save
@@ -54,6 +56,12 @@ class ModelLogger:
         :return: a callback_list to be placed on fit(callbacks=...)
         '''
         path = self.path + '.h5'
+        # automate mode
+        if monitor is 'val_loss':
+            mode = 'min'
+        elif monitor is 'val_acc':
+            mode = 'max'
+
         checkpoint = ModelCheckpoint(filepath=path,
                                      monitor=monitor,
                                      verbose=1,
@@ -61,6 +69,7 @@ class ModelLogger:
                                      mode=mode,  # for acc, it should b 'max'; for loss, 'min'
                                      period=period)  # no of epoch btw checkpoints
         callback_list = [checkpoint]
+
         return callback_list
 
     # this function use the model history returned by fit() to plot learning curve and save it
@@ -77,7 +86,14 @@ class ModelLogger:
         plt.close()
 
 
-def model_loader(model_name=None, dir=None, loss='categorical_crossentropy', optimizer='adam'):
+def model_loader(model_name=None, dir=None):
+    '''
+    :param model_name: The model name
+    :param dir: The location that contains .h5, .json of the model
+    :return: a model loaded with .h5 and .json
+    AIM: this just simplifies the model loading procedure by wrapping them in one.
+    This has to be followed by model.compile() if we wish to train the model later
+    '''
     path = dir + model_name
 
     # load architecture from .json
@@ -86,11 +102,24 @@ def model_loader(model_name=None, dir=None, loss='categorical_crossentropy', opt
 
     # load weights from .h5
     model.load_weights(path + '.h5')
-    model.compile(loss='categorical_crossentropy', optimizer='adam')
     print('Model Loaded !')
 
     return model
 
+
+def model_multiclass_evaluate(model, test_x, test_y):
+    # manual prediction, convert the output from one-hot encoding bac to class no
+    # e.g. [0 1 0 0] --> 1
+    prediction = model.predict(test_x)
+    prediction = np.argmax(prediction, axis=1)
+    actual = np.argmax(test_y, axis=1)
+
+    # visualize the multiclass classification accuracy
+    plt.plot(actual, color='r', label='Actual')
+    plt.plot(prediction, color='b', label='Prediction')
+    plt.title('Multiclassifer Accuracy Visualization')
+    plt.legend()
+    plt.show()
 
 
 
