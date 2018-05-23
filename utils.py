@@ -1,7 +1,7 @@
 from progressbar import ProgressBar, Percentage, Bar, SimpleProgress, ETA
 from keras.callbacks import ModelCheckpoint
 import matplotlib.pyplot as plt
-
+from keras.models import model_from_json
 
 # Try out more progressbar from https://github.com/coagulant/progressbar-python3/blob/master/examples.py
 # progress bar, maxval is like max value in a ruler, and set the progress with update()
@@ -76,6 +76,20 @@ class ModelLogger:
         # free up memory
         plt.close()
 
+
+def model_loader(model_name=None, dir=None, loss='categorical_crossentropy', optimizer='adam'):
+    path = dir + model_name
+
+    # load architecture from .json
+    with open(path + '.json', 'r') as f:
+        model = model_from_json(f.read())
+
+    # load weights from .h5
+    model.load_weights(path + '.h5')
+    model.compile(loss='categorical_crossentropy', optimizer='adam')
+    print('Model Loaded !')
+
+    return model
 
 
 

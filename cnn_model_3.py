@@ -152,5 +152,5 @@ history = model.fit(x=train_x,
                     callbacks=callback_list)
 
 # learning curve
-model_logger.learning_curve(history, save=True)
+model_logger.learning_curve(history, save=True, title='F-range (0-70kHz)')
 
