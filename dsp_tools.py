@@ -19,7 +19,6 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True):
     '''
     # Sample points and sampling frequency
     N = sampled_data.size
-    fs = fs
     # fft
     print('Scipy.FFT on {} points...'.format(N), end='')
     # take only half of the FFT output because it is a reflection
@@ -59,6 +58,7 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1,
     :param verbose: Print out the transformed data summary
     :param save: save the spectrogram as .jpeg
     :param save_title: title of the spectrogram to save
+    :param vis_max_freq_range: the maximum freq to include in visualization
     :return: time axis, frequency band and the Amplitude in 2D matrix
     '''
     # There is a trade-off btw resolution of frequency and time due to uncertainty principle
@@ -96,6 +96,7 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1,
         plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
         plt.title(save_title)
         plt.xlabel('Time [Sec]')
+        plt.colorbar()
 
         if save:
             plt.savefig('result\{}.png'.format(save_title))
