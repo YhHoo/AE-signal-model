@@ -18,21 +18,31 @@ def sweep_exponential(f_start, f_end, interval, n_steps):
         g_t = a * exp(b * t)
         print(t, 3 * sin(g_t))
 
+# sine wave sweeping f with noise---------------------
+# fs = 10e3
+# N = 10e4
+# amp = 2 * np.sqrt(2)
+# noise_power = 0.01 * fs / 2  # nyquist f x 0.001
+# time = np.arange(N) / fs
+# freq = np.linspace(1, 2e3, int(N))  # freq sweep range of sine wave
+# x = amp * np.sin(2*np.pi*freq*time + 1)
+# x += np.random.normal(scale=np.sqrt(noise_power), size=time.shape)
+# noise = np.random.normal(scale=np.sqrt(noise_power), size=time.shape)
 
-# assume this noise has freq from 20-10kHz
-# Here we let ensure the white noise is sampled at 20kHz to be able to capture 10kHz
-def white_noise(mean, std, interval, max_cap_freq):
-    '''
-    :param mean: of the white noise
-    :param std: std deviation of the noise
-    :param interval: length of the noise in time (s)
-    :param max_cap_freq: the maximum freq to be capture
-    :return:
-    '''
-    fs = max_cap_freq * 2  # (nyquist f) to able to capture 10kHz
-    sample_size = int(fs * interval)
-    white_noise = np.random.normal(mean, std, size=sample_size)
-    return white_noise, fs
+
+def white_noise(fs, duration, power):
+    total_point = int(fs * duration)
+    noise = np.random.normal(scale=np.sqrt(power), size=total_point)
+
+    return noise
+
+
+def sine_wave_continuous(fs, duration, amplitude, fo, phase=0):
+    total_point = int(fs * duration)
+    time_axis = np.linspace(0, duration, total_point)
+    y = amplitude * np.sin(2 * np.pi * fo * time_axis + phase)
+
+    return y, time_axis
 
 
 # equal to 5 seconds

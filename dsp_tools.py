@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft
 from scipy.signal import spectrogram
+from scipy.signal import filtfilt, butter
 
 
 # FAST FOURIER TRANSFORM (FFT)
@@ -42,11 +43,12 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True):
         plt.title('Fast Fourier Transform')
         plt.show()
     print('[Done]')
+
     return y_fft, f_axis
 
 
 # SPECTROGRAM
-def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1,
+def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd',
                       visualize=False, vis_max_freq_range=1e3, verbose=False,
                       save=False, save_title='Default'):
     '''
@@ -75,7 +77,7 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1,
                             scaling='spectrum',
                             nperseg=nperseg,  # ori=10000
                             noverlap=noverlap,  # ori=5007
-                            )
+                            mode=mode)
     f_res = fs / (2 * (f.size - 1))
     t_res = (sampled_data.shape[0] / fs) / t.size
 
@@ -109,8 +111,23 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1,
     return t, f, Sxx
 
 
+def butter_bandpass_filtfilt(sampled_data, fs, f_hicut, f_locut, order=5):
+    '''
+    :param sampled_data: input
+    :param fs: at wat f the data is sampled
+    :param f_hicut: higher boundary of the passband
+    :param f_locut: lower boundary of the passband
+    :param order: the higher the order the higher the Q
+    :return: np array
+    '''
+    f_nyquist = fs / 2
+    low = f_locut / f_nyquist
+    high = f_hicut / f_nyquist
+    b, a = butter(order, [low, high], btype='band')  # ignore warning
+    # using zero phase filter (so no phase shift after filter)
+    filtered_signal = filtfilt(b, a, sampled_data)
 
-
+    return filtered_signal
 
 
 
