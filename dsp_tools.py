@@ -11,11 +11,12 @@ from scipy.signal import filtfilt, butter
 
 
 # FAST FOURIER TRANSFORM (FFT)
-def fft_scipy(sampled_data=None, fs=1, visualize=True):
+def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=1e3):
     '''
     :param sampled_data: A one dimensional data (Size = N), can be list or series
     :param fs: Sampling frequency
     :param visualize: Plot or not (Boolean)
+    :param vis_max_freq_range: the maximum freq to include in visualization
     :return: amplitude and the frequency spectrum (Size = N // 2)
     '''
     # Sample points and sampling frequency
@@ -36,8 +37,8 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True):
         # use sci. notation at the x-axis value
         plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-        # plot only 0Hz to 300kHz
-        plt.xlim((0, 300e3))
+        # plot only 0Hz to specified freq
+        plt.xlim((0, vis_max_freq_range))
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Amplitude')
         plt.title('Fast Fourier Transform')
