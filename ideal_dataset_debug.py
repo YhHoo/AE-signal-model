@@ -6,6 +6,21 @@ import matplotlib.pyplot as plt
 from dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, fft_scipy
 from ideal_dataset import white_noise, sine_wave_continuous
 
+# creating zero phase signal
+fs = 5000
+cos_signal = white_noise(fs=fs, duration=1, power=1000)
+fft_scipy(cos_signal, fs=fs, vis_max_freq_range=fs/2)
+#
+# N = cos_signal.size
+# cos_fft = fft(cos_signal)
+# cos_fft_mag = (2.0/N) * np.abs(cos_fft[0: N//2])
+# cos_fft_phase = np.angle(cos_fft[0: N//2])
+# f_axis = np.linspace(0.0, fs / 2, N // 2)
+# plt.plot(f_axis, cos_fft_mag)
+# plt.plot(f_axis, cos_fft_phase)
+# plt.show()
+
+
 # simulated leak noise -------------------------------------
 # # assume it has active freq only in certain range
 # leak_noise = white_noise(fs=10e3, duration=1, power=1)
@@ -47,8 +62,9 @@ from ideal_dataset import white_noise, sine_wave_continuous
 #                   vis_max_freq_range=fs/2)
 
 
-fs = 1e3
-sine_wave, sine_wave_time_axis = sine_wave_continuous(fs=fs, duration=1, amplitude=1, fo=50, phase=1)
+# fs = 1e3
+# sine_wave, sine_wave_time_axis = sine_wave_continuous(fs=fs, duration=1, amplitude=1, fo=50, phase=0)
+# sine_wave2, sine_wave_time_axis2 = sine_wave_continuous(fs=fs, duration=1, amplitude=1, fo=20, phase=0)
 # plt.plot(sine_wave_time_axis, sine_wave)
 # plt.grid()
 # plt.show()
@@ -72,14 +88,21 @@ sine_wave, sine_wave_time_axis = sine_wave_continuous(fs=fs, duration=1, amplitu
 # plt.show()
 
 
-sine_fft = fft(sine_wave)
-N = sine_wave.size
-sine_fft_mag = (2.0/N) * np.abs(sine_fft[0: N//2])
-sine_fft_phase = np.angle(sine_fft[0: N//2])
-f_axis = np.linspace(0.0, fs/2, N//2)
-
-plt.plot(f_axis, sine_fft_mag)
-plt.plot(f_axis, sine_fft_phase, color='r')
-plt.plot([0.5*np.pi] * f_axis.size, color='k')
-plt.plot([np.pi] * f_axis.size, color='k')
-plt.show()
+# sine_fft = fft(sine_wave)
+# sine_fft2 = fft(sine_wave2)
+# N = sine_wave.size
+#
+# sine_fft_mag = (2.0/N) * np.abs(sine_fft[0: N//2])
+# sine_fft_phase = np.angle(sine_fft[0: N//2])
+#
+# sine_fft_mag2 = (2.0/N) * np.abs(sine_fft2[0: N//2])
+# sine_fft_phase2 = np.angle(sine_fft2[0: N//2])
+#
+# f_axis = np.linspace(0.0, fs/2, N//2)
+#
+# plt.plot(f_axis, sine_fft_mag)
+# plt.plot(f_axis, sine_fft_phase, color='r')
+# plt.plot(f_axis, sine_fft_phase2, color='g')
+# plt.plot([0.5*np.pi] * f_axis.size, color='k')
+# plt.plot([np.pi] * f_axis.size, color='k')
+# plt.show()

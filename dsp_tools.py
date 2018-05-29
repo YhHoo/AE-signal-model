@@ -28,20 +28,32 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=1e3):
     # divide by N to reduce the amplitude to correct one
     # times 2 to restore the discarded reflection amplitude
     y_fft = fft(sampled_data)
-    y_fft = (2.0/N) * np.abs(y_fft[0: N//2])
+    y_fft_mag = (2.0/N) * np.abs(y_fft[0: N//2])
+    y_fft_phase = np.angle(y_fft[0: N//2])
     # x-axis - only half of N
     f_axis = np.linspace(0.0, fs/2, N//2)
 
     if visualize:
-        plt.plot(f_axis, y_fft)
+
         # use sci. notation at the x-axis value
         plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         # plot only 0Hz to specified freq
         plt.xlim((0, vis_max_freq_range))
+
+        # mag plot
+        plt.subplot(211)
+        plt.plot(f_axis, y_fft_mag)
         plt.xlabel('Frequency [Hz]')
-        plt.ylabel('Amplitude')
+        plt.ylabel('Magnitude')
         plt.title('Fast Fourier Transform')
+
+        # phase plot
+        plt.subplot(212)
+        plt.plot(f_axis, y_fft_phase)
+        plt.xlabel('Frequency [Hz]')
+        plt.ylabel('Phase')
+
         plt.show()
     print('[Done]')
 

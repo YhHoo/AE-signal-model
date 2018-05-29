@@ -40,7 +40,7 @@ def white_noise(fs, duration, power):
 def sine_wave_continuous(fs, duration, amplitude, fo, phase=0):
     total_point = int(fs * duration)
     time_axis = np.linspace(0, duration, total_point)
-    y = amplitude * np.sin(2 * np.pi * fo * time_axis + phase)
+    y = amplitude * np.cos(2 * np.pi * fo * time_axis + phase)
 
     return y, time_axis
 
