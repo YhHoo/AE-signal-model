@@ -52,15 +52,16 @@ def sine_pulse():
                       vis_max_freq_range=fs/2)
 
 
-# Noise shift Signal---------------------------------------------
+# Noise shift Signal--------------------------------------------
+
 # time axis setting
 fs = 1000
-duration = 3  # tune this for duration
+duration = 100  # tune this for duration
 total_point = int(fs * duration)
 time_axis = np.linspace(0, duration, total_point)
 
 
-time_shift = [0, 100, 200]  # 0.1, 0.2 .. seconds
+time_shift = [0, 100, 200, 300]  # 0.1, 0.2 .. seconds
 np.random.seed(45)
 noise = white_noise(time_axis=time_axis, power=1)
 
@@ -71,7 +72,7 @@ for shift in time_shift:
 signal = pad_sequences(signal, maxlen=total_point + 500, dtype='float32', padding='post')
 
 # new time axis setting
-duration2 = 3.5  # tune this for duration
+duration2 = 100.5  # tune this for duration
 total_point2 = int(fs * duration2)
 time_axis2 = np.linspace(0, duration2, total_point2)
 
@@ -86,15 +87,32 @@ plt.show()
 # sliced to take only 1-3 seconds
 signal_sliced = signal[:, 1000:3000]
 
+phase_map = []
 for s in signal_sliced:
-    t, f, Sxx1 = spectrogram_scipy(signal_sliced[0],
-                                   fs=fs,
-                                   nperseg=100,
-                                   noverlap=50,
-                                   mode='angle',
-                                   visualize=True,
-                                   verbose=True)
-    
+    t, f, Sxx = spectrogram_scipy(signal_sliced[0],
+                                  fs=fs,
+                                  nperseg=100,
+                                  noverlap=85,
+                                  mode='angle',
+                                  visualize=False,
+                                  verbose=False,
+                                  vis_max_freq_range=fs/2)
+    phase_map.append(Sxx)
+
+phase_map = np.array(phase_map)
+print('Original Data Dim: ', phase_map.shape)
+
+print(phase_map[0, :, 1].shape)
+test = np.array([phase_map[0, :, 0], phase_map[1, :, 0]])
+print(test.shape)
+
+class_1, class_2, class_3 = [], [], []
+# for all time step
+for i in range(phase_map.shape[2]):
+    concat_phase = [phase_map[0, :, i], phase_map[1, :, i]]
+    class_1.append(concat_phase)
+class_1 = np.array(class_1)
+print(class_1.shape)
 
 
 
