@@ -1,7 +1,8 @@
-from scipy.signal import iirdesign, filtfilt, butter
+from scipy.signal import iirdesign, filtfilt, butter, stft
 import numpy as np
 import matplotlib.pyplot as plt
 from math import pi, sin, log, exp
+from keras.preprocessing.sequence import pad_sequences
 # self defined library
 from dsp_tools import spectrogram_scipy
 
@@ -18,31 +19,17 @@ def sweep_exponential(f_start, f_end, interval, n_steps):
         g_t = a * exp(b * t)
         print(t, 3 * sin(g_t))
 
-# sine wave sweeping f with noise---------------------
-# fs = 10e3
-# N = 10e4
-# amp = 2 * np.sqrt(2)
-# noise_power = 0.01 * fs / 2  # nyquist f x 0.001
-# time = np.arange(N) / fs
-# freq = np.linspace(1, 2e3, int(N))  # freq sweep range of sine wave
-# x = amp * np.sin(2*np.pi*freq*time + 1)
-# x += np.random.normal(scale=np.sqrt(noise_power), size=time.shape)
-# noise = np.random.normal(scale=np.sqrt(noise_power), size=time.shape)
 
-
-def white_noise(fs, duration, power):
-    total_point = int(fs * duration)
-    noise = np.random.normal(scale=np.sqrt(power), size=total_point)
+def white_noise(time_axis, power):
+    noise = np.random.normal(scale=np.sqrt(power), size=time_axis.size)
 
     return noise
 
 
-def sine_wave_continuous(fs, duration, amplitude, fo, phase=0):
-    total_point = int(fs * duration)
-    time_axis = np.linspace(0, duration, total_point)
-    y = amplitude * np.cos(2 * np.pi * fo * time_axis + phase)
+def sine_wave_continuous(time_axis, amplitude, fo, phase=0):
+    y = amplitude * np.sin(2 * np.pi * fo * time_axis + phase)
 
-    return y, time_axis
+    return y
 
 
 # equal to 5 seconds
@@ -63,5 +50,56 @@ def sine_pulse():
                       verbose=True,
                       visualize=True,
                       vis_max_freq_range=fs/2)
+
+
+# Noise shift Signal---------------------------------------------
+# time axis setting
+fs = 1000
+duration = 3  # tune this for duration
+total_point = int(fs * duration)
+time_axis = np.linspace(0, duration, total_point)
+
+
+time_shift = [0, 100, 200]  # 0.1, 0.2 .. seconds
+np.random.seed(45)
+noise = white_noise(time_axis=time_axis, power=1)
+
+signal = []
+for shift in time_shift:
+    signal.append(np.concatenate((np.zeros(shift), noise), axis=0))
+
+signal = pad_sequences(signal, maxlen=total_point + 500, dtype='float32', padding='post')
+
+# new time axis setting
+duration2 = 3.5  # tune this for duration
+total_point2 = int(fs * duration2)
+time_axis2 = np.linspace(0, duration2, total_point2)
+
+# plot all raw signals
+i = 1
+for s in signal:
+    plt.subplot(6, 1, i)
+    plt.plot(time_axis2, s)
+    i += 1
+plt.show()
+
+# sliced to take only 1-3 seconds
+signal_sliced = signal[:, 1000:3000]
+
+for s in signal_sliced:
+    t, f, Sxx1 = spectrogram_scipy(signal_sliced[0],
+                                   fs=fs,
+                                   nperseg=100,
+                                   noverlap=50,
+                                   mode='angle',
+                                   visualize=True,
+                                   verbose=True)
+    
+
+
+
+
+
+
 
 

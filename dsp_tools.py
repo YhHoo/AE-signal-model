@@ -57,7 +57,7 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=1e3):
         plt.show()
     print('[Done]')
 
-    return y_fft, f_axis
+    return y_fft_mag, y_fft_phase, f_axis
 
 
 # SPECTROGRAM
@@ -110,6 +110,7 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd'
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
         plt.title(save_title)
+        plt.grid()
         plt.xlabel('Time [Sec]')
         plt.colorbar()
 
