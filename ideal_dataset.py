@@ -54,13 +54,8 @@ def sine_pulse():
 
 
 # Noise shift Signal--------------------------------------------
-def noise_time_shift_dataset(time_axis):
-    # # time axis setting
-    # fs = 1000
-    # duration = 100  # tune this for duration
-    # total_point = int(fs * duration)
-    # time_axis = np.linspace(0, duration, total_point)
-
+def noise_time_shift_dataset(time_axis, fs, visualize_time_series=False, verbose=False):
+    # Create a time series white noise and applied delay to them--------------
     time_shift = [0, 100, 200, 300]  # 0.1, 0.2 .. seconds
     np.random.seed(45)
     noise = white_noise(time_axis=time_axis, power=1)
@@ -68,20 +63,24 @@ def noise_time_shift_dataset(time_axis):
     signal = []
     for shift in time_shift:
         signal.append(np.concatenate((np.zeros(shift), noise), axis=0))
+    # so that all time shifted series are of same length
+    signal = pad_sequences(signal, maxlen=(signal[-1].size + 500), dtype='float32', padding='post')
 
-    signal = pad_sequences(signal, maxlen=(time_shift[-1] + 500), dtype='float32', padding='post')
+    # visualize the time series signal after shift
+    if visualize_time_series:
+        # plot all raw signals
+        i = 1
+        for s in signal:
+            plt.subplot(6, 1, i)
+            plt.plot(s)
+            i += 1
+        plt.show()
+        plt.close()
 
-    # plot all raw signals
-    i = 1
-    for s in signal:
-        plt.subplot(6, 1, i)
-        plt.plot(s)
-        i += 1
-    plt.show()
+    # sliced to take only 1-9 seconds
+    signal_sliced = signal[:, 1000:9000]
 
-    # sliced to take only 1-3 seconds
-    signal_sliced = signal[:, 1000:3000]
-
+    # convert all time series to F-T representation, form the phase map----------
     phase_map = []
     for s in signal_sliced:
         t, f, Sxx = spectrogram_scipy(s,
@@ -93,10 +92,10 @@ def noise_time_shift_dataset(time_axis):
                                       verbose=False,
                                       vis_max_freq_range=fs/2)
         phase_map.append(Sxx)
-
+    # convert to ndarray
     phase_map = np.array(phase_map)
-    print('Original Data Dim (Sensor, Freq, Time): ', phase_map.shape)
 
+    # data slicing and labelling--------------------------------------------------
     dataset, label = [], []
     class_no = 0
 
@@ -113,23 +112,15 @@ def noise_time_shift_dataset(time_axis):
     dataset = np.array(dataset)
     label = np.array(label)
 
-    print('Data set Dim: ', dataset.shape)
-    print('Label Dim: ', label.shape)
-    print(label)
+    if verbose:
+        print('Original Data Dim (Sensor, Freq, Time): ', phase_map.shape)
+        print('Data set Dim: ', dataset.shape)
+        print('Label Dim: ', label.shape)
+
+    return dataset, label
 
 
-# time axis setting
-fs = 1000
-duration = 100  # tune this for duration
-total_point = int(fs * duration)
-time_axis = np.linspace(0, duration, total_point)
-noise_time_shift_dataset(time_axis)
 
-# train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
-#                                                          label=label,
-#                                                          num_classes=3,
-#                                                          train_split=0.6,
-#                                                          verbose=True)
 
 
 

@@ -154,27 +154,36 @@ def cnn_2_51_3class_v1():
     model = Sequential()
 
     # Convolutional layer 1 ------------------------------------------
-    model.add(Conv2D(filters=36, kernel_size=(10, 5), strides=(1, 1),
-                     activation='relu', input_shape=(3000, 23, 1)))
-    model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
+    model.add(Conv2D(filters=20, kernel_size=(2, 5), strides=(1, 1),
+                     activation='relu', input_shape=(2, 51, 1)))
+    model.add(MaxPooling2D(pool_size=(1, 2), strides=(1, 1)))
+    model.add(Dropout(0.2))
 
     # Convolutional layer 2 ------------------------------------------
-    model.add(Conv2D(filters=72, kernel_size=(10, 5), strides=(2, 1),
+    model.add(Conv2D(filters=40, kernel_size=(1, 5), strides=(1, 1),
                      activation='relu'))
-    model.add(MaxPooling2D(pool_size=(5, 2), strides=(2, 1)))
+    model.add(MaxPooling2D(pool_size=(1, 2), strides=(1, 1)))
+    model.add(Dropout(0.2))
 
     # Convolutional layer 3 ------------------------------------------
-    model.add(Conv2D(filters=96, kernel_size=(10, 3), strides=(4, 1),
+    model.add(Conv2D(filters=96, kernel_size=(1, 3), strides=(4, 1),
                      activation='relu'))
-    model.add(MaxPooling2D(pool_size=(5, 1), strides=(3, 1)))
-
-    # Convolutional layer 4 ------------------------------------------
-    model.add(Conv2D(filters=109, kernel_size=(6, 1), strides=(1, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(9, 1), strides=(2, 1)))
+    model.add(MaxPooling2D(pool_size=(1, 1), strides=(1, 1)))
+    #
+    # # Convolutional layer 4 ------------------------------------------
+    # model.add(Conv2D(filters=109, kernel_size=(6, 1), strides=(1, 1),
+    #                  activation='relu'))
+    # model.add(MaxPooling2D(pool_size=(9, 1), strides=(2, 1)))
     model.add(Flatten())
-
+    #
     # Fully connected ----------------------------------------
-    model.add(Dense(150, activation='relu'))
-    model.add(Dense(80, activation='relu'))
-    model.add(Dense(2, activation='softmax'))
+    model.add(Dense(50, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(20, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(3, activation='softmax'))
+
+    print(model.summary())
+
+    return model
+

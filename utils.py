@@ -73,9 +73,11 @@ class ModelLogger:
         return callback_list
 
     # this function use the model history returned by fit() to plot learning curve and save it
-    def learning_curve(self, history, save=False, show=False, title='default'):
+    def learning_curve(self, history, save=False, show=False, title='Learning Curve'):
         plt.plot(history.history['loss'], label='train_loss')
         plt.plot(history.history['val_loss'], label='test_loss')
+        plt.plot(history.history['acc'], label='train_acc')
+        plt.plot(history.history['val_acc'], label='test_acc')
         plt.legend()
         plt.title(title)
         if save:
@@ -191,7 +193,6 @@ def break_into_train_test(input, label, num_classes, train_split=0.7, verbose=Fa
     test_y = np.array(test_y)
 
     if verbose:
-        print('Split Index from start: ', split_index_from_start)
         print('Train_x Dim: ', train_x.shape)
         print('Test_x Dim: ', test_x.shape)
         print('Train_y Dim:', train_y.shape)
