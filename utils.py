@@ -122,4 +122,80 @@ def model_multiclass_evaluate(model, test_x, test_y):
     plt.show()
 
 
+def break_into_train_test(input, label, num_classes, train_split=0.7, verbose=False):
+    '''
+    :param input: expect a 3d np array where 1st index is total sample size
+    :param label: expect a 1d np array of same size as input.shape[0]
+    :param num_classes: total classes to break into
+    :param verbose: print the summary of train test size
+    :return: a train and test set
+    AIM----------------------------------
+    This is when we receive a list of N classes samples all concatenate together sequentially
+    e.g [0,..,0,1,..1,2,..,2...N-1..N-1] and we want to split them into train and test.
+
+    WARNING------------------------------
+    Every class size have to be EQUAL !
+
+    EXAMPLE------------------------------(execute it and watch)
+    data = np.array([[[1, 2],
+                      [3, 4]],
+                     [[2, 3],
+                      [4, 5]],
+                     [[3, 4],
+                      [5, 6]],
+                     [[11, 12],
+                      [13, 14]],
+                     [[12, 13],
+                      [14, 15]],
+                     [[13, 14],
+                      [15, 16]]])
+    label = np.array([0, 0, 0, 1, 1, 1])
+    train_x, train_y, test_x, test_y = break_into_train_test(input=data, label=label,
+                                                             num_classes=2, train_split=0.7, verbose=True)
+    print('Train x:\n', train_x)
+    print('Train y:\n', train_y)
+    print('Test x:\n', test_x)
+    print('Test y:\n', test_y)
+    '''
+    # ensure both input and label sample size are equal
+    assert input.shape[0] == label.shape[0], 'Sample size of Input and Label must be equal !'
+    print('\n----------TRAIN AND TEST SET---------')
+    sample_size = input.shape[0]
+    # create an index where the
+    class_break_index = np.linspace(0, sample_size, num_classes + 1)
+    # convert from float to int
+    class_break_index = [int(i) for i in class_break_index]
+    # determine split index from first 2 items of class_break_index list
+    split_index_from_start = int(train_split * (class_break_index[1] - class_break_index[0]))
+
+    # training set
+    train_x, test_x, train_y, test_y = [], [], [], []
+    # slicing in btw every intervals for classes
+    for i in range(len(class_break_index) - 1):
+        train_x.append(input[class_break_index[i]: (class_break_index[i] + split_index_from_start)])
+        test_x.append(input[(class_break_index[i] + split_index_from_start): class_break_index[i + 1]])
+        train_y.append(label[class_break_index[i]: (class_break_index[i] + split_index_from_start)])
+        test_y.append(label[(class_break_index[i] + split_index_from_start): class_break_index[i + 1]])
+
+    # convert list of list into just a list
+    train_x = [data for classes in train_x for data in classes]
+    test_x = [data for classes in test_x for data in classes]
+    train_y = [data for classes in train_y for data in classes]
+    test_y = [data for classes in test_y for data in classes]
+
+    # convert list to np array
+    train_x = np.array(train_x)
+    test_x = np.array(test_x)
+    train_y = np.array(train_y)
+    test_y = np.array(test_y)
+
+    if verbose:
+        print('Split Index from start: ', split_index_from_start)
+        print('Train_x Dim: ', train_x.shape)
+        print('Test_x Dim: ', test_x.shape)
+        print('Train_y Dim:', train_y.shape)
+        print('Test_y Dim:', test_y.shape)
+
+    # return
+    return train_x, train_y, test_x, test_y
 

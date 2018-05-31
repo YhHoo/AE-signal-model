@@ -100,11 +100,7 @@ for s in signal_sliced:
     phase_map.append(Sxx)
 
 phase_map = np.array(phase_map)
-print('Original Data Dim: ', phase_map.shape)
-
-print(phase_map[0, :, 1].shape)
-test = np.array([phase_map[0, :, 0], phase_map[1, :, 0]])
-print(test.shape)
+print('Original Data Dim (Sensor, Freq, Time): ', phase_map.shape)
 
 class_1, class_2, class_3 = [], [], []
 # for all time step
@@ -112,7 +108,8 @@ for i in range(phase_map.shape[2]):
     concat_phase = [phase_map[0, :, i], phase_map[1, :, i]]
     class_1.append(concat_phase)
 class_1 = np.array(class_1)
-print(class_1.shape)
+
+print('2-sensor Paired Data Dim (Sample, Sensor, Freq): ', class_1.shape)
 
 
 
