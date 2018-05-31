@@ -5,6 +5,7 @@ from math import pi, sin, log, exp
 from keras.preprocessing.sequence import pad_sequences
 # self defined library
 from dsp_tools import spectrogram_scipy
+from utils import break_into_train_test
 
 
 # --------------[Sine wave of increasing freq]--------------------
@@ -53,63 +54,82 @@ def sine_pulse():
 
 
 # Noise shift Signal--------------------------------------------
+def noise_time_shift_dataset(time_axis):
+    # # time axis setting
+    # fs = 1000
+    # duration = 100  # tune this for duration
+    # total_point = int(fs * duration)
+    # time_axis = np.linspace(0, duration, total_point)
+
+    time_shift = [0, 100, 200, 300]  # 0.1, 0.2 .. seconds
+    np.random.seed(45)
+    noise = white_noise(time_axis=time_axis, power=1)
+
+    signal = []
+    for shift in time_shift:
+        signal.append(np.concatenate((np.zeros(shift), noise), axis=0))
+
+    signal = pad_sequences(signal, maxlen=(time_shift[-1] + 500), dtype='float32', padding='post')
+
+    # plot all raw signals
+    i = 1
+    for s in signal:
+        plt.subplot(6, 1, i)
+        plt.plot(s)
+        i += 1
+    plt.show()
+
+    # sliced to take only 1-3 seconds
+    signal_sliced = signal[:, 1000:3000]
+
+    phase_map = []
+    for s in signal_sliced:
+        t, f, Sxx = spectrogram_scipy(s,
+                                      fs=fs,
+                                      nperseg=100,
+                                      noverlap=85,
+                                      mode='angle',
+                                      visualize=False,
+                                      verbose=False,
+                                      vis_max_freq_range=fs/2)
+        phase_map.append(Sxx)
+
+    phase_map = np.array(phase_map)
+    print('Original Data Dim (Sensor, Freq, Time): ', phase_map.shape)
+
+    dataset, label = [], []
+    class_no = 0
+
+    # for all sensor pair (all classes)
+    for i in range(phase_map.shape[0] - 1):
+        # for all time steps (all samples)
+        for j in range(phase_map.shape[2]):
+            concat_phase = [phase_map[0, :, j], phase_map[i+1, :, j]]
+            dataset.append(concat_phase)
+            label.append(class_no)
+        class_no += 1
+
+    # convert to Ndarray
+    dataset = np.array(dataset)
+    label = np.array(label)
+
+    print('Data set Dim: ', dataset.shape)
+    print('Label Dim: ', label.shape)
+    print(label)
+
 
 # time axis setting
 fs = 1000
 duration = 100  # tune this for duration
 total_point = int(fs * duration)
 time_axis = np.linspace(0, duration, total_point)
+noise_time_shift_dataset(time_axis)
 
-
-time_shift = [0, 100, 200, 300]  # 0.1, 0.2 .. seconds
-np.random.seed(45)
-noise = white_noise(time_axis=time_axis, power=1)
-
-signal = []
-for shift in time_shift:
-    signal.append(np.concatenate((np.zeros(shift), noise), axis=0))
-
-signal = pad_sequences(signal, maxlen=total_point + 500, dtype='float32', padding='post')
-
-# new time axis setting
-duration2 = 100.5  # tune this for duration
-total_point2 = int(fs * duration2)
-time_axis2 = np.linspace(0, duration2, total_point2)
-
-# plot all raw signals
-i = 1
-for s in signal:
-    plt.subplot(6, 1, i)
-    plt.plot(time_axis2, s)
-    i += 1
-plt.show()
-
-# sliced to take only 1-3 seconds
-signal_sliced = signal[:, 1000:3000]
-
-phase_map = []
-for s in signal_sliced:
-    t, f, Sxx = spectrogram_scipy(signal_sliced[0],
-                                  fs=fs,
-                                  nperseg=100,
-                                  noverlap=85,
-                                  mode='angle',
-                                  visualize=False,
-                                  verbose=False,
-                                  vis_max_freq_range=fs/2)
-    phase_map.append(Sxx)
-
-phase_map = np.array(phase_map)
-print('Original Data Dim (Sensor, Freq, Time): ', phase_map.shape)
-
-class_1, class_2, class_3 = [], [], []
-# for all time step
-for i in range(phase_map.shape[2]):
-    concat_phase = [phase_map[0, :, i], phase_map[1, :, i]]
-    class_1.append(concat_phase)
-class_1 = np.array(class_1)
-
-print('2-sensor Paired Data Dim (Sample, Sensor, Freq): ', class_1.shape)
+# train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
+#                                                          label=label,
+#                                                          num_classes=3,
+#                                                          train_split=0.6,
+#                                                          verbose=True)
 
 
 

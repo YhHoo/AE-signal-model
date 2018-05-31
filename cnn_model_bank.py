@@ -144,3 +144,37 @@ def cnn_3000_23_2class_v1():
     model.add(Dense(150, activation='relu'))
     model.add(Dense(80, activation='relu'))
     model.add(Dense(2, activation='softmax'))
+
+
+def cnn_2_51_3class_v1():
+    '''
+    Input: phase map of 2 sensors concatenate side by side,
+    where 2 means sensor no, 51 is frequency bin
+    '''
+    model = Sequential()
+
+    # Convolutional layer 1 ------------------------------------------
+    model.add(Conv2D(filters=36, kernel_size=(10, 5), strides=(1, 1),
+                     activation='relu', input_shape=(3000, 23, 1)))
+    model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
+
+    # Convolutional layer 2 ------------------------------------------
+    model.add(Conv2D(filters=72, kernel_size=(10, 5), strides=(2, 1),
+                     activation='relu'))
+    model.add(MaxPooling2D(pool_size=(5, 2), strides=(2, 1)))
+
+    # Convolutional layer 3 ------------------------------------------
+    model.add(Conv2D(filters=96, kernel_size=(10, 3), strides=(4, 1),
+                     activation='relu'))
+    model.add(MaxPooling2D(pool_size=(5, 1), strides=(3, 1)))
+
+    # Convolutional layer 4 ------------------------------------------
+    model.add(Conv2D(filters=109, kernel_size=(6, 1), strides=(1, 1),
+                     activation='relu'))
+    model.add(MaxPooling2D(pool_size=(9, 1), strides=(2, 1)))
+    model.add(Flatten())
+
+    # Fully connected ----------------------------------------
+    model.add(Dense(150, activation='relu'))
+    model.add(Dense(80, activation='relu'))
+    model.add(Dense(2, activation='softmax'))

@@ -129,8 +129,9 @@ def break_into_train_test(input, label, num_classes, train_split=0.7, verbose=Fa
     :param num_classes: total classes to break into
     :param verbose: print the summary of train test size
     :return: a train and test set
+
     AIM----------------------------------
-    This is when we receive a list of N classes samples all concatenate together sequentially
+    This is when we receive a list of N classes samples(a list of 2D array) all concatenate together sequentially
     e.g [0,..,0,1,..1,2,..,2...N-1..N-1] and we want to split them into train and test.
 
     WARNING------------------------------

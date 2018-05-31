@@ -7,5 +7,3 @@ import matplotlib.pyplot as plt
 from keras.utils import to_categorical
 from keras import optimizers
 from keras.datasets import mnist
-
-
