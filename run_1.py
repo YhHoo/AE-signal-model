@@ -2,7 +2,7 @@ import numpy as np
 from keras.utils import to_categorical
 # self declared library
 from ideal_dataset import noise_time_shift_dataset
-from utils import break_into_train_test, ModelLogger
+from utils import break_into_train_test, ModelLogger, model_multiclass_evaluate
 from cnn_model_bank import cnn_2_51_3class_v1
 
 # time axis setting
@@ -39,3 +39,5 @@ history = model.fit(x=train_x,
                     validation_data=(test_x, test_y))
 
 model_logger.learning_curve(history=history, show=True)
+model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
+
