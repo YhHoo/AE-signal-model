@@ -53,11 +53,26 @@ def sine_pulse():
                       vis_max_freq_range=fs/2)
 
 
-# Noise shift Signal--------------------------------------------
-def noise_time_shift_dataset(time_axis, fs, visualize_time_series=False, verbose=False):
-    # Create a time series white noise and applied delay to them--------------
+def noise_time_shift_dataset(time_axis, fs, random_seed=None, shuffle_each_class=False,
+                             visualize_time_series=False, verbose=False):
+    '''
+    :param time_axis: White nosie will consists of (time_axis.size) points
+    :param fs: sampling freq of the system
+    :param random_seed: If stated, the seed is fixed to that, orelse it is random everytime it is called
+    :param visualize_time_series: Plot the time series for checking delay in time
+    :param verbose: print the dimension of arranged FFT phase map
+    :return: a 3d data set where shape[0] is
+    AIM--------------
+    Create a time series white noise and applied delay to them
+    '''
+
+    # whether u wat the random series to be same all the time
+    if random_seed is None:
+        pass
+    else:
+        np.random.seed(random_seed)
+
     time_shift = [0, 100, 200, 300]  # 0.1, 0.2 .. seconds
-    np.random.seed(45)
     noise = white_noise(time_axis=time_axis, power=1)
 
     signal = []
@@ -114,7 +129,7 @@ def noise_time_shift_dataset(time_axis, fs, visualize_time_series=False, verbose
 
     if verbose:
         print('Original Data Dim (Sensor, Freq, Time): ', phase_map.shape)
-        print('Data set Dim: ', dataset.shape)
+        print('Paired Data set Dim (Sample size, Sensor, Freq): ', dataset.shape)
         print('Label Dim: ', label.shape)
 
     return dataset, label

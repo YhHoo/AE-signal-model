@@ -1,13 +1,16 @@
 from progressbar import ProgressBar, Percentage, Bar, SimpleProgress, ETA
 from keras.callbacks import ModelCheckpoint
-import matplotlib.pyplot as plt
+from keras.utils import to_categorical
 from keras.models import model_from_json
+import matplotlib.pyplot as plt
 import numpy as np
 
 
-# Try out more progressbar from https://github.com/coagulant/progressbar-python3/blob/master/examples.py
-# progress bar, maxval is like max value in a ruler, and set the progress with update()
 class ProgressBarForLoop:
+    '''
+    Try out more progressbar from https://github.com/coagulant/progressbar-python3/blob/master/examples.py
+    progress bar, maxval is like max value in a ruler, and set the progress with update()
+    '''
     # progress bar setup, set the title and max value
     def __init__(self, title, end=100):
         print(title + ':')
@@ -28,7 +31,16 @@ class ModelLogger:
     '''
     model_name practice --> [test_no]_[architecture]_[date]
     e.g. test2_CNN_22_5_18
+
+    # FOR SAVING MODEL-----------------------------
+    save_architecture() -> saves the architecture only into .JSON
+    save_best_weight_checkpoint() -> return a checkpoint to be placed into model.fit() so
+    it saves the best weights during training
+
+    # FOR PLOTTING AND SAVING LEARNING CURVE-------
+    learning_curve() -> take in history object ruturned during fit() and plot and save the fig
     '''
+
     def __init__(self, model, model_name):
         self.model = model
         self.path = 'result/' + model_name
@@ -79,6 +91,7 @@ class ModelLogger:
         plt.plot(history.history['acc'], label='train_acc')
         plt.plot(history.history['val_acc'], label='test_acc')
         plt.legend()
+        plt.grid()
         plt.title(title)
         if save:
             plt.savefig(self.path + '.png')
@@ -111,24 +124,54 @@ def model_loader(model_name=None, dir=None):
 
 def model_multiclass_evaluate(model, test_x, test_y):
     # manual prediction, convert the output from one-hot encoding bac to class no
-    # e.g. [0 1 0 0] --> 1
+    # e.g. [0 1 0 0] --> 1, [0 0 1 0] --> 2
+    # Make sure classes in the test_y are at subsequent order
     prediction = model.predict(test_x)
     prediction = np.argmax(prediction, axis=1)
     actual = np.argmax(test_y, axis=1)
 
     # visualize the multiclass classification accuracy
     plt.plot(actual, color='r', label='Actual')
-    plt.plot(prediction, color='b', label='Prediction')
+    plt.plot(prediction, color='b', label='Prediction', linestyle='None', marker='x')
     plt.title('Multiclassifer Accuracy Visualization')
     plt.legend()
     plt.show()
 
 
-def break_into_train_test(input, label, num_classes, train_split=0.7, verbose=False):
+def reshape_3d_to_4d_tocategorical(train_x, train_y, test_x, test_y, fourth_dim=1, num_classes=None, verbose=False):
+    '''
+    :param train_x: Expecting a 3d np array, where shape[0] is sample size
+    :param train_y: Expecting 1d np array
+    :param test_x: Expecting a 3d np array, where shape[0] is sample size
+    :param test_y: Expecting 1d np array
+    :param fourth_dim: Usually is 1, for non RGB image data
+    :param num_classes: For converting 1, 2, 3 into binary [1,0,0], [0,1,0], [0,0,1]
+    :param verbose: Print the returned dimension
+    :return: all reshaped train and test data, ready to fit into Conv2d
+    '''
+    train_x_4d = train_x.reshape((train_x.shape[0], train_x.shape[1], train_x.shape[2], fourth_dim))
+    test_x_4d = test_x.reshape((test_x.shape[0], test_x.shape[1], test_x.shape[2], fourth_dim))
+
+    # to categorical
+    train_y_cat = to_categorical(train_y, num_classes=num_classes)
+    test_y_cat = to_categorical(test_y, num_classes=num_classes)
+
+    if verbose:
+        print('-----RESHAPED------')
+        print('Train_x Dim: ', train_x_4d.shape)
+        print('Test_x Dim: ', test_x_4d.shape)
+        print('Train_y Dim:', train_y_cat.shape)
+        print('Test_y Dim:', test_y_cat.shape)
+
+    return train_x_4d, train_y_cat, test_x_4d, test_y_cat
+
+
+def break_into_train_test(input, label, num_classes, shuffled_each_class=True, train_split=0.7, verbose=False):
     '''
     :param input: expect a 3d np array where 1st index is total sample size
     :param label: expect a 1d np array of same size as input.shape[0]
     :param num_classes: total classes to break into
+    :param shuffled_each_class: it will shuffle the samples in every class
     :param verbose: print the summary of train test size
     :return: a train and test set
 
@@ -162,7 +205,24 @@ def break_into_train_test(input, label, num_classes, train_split=0.7, verbose=Fa
     '''
     # ensure both input and label sample size are equal
     assert input.shape[0] == label.shape[0], 'Sample size of Input and Label must be equal !'
-    print('\n----------TRAIN AND TEST SET---------')
+
+    # shuffling work
+    if shuffled_each_class:
+        class_split_index = np.linspace(0, 1581, num_classes + 1)
+
+        # accessing index btw each classes
+        for i in range(class_split_index.size - 1):
+            # for class of index 0-10, this array will return [0, 1, ...9]
+            entire_class_index = np.arange(class_split_index[i], class_split_index[i + 1], 1)
+            entire_class_index = [int(i) for i in entire_class_index]
+            # shuffle the index [0, 1, ...9] --> [4, 3, ...7]
+            entire_class_index_shuffled = np.random.permutation(entire_class_index)
+            # shuffle the value of the class and store the shuffled values
+            class_data_shuffled = input[entire_class_index_shuffled]
+            # replace the original unshuffled matrix
+            input[entire_class_index] = class_data_shuffled
+
+    # slicing work
     sample_size = input.shape[0]
     # create an index where the
     class_break_index = np.linspace(0, sample_size, num_classes + 1)
@@ -193,6 +253,9 @@ def break_into_train_test(input, label, num_classes, train_split=0.7, verbose=Fa
     test_y = np.array(test_y)
 
     if verbose:
+        print('\n----------TRAIN AND TEST SET---------')
+        if shuffled_each_class:
+            print('-------------[Shuffled]--------------')
         print('Train_x Dim: ', train_x.shape)
         print('Test_x Dim: ', test_x.shape)
         print('Train_y Dim:', train_y.shape)
