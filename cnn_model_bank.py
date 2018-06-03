@@ -1,5 +1,5 @@
 from keras.layers import Dense, Flatten
-from keras.layers import Conv2D, MaxPooling2D, Dropout
+from keras.layers import Conv2D, MaxPooling2D, Dropout, LocallyConnected2D
 from keras.models import Sequential
 from dataset_experiment_16_5_2018 import AccousticEmissionDataSet_16_5_2018
 from keras.utils import to_categorical
@@ -146,7 +146,7 @@ def cnn_3000_23_2class_v1():
     model.add(Dense(2, activation='softmax'))
 
 
-def cnn_2_51_3class_v1():
+def cnn_2_51_3class_v1(fc):
     '''
     Input: phase map of 2 sensors concatenate side by side,
     where 2 means sensor no, 51 is frequency bin
@@ -157,13 +157,13 @@ def cnn_2_51_3class_v1():
     model.add(Conv2D(filters=60, kernel_size=(2, 8), strides=(1, 1),
                      activation='relu', input_shape=(2, 51, 1)))
     model.add(MaxPooling2D(pool_size=(1, 2), strides=(1, 1)))
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.4))
 
     # Convolutional layer 2 ------------------------------------------
-    model.add(Conv2D(filters=100, kernel_size=(1, 5), strides=(1, 1),
+    model.add(Conv2D(filters=100, kernel_size=(1, 3), strides=(1, 1),
                      activation='relu'))
     model.add(MaxPooling2D(pool_size=(1, 2), strides=(1, 1)))
-    model.add(Dropout(0.3))
+    model.add(Dropout(0.4))
 
     # Convolutional layer 3 ------------------------------------------
     # model.add(Conv2D(filters=96, kernel_size=(1, 3), strides=(4, 1),
@@ -178,14 +178,14 @@ def cnn_2_51_3class_v1():
 
     # Flatten all into 1d vector--------------------------------------
     model.add(Flatten())
-    model.add(Dropout(0.3))
+    model.add(Dropout(0.4))
 
     # Fully connected ----------------------------------------
-    model.add(Dense(200, activation='relu'))
+    model.add(Dense(fc[0], activation='relu'))
+    model.add(Dropout(0.3))
+    model.add(Dense(fc[1], activation='relu'))
     model.add(Dropout(0.2))
-    model.add(Dense(70, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(30, activation='relu'))
+    model.add(Dense(fc[2], activation='relu'))
     model.add(Dropout(0.2))
     model.add(Dense(3, activation='softmax'))
 
