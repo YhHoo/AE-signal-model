@@ -53,7 +53,7 @@ def sine_pulse():
                       vis_max_freq_range=fs/2)
 
 
-def noise_time_shift_dataset(time_axis, fs, random_seed=None, shuffle_each_class=False,
+def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2,
                              visualize_time_series=False, verbose=False):
     '''
     :param time_axis: White nosie will consists of (time_axis.size) points
@@ -72,43 +72,52 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, shuffle_each_class
     else:
         np.random.seed(random_seed)
 
-    time_shift = [0, 100, 200, 300]  # 0.1, 0.2 .. seconds
-    noise = white_noise(time_axis=time_axis, power=1)
+    random_set = []
+    # generating different random series to increase sample size
+    for i in range(num_series):
+        # add as many shift as u want, fr small to big
+        time_shift = [0, 100, 200, 300]  # 0.1, 0.2 .. seconds,
+        noise = white_noise(time_axis=time_axis, power=1)
 
-    signal = []
-    for shift in time_shift:
-        signal.append(np.concatenate((np.zeros(shift), noise), axis=0))
-    # so that all time shifted series are of same length
-    signal = pad_sequences(signal, maxlen=(signal[-1].size + 500), dtype='float32', padding='post')
+        signal = []
+        for shift in time_shift:
+            signal.append(np.concatenate((np.zeros(shift), noise), axis=0))
+        # so that all time shifted series are of same length
+        signal = pad_sequences(signal, maxlen=(signal[-1].size + 500), dtype='float32', padding='post')
 
-    # visualize the time series signal after shift
-    if visualize_time_series:
-        # plot all raw signals
-        i = 1
-        for s in signal:
-            plt.subplot(6, 1, i)
-            plt.plot(s)
-            i += 1
-        plt.show()
-        plt.close()
+        # visualize the time series signal after shift
+        if visualize_time_series:
+            # plot all raw signals
+            i = 1
+            for s in signal:
+                plt.subplot(6, 1, i)
+                plt.plot(s)
+                i += 1
+            plt.show()
+            plt.close()
 
-    # sliced to take only 1-9 seconds
-    signal_sliced = signal[:, 1000:9000]
+        # sliced to take only 1-9 seconds
+        signal_sliced = signal[:, 1000:9000]
 
-    # convert all time series to F-T representation, form the phase map----------
-    phase_map = []
-    for s in signal_sliced:
-        t, f, Sxx = spectrogram_scipy(s,
-                                      fs=fs,
-                                      nperseg=100,
-                                      noverlap=85,
-                                      mode='angle',
-                                      visualize=False,
-                                      verbose=False,
-                                      vis_max_freq_range=fs/2)
-        phase_map.append(Sxx)
-    # convert to ndarray
-    phase_map = np.array(phase_map)
+        # convert all time series to F-T representation, form the phase map----------
+        phase_map = []
+        for s in signal_sliced:
+            t, f, Sxx = spectrogram_scipy(s,
+                                          fs=fs,
+                                          nperseg=100,
+                                          noverlap=85,
+                                          mode='angle',
+                                          visualize=False,
+                                          verbose=False,
+                                          vis_max_freq_range=fs/2)
+            phase_map.append(Sxx)
+        # convert to ndarray
+        phase_map = np.array(phase_map)
+        # put all 3d phase map array into list
+        random_set.append(phase_map)
+
+    # concatenate all 3d ndarray in random_set list in axis 2
+    phase_map = np.concatenate(random_set, axis=2)
 
     # data slicing and labelling--------------------------------------------------
     dataset, label = [], []
@@ -133,10 +142,6 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, shuffle_each_class
         print('Label Dim: ', label.shape)
 
     return dataset, label
-
-
-
-
 
 
 

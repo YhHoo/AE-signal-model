@@ -12,17 +12,17 @@ Data Pre-processing: Phase info from STFT, 3 classes, CNN input shape of (n, 2, 
 '''
 # time axis setting
 fs = 1000
-duration = 10  # tune this for duration
+duration = 20  # tune this for duration
 total_point = int(fs * duration)
 time_axis = np.linspace(0, duration, total_point)
 
-dataset, label = noise_time_shift_dataset(time_axis, fs=fs, verbose=True)
+dataset, label = noise_time_shift_dataset(time_axis, fs=fs, verbose=True, num_series=2)
 
 
 train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
                                                          label=label,
                                                          num_classes=3,
-                                                         train_split=0.8,
+                                                         train_split=0.7,
                                                          verbose=True)
 
 # reshape to satisfy conv2d input shape
@@ -38,7 +38,7 @@ model_logger = ModelLogger(model, model_name='white_noise_cnn')
 history = model.fit(x=train_x,
                     y=train_y,
                     batch_size=30,
-                    epochs=300,
+                    epochs=100,
                     verbose=2,
                     validation_data=(test_x, test_y))
 
