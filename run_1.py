@@ -17,7 +17,7 @@ duration = 20  # tune this for duration
 total_point = int(fs * duration)
 time_axis = np.linspace(0, duration, total_point)
 
-dataset, label = noise_time_shift_dataset(time_axis, fs=fs, verbose=True, num_series=2)
+dataset, label = noise_time_shift_dataset(time_axis, fs=fs, verbose=True, num_series=1)
 
 train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
                                                          label=label,

@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import pi, sin, log, exp
 from keras.preprocessing.sequence import pad_sequences
+from sklearn.preprocessing import MinMaxScaler
 # self defined library
 from dsp_tools import spectrogram_scipy
 from utils import break_into_train_test
@@ -58,6 +59,7 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2,
     '''
     :param time_axis: White nosie will consists of (time_axis.size) points
     :param fs: sampling freq of the system
+    :param num_series: num of diff random series,it controls the sample size
     :param random_seed: If stated, the seed is fixed to that, orelse it is random everytime it is called
     :param visualize_time_series: Plot the time series for checking delay in time
     :param verbose: print the dimension of arranged FFT phase map
@@ -65,6 +67,8 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2,
     AIM--------------
     Create a time series white noise and applied delay to them
     '''
+    # Scaler declaration
+    scaler = MinMaxScaler(feature_range=(0, 1))
 
     # whether u wat the random series to be same all the time
     if random_seed is None:
@@ -110,6 +114,9 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2,
                                           visualize=False,
                                           verbose=False,
                                           vis_max_freq_range=fs/2)
+            # scaling of all phases from -2pi to 2pi in 2d matrix of Sxx to 0-1
+            Sxx = scaler.fit_transform(Sxx.ravel().reshape((-1, 1))).reshape((Sxx.shape[0], Sxx.shape[1]))
+            print(Sxx)
             phase_map.append(Sxx)
         # convert to ndarray
         phase_map = np.array(phase_map)

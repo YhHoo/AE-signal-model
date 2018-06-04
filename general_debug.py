@@ -7,37 +7,24 @@ import matplotlib.pyplot as plt
 from keras.utils import to_categorical
 from keras import optimizers
 from keras.datasets import mnist
+from sklearn.preprocessing import MinMaxScaler
+# self library
 # from ideal_dataset import noise_time_shift_dataset
 
-data = np.array([[[1, 2],
+data_3d = np.array([[[1, 2],
                   [3, 4]],
                  [[2, 3],
                   [4, 5]],
                  [[3, 4],
-                  [5, 6]],
-                 [[11, 12],
-                  [13, 14]],
-                 [[12, 13],
-                  [14, 15]],
-                 [[13, 14],
-                  [15, 16]]])
-print(data)
-print(data.shape)
+                  [5, 6]]])
+data_2d = np.array([[1, 2],
+                    [3, 4],
+                    [2, 5]])
+data_2d = data_2d.astype(dtype='float32')
 
-data2 = data
+scaler = MinMaxScaler(feature_range=(0, 1))
 
-print(data2.shape)
-
-l = []
-l.append(data)
-# l.append(data2)
-
-
-z = np.concatenate(l, axis=2)
-print(z.shape)
-print(z)
-
-
-
+data_2d = scaler.fit_transform(data_2d.ravel().reshape(-1, 1)).reshape((data_2d.shape[0], data_2d.shape[1]))
+print(data_2d)
 
 
