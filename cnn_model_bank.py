@@ -218,3 +218,27 @@ def fc_2x51_3class(fc):
     print(model.summary())
 
     return model
+
+
+# this model gives test_acc of 0.98 in first epoch
+def cnn_28_28_mnist():
+    model = Sequential()
+
+    model.add(Conv2D(filters=30, kernel_size=(5, 5), strides=(1, 1),
+                     activation='relu', input_shape=(28, 28, 1)))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+    model.add(Dropout(0.2))
+
+    model.add(Conv2D(filters=10, kernel_size=(3, 3), strides=(1, 1),
+                     activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+
+    model.add(Flatten())
+
+    model.add(Dense(128, activation='relu'))
+    model.add(Dense(50, activation='relu'))
+    model.add(Dense(10, activation='softmax'))
+
+    print(model.summary())
+
+    return model
