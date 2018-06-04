@@ -193,3 +193,28 @@ def cnn_2_51_3class_v1(fc):
 
     return model
 
+
+def fc_2x51_3class(fc):
+    '''
+    Input: Flatten phase map of 2 sensors concatenate side by side,
+    where 2 means sensor no, 51 is frequency bin.
+    '''
+    model = Sequential()
+
+    # Fully connected ----------------------------------------
+    model.add(Dense(fc[0], activation='relu', input_dim=102))
+    model.add(Dropout(0.3))
+    model.add(Dense(fc[1], activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(fc[2], activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(fc[3]))
+    model.add(Dropout(0.2))
+    model.add(Dense(fc[4]))
+    # output layer
+    model.add(Dropout(0.2))
+    model.add(Dense(3, activation='softmax'))
+
+    print(model.summary())
+
+    return model

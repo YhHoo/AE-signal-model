@@ -1,15 +1,16 @@
+'''
+Data set: Randomly Generated White Noise with 3 shifts i.e. 0.1s, 0.2s and 0.3s.
+Data Pre-processing: Phase info from STFT, 3 classes, CNN input shape of (n, 2, 51, 1)
+'''
+
 import numpy as np
-from keras.utils import to_categorical
 # self declared library
 from ideal_dataset import noise_time_shift_dataset
 from utils import break_into_train_test, ModelLogger, model_multiclass_evaluate, reshape_3d_to_4d_tocategorical
 from cnn_model_bank import cnn_2_51_3class_v1
 
 # ------------------------------------------------------------------------------------- Dataset 1
-'''
-Data set: Randomly Generated White Noise with 3 shifts i.e. 0.1s, 0.2s and 0.3s. 
-Data Pre-processing: Phase info from STFT, 3 classes, CNN input shape of (n, 2, 51, 1)
-'''
+
 
 # time axis setting
 fs = 1000

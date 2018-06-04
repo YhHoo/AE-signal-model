@@ -116,7 +116,6 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2,
                                           vis_max_freq_range=fs/2)
             # scaling of all phases from -2pi to 2pi in 2d matrix of Sxx to 0-1
             Sxx = scaler.fit_transform(Sxx.ravel().reshape((-1, 1))).reshape((Sxx.shape[0], Sxx.shape[1]))
-            print(Sxx)
             phase_map.append(Sxx)
         # convert to ndarray
         phase_map = np.array(phase_map)
