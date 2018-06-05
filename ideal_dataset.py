@@ -108,7 +108,7 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2,
         for s in signal_sliced:
             t, f, Sxx = spectrogram_scipy(s,
                                           fs=fs,
-                                          nperseg=100,
+                                          nperseg=100,  # no of freq bin = nperseg/2 + 1
                                           noverlap=85,
                                           mode='angle',
                                           visualize=False,
