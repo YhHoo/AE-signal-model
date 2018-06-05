@@ -1,3 +1,9 @@
+'''
+This is to first flatten the entire 2x51 input frames into feature vectors of 102. Then jz feed
+directly into Fully connected.
+Result: Wont works.
+'''
+
 import numpy as np
 # self declared library
 from ideal_dataset import noise_time_shift_dataset

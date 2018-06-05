@@ -221,7 +221,7 @@ def fc_2x51_3class(fc):
 
 
 # this model gives test_acc of 0.98 in first epoch
-def cnn_28_28_mnist():
+def cnn_28_28_mnist_10class():
     model = Sequential()
 
     model.add(Conv2D(filters=30, kernel_size=(5, 5), strides=(1, 1),

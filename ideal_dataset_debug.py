@@ -1,56 +1,63 @@
-from scipy.signal import filtfilt, butter
+from scipy.signal import filtfilt, butter, spectrogram
 from scipy.fftpack import fft
+from keras.preprocessing.sequence import pad_sequences
 import numpy as np
 import matplotlib.pyplot as plt
 # self defined library
-from dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, fft_scipy
-from ideal_dataset import white_noise, sine_wave_continuous
+from ideal_dataset import noise_time_shift_dataset, white_noise
 
 
 # time axis setting
-fs = 5000
-duration = 4  # tune this for duration
+fs = 1000
+duration = 20  # tune this for duration
 total_point = int(fs * duration)
 time_axis = np.linspace(0, duration, total_point)
 
-# sine wave
-sine = sine_wave_continuous(time_axis=time_axis, amplitude=10, fo=50, phase=0)
-sine2 = sine_wave_continuous(time_axis=time_axis, amplitude=10, fo=50, phase=1)
-# noise
-noise = white_noise(time_axis=time_axis, power=10)
+# Inside the noise_time_shift_dataset() -------------------------------------------
 
+time_shift = [0, 100, 200, 300]  # 0.1, 0.2 .. seconds,
+noise = white_noise(time_axis=time_axis, power=1)
 
-t, f, Sxx1 = spectrogram_scipy(sine,
-                               fs=fs,
-                               nperseg=1000,
-                               noverlap=500,
-                               mode='angle',
-                               visualize=False,
-                               verbose=True)
+signal = []
+for shift in time_shift:
+    signal.append(np.concatenate((np.zeros(shift), noise), axis=0))
+# so that all time shifted series are of same length
+signal = pad_sequences(signal, maxlen=(signal[-1].size + 500), dtype='float32', padding='post')
 
-plt.plot(t, Sxx1[10], label='Phase 0')
-t, f, Sxx2 = spectrogram_scipy(sine2,
-                               fs=fs,
-                               nperseg=1000,
-                               noverlap=500,
-                               mode='angle',
-                               visualize=False,
-                               verbose=True)
-
-plt.plot(t, Sxx2[10], label='Phase 1')
-# plt.plot(t, Sxx[30], label=f[30])
-# plt.plot(t, Sxx[100], label=f[100])
-# plt.plot(t, Sxx[300], label=f[300])
-# plt.plot(t, Sxx[450], label=f[450])
-
-plt.legend()
+# visualize the time series signal after shift
+# plot all raw signals
+i = 1
+for s in signal:
+    plt.subplot(6, 1, i)
+    plt.plot(s)
+    i += 1
 plt.show()
+plt.close()
 
-diff = []
-for i in range(Sxx1.shape[1]):
-    diff.append(Sxx2[10, i] - Sxx1[10, i])
+# sliced to take only 1-9 seconds
+signal_sliced = signal[:, 1000:9000]
 
-print(diff)
-plt.plot(diff)
+# convert all time series to F-T representation, form the phase map----------
+phase_map = []
+i = 1
+for s in signal_sliced:
+    f, t, Sxx = spectrogram(s,
+                            fs=fs,
+                            scaling='spectrum',
+                            nperseg=100,
+                            noverlap=81,
+                            mode='angle')
+    plt.figure(i)
+    plt.pcolormesh(t, f, Sxx)
+    plt.ylabel('Frequency [Hz]')
+    # display only 0Hz to 300kHz
+    plt.ylim((0, fs/2))
+    plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+    plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+    plt.title('Spectrogram Phase Information {}'.format(i))
+    plt.grid()
+    plt.xlabel('Time [Sec]')
+    plt.colorbar()
+    i += 1
+
 plt.show()
-
