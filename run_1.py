@@ -12,23 +12,25 @@ from cnn_model_bank import cnn_2_51_3class_v1
 # ------------------------------------------------------------------------------------- Dataset 1
 
 
+# total classes
+num_classes = 3
 # time axis setting
 fs = 1000
 duration = 20  # tune this for duration
 total_point = int(fs * duration)
 time_axis = np.linspace(0, duration, total_point)
 
-dataset, label = noise_time_shift_dataset(time_axis, fs=fs, verbose=True, num_series=1)
+dataset, label = noise_time_shift_dataset(time_axis, fs=fs, verbose=True, num_series=3, normalize=False)
 
 train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
                                                          label=label,
-                                                         num_classes=3,
+                                                         num_classes=num_classes,
                                                          train_split=0.7,
                                                          verbose=True)
 
 # reshape to satisfy conv2d input shape
 train_x, train_y, test_x, test_y = reshape_3d_to_4d_tocategorical(train_x, train_y, test_x, test_y,
-                                                                  fourth_dim=1, num_classes=3, verbose=True)
+                                                                  fourth_dim=1, num_classes=num_classes, verbose=True)
 # Testing different FC architecture
 fc_list = [[200, 100, 50], [250, 150, 100], [350, 200, 150], [400, 300, 200]]
 model_name = ['FC_200_100_50_set1', 'FC_250_150_100_set1', 'FC_350_200_150_set1', 'FC_400_300_200_set1']
@@ -42,8 +44,8 @@ for i in range(len(fc_list)):
     # model training
     history = model.fit(x=train_x,
                         y=train_y,
-                        batch_size=30,
-                        epochs=300,
+                        batch_size=50,
+                        epochs=100,
                         verbose=2,
                         validation_data=(test_x, test_y))
 

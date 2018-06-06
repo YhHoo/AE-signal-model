@@ -154,13 +154,13 @@ def cnn_2_51_3class_v1(fc):
     model = Sequential()
 
     # Convolutional layer 1 ------------------------------------------
-    model.add(Conv2D(filters=60, kernel_size=(2, 8), strides=(1, 1),
+    model.add(Conv2D(filters=60, kernel_size=(2, 4), strides=(1, 1),
                      activation='relu', input_shape=(2, 51, 1)))
     model.add(MaxPooling2D(pool_size=(1, 2), strides=(1, 1)))
-    model.add(Dropout(0.4))
+    model.add(Dropout(0.2))
 
     # Convolutional layer 2 ------------------------------------------
-    model.add(Conv2D(filters=100, kernel_size=(1, 3), strides=(1, 1),
+    model.add(Conv2D(filters=100, kernel_size=(1, 2), strides=(1, 1),
                      activation='relu'))
     model.add(MaxPooling2D(pool_size=(1, 2), strides=(1, 1)))
     model.add(Dropout(0.4))

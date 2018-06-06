@@ -208,12 +208,13 @@ def break_into_train_test(input, label, num_classes, shuffled_each_class=True, t
 
     # shuffling work
     if shuffled_each_class:
-        class_split_index = np.linspace(0, 1581, num_classes + 1)
+        class_split_index = np.linspace(0, input.shape[0], num_classes + 1)
 
         # accessing index btw each classes
         for i in range(class_split_index.size - 1):
             # for class of index 0-10, this array will return [0, 1, ...9]
             entire_class_index = np.arange(class_split_index[i], class_split_index[i + 1], 1)
+            # convert to int from float
             entire_class_index = [int(i) for i in entire_class_index]
             # shuffle the index [0, 1, ...9] --> [4, 3, ...7]
             entire_class_index_shuffled = np.random.permutation(entire_class_index)
@@ -263,4 +264,21 @@ def break_into_train_test(input, label, num_classes, shuffled_each_class=True, t
 
     # return
     return train_x, train_y, test_x, test_y
+
+
+def three_dim_visualizer(x_axis, y_axis, zxx, label):
+    # make sure the axes are of equal sizes for zxx
+    assert x_axis.size == zxx.shape[1], 'axis [0] of zxx differ from x_axis.size'
+    assert y_axis.size == zxx.shape[0], 'axis [1] of zxx differ from y_axis.size'
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    for i in range(y_axis.size):
+        ax.bar(x_axis, zxx[i], zs=y_axis[i], zdir='y', alpha=0.8)
+    ax.set_xlabel(label[0])
+    ax.set_ylabel(label[1])
+    ax.set_zlabel(label[2])
+
+    plt.show()
+
 

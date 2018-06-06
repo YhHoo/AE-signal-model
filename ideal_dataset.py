@@ -110,13 +110,13 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2, norm
             t, f, Sxx = spectrogram_scipy(s,
                                           fs=fs,
                                           nperseg=100,  # no of freq bin = nperseg/2 + 1
-                                          noverlap=85,
+                                          noverlap=0,
                                           mode='angle',
-                                          visualize=True,
-                                          verbose=True,
+                                          visualize=False,
+                                          verbose=False,
                                           vis_max_freq_range=fs/2)
             if normalize:
-                # scaling of all phases from -2pi to 2pi in 2d matrix of Sxx to 0-1
+                # scaling of all phases from -pi to pi in 2d matrix of Sxx to 0-1
                 Sxx = scaler.fit_transform(Sxx.ravel().reshape((-1, 1))).reshape((Sxx.shape[0], Sxx.shape[1]))
             phase_map.append(Sxx)
         # convert to ndarray
@@ -152,8 +152,79 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2, norm
     return dataset, label
 
 
+def noise_time_shift_xcor_return(time_axis, fs, random_seed=None, num_series=1, visualize_time_series=False):
+    # ---------------------------[Declaration]-----------------------------
+    # scaler declaration
+    scaler = MinMaxScaler(feature_range=(0, 1))
 
+    # whether u wat the random series to be same all the time
+    if random_seed is None:
+        pass
+    else:
+        np.random.seed(random_seed)
 
+    class_1, class_2, class_3 = [], [], []
+    # -------------------[Generating Noise with Shift]---------------------
+    for i in range(num_series):
+        # add as many shift as u want, fr small to big
+        time_shift = [0, 100, 200, 300]  # 0.1, 0.2 .. seconds,
+        noise = white_noise(time_axis=time_axis, power=1)
 
+        signal = []
+        for shift in time_shift:
+            signal.append(np.concatenate((np.zeros(shift), noise), axis=0))
+        # so that all time shifted series are of same length
+        signal = pad_sequences(signal, maxlen=(signal[-1].size + 500), dtype='float32', padding='post')
 
+        # visualize the time series signal after shift
+        if visualize_time_series:
+            # plot all raw signals
+            i = 1
+            for s in signal:
+                plt.subplot(6, 1, i)
+                plt.plot(s)
+                i += 1
+            plt.show()
+            plt.close()
+
+        # sliced to take only 1-9 seconds
+        signal_sliced = signal[:, 1000:9000]
+
+        # -------------------[Converting time signal to F-T representation]---------------------
+        phase_map = []
+        for s in signal_sliced:
+            t, f, Sxx = spectrogram_scipy(s,
+                                          fs=fs,
+                                          nperseg=100,  # no of freq bin = nperseg/2 + 1
+                                          noverlap=0,  # no overlapped signal in each window take
+                                          mode='angle',
+                                          visualize=False,
+                                          verbose=False,
+                                          vis_max_freq_range=fs / 2)
+            phase_map.append(Sxx)
+        # convert to ndarray
+        phase_map = np.array(phase_map)
+
+        # -------------------[Converting 2 phase map to X-cor map]---------------------
+        xcor_of_each_f_list = []
+        # for map 1, 2, 3 to correlate with map 0
+        for i in range(1, phase_map.shape[0] + 1, 1):
+            # for all frequency bands
+            for j in range(phase_map.shape[1]):
+                x_cor = np.correlate(phase_map[0, j], phase_map[i, j], 'full')
+                xcor_of_each_f_list.append(x_cor)
+            # xcor map of 2 phase map, axis[0] is freq, axis[1] is x-cor unit shift
+            xcor_of_each_f_list = np.array(xcor_of_each_f_list)
+
+            # put into different classes according to their shift
+            if i is 1:
+                class_1.append(xcor_of_each_f_list)
+            if i is 2:
+                class_2.append(xcor_of_each_f_list)
+            if i is 3:
+                class_3.append(xcor_of_each_f_list)
+        
+        # plt.pcolormesh(np.arange(1, 160, 1), f, xcor_of_each_f_list)
+        # plt.colorbar()
+        # plt.show()
 
