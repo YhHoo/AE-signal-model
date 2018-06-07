@@ -1,16 +1,14 @@
-# ------------------------------------------------------
-# this model expecting the input data of 0.2 seconds with shape of (3000/1000/700, 40) only.
-# ------------------------------------------------------
+'''
+This file trains the model on dataset_experiment_16_5_2018().
+this model expecting the input data of 0.2 seconds with shape of (3000/1000/700, 40) only.
+'''
 
-from keras.layers import Dense, Flatten
-from keras.layers import Conv2D, MaxPooling2D, Dropout
-from keras.models import Sequential
-from dataset_experiment_16_5_2018 import AccousticEmissionDataSet_16_5_2018
+from src.experiment_dataset.dataset_experiment_16_5_2018 import AccousticEmissionDataSet_16_5_2018
 from keras.utils import to_categorical
 from keras import optimizers
 # self defined library
-from utils import ModelLogger, model_multiclass_evaluate
-from cnn_model_bank import cnn_1000_40_7class_v1, cnn_700_40_7class_v1
+from src.utils.helpers import ModelLogger, model_multiclass_evaluate
+from src.model_bank.cnn_model_bank import cnn_1000_40_7class_v1, cnn_700_40_7class_v1
 
 # ----------------------------------------------------------------------------------------------TEST 1
 # data set
@@ -74,7 +72,6 @@ test_x = test_x.reshape((test_x.shape[0], test_x.shape[1], test_x.shape[2], 1))
 # convert
 train_y = to_categorical(train_y, num_classes=7)
 test_y = to_categorical(test_y, num_classes=7)
-
 
 # data summary
 print('\n----------INPUT DATA DIMENSION---------')

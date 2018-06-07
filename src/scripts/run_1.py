@@ -5,9 +5,9 @@ Data Pre-processing: Phase info from STFT, 3 classes, CNN input shape of (n, 2, 
 
 import numpy as np
 # self declared library
-from ideal_dataset import noise_time_shift_dataset, noise_time_shift_xcor_return
-from utils import break_into_train_test, ModelLogger, model_multiclass_evaluate, reshape_3d_to_4d_tocategorical
-from cnn_model_bank import cnn_51_159_3class_v1
+from src.controlled_dataset.ideal_dataset import noise_time_shift_xcor_return
+from src.utils.helpers import break_into_train_test, ModelLogger, model_multiclass_evaluate, reshape_3d_to_4d_tocategorical
+from src.model_bank.cnn_model_bank import cnn_51_159_3class_v1
 
 # ------------------------------------------------------------------------------------- Dataset 1
 

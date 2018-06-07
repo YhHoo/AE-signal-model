@@ -1,11 +1,8 @@
 from keras.layers import Dense, Flatten
-from keras.layers import Conv2D, MaxPooling2D, Dropout, LocallyConnected2D
+from keras.layers import Conv2D, MaxPooling2D, Dropout
 from keras.models import Sequential
-from dataset_experiment_16_5_2018 import AccousticEmissionDataSet_16_5_2018
-from keras.utils import to_categorical
-from keras import optimizers
+
 # self defined library
-from utils import ModelLogger, model_multiclass_evaluate
 
 '''
 Model Naming Practice: [model architecture]_[input dimension]_[class]_[variant]_[comment(optional)]
@@ -290,6 +287,3 @@ def cnn_51_159_3class_v1():
     print(model.summary())
 
     return model
-
-
-# cnn_51_159_3class_v1()

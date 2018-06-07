@@ -6,9 +6,9 @@ Result: Wont works.
 
 import numpy as np
 # self declared library
-from ideal_dataset import noise_time_shift_dataset
-from utils import break_into_train_test, ModelLogger, model_multiclass_evaluate, reshape_3d_to_4d_tocategorical
-from cnn_model_bank import fc_2x51_3class
+from src.controlled_dataset.ideal_dataset import noise_time_shift_dataset
+from src.utils.helpers import break_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
+from src.model_bank.cnn_model_bank import fc_2x51_3class
 
 
 # time axis setting

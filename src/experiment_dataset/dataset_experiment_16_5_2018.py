@@ -1,9 +1,9 @@
 import numpy as np
 from nptdms import TdmsFile
-from dsp_tools import spectrogram_scipy, fft_scipy
+from src.utils.dsp_tools import spectrogram_scipy
 from os import listdir
 # self defined library
-from utils import ProgressBarForLoop, break_into_train_test
+from src.utils.helpers import ProgressBarForLoop, break_into_train_test
 
 
 class AccousticEmissionDataSet_16_5_2018:

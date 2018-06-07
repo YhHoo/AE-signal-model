@@ -16,8 +16,8 @@ from keras.models import Sequential
 from keras.utils import to_categorical
 
 # self library
-from utils import ProgressBarForLoop
-from dsp_tools import spectrogram_scipy
+from src.utils.helpers import ProgressBarForLoop
+from src.utils.dsp_tools import spectrogram_scipy
 
 
 def read_csv_from_folder(path=None):

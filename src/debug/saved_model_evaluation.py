@@ -1,7 +1,10 @@
+'''
+This code laod the saved model in .h5 and .json, use predict() to try classifying new/test data
+'''
 from keras.utils import to_categorical
 # self defined library
-from utils import model_loader, model_multiclass_evaluate
-from dataset_experiment_16_5_2018 import AccousticEmissionDataSet_16_5_2018
+from src.utils.helpers import model_loader, model_multiclass_evaluate
+from src.experiment_dataset.dataset_experiment_16_5_2018 import AccousticEmissionDataSet_16_5_2018
 
 # -------------------[LOADING DATA]----------------------------
 # data set

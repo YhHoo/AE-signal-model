@@ -1,12 +1,11 @@
-from scipy.signal import iirdesign, filtfilt, butter, stft
 import numpy as np
 import matplotlib.pyplot as plt
 from math import pi, sin, log, exp
 from keras.preprocessing.sequence import pad_sequences
 from sklearn.preprocessing import MinMaxScaler
 # self defined library
-from dsp_tools import spectrogram_scipy
-from utils import break_into_train_test, three_dim_visualizer, ProgressBarForLoop
+from src.utils.dsp_tools import spectrogram_scipy
+from src.utils.helpers import three_dim_visualizer, ProgressBarForLoop
 
 
 # --------------[Sine wave of increasing freq]--------------------
