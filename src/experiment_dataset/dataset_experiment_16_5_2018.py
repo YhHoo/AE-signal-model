@@ -3,7 +3,7 @@ from nptdms import TdmsFile
 from src.utils.dsp_tools import spectrogram_scipy
 from os import listdir
 # self defined library
-from src.utils.helpers import ProgressBarForLoop, break_into_train_test
+from src.utils.helpers import ProgressBarForLoop, break_into_train_test, read_all_tdms_from_folder
 
 
 class AccousticEmissionDataSet_16_5_2018:
@@ -21,47 +21,13 @@ class AccousticEmissionDataSet_16_5_2018:
         self.path_noleak_pos0123_2bar = 'Experiment_16_5_2018/Experiment 1/pos_0_1_2_3/no_leak/2_bar/'
         self.path_noleak_pos0456_2bar = 'Experiment_16_5_2018/Experiment 1/pos_0_4_5_6/no_leak/2_bar/'
 
-    # private non-callable function, only used in this class to read all file of same kind
-    @staticmethod
-    def _read_tdms_from_folder(folder_path=None):
-        '''
-        :param folder_path: The folder which contains several sets data of same setup (Test rig)
-        :return: 3d matrix where shape[0]=no. of sets | shape[1]=no. of AE Signal points | shape[2]=no. of sensors
-        Aim: To combine all sets of data for same experiment setup into one 3d array.
-        WARNING: All sets of input data must contains same number of points e.g. 5 seconds/5M points for all sets
-        '''
-        # ensure path exist
-        assert folder_path is not None, 'No Folder is selected'
-
-        # list full path of all tdms file in the specified folder
-        all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
-        n_channel_matrix = []
-
-        # do for all 3 sets of tdms file
-        # read tdms and save as 4 channel np array
-        pb = ProgressBarForLoop('Reading <-- ' + folder_path, end=len(all_file_path))
-        for f in all_file_path:
-            tdms_file = TdmsFile(f)
-            tdms_df = tdms_file.as_dataframe()
-            # store the df values to list
-            n_channel_matrix.append(tdms_df.values)
-            # update progress
-            pb.update(now=all_file_path.index(f))
-        # kill progress bar
-        pb.destroy()
-        # convert the list matrix
-        n_channel_matrix = np.array(n_channel_matrix)
-        print('Data Dim: ', n_channel_matrix.shape, '\n')
-
-        return n_channel_matrix
-
     # 7 position (0-6) | 0-6 are 7 leak positions100
     def sleak_1bar_7pos(self, train_split=0.7, f_range=(0, 3000)):
         full_path_0123 = self.drive + self.path_sleak_pos0123_1bar
         full_path_0456 = self.drive + self.path_sleak_pos0456_1bar
         # get all 4 channels sensor data in np matrix of 4 columns
-        data_0123 = self._read_tdms_from_folder(full_path_0123)
-        data_0456 = self._read_tdms_from_folder(full_path_0456)
+        data_0123 = read_all_tdms_from_folder(full_path_0123)
+        data_0456 = read_all_tdms_from_folder(full_path_0456)
 
         # ensure both has same number of sets before concatenate
         assert data_0123.shape[0] == data_0456.shape[0], 'Different no of sets detected'
