@@ -281,15 +281,15 @@ def cnn_51_159_3class_v1():
     # Fully connected ----------------------------------------
     model.add(Dense(100, activation='relu'))
     # model.add(Dropout(0.3))
-    # model.add(Dense(fc[1], activation='relu'))
+    model.add(Dense(200, activation='relu'))
     # model.add(Dropout(0.2))
-    # model.add(Dense(fc[2], activation='relu'))
+    model.add(Dense(100, activation='relu'))
     # model.add(Dropout(0.2))
-    # model.add(Dense(3, activation='softmax'))
+    model.add(Dense(3, activation='softmax'))
 
     print(model.summary())
 
     return model
 
 
-cnn_51_159_3class_v1()
+# cnn_51_159_3class_v1()

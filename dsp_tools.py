@@ -74,7 +74,7 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd'
     :param save: save the spectrogram as .jpeg
     :param save_title: title of the spectrogram to save
     :param vis_max_freq_range: the maximum freq to include in visualization
-    :return: time axis, frequency band and the Amplitude in 2D matrix
+    :return: time axis, frequency band and the 2D matrix(shape[0]=freq, shape[1]=time step)
     '''
     # There is a trade-off btw resolution of frequency and time due to uncertainty principle
     # Spectrogram split input signal into segments before FFT and PSD on each seg.
