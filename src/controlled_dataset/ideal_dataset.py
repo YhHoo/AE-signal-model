@@ -63,7 +63,7 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2, norm
     :param random_seed: If stated, the seed is fixed to that, orelse it is random everytime it is called
     :param visualize_time_series: Plot the time series for checking delay in time
     :param verbose: print the dimension of arranged FFT phase map
-    :return: a 3d data set where shape[0] is
+    :return: a 3d data set where shape[0]=sample sizes, shape[1]=sensor, shape[2]=freq
     AIM--------------
     Create a time series white noise and applied delay to them
     '''
@@ -151,8 +151,20 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2, norm
     return dataset, label
 
 
-def noise_time_shift_xcor_return(time_axis, fs, random_seed=None, num_series=1, visualize_time_series=False,
-                                 visualize_xcor_map=False):
+def noise_time_shift_xcor_return(time_axis, fs, random_seed=None, num_series=1, normalize_xcor_score=True,
+                                 visualize_time_series=False, visualize_xcor_map=False):
+    '''
+    :param time_axis: White nosie will consists of (time_axis.size) points
+    :param fs: sampling freq of the system
+    :param num_series: num of diff random series,it controls the sample size, class size = num_series
+    :param normalize_xcor_score: Normalize with max min range for the xcor matrix
+    :param random_seed: If stated, the seed is fixed to that, orelse it is random everytime it is called
+    :param visualize_time_series: Plot the time series for checking delay in time
+    :param visualize_xcor_map: Plot the color map for xcor map
+    :return: a 3d data set where shape[0]=sample sizes, shape[1]=freq, shape[2]=xcor_steps
+    AIM--------------
+    Create a time series white noise -> time delay -> take phase component -> xcor -> xcor_map
+    '''
     # ---------------------------[Declaration]-----------------------------
     # scaler declaration
     scaler = MinMaxScaler(feature_range=(0, 1))
@@ -216,8 +228,10 @@ def noise_time_shift_xcor_return(time_axis, fs, random_seed=None, num_series=1, 
                 xcor_of_each_f_list.append(x_cor)
             # xcor map of 2 phase map, axis[0] is freq, axis[1] is x-cor unit shift
             xcor_of_each_f_list = np.array(xcor_of_each_f_list)
-            # normalize each xcor_map
-            xcor_of_each_f_list = scaler.fit_transform(xcor_of_each_f_list.ravel().reshape((-1, 1))).reshape((xcor_of_each_f_list.shape[0], xcor_of_each_f_list.shape[1]))
+            if normalize_xcor_score:
+                # normalize each xcor_map with linear function btw their max and min values
+                xcor_of_each_f_list = scaler.fit_transform(xcor_of_each_f_list.ravel().reshape((-1, 1)))\
+                    .reshape((xcor_of_each_f_list.shape[0], xcor_of_each_f_list.shape[1]))
 
             # Print all xcor_map
             if visualize_xcor_map:

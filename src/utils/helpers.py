@@ -3,7 +3,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.utils import to_categorical
 from keras.models import model_from_json
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d import Axes3D  # do not delete
 import numpy as np
 
 

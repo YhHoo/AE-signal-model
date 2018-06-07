@@ -1,12 +1,21 @@
 '''
-Data set: Randomly Generated White Noise with 3 shifts i.e. 0.1s, 0.2s and 0.3s.
-Data Pre-processing: Phase info from STFT, 3 classes, CNN input shape of (n, 2, 51, 1)
+Data set------------------
+noise_time_shift_xcor_return() -> Randomly Generated White Noise with 3 shifts i.e. 0.1s, 0.2s and 0.3s.
+
+Data Pre-processing-------
+Phase info from STFT of 4 signals --> xcor for each freq band of 2 phases map --> 3x xcor_map for 1
+random noise signal --> cnn_51_159_3class_v1()
+
+Result--------------------
+The CNN is able to recognize xcor map, giving acc of 100%
+However, a time shift for a signal shud
 '''
 
 import numpy as np
 # self declared library
 from src.controlled_dataset.ideal_dataset import noise_time_shift_xcor_return
-from src.utils.helpers import break_into_train_test, ModelLogger, model_multiclass_evaluate, reshape_3d_to_4d_tocategorical
+from src.utils.helpers import break_into_train_test, ModelLogger, model_multiclass_evaluate, \
+                              reshape_3d_to_4d_tocategorical
 from src.model_bank.cnn_model_bank import cnn_51_159_3class_v1
 
 # ------------------------------------------------------------------------------------- Dataset 1

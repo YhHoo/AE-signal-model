@@ -1,13 +1,12 @@
-from keras.layers import Dense, Flatten
-from keras.layers import Conv2D, MaxPooling2D, Dropout
-from keras.models import Sequential
-
-# self defined library
-
 '''
 Model Naming Practice: [model architecture]_[input dimension]_[class]_[variant]_[comment(optional)]
 e.g. cnn_3000_40_2class_v1 or cnn_3000_40__7class_v1_dropout
 '''
+
+from keras.layers import Dense, Flatten
+from keras.layers import Conv2D, MaxPooling2D, Dropout
+from keras.models import Sequential
+# self defined library
 
 
 def cnn_1000_40_7class_v1():
@@ -243,8 +242,8 @@ def cnn_28_28_mnist_10class():
 
 def cnn_51_159_3class_v1():
     '''
-    Input: phase map of 2 sensors concatenate side by side,
-    where 2 means sensor no, 51 is frequency bin
+    Input: the xcor map produced from 2 phase maps of white noise of diff lags.
+    Result: Able to recognize a 51x169 xcor map perfectly.
     '''
     model = Sequential()
 
