@@ -46,8 +46,3 @@ from scipy.signal import correlate
 # print(cor.shape)
 # print(np.argmax(cor))
 
-
-for i in range(10):
-    lx = 4 + 5
-
-print(lx)

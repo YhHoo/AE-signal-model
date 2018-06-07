@@ -6,7 +6,7 @@ from keras.preprocessing.sequence import pad_sequences
 from sklearn.preprocessing import MinMaxScaler
 # self defined library
 from dsp_tools import spectrogram_scipy
-from utils import break_into_train_test
+from utils import break_into_train_test, three_dim_visualizer
 
 
 # --------------[Sine wave of increasing freq]--------------------
@@ -93,11 +93,11 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2, norm
         # visualize the time series signal after shift
         if visualize_time_series:
             # plot all raw signals
-            i = 1
+            diag_no = 1
             for s in signal:
-                plt.subplot(6, 1, i)
+                plt.subplot(6, 1, diag_no)
                 plt.plot(s)
-                i += 1
+                diag_no += 1
             plt.show()
             plt.close()
 
@@ -152,7 +152,8 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2, norm
     return dataset, label
 
 
-def noise_time_shift_xcor_return(time_axis, fs, random_seed=None, num_series=1, visualize_time_series=False):
+def noise_time_shift_xcor_return(time_axis, fs, random_seed=None, num_series=1, visualize_time_series=False,
+                                 visualize_xcor_map=False):
     # ---------------------------[Declaration]-----------------------------
     # scaler declaration
     scaler = MinMaxScaler(feature_range=(0, 1))
@@ -176,14 +177,14 @@ def noise_time_shift_xcor_return(time_axis, fs, random_seed=None, num_series=1, 
         # so that all time shifted series are of same length
         signal = pad_sequences(signal, maxlen=(signal[-1].size + 500), dtype='float32', padding='post')
 
-        # visualize the time series signal after shift
+        # visualize the shifted time series signal -------------------------
         if visualize_time_series:
             # plot all raw signals
-            i = 1
+            diag_no = 1
             for s in signal:
-                plt.subplot(6, 1, i)
+                plt.subplot(6, 1, diag_no)
                 plt.plot(s)
-                i += 1
+                diag_no += 1
             plt.show()
             plt.close()
 
@@ -199,32 +200,61 @@ def noise_time_shift_xcor_return(time_axis, fs, random_seed=None, num_series=1, 
                                           noverlap=0,  # no overlapped signal in each window take
                                           mode='angle',
                                           visualize=False,
-                                          verbose=False,
+                                          verbose=True,
                                           vis_max_freq_range=fs / 2)
             phase_map.append(Sxx)
         # convert to ndarray
         phase_map = np.array(phase_map)
 
-        # -------------------[Converting 2 phase map to X-cor map]---------------------
+        # -------------------[Converting 2 phase map to 1 X-cor map]---------------------
         xcor_of_each_f_list = []
         # for map 1, 2, 3 to correlate with map 0
-        for i in range(1, phase_map.shape[0] + 1, 1):
+        for j in range(1, phase_map.shape[0], 1):
             # for all frequency bands
-            for j in range(phase_map.shape[1]):
-                x_cor = np.correlate(phase_map[0, j], phase_map[i, j], 'full')
+            for k in range(phase_map.shape[1]):
+                x_cor = np.correlate(phase_map[0, k], phase_map[j, k], 'full')
                 xcor_of_each_f_list.append(x_cor)
             # xcor map of 2 phase map, axis[0] is freq, axis[1] is x-cor unit shift
             xcor_of_each_f_list = np.array(xcor_of_each_f_list)
-
+            # Print all xcor_map
+            if visualize_xcor_map:
+                three_dim_visualizer(x_axis=np.arange(1, xcor_of_each_f_list.shape[1] + 1, 1),
+                                     y_axis=f,
+                                     zxx=xcor_of_each_f_list,
+                                     label=['Xcor_steps', 'Frequency', 'Correlation Score'],
+                                     output='color_map')
             # put into different classes according to their shift
-            if i is 1:
+            if j is 1:
                 class_1.append(xcor_of_each_f_list)
-            if i is 2:
+            if j is 2:
                 class_2.append(xcor_of_each_f_list)
-            if i is 3:
+            if j is 3:
                 class_3.append(xcor_of_each_f_list)
+                # print('CLASS 3 obj DIM: {}'.format(xcor_of_each_f_list.shape))
+                # plt.pcolormesh(np.arange(1, 160, 1), f, xcor_of_each_f_list)
+                # plt.colorbar()
+                # plt.show()
 
-        # plt.pcolormesh(np.arange(1, 160, 1), f, xcor_of_each_f_list)
-        # plt.colorbar()
-        # plt.show()
+            # empty n reset the xcor_of_each_f_list
+            xcor_of_each_f_list = []
 
+    # -------------------[Data Slicing and Train Test data]---------------------
+    class_1 = np.array(class_1)
+    class_2 = np.array(class_2)
+    class_3 = np.array(class_3)
+    all_class = [class_1, class_2, class_3]
+    dataset = np.concatenate(all_class, axis=0)
+    label = np.array([0]*class_1.shape[0] + [1]*class_2.shape[0] + [2]*class_3.shape[0])
+
+    print('Data set Dim: ', dataset.shape)
+    print('Label Dim: ', label.shape)
+
+    return dataset, label
+
+# time axis setting
+fs = 1000
+duration = 20  # tune this for duration
+total_point = int(fs * duration)
+time_axis = np.linspace(0, duration, total_point)
+noise_time_shift_xcor_return(time_axis=time_axis, fs=fs, num_series=2, visualize_time_series=True,
+                             visualize_xcor_map=True)

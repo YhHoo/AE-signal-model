@@ -242,3 +242,54 @@ def cnn_28_28_mnist_10class():
     print(model.summary())
 
     return model
+
+
+def cnn_51_159_3class_v1():
+    '''
+    Input: phase map of 2 sensors concatenate side by side,
+    where 2 means sensor no, 51 is frequency bin
+    '''
+    model = Sequential()
+
+    # Convolutional layer 1 ------------------------------------------
+    model.add(Conv2D(filters=36, kernel_size=(2, 2), strides=(1, 1),
+                     activation='relu', input_shape=(51, 159, 1)))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+    # model.add(Dropout(0.2))
+
+    # Convolutional layer 2 ------------------------------------------
+    model.add(Conv2D(filters=64, kernel_size=(2, 2), strides=(1, 1),
+                     activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    # model.add(Dropout(0.4))
+
+    # Convolutional layer 3 ------------------------------------------
+    model.add(Conv2D(filters=96, kernel_size=(3, 3), strides=(1, 1),
+                     activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    # model.add(Dropout(0.3))
+
+    # Convolutional layer 4 ------------------------------------------
+    # model.add(Conv2D(filters=109, kernel_size=(1, 3), strides=(1, 1),
+    #                  activation='relu'))
+    # model.add(MaxPooling2D(pool_size=(1, 2), strides=(1, 1)))
+
+    # Flatten all into 1d vector--------------------------------------
+    model.add(Flatten())
+    model.add(Dropout(0.4))
+
+    # Fully connected ----------------------------------------
+    model.add(Dense(100, activation='relu'))
+    # model.add(Dropout(0.3))
+    # model.add(Dense(fc[1], activation='relu'))
+    # model.add(Dropout(0.2))
+    # model.add(Dense(fc[2], activation='relu'))
+    # model.add(Dropout(0.2))
+    # model.add(Dense(3, activation='softmax'))
+
+    print(model.summary())
+
+    return model
+
+
+cnn_51_159_3class_v1()

@@ -3,6 +3,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.utils import to_categorical
 from keras.models import model_from_json
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
 
@@ -266,19 +267,34 @@ def break_into_train_test(input, label, num_classes, shuffled_each_class=True, t
     return train_x, train_y, test_x, test_y
 
 
-def three_dim_visualizer(x_axis, y_axis, zxx, label):
+def three_dim_visualizer(x_axis, y_axis, zxx, label, output):
+    '''
+    :param x_axis: the actual x-axis we wish to see in cartesian plane
+    :param y_axis: the actual y-axis we wish to see in cartesian plane
+    :param zxx: Zxx is a matrix of dim: (y_axis.size, x_axis.size)
+    :param label: List of string labels for [x_axis, y_axis, z_axis]
+    :return: plot()
+    '''
     # make sure the axes are of equal sizes for zxx
-    assert x_axis.size == zxx.shape[1], 'axis [0] of zxx differ from x_axis.size'
-    assert y_axis.size == zxx.shape[0], 'axis [1] of zxx differ from y_axis.size'
+    assert x_axis.size == zxx.shape[1], 'axis [1] of zxx differ from x_axis.size'
+    assert y_axis.size == zxx.shape[0], 'axis [0] of zxx differ from y_axis.size'
+    assert output is not None, 'Please specify Output'
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    for i in range(y_axis.size):
-        ax.bar(x_axis, zxx[i], zs=y_axis[i], zdir='y', alpha=0.8)
-    ax.set_xlabel(label[0])
-    ax.set_ylabel(label[1])
-    ax.set_zlabel(label[2])
+    if output is 'bar_chart':
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        for i in range(y_axis.size):
+            ax.bar(x_axis, zxx[i], zs=y_axis[i], zdir='y', alpha=0.8)
+        ax.set_xlabel(label[0])
+        ax.set_ylabel(label[1])
+        ax.set_zlabel(label[2])
+        plt.show()
+    elif output is 'color_map':
+        plt.pcolormesh(x_axis, y_axis, zxx)
+        plt.colorbar()
+        plt.xlabel(label[0])
+        plt.ylabel(label[1])
+        plt.show()
 
-    plt.show()
-
+    plt.close()
 
