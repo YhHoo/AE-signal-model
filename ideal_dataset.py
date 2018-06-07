@@ -223,7 +223,7 @@ def noise_time_shift_xcor_return(time_axis, fs, random_seed=None, num_series=1, 
                 class_2.append(xcor_of_each_f_list)
             if i is 3:
                 class_3.append(xcor_of_each_f_list)
-        
+
         # plt.pcolormesh(np.arange(1, 160, 1), f, xcor_of_each_f_list)
         # plt.colorbar()
         # plt.show()
