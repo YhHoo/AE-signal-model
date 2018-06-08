@@ -1,12 +1,17 @@
-# self library
-# from ideal_dataset import noise_time_shift_dataset
-#
-# data_3d = np.array([[[1, 2],
-#                   [3, 4]],
-#                  [[2, 3],
-#                   [4, 5]],
-#                  [[3, 4],
-#                   [5, 6]]])
+import numpy as np
+from src.utils.helpers import read_all_tdms_from_folder, three_dim_visualizer
+
+
+# three_dim_visualizer()
+data_3d = np.array([[[1, 2],
+                     [3, 4]],
+                    [[2, 3],
+                     [4, 5]],
+                    [[3, 4],
+                     [5, 6]]])
+print(data_3d.shape)
+print(data_3d[0].shape[0])
+
 # data_2d = np.array([[1, 2],
 #                     [3, 4],
 #                     [2, 5]])

@@ -269,12 +269,13 @@ def break_into_train_test(input, label, num_classes, shuffled_each_class=True, t
     return train_x, train_y, test_x, test_y
 
 
-def three_dim_visualizer(x_axis, y_axis, zxx, label, output):
+def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title):
     '''
     :param x_axis: the actual x-axis we wish to see in cartesian plane
     :param y_axis: the actual y-axis we wish to see in cartesian plane
     :param zxx: Zxx is a matrix of dim: (y_axis.size, x_axis.size)
     :param label: List of string labels for [x_axis, y_axis, z_axis]
+    :param output: bar_chart or color_map output
     :return: plot()
     '''
     # make sure the axes are of equal sizes for zxx
@@ -282,6 +283,7 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label, output):
     assert y_axis.size == zxx.shape[0], 'axis [0] of zxx differ from y_axis.size'
     assert output is not None, 'Please specify Output'
 
+    plt.title(title)
     if output is 'bar_chart':
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
@@ -317,7 +319,7 @@ def read_all_tdms_from_folder(folder_path=None):
 
     # do for all 3 sets of tdms file
     # read tdms and save as 4 channel np array
-    pb = ProgressBarForLoop('Reading <-- ' + folder_path, end=len(all_file_path))
+    pb = ProgressBarForLoop('Reading --> ' + folder_path, end=len(all_file_path))
     for f in all_file_path:
         tdms_file = TdmsFile(f)
         tdms_df = tdms_file.as_dataframe()

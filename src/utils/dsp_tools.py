@@ -67,7 +67,7 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd'
     '''
     :param sampled_data: A one dimensional data (Size = N), can be list or series
     :param fs: Sampling frequency
-    :param nperseg: if higher, f-res higher
+    :param nperseg: if higher, f-res higher,  no of freq bin = nperseg/2 + 1 !!
     :param noverlap: if higher, t-res higher
     :param visualize: Plot Spectrogram or not (Boolean)
     :param verbose: Print out the transformed data summary
@@ -144,5 +144,34 @@ def butter_bandpass_filtfilt(sampled_data, fs, f_hicut, f_locut, order=5):
     return filtered_signal
 
 
+def one_dim_xcor_freq_band(mat1, mat2):
+    '''
+    We expect for both mat 1 n 2, shape[0] --> freq band, shape[1] --> time steps
+    :param mat1: input
+    :param mat2: input
+    :return: 2d normalized xcor map whr shape[0] --> freq band, shape[1] --> xcor steps
+    '''
+    # ensure they hv equal number of freq bands
+    assert mat1.shape[0] == mat2.shape[0], 'Both matrix has different shape[0]'
+
+    xcor_of_each_f_list = []
+    # for all frequency bands
+    for k in range(mat1.shape[0]):
+        x_cor = np.correlate(mat1[k], mat2[k], 'full')
+        xcor_of_each_f_list.append(x_cor)
+    # xcor map of 2 phase map, axis[0] is freq, axis[1] is x-cor unit shift
+    xcor_of_each_f_list = np.array(xcor_of_each_f_list)
+
+    # normalize each xcor_map with linear function btw their max and min values
+    xcor_of_each_f_list = scaler.fit_transform(xcor_of_each_f_list.ravel().reshape((-1, 1))) \
+        .reshape((xcor_of_each_f_list.shape[0], xcor_of_each_f_list.shape[1]))
+
+    # Print all xcor_map
+    if visualize_xcor_map:
+        three_dim_visualizer(x_axis=np.arange(1, xcor_of_each_f_list.shape[1] + 1, 1),
+                             y_axis=f,
+                             zxx=xcor_of_each_f_list,
+                             label=['Xcor_steps', 'Frequency', 'Correlation Score'],
+                             output='color_map')
 
 

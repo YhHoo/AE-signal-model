@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 # self defined library
 from src.controlled_dataset.ideal_dataset import white_noise, sine_wave_continuous
+from src.utils.dsp_tools import spectrogram_scipy
 
 # time axis setting
 fs = 1000
@@ -37,8 +38,17 @@ plt.show()
 plt.close()
 
 # sliced to take only 1-9 seconds
-signal_sliced = signal[:, 1000:9000]
+signal_sliced = signal[:, :9000]
 
+t, f, Sxx = spectrogram_scipy(signal_sliced[3],
+                              fs=fs,
+                              nperseg=100,
+                              noverlap=0,
+                              mode='angle',
+                              visualize=True,
+                              verbose=True)
+
+print(Sxx)
 # convert all time series to F-T representation, form the phase map----------
 phase_map = []
 i = 1
