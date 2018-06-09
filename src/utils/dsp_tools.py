@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from scipy.fftpack import fft
 from scipy.signal import spectrogram
 from scipy.signal import filtfilt, butter
+from sklearn.preprocessing import MinMaxScaler
 
 
 # FAST FOURIER TRANSFORM (FFT)
@@ -144,11 +145,12 @@ def butter_bandpass_filtfilt(sampled_data, fs, f_hicut, f_locut, order=5):
     return filtered_signal
 
 
-def one_dim_xcor_freq_band(mat1, mat2):
+def one_dim_xcor_freq_band(mat1, mat2, verbose):
     '''
     We expect for both mat 1 n 2, shape[0] --> freq band, shape[1] --> time steps
     :param mat1: input
     :param mat2: input
+    :param verbose: print the xcor map dimension
     :return: 2d normalized xcor map whr shape[0] --> freq band, shape[1] --> xcor steps
     '''
     # ensure they hv equal number of freq bands
@@ -163,15 +165,13 @@ def one_dim_xcor_freq_band(mat1, mat2):
     xcor_of_each_f_list = np.array(xcor_of_each_f_list)
 
     # normalize each xcor_map with linear function btw their max and min values
+    scaler = MinMaxScaler(feature_range=(0, 1))
     xcor_of_each_f_list = scaler.fit_transform(xcor_of_each_f_list.ravel().reshape((-1, 1))) \
         .reshape((xcor_of_each_f_list.shape[0], xcor_of_each_f_list.shape[1]))
 
-    # Print all xcor_map
-    if visualize_xcor_map:
-        three_dim_visualizer(x_axis=np.arange(1, xcor_of_each_f_list.shape[1] + 1, 1),
-                             y_axis=f,
-                             zxx=xcor_of_each_f_list,
-                             label=['Xcor_steps', 'Frequency', 'Correlation Score'],
-                             output='color_map')
+    if verbose:
+        print('Xcor Map Dim (freq band, xcor steps): ', xcor_of_each_f_list.shape)
+
+    return xcor_of_each_f_list
 
 

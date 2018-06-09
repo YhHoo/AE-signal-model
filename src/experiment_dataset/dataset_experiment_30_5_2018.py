@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 # self library
 from src.utils.helpers import read_all_tdms_from_folder, three_dim_visualizer
-from src.utils.dsp_tools import spectrogram_scipy
+from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_freq_band
 
 
 # for Pencil Lead Break data, the sensor position are (-2, -1, 22, 23)m
@@ -16,6 +16,7 @@ class AcousticEmissionDataSet_30_5_2018:
         self.path_6m_plb = self.drive + 'Experiment_30_5_2018/test1_-2,-1,22,23m/PLB, Hammer/6m/PLB/'
 
     def plb_4_sensor(self, leak_pos=0):
+        # ---------------------[Select the file and read]------------------------
         if leak_pos is 0:
             n_channel_data = read_all_tdms_from_folder(self.path_0m_plb)
         elif leak_pos is 2:
@@ -24,6 +25,9 @@ class AcousticEmissionDataSet_30_5_2018:
             n_channel_data = read_all_tdms_from_folder(self.path_0m_plb)
         elif leak_pos is 6:
             n_channel_data = read_all_tdms_from_folder(self.path_0m_plb)
+
+
+
 
         return n_channel_data
 
@@ -72,6 +76,8 @@ label = [(-2, -1), (-1, 22), (22, 23)]
 
 # for all sensor pair
 for i in range(len(sensor_pair)):
+    xcor_map = one_dim_xcor_freq_band(phase_map[sensor_pair[i][0]])
+
     # for all frequency bands
     for k in range(phase_map.shape[1]):
         x_cor = np.correlate(phase_map[sensor_pair[i][0], k], phase_map[sensor_pair[i][1], k], 'full')
