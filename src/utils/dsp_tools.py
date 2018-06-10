@@ -145,33 +145,47 @@ def butter_bandpass_filtfilt(sampled_data, fs, f_hicut, f_locut, order=5):
     return filtered_signal
 
 
-def one_dim_xcor_freq_band(mat1, mat2, verbose):
+def one_dim_xcor_freq_band(input_mat, pair_list, verbose):
     '''
-    We expect for both mat 1 n 2, shape[0] --> freq band, shape[1] --> time steps
-    :param mat1: input
-    :param mat2: input
-    :param verbose: print the xcor map dimension
-    :return: 2d normalized xcor map whr shape[0] --> freq band, shape[1] --> xcor steps
+    :param input_mat: a 3d np matrix input, where shape[0] -> no. of phase map,
+                                                  shape[1] -> freq band,
+                                                  shape[1] -> time steps
+    :param pair_list: list of 2d tuples, e.g. [(0, 1), (1, 2)], such that input_mat[0] and input_mat[1] is xcor, and
+                      input_mat[1] and input_mat[2] is xcor.
+    :param verbose: print the output xcor map dimension
+    :return: 3d normalized xcor map whr shape[0] -> no. of phase maps,
+                                        shape[1] -> freq band,
+                                        shape[1] -> xcor steps
     '''
-    # ensure they hv equal number of freq bands
-    assert mat1.shape[0] == mat2.shape[0], 'Both matrix has different shape[0]'
+    # ensure they hv equal number of axis[1] or freq band
+    try:
+        temp = input_mat.shape[1]
+    except IndexError:
+        print('YH_WARNING: The axis[1] of the input_mat are not equal')
+        raise
 
-    xcor_of_each_f_list = []
-    # for all frequency bands
-    for k in range(mat1.shape[0]):
-        x_cor = np.correlate(mat1[k], mat2[k], 'full')
-        xcor_of_each_f_list.append(x_cor)
-    # xcor map of 2 phase map, axis[0] is freq, axis[1] is x-cor unit shift
-    xcor_of_each_f_list = np.array(xcor_of_each_f_list)
+    xcor_bank = []
+    for pair in pair_list:
+        xcor_of_each_f_list = []
+        # for all frequency bands
+        for i in range(input_mat.shape[1]):
+            x_cor = np.correlate(input_mat[pair[0], i], input_mat[pair[1], i], 'full')
+            xcor_of_each_f_list.append(x_cor)
+        # xcor map of 2 phase map, axis[0] is freq, axis[1] is x-cor unit shift
+        xcor_of_each_f_list = np.array(xcor_of_each_f_list)
 
-    # normalize each xcor_map with linear function btw their max and min values
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    xcor_of_each_f_list = scaler.fit_transform(xcor_of_each_f_list.ravel().reshape((-1, 1))) \
-        .reshape((xcor_of_each_f_list.shape[0], xcor_of_each_f_list.shape[1]))
+        # normalize each xcor_map with linear function btw their max and min values
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        xcor_of_each_f_list = scaler.fit_transform(xcor_of_each_f_list.ravel().reshape((-1, 1))) \
+            .reshape((xcor_of_each_f_list.shape[0], xcor_of_each_f_list.shape[1]))
+
+        # store the xcor map for a pair of phase map
+        xcor_bank.append(xcor_of_each_f_list)
+    xcor_bank = np.array(xcor_bank)
 
     if verbose:
-        print('Xcor Map Dim (freq band, xcor steps): ', xcor_of_each_f_list.shape)
+        print('Xcor Map Dim (No. of xcor map, freq band, xcor steps): ', xcor_bank.shape)
 
-    return xcor_of_each_f_list
+    return xcor_bank
 
 

@@ -74,6 +74,8 @@ scaler = MinMaxScaler(feature_range=(0, 1))
 sensor_pair = [(0, 1), (1, 2), (2, 3)]
 label = [(-2, -1), (-1, 22), (22, 23)]
 
+xcor_map = one_dim_xcor_freq_band(input_mat=)
+
 # for all sensor pair
 for i in range(len(sensor_pair)):
     xcor_map = one_dim_xcor_freq_band(phase_map[sensor_pair[i][0]])
