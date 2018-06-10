@@ -1,6 +1,5 @@
 import numpy as np
-import sys
-from src.utils.helpers import read_all_tdms_from_folder, three_dim_visualizer
+import mayavi.mlab as mlb
 
 
 # three_dim_visualizer()
@@ -9,26 +8,22 @@ data_3d = np.array([[[1],
                     [[2],
                      [4]],
                     [[3],
-                     [5, 5]]])
-# print(data_3d.shape[2])
-try:
-    no_of_freq_band = data_3d.shape[2]
-    pass
-except IndexError:
-    print('YH_WARNING: The axis[1] of the input_mat are not equal')
-    raise
-
-
-
-print('COMPLETED')
-
+                     [5]]])
+print(data_3d.shape)
 # print(data_3d.shape[1])
 # print(data_3d[0].shape[0])
 
-
+s = np.arange(0, 100, 1).reshape((5, 20))
+x = np.arange(0, 20, 1)
+y = np.arange(0, 5, 1)
+print(s)
+print(x)
+print(y)
+mlb.barchart(y, x, s)
+mlb.imshow()
 
 # data_2d = np.array([[1, 2],
-#                     [3, 4],
+#                     [3, 4] ,
 #                     [2, 5]])
 # data_2d = data_2d.astype(dtype='float32')
 

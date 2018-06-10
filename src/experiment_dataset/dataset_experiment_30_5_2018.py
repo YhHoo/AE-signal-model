@@ -74,7 +74,7 @@ sensor_pair = [(0, 1), (1, 2), (2, 3)]
 label = [(-2, -1), (-1, 22), (22, 23)]
 
 xcor_map = one_dim_xcor_freq_band(input_mat=phase_map, pair_list=sensor_pair, verbose=True)
-i = 0
+# i = 0
 # for map in xcor_map:
 #     three_dim_visualizer(x_axis=np.arange(1, map.shape[1] + 1, 1),
 #                          y_axis=f,
@@ -86,7 +86,7 @@ i = 0
 
 three_dim_visualizer(x_axis=np.arange(1, xcor_map[1].shape[1] + 1, 1),
                      y_axis=f,
-                     zxx=xcor_map[1],
+                     zxx=xcor_map[2],
                      label=['Xcor_steps', 'Frequency', 'Correlation Score'],
-                     output='3d',
-                     title='PLB Phase Map - Sensor[{}m] x Sensor[{}m]'.format(label[1][0], label[1][1]))
+                     output='2d',
+                     title='PLB Phase Map - Sensor[{}m] x Sensor[{}m]'.format(label[2][0], label[2][1]))
