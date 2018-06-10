@@ -32,7 +32,7 @@ class AcousticEmissionDataSet_30_5_2018:
         return n_channel_data
 
 
-data = AcousticEmissionDataSet_30_5_2018(drive='E')
+data = AcousticEmissionDataSet_30_5_2018(drive='F')
 sensor_data = data.plb_4_sensor(leak_pos=0)
 
 # plt.subplot(4, 1, 1)
@@ -55,13 +55,14 @@ sensor_data = data.plb_4_sensor(leak_pos=0)
 phase_map = []
 # for all 4 sensors
 for i in range(sensor_data.shape[2]):
-    t, f, Sxx = spectrogram_scipy(sensor_data[1, 800000:1000000, i],
+    set_no = 1
+    t, f, Sxx = spectrogram_scipy(sensor_data[set_no, 800000:1000000, i],
                                   fs=1e6,
                                   nperseg=2000,
                                   noverlap=0,
                                   mode='angle',
                                   visualize=False,
-                                  verbose=True,
+                                  verbose=False,
                                   vis_max_freq_range=1e6/2)
     phase_map.append(Sxx)
 phase_map = np.array(phase_map)
@@ -69,33 +70,23 @@ phase_map = np.array(phase_map)
 # xcor for sensor at -1m and 22m
 # for all frequency bands
 xcor_of_each_f_list = []
-normalize_xcor_score = True
-scaler = MinMaxScaler(feature_range=(0, 1))
 sensor_pair = [(0, 1), (1, 2), (2, 3)]
 label = [(-2, -1), (-1, 22), (22, 23)]
 
-xcor_map = one_dim_xcor_freq_band(input_mat=)
+xcor_map = one_dim_xcor_freq_band(input_mat=phase_map, pair_list=sensor_pair, verbose=True)
+i = 0
+# for map in xcor_map:
+#     three_dim_visualizer(x_axis=np.arange(1, map.shape[1] + 1, 1),
+#                          y_axis=f,
+#                          zxx=map,
+#                          label=['Xcor_steps', 'Frequency', 'Correlation Score'],
+#                          output='2d',
+#                          title='PLB Phase Map - Sensor[{}m] x Sensor[{}m]'.format(label[i][0], label[i][1]))
+#     i += 1
 
-# for all sensor pair
-for i in range(len(sensor_pair)):
-    xcor_map = one_dim_xcor_freq_band(phase_map[sensor_pair[i][0]])
-
-    # for all frequency bands
-    for k in range(phase_map.shape[1]):
-        x_cor = np.correlate(phase_map[sensor_pair[i][0], k], phase_map[sensor_pair[i][1], k], 'full')
-        xcor_of_each_f_list.append(x_cor)
-    # xcor map of 2 phase map, axis[0] is freq, axis[1] is x-cor unit shift
-    xcor_of_each_f_list = np.array(xcor_of_each_f_list)
-
-    if normalize_xcor_score:
-        # normalize each xcor_map with linear function btw their max and min values
-        xcor_of_each_f_list = scaler.fit_transform(xcor_of_each_f_list.ravel().reshape((-1, 1)))\
-            .reshape((xcor_of_each_f_list.shape[0], xcor_of_each_f_list.shape[1]))
-
-    three_dim_visualizer(x_axis=np.arange(1, xcor_of_each_f_list.shape[1] + 1, 1),
-                         y_axis=f,
-                         zxx=xcor_of_each_f_list,
-                         label=['Xcor_steps', 'Frequency', 'Correlation Score'],
-                         output='color_map',
-                         title='PLB Phase Map - Sensor[{}m] x Sensor[{}m]'.format(label[i][0], label[i][1]))
-    xcor_of_each_f_list = []
+three_dim_visualizer(x_axis=np.arange(1, xcor_map[1].shape[1] + 1, 1),
+                     y_axis=f,
+                     zxx=xcor_map[1],
+                     label=['Xcor_steps', 'Frequency', 'Correlation Score'],
+                     output='3d',
+                     title='PLB Phase Map - Sensor[{}m] x Sensor[{}m]'.format(label[1][0], label[1][1]))

@@ -159,9 +159,10 @@ def one_dim_xcor_freq_band(input_mat, pair_list, verbose):
     '''
     # ensure they hv equal number of axis[1] or freq band
     try:
-        temp = input_mat.shape[1]
+        # simply accessing
+        input_mat.shape[1]
     except IndexError:
-        print('YH_WARNING: The axis[1] of the input_mat are not equal')
+        print('YH_WARNING: The axis[1] of the input_mat are not uniform')
         raise
 
     xcor_bank = []
@@ -184,6 +185,7 @@ def one_dim_xcor_freq_band(input_mat, pair_list, verbose):
     xcor_bank = np.array(xcor_bank)
 
     if verbose:
+        print('---------One-Dimensional X-correlation---------')
         print('Xcor Map Dim (No. of xcor map, freq band, xcor steps): ', xcor_bank.shape)
 
     return xcor_bank

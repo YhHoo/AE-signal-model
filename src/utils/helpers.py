@@ -276,6 +276,7 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title):
     :param zxx: Zxx is a matrix of dim: (y_axis.size, x_axis.size)
     :param label: List of string labels for [x_axis, y_axis, z_axis]
     :param output: bar_chart or color_map output
+    :param title: title on top of the plot
     :return: plot()
     '''
     # make sure the axes are of equal sizes for zxx
@@ -283,17 +284,18 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title):
     assert y_axis.size == zxx.shape[0], 'axis [0] of zxx differ from y_axis.size'
     assert output is not None, 'Please specify Output'
 
-    plt.title(title)
-    if output is 'bar_chart':
+    if output is '3d':
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
+        ax.set_title(title)
         for i in range(y_axis.size):
             ax.bar(x_axis, zxx[i], zs=y_axis[i], zdir='y', alpha=0.8)
         ax.set_xlabel(label[0])
         ax.set_ylabel(label[1])
         ax.set_zlabel(label[2])
         plt.show()
-    elif output is 'color_map':
+    elif output is '2d':
+        plt.title(title)
         plt.pcolormesh(x_axis, y_axis, zxx)
         plt.colorbar()
         plt.xlabel(label[0])
