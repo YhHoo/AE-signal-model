@@ -147,7 +147,7 @@ def butter_bandpass_filtfilt(sampled_data, fs, f_hicut, f_locut, order=5):
 
 def one_dim_xcor_freq_band(input_mat, pair_list, verbose):
     '''
-    :param input_mat: a 3d np matrix input, where shape[0] -> no. of phase map,
+    :param input_mat: a 3d np matrix input, where shape[0] -> no. of phase map (diff sensors),
                                                   shape[1] -> freq band,
                                                   shape[1] -> time steps
     :param pair_list: list of 2d tuples, e.g. [(0, 1), (1, 2)], such that input_mat[0] and input_mat[1] is xcor, and

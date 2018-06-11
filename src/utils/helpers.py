@@ -333,6 +333,6 @@ def read_all_tdms_from_folder(folder_path=None):
     pb.destroy()
     # convert the list matrix
     n_channel_matrix = np.array(n_channel_matrix)
-    print('Data Dim: ', n_channel_matrix.shape, '\n')
+    print('Read Data Dim: ', n_channel_matrix.shape, '\n')
 
     return n_channel_matrix
