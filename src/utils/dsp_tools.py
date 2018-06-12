@@ -153,7 +153,7 @@ def one_dim_xcor_freq_band(input_mat, pair_list, verbose):
     :param pair_list: list of 2d tuples, e.g. [(0, 1), (1, 2)], such that input_mat[0] and input_mat[1] is xcor, and
                       input_mat[1] and input_mat[2] is xcor.
     :param verbose: print the output xcor map dimension
-    :return: 3d normalized xcor map whr shape[0] -> no. of phase maps,
+    :return: 3d normalized xcor map whr shape[0] -> no. of xcor maps,
                                         shape[1] -> freq band,
                                         shape[1] -> xcor steps
     '''

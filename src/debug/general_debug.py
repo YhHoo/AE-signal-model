@@ -4,14 +4,32 @@ from scipy import signal
 # import mayavi.mlab as mlb
 
 
+fig = plt.figure(figsize=(12, 8))
+# ax = fig.add_subplot(1, 1, 1)
+plt.plot([1, 2, 3])
+
+# ax.plot([1, 2, 3], marker='x')
+# ax.legend()
+# ax.pcolormesh
+plt.show()
+
+
+
+
+# def test(x, y):
+#     assert x == y, 'Non equal xy'
+#
+#
+# test(5, 6)
+
 # three_dim_visualizer()
-data_3d = np.array([[[1],
-                     [3]],
-                    [[2],
-                     [4]],
-                    [[3],
-                     [5]]])
-print(data_3d.shape)
+# data_3d = np.array([[[1],
+#                      [3]],
+#                     [[2],
+#                      [4]],
+#                     [[3],
+#                      [5]]])
+# print(data_3d.shape)
 # print(data_3d.shape[1])
 # print(data_3d[0].shape[0])
 
@@ -23,17 +41,15 @@ print(data_3d.shape)
 # print(y)
 # mlb.barchart(y, x, s)
 # mlb.imshow()
-sig = np.repeat([0., 1., 0., 1], 100)
-win = signal.hann(50)
-print(sum(win))
-mat1 = np.array([3, 9, 2, 1, 0, 0, 0, 0])
-mat2 = np.array([0, 3, 9, 2, 1, 0, 0, 0])
 
-# mat3 = np.array([0, 0, 1, 0, 1, 0, 0, 0]).reshape((1, 8))
-# mat4 = np.array([0, 0, 0, 1, 0, 1, 0, 0]).reshape((1, 8))
-plt.plot(sig)
-plt.plot(win, marker='x')
-plt.show()
+# sig = np.repeat([0., 1., 0., 1], 100)
+# win = signal.hann(50)
+# print(sum(win))
+# mat1 = np.array([3, 9, 2, 1, 0, 0, 0, 0])
+# mat2 = np.array([0, 3, 9, 2, 1, 0, 0, 0])
+# plt.plot(sig)
+# plt.plot(win, marker='x')
+# plt.show()
 
 
 # ori_signal = np.concatenate((mat1, mat3), axis=0)

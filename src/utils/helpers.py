@@ -276,6 +276,7 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title):
     :param zxx: Zxx is a matrix of dim: (y_axis.size, x_axis.size)
     :param label: List of string labels for [x_axis, y_axis, z_axis]
     :param output: bar_chart or color_map output
+    :param show: show up the plot
     :param title: title on top of the plot
     :return: plot()
     '''
@@ -293,16 +294,16 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title):
         ax.set_xlabel(label[0])
         ax.set_ylabel(label[1])
         ax.set_zlabel(label[2])
-        plt.show()
     elif output is '2d':
+        plt.figure(figsize=(9, 5))  # 8 inches square
         plt.title(title)
         plt.pcolormesh(x_axis, y_axis, zxx)
-        plt.colorbar()
         plt.xlabel(label[0])
         plt.ylabel(label[1])
-        plt.show()
+        plt.colorbar()
 
-    plt.close()
+    # set to false when we wan to save a series of plot
+    return plt
 
 
 def read_all_tdms_from_folder(folder_path=None):
