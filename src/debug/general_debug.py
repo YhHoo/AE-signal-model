@@ -4,23 +4,38 @@ from scipy import signal
 # import mayavi.mlab as mlb
 
 
-fig = plt.figure(figsize=(12, 8))
-# ax = fig.add_subplot(1, 1, 1)
-plt.plot([1, 2, 3])
+# fig1 = plt.figure()
+# fig2 = plt.figure()
+# ax1 = fig1.add_subplot(1, 1, 1)
+# ax2 = fig2.add_subplot(1, 1, 1)
+# ax1.plot([1, 2, 3])
+# ax2.plot([5, 6, 7])
+# plt.show()
+t = np.linspace(-1, 1, 200, endpoint=False)
+sig = np.cos(2 * np.pi * 7 * t)
+pulse = signal.gausspulse(t - 0.4, fc=2)
+widths = np.arange(1, 31)
+cwtmatr = signal.cwt(sig, signal.ricker, widths)
+print(cwtmatr)
+print(cwtmatr.shape)
 
-# ax.plot([1, 2, 3], marker='x')
-# ax.legend()
-# ax.pcolormesh
+
+fig1 = plt.figure()
+ax1 = fig1.add_subplot(2, 1, 1)
+ax1.set_title('Wavelet Transform')
+ax2 = fig1.add_subplot(2, 1, 2)
+ax2.set_title('Input Signal')
+
+ax1.plot(t, sig)
+ax1.set_xbound(lower=t.min(), upper=t.max())
+
+i = ax2.imshow(cwtmatr, extent=[-1, 1, 1, 31], cmap='PRGn', aspect='auto',
+               vmax=abs(cwtmatr).max(), vmin=-abs(cwtmatr).max())
+ax2.set_xbound(lower=t.min(), upper=t.max())
+# fig1.colorbar(i)
+plt.subplots_adjust(hspace=0.3)
 plt.show()
 
-
-
-
-# def test(x, y):
-#     assert x == y, 'Non equal xy'
-#
-#
-# test(5, 6)
 
 # three_dim_visualizer()
 # data_3d = np.array([[[1],
@@ -28,7 +43,8 @@ plt.show()
 #                     [[2],
 #                      [4]],
 #                     [[3],
-#                      [5]]])
+#                      [-5]]])
+# print(data_3d.min())
 # print(data_3d.shape)
 # print(data_3d.shape[1])
 # print(data_3d[0].shape[0])

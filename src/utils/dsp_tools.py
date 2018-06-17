@@ -63,13 +63,14 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=1e3):
 
 # SPECTROGRAM
 def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd',
-                      visualize=False, vis_max_freq_range=1e3, verbose=False,
+                      visualize=False, vis_max_freq_range=None, verbose=False,
                       save=False, save_title='Default'):
     '''
     :param sampled_data: A one dimensional data (Size = N), can be list or series
     :param fs: Sampling frequency
     :param nperseg: if higher, f-res higher,  no of freq bin = nperseg/2 + 1 !!
     :param noverlap: if higher, t-res higher
+    :param mode: 'psd', 'magnitude', 'angle'(deg), 'phase'(rad), 'complex'
     :param visualize: Plot Spectrogram or not (Boolean)
     :param verbose: Print out the transformed data summary
     :param save: save the spectrogram as .jpeg
@@ -85,6 +86,11 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd'
     # ensure it is np array
     if isinstance(sampled_data, list):
         sampled_data = np.array(sampled_data)
+
+    # check the visualize freq range
+    if vis_max_freq_range is None:
+        vis_max_freq_range = fs / 2
+
     # begin
     f, t, Sxx = spectrogram(sampled_data,
                             fs=fs,
