@@ -286,3 +286,42 @@ def cnn_51_159_3class_v1():
     print(model.summary())
 
     return model
+
+
+def cnn_general_v1(input_shape, num_classes):
+    model = Sequential()
+
+    # Convolutional layer 1 ------------------------------------------
+    model.add(Conv2D(filters=36, kernel_size=(2, 2), strides=(1, 1),
+                     activation='relu', input_shape=(input_shape[0], input_shape[1], 1)))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+    # model.add(Dropout(0.2))
+
+    # Convolutional layer 2 ------------------------------------------
+    model.add(Conv2D(filters=64, kernel_size=(2, 2), strides=(1, 1),
+                     activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    # model.add(Dropout(0.4))
+
+    # Convolutional layer 3 ------------------------------------------
+    model.add(Conv2D(filters=96, kernel_size=(3, 3), strides=(1, 1),
+                     activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    # model.add(Dropout(0.3))
+
+    # Flatten all into 1d vector--------------------------------------
+    model.add(Flatten())
+    model.add(Dropout(0.4))
+
+    # Fully connected ----------------------------------------
+    model.add(Dense(100, activation='relu'))
+    # model.add(Dropout(0.3))
+    model.add(Dense(200, activation='relu'))
+    # model.add(Dropout(0.2))
+    model.add(Dense(100, activation='relu'))
+    # model.add(Dropout(0.2))
+    model.add(Dense(num_classes, activation='softmax'))
+
+    print(model.summary())
+
+    return model

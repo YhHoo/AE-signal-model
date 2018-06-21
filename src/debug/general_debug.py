@@ -1,42 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
+from src.controlled_dataset.ideal_dataset import white_noise
 # import mayavi.mlab as mlb
 
-
-t = np.linspace(-1, 1, 1000, endpoint=False)
-offset = [0, -0.2, -0.4]
-for off in offset:
-    pulse1 = signal.gausspulse(t+off, fc=50)
-    pulse2 = signal.gausspulse(t-0.1+off, fc=50)
-    cor = np.correlate(pulse1, pulse2, 'full')
-    print('USING NUMPY CORRELATE---------------')
-    print(cor)
-    print(cor.shape)
-    print(np.argmax(cor))
-    plt.title('Xcor Map')
-    plt.plot(cor)
-    plt.show()
-    plt.close()
-
-pulse1 = signal.gausspulse(t, fc=50)
-pulse2 = signal.gausspulse(t-0.1, fc=50)
-fig1 = plt.figure()
-ax1 = fig1.add_subplot(2, 1, 1)
-ax2 = fig1.add_subplot(2, 1, 2)
-ax1.set_title('Original Pulse')
-ax2.set_title('Delayed Pulse')
-ax1.plot(t, pulse1)
-ax2.plot(t, pulse2)
-plt.subplots_adjust(hspace=0.4)
-plt.show()
+l = [1, 2, 3]
+m = [10, 11, 12]
+mix = []
+for i, j in (zip(l, m)):
+    print(i+j)
 
 
-# Wavelet transform
-# widths = np.arange(1, 31)
-# cwtmatr = signal.cwt(sig, signal.ricker, widths)
-# print(cwtmatr)
-# print(cwtmatr.shape)
+
+
+
+
 
 
 # three_dim_visualizer()
