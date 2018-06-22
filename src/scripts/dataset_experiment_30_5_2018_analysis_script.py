@@ -19,33 +19,25 @@ _, _, _, fig = spectrogram_scipy(sampled_data=n_channel_data[1, 500000:1500000, 
 plt.show()
 
 # -------------------[Visualize in time series and Spectrogram]-------------------
-# fig1 = plt.figure()
-# fig2 = plt.figure()
-# fig3 = plt.figure()
-# fig1.subplots_adjust(hspace=0.5)
-# # fig 1
-# ax11 = fig1.add_subplot(2, 1, 1)
-# ax11.set_title('Time series sensor [-1m]')
-# ax12 = fig1.add_subplot(2, 1, 2)
-# ax12.set_title('Time series sensor [22m]')
-# ax2 = fig2.add_axes([0.1, 0.1, 0.6, 0.8])
-# ax2.set_title('Freq-Time Rep in Magnitude for sensor [-1m]')
-# ax3 = fig3.add_axes([0.1, 0.1, 0.6, 0.8])
-# ax3.set_title('Freq-Time Rep in Magnitude for sensor [22m]')
-# # plot time series
-# ax11.plot(n_channel_data[1, 500000:1500000, 1])
-# ax12.plot(n_channel_data[1, 500000:1500000, 2])
-# # plot f-t graph
-# # sensor 1
-# i1 = ax2.imshow(phase_bank[1, 1], aspect='auto', interpolation=None, extent=[0, 10, 0, 10])
-# # sensor 2
-# i2 = ax3.imshow(phase_bank[1, 2], aspect='auto', interpolation=None, extent=[0, 10, 0, 10])
-# colorbar_ax2 = fig2.add_axes([0.7, 0.1, 0.05, 0.8])
-# colorbar_ax3 = fig3.add_axes([0.7, 0.1, 0.05, 0.8])
-# fig2.colorbar(i1, cax=colorbar_ax2)
-# fig3.colorbar(i2, cax=colorbar_ax3)
-#
-# plt.show()
+fig1 = plt.figure()
+fig2 = plt.figure()
+fig3 = plt.figure()
+fig1.subplots_adjust(hspace=0.5)
+# fig 1
+ax11 = fig1.add_subplot(2, 1, 1)
+ax11.set_title('Time series sensor [-1m]')
+ax12 = fig1.add_subplot(2, 1, 2)
+ax12.set_title('Time series sensor [22m]')
+ax2 = fig2.add_axes([0.1, 0.1, 0.6, 0.8])
+ax2.set_title('Freq-Time Rep in Magnitude for sensor [-1m]')
+ax3 = fig3.add_axes([0.1, 0.1, 0.6, 0.8])
+ax3.set_title('Freq-Time Rep in Magnitude for sensor [22m]')
+# plot time series
+ax11.plot(n_channel_data[1, 500000:1500000, 1])
+ax12.plot(n_channel_data[1, 500000:1500000, 2])
+# plot f-t graph
+
+plt.show()
 
 
 # ----------------------[Visualize in Time and Saving]----------------------------
