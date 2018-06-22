@@ -24,7 +24,7 @@ _, _, mat = spectrogram_scipy(sampled_data=signal,
                               noverlap=0,
                               mode='angle',
                               verbose=True,
-                              visualize=True)
+                              return_plot=True)
 print(mat)
 
 _, _, mat = spectrogram_scipy(sampled_data=signal,
@@ -33,6 +33,6 @@ _, _, mat = spectrogram_scipy(sampled_data=signal,
                               noverlap=0,
                               mode='magnitude',
                               verbose=True,
-                              visualize=True)
+                              return_plot=True)
 
 print(mat)

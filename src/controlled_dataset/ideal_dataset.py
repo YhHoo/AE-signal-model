@@ -49,7 +49,7 @@ def sine_pulse():
                       nperseg=500,
                       noverlap=100,
                       verbose=True,
-                      visualize=True,
+                      return_plot=True,
                       vis_max_freq_range=fs/2)
 
 
@@ -111,7 +111,7 @@ def noise_time_shift_dataset(time_axis, fs, random_seed=None, num_series=2, norm
                                           nperseg=100,  # no of freq bin = nperseg/2 + 1
                                           noverlap=0,
                                           mode='angle',
-                                          visualize=False,
+                                          return_plot=False,
                                           verbose=False,
                                           vis_max_freq_range=fs/2)
             if normalize:
@@ -211,7 +211,7 @@ def noise_time_shift_xcor_return(time_axis, fs, random_seed=None, num_series=1, 
                                           nperseg=100,  # no of freq bin = nperseg/2 + 1
                                           noverlap=0,  # no overlapped signal in each window take
                                           mode='angle',
-                                          visualize=False,
+                                          return_plot=False,
                                           verbose=False,
                                           vis_max_freq_range=fs / 2)
             phase_map.append(Sxx)

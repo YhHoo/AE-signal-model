@@ -135,7 +135,7 @@ data_noleak_all, data_leak_all = [], []
 pb = ProgressBarForLoop('Spectrogram Transform --> [noleak_2bar]', end=data_noleak.shape[0])
 flag = 0
 for signal_in_time in data_noleak[:]:
-    _, _, mat = spectrogram_scipy(signal_in_time, fs=1e6, noverlap=1000, nperseg=10000, visualize=False, verbose=False)
+    _, _, mat = spectrogram_scipy(signal_in_time, fs=1e6, noverlap=1000, nperseg=10000, return_plot=False, verbose=False)
     # take 0-300kHz only
     data_noleak_all.append(mat[:3000])
     pb.update(now=flag)
@@ -148,7 +148,7 @@ print('NoLeak Data Time Frequency Rep Dim: {}\n'.format(data_noleak_all.shape))
 pb = ProgressBarForLoop('Spectrogram Transform --> [leak_2bar]', end=data_leak.shape[0])
 flag = 0
 for signal_in_time in data_leak[:]:
-    _, _, mat = spectrogram_scipy(signal_in_time, fs=1e6, visualize=False, verbose=False)
+    _, _, mat = spectrogram_scipy(signal_in_time, fs=1e6, return_plot=False, verbose=False)
     # take 0-300kHz only
     data_leak_all.append(mat[:3000])
     pb.update(now=flag)

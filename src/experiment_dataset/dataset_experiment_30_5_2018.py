@@ -18,9 +18,16 @@ class AcousticEmissionDataSet_30_5_2018:
     def plb_4_sensor(self, leak_pos=0):
         # ---------------------[Select the file and read]------------------------
         '''
-        n_channel_data is a 3d matrix where shape[0]-> no of set(sample size),
-                                            shape[1]-> no. of AE data points,
-                                            shape[2]-> no. of sensors
+        :param leak_pos: the leak position on the pipe
+        :return
+        n_channel_data -> 3d matrix where shape[0]-> no of set(sample size),
+                                          shape[1]-> no. of AE data points,
+                                          shape[2]-> no. of sensors
+        phase_map_all -> 4d matrix where shape[0]-> no of set(sample size),
+                                         shape[1]-> no. of sensors
+                                         shape[2]-> no. of freq band,
+                                         shape[3]-> no. of time steps
+
         '''
         if leak_pos is 0:
             n_channel_data = read_all_tdms_from_folder(self.path_0m_plb)
@@ -32,21 +39,20 @@ class AcousticEmissionDataSet_30_5_2018:
             n_channel_data = read_all_tdms_from_folder(self.path_6m_plb)
 
         # ---------------------[STFT into phase maps]------------------------
-
         # for all sets (samples)
         phase_map_all = []
         for set_no in range(n_channel_data.shape[0]):
             phase_map_bank = []
             # for all sensors
             for sensor_no in range(n_channel_data.shape[2]):
-                t, f, Sxx = spectrogram_scipy(n_channel_data[set_no, 500000:1500000, sensor_no],
-                                              fs=1e6,
-                                              nperseg=2000,
-                                              noverlap=0,
-                                              mode='angle',
-                                              visualize=False,
-                                              verbose=True,
-                                              vis_max_freq_range=1e6 / 2)
+                t, f, Sxx, _ = spectrogram_scipy(n_channel_data[set_no, 500000:1500000, sensor_no],
+                                                 fs=1e6,
+                                                 nperseg=2000,
+                                                 noverlap=0,
+                                                 mode='magnitude',
+                                                 return_plot=False,
+                                                 verbose=False,
+                                                 vis_max_freq_range=1e6 / 2)
                 phase_map_bank.append(Sxx)
             phase_map_bank = np.array(phase_map_bank)
             phase_map_all.append(phase_map_bank)
@@ -54,6 +60,8 @@ class AcousticEmissionDataSet_30_5_2018:
         phase_map_all = np.array(phase_map_all)
         print('Phase Map Dim (set_no, sensor_no, freq_band, time steps): ', phase_map_all.shape, '\n')
 
-        return n_channel_data, phase_map_all, f
+        return n_channel_data, phase_map_all, f, t
+
+
 
 

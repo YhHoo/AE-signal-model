@@ -36,6 +36,7 @@ ax3 = fig1.add_subplot(3, 1, 3)
 ax1.plot(t, mix_signal_1)
 ax2.plot(t, mix_signal_2)
 ax3.plot(t, mix_signal_3)
+
 plt.show()
 
 class_1, class_2 = [], []
@@ -45,7 +46,7 @@ for i in range(100):
                                    nperseg=200,
                                    noverlap=0,
                                    mode='angle',
-                                   visualize=False,
+                                   return_plot=False,
                                    verbose=False)
 
     _, _, mat2 = spectrogram_scipy(sampled_data=mix_signal_2,
@@ -53,7 +54,7 @@ for i in range(100):
                                    nperseg=200,
                                    noverlap=0,
                                    mode='angle',
-                                   visualize=False,
+                                   return_plot=False,
                                    verbose=False)
 
     _, _, mat3 = spectrogram_scipy(sampled_data=mix_signal_3,
@@ -61,7 +62,7 @@ for i in range(100):
                                    nperseg=200,
                                    noverlap=0,
                                    mode='angle',
-                                   visualize=False,
+                                   return_plot=False,
                                    verbose=False)
     l = np.array([mat1, mat2, mat3])
     xcor_map = one_dim_xcor_freq_band(input_mat=l, pair_list=[(0, 1), (0, 2)], verbose=False)

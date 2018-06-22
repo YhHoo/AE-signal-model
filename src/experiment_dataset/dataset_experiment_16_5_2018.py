@@ -53,7 +53,7 @@ class AccousticEmissionDataSet_16_5_2018:
                                                  fs=1e6,
                                                  nperseg=10000,
                                                  noverlap=5007,
-                                                 visualize=False,
+                                                 return_plot=False,
                                                  verbose=False,
                                                  save=False,
                                                  save_title='Class[{}] Set[{}]'.format(i, j))

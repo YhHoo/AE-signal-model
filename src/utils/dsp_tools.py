@@ -64,7 +64,7 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=1e3):
 
 # SPECTROGRAM
 def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd',
-                      visualize=False, vis_max_freq_range=None, verbose=False,
+                      return_plot=False, vis_max_freq_range=None, verbose=False,
                       save=False, save_title='Default'):
     '''
     :param sampled_data: A one dimensional data (Size = N), can be list or series
@@ -72,7 +72,8 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd'
     :param nperseg: if higher, f-res higher,  no of freq bin = nperseg/2 + 1 !!
     :param noverlap: if higher, t-res higher
     :param mode: 'psd', 'magnitude', 'angle'(deg), 'phase'(rad), 'complex'
-    :param visualize: Plot Spectrogram or not (Boolean)
+    :param return_plot: return figure object of the spectrogram plot, if False, the returned obj
+    wil become none
     :param verbose: Print out the transformed data summary
     :param save: save the spectrogram as .jpeg
     :param save_title: title of the spectrogram to save
@@ -109,28 +110,44 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd'
         print('Frequency Segment....{}\nFirst 5: {}\nLast 5: {}\n'.format(f.size, f[:5], f[-5:]))
         print('Spectrogram Dim: {}\nF-Resolution: {}Hz/Band\nT-Resolution: {}'.format(Sxx.shape, f_res, t_res))
 
-    if save or visualize:
-        # plotting spectrogram
-        plt.pcolormesh(t, f, Sxx)
-        plt.ylabel('Frequency [Hz]')
-        # display only 0Hz to 300kHz
-        plt.ylim((0, vis_max_freq_range))
-        plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-        plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
-        plt.title(save_title)
-        plt.grid()
-        plt.xlabel('Time [Sec]')
-        plt.colorbar()
+    # plotting spectrogram
+    if return_plot:
+        fig = plt.figure()
+        ax = fig.add_axes([0.1, 0.1, 0.6, 0.8])
+        colorbar_ax = fig.add_axes([0.7, 0.1, 0.05, 0.8])
+        i = ax.pcolormesh(t, f, Sxx)
+        fig.colorbar(i, cax=colorbar_ax)
+        ax.grid()
+        ax.set_xlabel('Time [Sec]')
+        ax.set_ylabel('Frequency [Hz]')
+        ax.set_ylim(bottom=0, top=vis_max_freq_range, auto=True)
+        ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        ax.set_title(save_title)
+    else:
+        fig = None
 
-        if save:
-            plt.savefig('result\{}.png'.format(save_title))
+    # [THIS METHOD OF PLOT IS OBSOLETE]
+    # if save or return_plot:
+        # plt.pcolormesh(t, f, Sxx)
+        # plt.ylabel('Frequency [Hz]')
+        # # display only 0Hz to 300kHz
+        # plt.ylim((0, vis_max_freq_range))
+        # plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        # plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+        # plt.title(save_title)
+        # plt.grid()
+        # plt.xlabel('Time [Sec]')
+        # plt.colorbar()
 
-        if visualize:
-            plt.show()
+        # if save:
+        #     plt.savefig('result\{}.png'.format(save_title))
+        #
+        # if return_plot:
+        #     plt.show()
 
-        plt.close()
+        # plt.close()
 
-    return t, f, Sxx
+    return t, f, Sxx, fig
 
 
 def butter_bandpass_filtfilt(sampled_data, fs, f_hicut, f_locut, order=5):
