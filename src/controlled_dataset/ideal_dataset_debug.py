@@ -41,29 +41,29 @@ plt.show()
 
 class_1, class_2 = [], []
 for i in range(100):
-    t, f, mat1 = spectrogram_scipy(sampled_data=mix_signal_1,
-                                   fs=2500,  # because 2500 points per sec
-                                   nperseg=200,
-                                   noverlap=0,
-                                   mode='angle',
-                                   return_plot=False,
-                                   verbose=False)
+    t, f, mat1, _ = spectrogram_scipy(sampled_data=mix_signal_1,
+                                      fs=2500,  # because 2500 points per sec
+                                      nperseg=200,
+                                      noverlap=0,
+                                      mode='angle',
+                                      return_plot=False,
+                                      verbose=False)
 
-    _, _, mat2 = spectrogram_scipy(sampled_data=mix_signal_2,
-                                   fs=2500,  # because 2500 points per sec
-                                   nperseg=200,
-                                   noverlap=0,
-                                   mode='angle',
-                                   return_plot=False,
-                                   verbose=False)
+    _, _, mat2, _ = spectrogram_scipy(sampled_data=mix_signal_2,
+                                      fs=2500,  # because 2500 points per sec
+                                      nperseg=200,
+                                      noverlap=0,
+                                      mode='angle',
+                                      return_plot=False,
+                                      verbose=False)
 
-    _, _, mat3 = spectrogram_scipy(sampled_data=mix_signal_3,
-                                   fs=2500,  # because 2500 points per sec
-                                   nperseg=200,
-                                   noverlap=0,
-                                   mode='angle',
-                                   return_plot=False,
-                                   verbose=False)
+    _, _, mat3, _ = spectrogram_scipy(sampled_data=mix_signal_3,
+                                      fs=2500,  # because 2500 points per sec
+                                      nperseg=200,
+                                      noverlap=0,
+                                      mode='angle',
+                                      return_plot=False,
+                                      verbose=False)
     l = np.array([mat1, mat2, mat3])
     xcor_map = one_dim_xcor_freq_band(input_mat=l, pair_list=[(0, 1), (0, 2)], verbose=False)
     # signal labelling

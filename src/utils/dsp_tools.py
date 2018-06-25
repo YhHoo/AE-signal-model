@@ -65,7 +65,7 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=1e3):
 # SPECTROGRAM
 def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd',
                       return_plot=False, vis_max_freq_range=None, verbose=False,
-                      save=False, save_title='Default'):
+                      save=False, plot_title='Default'):
     '''
     :param sampled_data: A one dimensional data (Size = N), can be list or series
     :param fs: Sampling frequency
@@ -76,7 +76,7 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd'
     wil become none
     :param verbose: Print out the transformed data summary
     :param save: save the spectrogram as .jpeg
-    :param save_title: title of the spectrogram to save
+    :param plot_title: title of the spectrogram to save
     :param vis_max_freq_range: the maximum freq to include in visualization
     :return: time axis, frequency band and the 2D matrix(shape[0]=freq, shape[1]=time step)
     '''
@@ -122,7 +122,7 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd'
         ax.set_ylabel('Frequency [Hz]')
         ax.set_ylim(bottom=0, top=vis_max_freq_range, auto=True)
         ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-        ax.set_title(save_title)
+        ax.set_title(plot_title)
     else:
         fig = None
 

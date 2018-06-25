@@ -56,7 +56,7 @@ class AccousticEmissionDataSet_16_5_2018:
                                                  return_plot=False,
                                                  verbose=False,
                                                  save=False,
-                                                 save_title='Class[{}] Set[{}]'.format(i, j))
+                                                 plot_title='Class[{}] Set[{}]'.format(i, j))
                 # split 5 sec into 25x0.2sec for bigger sample size
                 # take only 0 - 300kHz (3000 points) out of 0 - 500kHz (5001 points)
                 index_start = 0
