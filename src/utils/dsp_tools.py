@@ -63,7 +63,7 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=1e3):
 
 
 # SPECTROGRAM
-def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd',
+def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, nfft=None, mode='psd',
                       return_plot=False, vis_max_freq_range=None, verbose=False,
                       save=False, plot_title='Default'):
     '''
@@ -71,6 +71,8 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd'
     :param fs: Sampling frequency
     :param nperseg: if higher, f-res higher,  no of freq bin = nperseg/2 + 1 !!
     :param noverlap: if higher, t-res higher
+    :param nfft: if set to 500, and if nperseg is 400, 100 zeros will be added to the 400 points signal to make it 500.
+    this is to simply increase the segmented length so that more freq res is obtained.
     :param mode: 'psd', 'magnitude', 'angle'(deg), 'phase'(rad), 'complex'
     :param return_plot: return figure object of the spectrogram plot, if False, the returned obj
     wil become none
@@ -97,8 +99,9 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, mode='psd'
     f, t, Sxx = spectrogram(sampled_data,
                             fs=fs,
                             scaling='spectrum',
-                            nperseg=nperseg,  # ori=10000
-                            noverlap=noverlap,  # ori=5007
+                            nperseg=nperseg,
+                            noverlap=noverlap,
+                            nfft=nfft,
                             mode=mode)
     f_res = fs / (2 * (f.size - 1))
     t_res = (sampled_data.shape[0] / fs) / t.size

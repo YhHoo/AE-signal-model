@@ -269,14 +269,15 @@ def break_into_train_test(input, label, num_classes, shuffled_each_class=True, t
     return train_x, train_y, test_x, test_y
 
 
-def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title):
+def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title, vis_range=[None, None, None, None]):
     '''
     :param x_axis: the actual x-axis we wish to see in cartesian plane
     :param y_axis: the actual y-axis we wish to see in cartesian plane
     :param zxx: Zxx is a matrix of dim: (y_axis.size, x_axis.size)
     :param label: List of string labels for [x_axis, y_axis, z_axis]
     :param output: bar_chart or color_map output
-    :param show: show up the plot
+    :param vis_range: axis[0] and [1] is y-axis min n max, axis[2] and [3] is x-axis min n max
+    Note that they only applies for visualization, the data is fully generated anyway.
     :param title: title on top of the plot
     :return: plot()
     '''
@@ -295,12 +296,26 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title):
         ax.set_ylabel(label[1])
         ax.set_zlabel(label[2])
     elif output is '2d':
-        plt.figure(figsize=(9, 5))  # 8 inches square
-        plt.title(title)
-        plt.pcolormesh(x_axis, y_axis, zxx)
-        plt.xlabel(label[0])
-        plt.ylabel(label[1])
-        plt.colorbar()
+        fig = plt.figure(figsize=(9, 5))
+        ax = fig.add_axes([0.1, 0.1, 0.6, 0.8])
+        ax.set_title(title)
+        colorbar_ax = fig.add_axes([0.7, 0.1, 0.05, 0.8])
+        i = ax.pcolormesh(x_axis, y_axis, zxx)
+        fig.colorbar(i, cax=colorbar_ax)
+        ax.grid()
+        ax.set_xlabel('Time [Sec]')
+        ax.set_ylabel('Frequency [Hz]')
+        ax.set_ylim(bottom=vis_range[0], top=vis_range[1], auto=True)
+        ax.set_xlim(left=vis_range[2], right=vis_range[3], auto=True)
+        ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+
+        # plt.figure(figsize=(9, 5))  # 8 inches square
+        # plt.title(title)
+        # plt.pcolormesh(x_axis, y_axis, zxx)
+        # plt.xlabel(label[0])
+        # plt.set_ylim()
+        # plt.ylabel(label[1])
+        # plt.colorbar()
 
     # set to false when we wan to save a series of plot
     return plt

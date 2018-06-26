@@ -1,98 +1,29 @@
+'''
+This script is used to analyze the PLB data sets from experiment 30_5_2018. We aim to finds the recognizable 2d patterns
+from the plb time series data, either by STFT in magnitude, phase... and Wavelet.
+'''
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 # self lib
 from src.experiment_dataset.dataset_experiment_30_5_2018 import AcousticEmissionDataSet_30_5_2018
 from src.utils.dsp_tools import one_dim_xcor_freq_band, spectrogram_scipy
 from src.utils.helpers import three_dim_visualizer
+from src.utils.plb_analysis_tools import dual_sensor_xcor_with_stft_qiuckview
+
 
 # -------------------[Xcor testing of spectrogram output]-------------------
 data = AcousticEmissionDataSet_30_5_2018(drive='E')
-ft_mode = 'magnitude'  # mag, angle, phase
+set_no = 2
 
 # data acquisition for leak pos @ 0m----------------
-n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=0)
-# plotting the time series data of the sensors
-fig1 = plt.figure()
-fig1.subplots_adjust(hspace=0.5)
-# fig 1
-ax11 = fig1.add_subplot(2, 1, 1)
-ax11.set_title('Time series sensor [-1m] @ 0m')
-ax12 = fig1.add_subplot(2, 1, 2)
-ax12.set_title('Time series sensor [22m] @ 0m')
-ax11.plot(n_channel_data[1, 500000:1500000, 1])
-ax12.plot(n_channel_data[1, 500000:1500000, 2])
-
-_, freq_axis, sxx1, figA1 = spectrogram_scipy(sampled_data=n_channel_data[1, 500000:1500000, 1],
-                                              fs=1e6,
-                                              nperseg=1000,
-                                              noverlap=0,
-                                              mode=ft_mode,
-                                              return_plot=True,
-                                              plot_title='Freq-Time rep of sensor [-1m] @ 0m',
-                                              verbose=True, vis_max_freq_range=1e5)
-
-_, _, sxx2, figB1 = spectrogram_scipy(sampled_data=n_channel_data[1, 500000:1500000, 2],
-                                      fs=1e6,
-                                      nperseg=1000,
-                                      noverlap=0,
-                                      mode=ft_mode,
-                                      return_plot=True,
-                                      plot_title='Freq-Time rep of sensor [22m] @ 0m',
-                                      verbose=True, vis_max_freq_range=1e5)
-mag_map = np.array([sxx1, sxx2])
-sensor_pair = [(0, 1)]
-xcor_map = one_dim_xcor_freq_band(input_mat=mag_map,
-                                  pair_list=sensor_pair,
-                                  verbose=True)
-xcor_fig_1 = three_dim_visualizer(x_axis=np.arange(1, xcor_map.shape[2] + 1, 1),
-                                  y_axis=freq_axis,
-                                  zxx=xcor_map[0],
-                                  label=['Xcor_steps', 'Frequency', 'Correlation Score'],
-                                  output='2d',
-                                  title='PLB Mag Map Xcor - Sensor[-1m] x Sensor[22m] - Set1 @ 0m')
-
-# data acquisition for leak pos @ 2m----------------
-n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=2)
-# plotting the time series data of the sensors
-fig1 = plt.figure()
-fig1.subplots_adjust(hspace=0.5)
-# fig 1
-ax11 = fig1.add_subplot(2, 1, 1)
-ax11.set_title('Time series sensor [-1m] @ 2m')
-ax12 = fig1.add_subplot(2, 1, 2)
-ax12.set_title('Time series sensor [22m] @ 2m')
-ax11.plot(n_channel_data[1, 500000:1500000, 1])
-ax12.plot(n_channel_data[1, 500000:1500000, 2])
-
-_, freq_axis, sxx1, figA2 = spectrogram_scipy(sampled_data=n_channel_data[1, 500000:1500000, 1],
-                                              fs=1e6,
-                                              nperseg=1000,
-                                              noverlap=0,
-                                              mode=ft_mode,
-                                              return_plot=True,
-                                              plot_title='Freq-Time rep of sensor [-1m] @ 2m',
-                                              verbose=True, vis_max_freq_range=1e5)
-
-_, _, sxx2, figB2 = spectrogram_scipy(sampled_data=n_channel_data[1, 500000:1500000, 2],
-                                      fs=1e6,
-                                      nperseg=1000,
-                                      noverlap=0,
-                                      mode=ft_mode,
-                                      return_plot=True,
-                                      plot_title='Freq-Time rep of sensor [22m] @ 2m',
-                                      verbose=True, vis_max_freq_range=1e5)
-mag_map = np.array([sxx1, sxx2])
-sensor_pair = [(0, 1)]
-xcor_map = one_dim_xcor_freq_band(input_mat=mag_map,
-                                  pair_list=sensor_pair,
-                                  verbose=True)
-xcor_fig_2 = three_dim_visualizer(x_axis=np.arange(1, xcor_map.shape[2] + 1, 1),
-                                  y_axis=freq_axis,
-                                  zxx=xcor_map[0],
-                                  label=['Xcor_steps', 'Frequency', 'Correlation Score'],
-                                  output='2d',
-                                  title='PLB Mag Map Xcor - Sensor[-1m] x Sensor[22m] - Set1 @ 2m')
-
+n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=4)
+fig1, fig2, fig3, fig4 = dual_sensor_xcor_with_stft_qiuckview(data_1=n_channel_data[set_no, 500000:1500000, 1],
+                                                              data_2=n_channel_data[set_no, 500000:1500000, 2],
+                                                              stft_mode='magnitude',
+                                                              stft_nperseg=200,
+                                                              plot_label=['4m', '-1m', '22m'],
+                                                              save_selection=[0, 0, 0, 0])
 plt.show()
 
 # ----------------------[Visualize in Time and Saving]----------------------------

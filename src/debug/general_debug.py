@@ -4,32 +4,40 @@ from scipy import signal
 from src.controlled_dataset.ideal_dataset import white_noise
 # import mayavi.mlab as mlb
 
-t = np.linspace(0, 10, 11)
-f = np.linspace(10, 100, 11)
-mat = np.arange(0, 100, 1).reshape((10, 10))
-print(t.shape)
-print(f.shape)
-print(mat.shape)
-print(mat)
+# t = np.linspace(0, 10, 11)
+# f = np.linspace(10, 100, 11)
+# mat = np.arange(0, 100, 1).reshape((10, 10))
+# print(t.shape)
+# print(f.shape)
+# print(mat.shape)
+# print(mat)
 
+l = ['a', 'b', 'c']
+m = 'x'
+print(len(l))
+# for i in l:
+#     if m is i:
+#
+#
+# assert m == item for i in l
 
-def colormapplot():
-    fig = plt.figure()
-    ax = fig.add_axes([0.1, 0.1, 0.6, 0.8])
-    colorbar_ax = fig.add_axes([0.7, 0.1, 0.05, 0.8])
-    i = ax.pcolormesh(t, f, mat)
-    ax.grid()
-    fig.colorbar(i, cax=colorbar_ax)
-
-    return fig
-
-
-for i in range(3):
-    _ = colormapplot()
-    plt.close()
-
-fig1 = colormapplot()
-plt.show()
+# def colormapplot():
+#     fig = plt.figure()
+#     ax = fig.add_axes([0.1, 0.1, 0.6, 0.8])
+#     colorbar_ax = fig.add_axes([0.7, 0.1, 0.05, 0.8])
+#     i = ax.pcolormesh(t, f, mat)
+#     ax.grid()
+#     fig.colorbar(i, cax=colorbar_ax)
+#
+#     return fig
+#
+#
+# for i in range(3):
+#     _ = colormapplot()
+#     plt.close()
+#
+# fig1 = colormapplot()
+# plt.show()
 
 
 
