@@ -70,7 +70,7 @@ def dual_sensor_xcor_with_stft_qiuckview(data_1, data_2, stft_mode, stft_nperseg
                                     y_axis=freq_axis,
                                     zxx=xcor_map[0],
                                     label=['Xcor_steps', 'Frequency', 'Correlation Score'],
-                                    output='2d', vis_range=[],
+                                    output='2d', vis_range=[0, 1e5, 4000, 6000],
                                     title='PLB {} Map Xcor - Sensor[{}] x Sensor[{}] - @ {}'
                                     .format(stft_mode, plot_label[1], plot_label[2], plot_label[0]))
 

@@ -14,17 +14,17 @@ from src.utils.plb_analysis_tools import dual_sensor_xcor_with_stft_qiuckview
 
 # -------------------[Xcor testing of spectrogram output]-------------------
 data = AcousticEmissionDataSet_30_5_2018(drive='E')
-set_no = 2
+set_no = 1
 
 # data acquisition for leak pos @ 0m----------------
-n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=4)
+n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=6)
 fig1, fig2, fig3, fig4 = dual_sensor_xcor_with_stft_qiuckview(data_1=n_channel_data[set_no, 500000:1500000, 1],
                                                               data_2=n_channel_data[set_no, 500000:1500000, 2],
                                                               stft_mode='magnitude',
                                                               stft_nperseg=200,
-                                                              plot_label=['4m', '-1m', '22m'],
-                                                              save_selection=[0, 0, 0, 0])
-plt.show()
+                                                              plot_label=['6m', '-1m', '22m'],
+                                                              save_selection=[0, 0, 0, 1])
+
 
 # ----------------------[Visualize in Time and Saving]----------------------------
 time_analysis = False
