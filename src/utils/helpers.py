@@ -285,6 +285,7 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title, vis_range=[N
     assert x_axis.size == zxx.shape[1], 'axis [1] of zxx differ from x_axis.size'
     assert y_axis.size == zxx.shape[0], 'axis [0] of zxx differ from y_axis.size'
     assert output is not None, 'Please specify Output'
+    print('Visualizing...')
 
     if output is '3d':
         fig = plt.figure()

@@ -13,7 +13,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 # FAST FOURIER TRANSFORM (FFT)
-def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=1e3):
+def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=None):
     '''
     :param sampled_data: A one dimensional data (Size = N), can be list or series
     :param fs: Sampling frequency
@@ -21,6 +21,10 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=1e3):
     :param vis_max_freq_range: the maximum freq to include in visualization
     :return: amplitude and the frequency spectrum (Size = N // 2)
     '''
+    # visualize freq
+    if vis_max_freq_range is None:
+        vis_max_freq_range = fs/2
+
     # Sample points and sampling frequency
     N = sampled_data.size
     # fft
@@ -38,6 +42,7 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=1e3):
     if visualize:
 
         # use sci. notation at the x-axis value
+        plt.subplots_adjust(hspace=0.5)
         plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         # plot only 0Hz to specified freq

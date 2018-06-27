@@ -4,26 +4,90 @@ from the plb time series data, either by STFT in magnitude, phase... and Wavelet
 '''
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
+from scipy.signal import cwt, ricker
 # self lib
 from src.experiment_dataset.dataset_experiment_30_5_2018 import AcousticEmissionDataSet_30_5_2018
-from src.utils.dsp_tools import one_dim_xcor_freq_band, spectrogram_scipy
+from src.utils.dsp_tools import one_dim_xcor_freq_band, butter_bandpass_filtfilt
 from src.utils.helpers import three_dim_visualizer
 from src.utils.plb_analysis_tools import dual_sensor_xcor_with_stft_qiuckview
 
 
-# -------------------[Xcor testing of spectrogram output]-------------------
+# -------------------[PLB TEST - Xcor testing of spectrogram output]-------------------
 data = AcousticEmissionDataSet_30_5_2018(drive='E')
 set_no = 1
 
 # data acquisition for leak pos @ 0m----------------
-n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=6)
-fig1, fig2, fig3, fig4 = dual_sensor_xcor_with_stft_qiuckview(data_1=n_channel_data[set_no, 500000:1500000, 1],
-                                                              data_2=n_channel_data[set_no, 500000:1500000, 2],
-                                                              stft_mode='magnitude',
-                                                              stft_nperseg=200,
-                                                              plot_label=['6m', '-1m', '22m'],
-                                                              save_selection=[0, 0, 0, 1])
+n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=0)
+
+# bandpass from 20kHz to 100kHz
+input_signal_1 = n_channel_data[set_no, 850000:1000000, 1]
+input_signal_2 = n_channel_data[set_no, 850000:1000000, 2]
+input_signal_3 = n_channel_data[set_no, 850000:1000000, 1]
+filtered_signal_1 = butter_bandpass_filtfilt(sampled_data=input_signal_1, fs=1e6, f_hicut=1e5, f_locut=20e3)
+filtered_signal_2 = butter_bandpass_filtfilt(sampled_data=input_signal_2, fs=1e6, f_hicut=1e5, f_locut=20e3)
+
+stft_analysis = False
+if stft_analysis:
+    fig1, fig2, fig3, fig4 = dual_sensor_xcor_with_stft_qiuckview(data_1=filtered_signal_1,
+                                                                  data_2=filtered_signal_2,
+                                                                  stft_mode='magnitude',
+                                                                  stft_nperseg=200,
+                                                                  plot_label=['0m', '-1m', '22m'],
+                                                                  save_selection=[0, 0, 0, 0])
+
+
+# -------------------[Wavelet Transform]-------------------
+widths = np.arange(1, 100)
+cwtmatr_1 = cwt(filtered_signal_1, ricker, widths)
+cwtmatr_2 = cwt(filtered_signal_2, ricker, widths)
+t = np.arange(850000, 1000000, 1)  # to be defined
+print(cwtmatr_1.shape)
+print(cwtmatr_2.shape)
+
+cwt_map = np.array([cwtmatr_1, cwtmatr_2])
+sensor_pair = [(0, 1)]
+xcor_map = one_dim_xcor_freq_band(input_mat=cwt_map,
+                                  pair_list=sensor_pair,
+                                  verbose=True)
+fig_xcor = three_dim_visualizer(x_axis=np.arange(1, xcor_map.shape[2] + 1, 1),
+                                y_axis=widths,
+                                zxx=xcor_map,
+                                label=['time steps', 'Wavelet Width', 'Correlation Score'],
+                                output='2d',
+                                title='Wavelet Transform')
+
+# figori = plt.figure()
+# ax1 = figori.add_subplot(1, 1, 1)
+# ax1.set_title('Input Signal')
+# ax1.plot(t, input_signal_3)
+
+# plotting components for CWT
+# width_to_plot = [1, 30, 50, 65, 80]
+# fig_cwt_component = plt.figure(figsize=(8, 5))
+# ax_component_1 = fig_cwt_component.add_subplot(5, 1, 1)
+# ax_component_2 = fig_cwt_component.add_subplot(5, 1, 2)
+# ax_component_3 = fig_cwt_component.add_subplot(5, 1, 3)
+# ax_component_4 = fig_cwt_component.add_subplot(5, 1, 4)
+# ax_component_5 = fig_cwt_component.add_subplot(5, 1, 5)
+# ax_component_1.set_title('Width = {}'.format(width_to_plot[0]))
+# ax_component_2.set_title('Width = {}'.format(width_to_plot[1]))
+# ax_component_3.set_title('Width = {}'.format(width_to_plot[2]))
+# ax_component_4.set_title('Width = {}'.format(width_to_plot[3]))
+# ax_component_5.set_title('Width = {}'.format(width_to_plot[4]))
+# ax_component_1.plot(cwtmatr[width_to_plot[0], :])
+# ax_component_2.plot(cwtmatr[width_to_plot[1], :])
+# ax_component_3.plot(cwtmatr[width_to_plot[2], :])
+# ax_component_4.plot(cwtmatr[width_to_plot[3], :])
+# ax_component_5.plot(cwtmatr[width_to_plot[4], :])
+
+# fig_cwt = three_dim_visualizer(x_axis=np.arange(1, cwtmatr.shape[1] + 1, 1),
+#                                y_axis=widths,
+#                                zxx=cwtmatr,
+#                                label=['time steps', 'Wavelet Width', 'Correlation Score'],
+#                                output='2d',
+#                                title='Wavelet Transform')
+plt.subplots_adjust(hspace=0.6)
+plt.show()
 
 
 # ----------------------[Visualize in Time and Saving]----------------------------
