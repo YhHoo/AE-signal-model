@@ -189,6 +189,7 @@ def one_dim_xcor_freq_band(input_mat, pair_list, verbose):
                                         shape[1] -> freq band,
                                         shape[1] -> xcor steps
     '''
+    print('One dim xcor from freq band...')
     # ensure they hv equal number of axis[1] or freq band
     try:
         # simply accessing
