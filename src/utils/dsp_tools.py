@@ -218,13 +218,13 @@ def one_dim_xcor_freq_band(input_mat, pair_list, verbose):
     xcor_bank = np.array(xcor_bank)
 
     if verbose:
-        print('---------One-Dimensional X-correlation---------')
+        print('\n---------One-Dimensional X-correlation---------')
         print('Xcor Map Dim (No. of xcor map, freq band, xcor steps): ', xcor_bank.shape)
 
     return xcor_bank
 
 
-# [In the Process of Writing]
+# [UNNECESSARY WRAPPER FOR CWT, UNLESS IT SERVES A GREAT SHORTCUT]
 def continuous_wavelet_transform_scipy(input_signal):
     widths = np.arange(1, 31)
     cwtmatr = cwt(input_signal, ricker, widths)
