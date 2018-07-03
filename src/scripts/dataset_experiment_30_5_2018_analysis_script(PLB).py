@@ -37,80 +37,83 @@ if stft_analysis:
 
 
 # -------------------[Wavelet Transform]-------------------
-widths = np.array([1, 10, 20.3, 30])
-cwtmatr_1 = cwt(filtered_signal_1, ricker, widths)
-cwtmatr_2 = cwt(filtered_signal_2, ricker, widths)
+widths = np.array([1, 5, 10, 15])
+widths_2 = np.arange(1, 20, 0.1)
+cwtmatr_1 = cwt(filtered_signal_1, ricker, widths_2)
+cwtmatr_2 = cwt(filtered_signal_2, ricker, widths_2)
 t = np.arange(850000, 1000000, 1)  # to be defined
 print(cwtmatr_1.shape)
 print(cwtmatr_2.shape)
 
-cwt_map = np.array([cwtmatr_1, cwtmatr_2])
-sensor_pair = [(0, 1)]
-xcor_map = one_dim_xcor_freq_band(input_mat=cwt_map,
-                                  pair_list=sensor_pair,
-                                  verbose=True)
-# fig_xcor = three_dim_visualizer(x_axis=np.arange(1, xcor_map.shape[2] + 1, 1),
-#                                 y_axis=widths,
-#                                 zxx=xcor_map[0],
-#                                 label=['time steps', 'Wavelet Width', 'Correlation Score'],
-#                                 output='2d',
-#                                 title='Wavelet Transform')
+cwt_amplitude_plot = False
+if cwt_amplitude_plot:
+    cwtmatr_1_max = np.array([i.max() for i in cwtmatr_1])
+    cwtmatr_2_max = np.array([i.max() for i in cwtmatr_2])
+    fig_cwt_amplitude = plt.figure(figsize=(8, 5))
+    ax_cwt_amp_sensor1 = fig_cwt_amplitude.add_subplot(2, 1, 1)
+    ax_cwt_amp_sensor2 = fig_cwt_amplitude.add_subplot(2, 1, 2)
+    # set title of subplots
+    ax_cwt_amp_sensor1.set_title('Maximum Coefficient in CWT of Sensor 1 data against the Widths')
+    ax_cwt_amp_sensor2.set_title('Maximum Coefficient in CWT of Sensor 2 data against the Widths')
+    # plot
+    ax_cwt_amp_sensor1.plot(widths_2, cwtmatr_1_max)
+    ax_cwt_amp_sensor2.plot(widths_2, cwtmatr_2_max)
 
-# fig_ori = plt.figure()
-# ax1 = fig_ori.add_subplot(1, 1, 1)
-# ax1.set_title('Input Signal')
-# ax1.plot(t, input_signal_3)
 
-# plotting components for CWT xcor result
-# width_to_plot = [1, 30, 50, 65, 80]
-fig_cwt_component = plt.figure(figsize=(8, 5))
-fig_cwt_component.suptitle('CWT Components')
-ax_component_1 = fig_cwt_component.add_subplot(4, 1, 1)
-ax_component_2 = fig_cwt_component.add_subplot(4, 1, 2)
-ax_component_3 = fig_cwt_component.add_subplot(4, 1, 3)
-ax_component_4 = fig_cwt_component.add_subplot(4, 1, 4)
-# ax_component_5 = fig_cwt_component.add_subplot(5, 1, 5)
-ax_component_1.set_title('Width = {}'.format(widths[0]))
-ax_component_2.set_title('Width = {}'.format(widths[1]))
-ax_component_3.set_title('Width = {}'.format(widths[2]))
-ax_component_4.set_title('Width = {}'.format(widths[3]))
-# ax_component_5.set_title('Width = {}'.format(width_to_plot[4]))
-ax_component_1.plot(cwtmatr_1[0, :])
-ax_component_2.plot(cwtmatr_1[1, :])
-ax_component_3.plot(cwtmatr_1[2, :])
-ax_component_4.plot(cwtmatr_1[3, :])
+xcor_in_cwt = True
+if xcor_in_cwt:
+    cwt_map = np.array([cwtmatr_1, cwtmatr_2])
+    sensor_pair = [(0, 1)]
+    xcor_map = one_dim_xcor_freq_band(input_mat=cwt_map,
+                                      pair_list=sensor_pair,
+                                      verbose=True)
+    # plotting components for CWT xcor result
+    fig_cwt_component = plt.figure(figsize=(8, 5))
+    fig_cwt_component.suptitle('CWT Components')
+    ax_component_1 = fig_cwt_component.add_subplot(4, 1, 1)
+    ax_component_2 = fig_cwt_component.add_subplot(4, 1, 2)
+    ax_component_3 = fig_cwt_component.add_subplot(4, 1, 3)
+    ax_component_4 = fig_cwt_component.add_subplot(4, 1, 4)
+    # ax_component_5 = fig_cwt_component.add_subplot(5, 1, 5)
+    ax_component_1.set_title('Width = {}'.format(widths[0]))
+    ax_component_2.set_title('Width = {}'.format(widths[1]))
+    ax_component_3.set_title('Width = {}'.format(widths[2]))
+    ax_component_4.set_title('Width = {}'.format(widths[3]))
+    # ax_component_5.set_title('Width = {}'.format(width_to_plot[4]))
+    ax_component_1.plot(cwtmatr_1[0, :])
+    ax_component_2.plot(cwtmatr_1[1, :])
+    ax_component_3.plot(cwtmatr_1[2, :])
+    ax_component_4.plot(cwtmatr_1[3, :])
+    # setting
+    plt.subplots_adjust(hspace=0.6)
 
-plt.subplots_adjust(hspace=0.6)
+    fig_cwt_xcor = plt.figure(figsize=(8, 5))
+    fig_cwt_xcor.suptitle('CWT Xcor Result')
+    ax_component_xcor_1 = fig_cwt_xcor.add_subplot(4, 1, 1)
+    ax_component_xcor_2 = fig_cwt_xcor.add_subplot(4, 1, 2)
+    ax_component_xcor_3 = fig_cwt_xcor.add_subplot(4, 1, 3)
+    ax_component_xcor_4 = fig_cwt_xcor.add_subplot(4, 1, 4)
+    # naming
+    ax_component_xcor_1.set_title('Width = {}'.format(widths[0]))
+    ax_component_xcor_2.set_title('Width = {}'.format(widths[1]))
+    ax_component_xcor_3.set_title('Width = {}'.format(widths[2]))
+    ax_component_xcor_4.set_title('Width = {}'.format(widths[3]))
+    # plot
+    ax_component_xcor_1.plot(xcor_map[0, 0, :])
+    ax_component_xcor_2.plot(xcor_map[0, 1, :])
+    ax_component_xcor_3.plot(xcor_map[0, 2, :])
+    ax_component_xcor_4.plot(xcor_map[0, 3, :])
+    # setting
+    plt.subplots_adjust(hspace=0.6)
 
-# ax_component_5.plot(cwtmatr[width_to_plot[4], :])
-
-# fig_cwt = three_dim_visualizer(x_axis=np.arange(1, cwtmatr.shape[1] + 1, 1),
-#                                y_axis=widths,
-#                                zxx=cwtmatr,
-#                                label=['time steps', 'Wavelet Width', 'Correlation Score'],
-#                                output='2d',
-#                                title='Wavelet Transform')
-
-fig_cwt_xcor = plt.figure(figsize=(8, 5))
-fig_cwt_xcor.suptitle('CWT Xcor Result')
-ax_component_xcor_1 = fig_cwt_xcor.add_subplot(4, 1, 1)
-ax_component_xcor_2 = fig_cwt_xcor.add_subplot(4, 1, 2)
-ax_component_xcor_3 = fig_cwt_xcor.add_subplot(4, 1, 3)
-ax_component_xcor_4 = fig_cwt_xcor.add_subplot(4, 1, 4)
-# naming
-ax_component_xcor_1.set_title('Width = {}'.format(widths[0]))
-ax_component_xcor_2.set_title('Width = {}'.format(widths[1]))
-ax_component_xcor_3.set_title('Width = {}'.format(widths[2]))
-ax_component_xcor_4.set_title('Width = {}'.format(widths[3]))
-# plot
-ax_component_xcor_1.plot(xcor_map[0, 0, :])
-ax_component_xcor_2.plot(xcor_map[0, 1, :])
-ax_component_xcor_3.plot(xcor_map[0, 2, :])
-ax_component_xcor_4.plot(xcor_map[0, 3, :])
-
-plt.subplots_adjust(hspace=0.6)
-
-plt.show()
+    fig_xcor = three_dim_visualizer(x_axis=np.arange(1, xcor_map.shape[2] + 1, 1),
+                                    y_axis=widths_2,
+                                    zxx=xcor_map[0],
+                                    label=['time steps', 'Wavelet Width', 'Correlation Score'],
+                                    output='2d',
+                                    title='CWT Xcor(Normalized) of Sensor[-1m] and Sensor[22m]')
+    fig_xcor.savefig('Xcor Map')
+    plt.show()
 
 
 # ----------------------[Visualize in Time and Saving]----------------------------

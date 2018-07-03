@@ -304,8 +304,8 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title, vis_range=[N
         i = ax.pcolormesh(x_axis, y_axis, zxx)
         fig.colorbar(i, cax=colorbar_ax)
         ax.grid()
-        ax.set_xlabel('Time [Sec]')
-        ax.set_ylabel('Frequency [Hz]')
+        ax.set_xlabel(label[0])
+        ax.set_ylabel(label[1])
         ax.set_ylim(bottom=vis_range[0], top=vis_range[1], auto=True)
         ax.set_xlim(left=vis_range[2], right=vis_range[3], auto=True)
         ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
@@ -353,3 +353,4 @@ def read_all_tdms_from_folder(folder_path=None):
     print('Read Data Dim: ', n_channel_matrix.shape, '\n')
 
     return n_channel_matrix
+

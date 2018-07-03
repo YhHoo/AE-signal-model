@@ -1,11 +1,21 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
+from scipy.signal import find_peaks
+# self lib
 from src.controlled_dataset.ideal_dataset import white_noise
-# import mayavi.mlab as mlb
 
-l = np.arange(0, 10)
-print(l)
+
+fig = plt.figure(figsize=(10, 7))
+ax11 = fig.add_subplot(2, 2, 1)
+ax21 = fig.add_subplot(2, 2, 2)
+ax12 = fig.add_subplot(2, 2, 3)
+ax22 = fig.add_subplot(2, 2, 4)
+ax11.set_title('a')
+ax21.set_title('b')
+ax12.set_title('c')
+ax22.set_title('d')
+plt.show()
 
 # t = np.linspace(0, 10, 11)
 # f = np.linspace(10, 100, 11)
@@ -53,8 +63,6 @@ print(l)
 #
 # fig1 = colormapplot()
 # plt.show()
-
-
 
 
 # three_dim_visualizer()

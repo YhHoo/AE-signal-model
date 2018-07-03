@@ -14,6 +14,8 @@ class AcousticEmissionDataSet_30_5_2018:
         self.path_2m_plb = self.drive + 'Experiment_30_5_2018/test1_-2,-1,22,23m/PLB, Hammer/2m/PLB/'
         self.path_4m_plb = self.drive + 'Experiment_30_5_2018/test1_-2,-1,22,23m/PLB, Hammer/4m/PLB/'
         self.path_6m_plb = self.drive + 'Experiment_30_5_2018/test1_-2,-1,22,23m/PLB, Hammer/6m/PLB/'
+        self.path_leak_1bar_5mm = self.drive + 'Experiment_30_5_2018/test1_-2,-1,22,23m/leak/5_mm/1_bar/'
+        self.path_noleak_1bar_5mm = self.drive + 'Experiment_30_5_2018/test1_-2,-1,22,23m/no_leak/1_bar/'
 
     def plb_4_sensor(self, leak_pos=0):
         # ---------------------[Select the file and read]------------------------
@@ -61,6 +63,26 @@ class AcousticEmissionDataSet_30_5_2018:
         print('Phase Map Dim (set_no, sensor_no, freq_band, time steps): ', phase_map_all.shape, '\n')
 
         return n_channel_data, phase_map_all, f, t
+
+    def leak_noleak_4_sensor(self, leak=True):
+        # leak pos at 0m, 1bar, 5mm hole
+        # ---------------------[Select the file and read]------------------------
+        '''
+        :param leak: True is leak, False is no leak
+        :return
+        n_channel_data -> 3d matrix where shape[0]-> no of set(sample size),
+                                          shape[1]-> no. of AE data points,
+                                          shape[2]-> no. of sensors
+        '''
+        if leak is True:
+            n_channel_data = read_all_tdms_from_folder(self.path_leak_1bar_5mm)
+        else:
+            n_channel_data = read_all_tdms_from_folder(self.path_noleak_1bar_5mm)
+
+        return n_channel_data
+
+
+
 
 
 
