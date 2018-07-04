@@ -58,6 +58,25 @@ for s, p in zip(set_no, pos):
     print('CWT output 1 dim: ', cwtmatr_1.shape)
     print('CWT output 2 dim: ', cwtmatr_2.shape)
 
+    fig_cwt_1 = three_dim_visualizer(x_axis=np.arange(1, cwtmatr_1.shape[1] + 1, 1),
+                                     y_axis=widths_2,
+                                     zxx=cwtmatr_1,
+                                     label=['time steps', 'Wavelet Width', 'CWT Coefficient'],
+                                     output='2d',
+                                     title='CWT Coef of Sensor[-1m], Source @ {}m'.format(p))
+    fig_cwt_2 = three_dim_visualizer(x_axis=np.arange(1, cwtmatr_2.shape[1] + 1, 1),
+                                     y_axis=widths_2,
+                                     zxx=cwtmatr_2,
+                                     label=['time steps', 'Wavelet Width', 'CWT Coefficient'],
+                                     output='2d',
+                                     title='CWT Coef of Sensor[-1m], Source @ {}m'.format(p))
+    path_s1 = '{}CWT_sensor[{}m]_Source@{}m'.format(savepath, '-1m', p)
+    path_s2 = '{}CWT_sensor[{}m]_Source@{}m'.format(savepath, '22m', p)
+    fig_cwt_1.savefig(path_s1)
+    fig_cwt_2.savefig(path_s2)
+    plt.close()
+    print('Saved !')
+
     cwt_amplitude_plot = False
     if cwt_amplitude_plot:
         cwtmatr_1_max = np.array([i.max() for i in cwtmatr_1])
@@ -128,9 +147,9 @@ for s, p in zip(set_no, pos):
                                         zxx=xcor_map[0],
                                         label=['time steps', 'Wavelet Width', 'Correlation Score'],
                                         output='2d',
-                                        title='CWT Xcor(Normalized) of Sensor[-1m] and Sensor[22m], Source @ {}m'
+                                        title='CWT Xcor(Normalized+DowSmp) of Sensor[-1m] and Sensor[22m], Source @ {}m'
                                         .format(p))
-        path = '{}XcorMap_Source @ {}m'.format(savepath, p)
+        path = '{}XcorMap_Source @ {}m_DowSmp'.format(savepath, p)
         fig_xcor.savefig(path)
         print('Saved !')
         plt.close()
