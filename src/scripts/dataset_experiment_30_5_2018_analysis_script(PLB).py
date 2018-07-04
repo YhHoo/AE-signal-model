@@ -39,7 +39,7 @@ if stft_analysis:
 
 # -------------------[Wavelet Transform]-------------------
 widths = np.array([1, 5, 10, 15])
-widths_2 = np.arange(1, 20, 0.1)
+widths_2 = np.arange(1, 20, 0.5)
 
 savepath = 'C:/Users/YH/Desktop/hooyuheng.masterWork/MASTER_PAPERWORK/' \
            'My Practical Work------------/Exp30_5_2018/PLB test/'
@@ -69,7 +69,7 @@ for s, p in zip(set_no, pos):
                                      zxx=cwtmatr_2,
                                      label=['time steps', 'Wavelet Width', 'CWT Coefficient'],
                                      output='2d',
-                                     title='CWT Coef of Sensor[-1m], Source @ {}m'.format(p))
+                                     title='CWT Coef of Sensor[22m], Source @ {}m'.format(p))
     path_s1 = '{}CWT_sensor[{}m]_Source@{}m'.format(savepath, '-1m', p)
     path_s2 = '{}CWT_sensor[{}m]_Source@{}m'.format(savepath, '22m', p)
     fig_cwt_1.savefig(path_s1)
