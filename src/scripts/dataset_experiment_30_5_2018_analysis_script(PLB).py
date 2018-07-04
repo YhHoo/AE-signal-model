@@ -13,7 +13,7 @@ from src.utils.plb_analysis_tools import dual_sensor_xcor_with_stft_qiuckview
 
 
 # -------------------[PLB TEST]-------------------
-data = AcousticEmissionDataSet_30_5_2018(drive='E')
+data = AcousticEmissionDataSet_30_5_2018(drive='F')
 set_no = 1
 
 # data acquisition for leak pos @ 0m----------------
@@ -45,14 +45,13 @@ pos = [0, 2, 4, 6]
 savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
 
 for p in pos:
-    n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=0)
+    n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=p)
 
     # bandpass from 20kHz to 100kHz
     input_signal_1 = n_channel_data[set_no, 850000:1000000, 1]
     input_signal_2 = n_channel_data[set_no, 850000:1000000, 2]
-    input_signal_3 = n_channel_data[set_no, 850000:1000000, 1]
-    filtered_signal_1 = butter_bandpass_filtfilt(sampled_data=input_signal_1, fs=1e6, f_hicut=1e5, f_locut=20e3)
-    filtered_signal_2 = butter_bandpass_filtfilt(sampled_data=input_signal_2, fs=1e6, f_hicut=1e5, f_locut=20e3)
+    filtered_signal_1 = butter_bandpass_filtfilt(sampled_data=input_signal_1, fs=1e6, f_hicut=100e3, f_locut=20e3)
+    filtered_signal_2 = butter_bandpass_filtfilt(sampled_data=input_signal_2, fs=1e6, f_hicut=100e3, f_locut=20e3)
     cwtmatr_1 = cwt(filtered_signal_1, ricker, widths_2)
     cwtmatr_2 = cwt(filtered_signal_2, ricker, widths_2)
     t = np.arange(850000, 1000000, 1)  # to be defined
@@ -132,6 +131,7 @@ for p in pos:
                                         .format(p))
         path = '{}XcorMap_Source @ {}m'.format(savepath, p)
         fig_xcor.savefig(path)
+        print('Saved !')
         plt.close()
 
 
