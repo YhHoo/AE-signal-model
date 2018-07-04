@@ -70,8 +70,8 @@ for s, p in zip(set_no, pos):
                                      label=['time steps', 'Wavelet Width', 'CWT Coefficient'],
                                      output='2d',
                                      title='CWT Coef of Sensor[22m], Source @ {}m'.format(p))
-    path_s1 = '{}CWT_sensor[{}m]_Source@{}m'.format(savepath, '-1m', p)
-    path_s2 = '{}CWT_sensor[{}m]_Source@{}m'.format(savepath, '22m', p)
+    path_s1 = '{}CWT_sensor[{}]_Source@{}m'.format(savepath, '-1m', p)
+    path_s2 = '{}CWT_sensor[{}]_Source@{}m'.format(savepath, '22m', p)
     fig_cwt_1.savefig(path_s1)
     fig_cwt_2.savefig(path_s2)
     plt.close()
@@ -142,9 +142,9 @@ for s, p in zip(set_no, pos):
             # setting
             plt.subplots_adjust(hspace=0.6)
 
-        fig_xcor = three_dim_visualizer(x_axis=np.arange(1, xcor_map.shape[2] + 1, 1),
+        fig_xcor = three_dim_visualizer(x_axis=np.arange(1, xcor_map.shape[1] + 1, 1),
                                         y_axis=widths_2,
-                                        zxx=xcor_map[0],
+                                        zxx=xcor_map,
                                         label=['time steps', 'Wavelet Width', 'Correlation Score'],
                                         output='2d',
                                         title='CWT Xcor(Normalized+DowSmp) of Sensor[-1m] and Sensor[22m], Source @ {}m'
