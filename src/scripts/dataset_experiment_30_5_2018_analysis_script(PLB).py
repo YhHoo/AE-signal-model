@@ -14,8 +14,8 @@ from src.utils.plb_analysis_tools import dual_sensor_xcor_with_stft_qiuckview
 
 # -------------------[PLB TEST]-------------------
 data = AcousticEmissionDataSet_30_5_2018(drive='F')
-set_no = 1
-
+set_no = [1, 1, 2, 1]
+pos = [0, 2, 4, 6]
 # data acquisition for leak pos @ 0m----------------
 # n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=0)
 #
@@ -41,16 +41,15 @@ if stft_analysis:
 widths = np.array([1, 5, 10, 15])
 widths_2 = np.arange(1, 20, 0.1)
 
-pos = [0, 2, 4, 6]
 savepath = 'C:/Users/YH/Desktop/hooyuheng.masterWork/MASTER_PAPERWORK/' \
            'My Practical Work------------/Exp30_5_2018/PLB test/'
 
-for p in pos:
+for s, p in zip(set_no, pos):
     n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=p)
 
     # bandpass from 20kHz to 100kHz
-    input_signal_1 = n_channel_data[set_no, 850000:1000000, 1]
-    input_signal_2 = n_channel_data[set_no, 850000:1000000, 2]
+    input_signal_1 = n_channel_data[s, 850000:1000000, 1]
+    input_signal_2 = n_channel_data[s, 850000:1000000, 2]
     filtered_signal_1 = butter_bandpass_filtfilt(sampled_data=input_signal_1, fs=1e6, f_hicut=100e3, f_locut=20e3)
     filtered_signal_2 = butter_bandpass_filtfilt(sampled_data=input_signal_2, fs=1e6, f_hicut=100e3, f_locut=20e3)
     cwtmatr_1 = cwt(filtered_signal_1, ricker, widths_2)
@@ -80,7 +79,8 @@ for p in pos:
         xcor_map = one_dim_xcor_freq_band(input_mat=cwt_map,
                                           pair_list=sensor_pair,
                                           verbose=True)
-
+        xcor_map = xcor_map[0, :, 0:xcor_map.shape[2]:10]
+        print('DEBUGGING--------->', xcor_map.shape)
         # plotting 4 CWT channels only in a time series plot
         plot_cwt_indi = False
         if plot_cwt_indi:

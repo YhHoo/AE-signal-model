@@ -6,16 +6,18 @@ from scipy.signal import find_peaks
 from src.controlled_dataset.ideal_dataset import white_noise
 
 
-fig = plt.figure(figsize=(10, 7))
-ax11 = fig.add_subplot(2, 2, 1)
-ax21 = fig.add_subplot(2, 2, 2)
-ax12 = fig.add_subplot(2, 2, 3)
-ax22 = fig.add_subplot(2, 2, 4)
-ax11.set_title('a')
-ax21.set_title('b')
-ax12.set_title('c')
-ax22.set_title('d')
-plt.show()
+# l = np.arange(0, 1000000, 1)
+# print(l.shape)
+# l_downsample = l[0:l.shape[0]:10]
+# print(l_downsample.shape)
+
+l = [1, 2, 3]
+m = [5, 6, 7]
+n = [10, 11, 12]
+for i, j, k in zip(l, m, n):
+    print(i+j)
+    print(k)
+
 
 # t = np.linspace(0, 10, 11)
 # f = np.linspace(10, 100, 11)
