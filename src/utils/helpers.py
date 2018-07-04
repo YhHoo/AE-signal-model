@@ -338,7 +338,7 @@ def read_all_tdms_from_folder(folder_path=None):
 
     # do for all 3 sets of tdms file
     # read tdms and save as 4 channel np array
-    pb = ProgressBarForLoop('Reading --> ' + folder_path, end=len(all_file_path))
+    pb = ProgressBarForLoop('\nReading --> ' + folder_path, end=len(all_file_path))
     for f in all_file_path:
         tdms_file = TdmsFile(f)
         tdms_df = tdms_file.as_dataframe()

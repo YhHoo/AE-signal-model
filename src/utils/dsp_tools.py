@@ -10,6 +10,8 @@ from scipy.signal import spectrogram
 from scipy.signal import cwt, ricker
 from scipy.signal import filtfilt, butter
 from sklearn.preprocessing import MinMaxScaler
+# self lib
+from src.utils.helpers import ProgressBarForLoop
 
 
 # FAST FOURIER TRANSFORM (FFT)
@@ -189,7 +191,6 @@ def one_dim_xcor_freq_band(input_mat, pair_list, verbose):
                                         shape[1] -> freq band,
                                         shape[1] -> xcor steps
     '''
-    print('One dim xcor from freq band...')
     # ensure they hv equal number of axis[1] or freq band
     try:
         # simply accessing
@@ -201,10 +202,13 @@ def one_dim_xcor_freq_band(input_mat, pair_list, verbose):
     xcor_bank = []
     for pair in pair_list:
         xcor_of_each_f_list = []
-        # for all frequency bands
+        # for all feature(freq/wavelet width) bands
+        pb = ProgressBarForLoop(title='One dim Xcor', end=input_mat.shape[1])
         for i in range(input_mat.shape[1]):
+            pb.update(now=i)
             x_cor = np.correlate(input_mat[pair[0], i], input_mat[pair[1], i], 'full')
             xcor_of_each_f_list.append(x_cor)
+        pb.destroy()
         # xcor map of 2 phase map, axis[0] is freq, axis[1] is x-cor unit shift
         xcor_of_each_f_list = np.array(xcor_of_each_f_list)
 
