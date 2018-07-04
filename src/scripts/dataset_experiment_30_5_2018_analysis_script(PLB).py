@@ -42,7 +42,8 @@ widths = np.array([1, 5, 10, 15])
 widths_2 = np.arange(1, 20, 0.1)
 
 pos = [0, 2, 4, 6]
-savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
+savepath = 'C:/Users/YH/Desktop/hooyuheng.masterWork/MASTER_PAPERWORK/' \
+           'My Practical Work------------/Exp30_5_2018/PLB test/'
 
 for p in pos:
     n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=p)
