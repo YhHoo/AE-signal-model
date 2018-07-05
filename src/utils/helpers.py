@@ -354,3 +354,10 @@ def read_all_tdms_from_folder(folder_path=None):
 
     return n_channel_matrix
 
+
+'''
+GETTING EXECUTION TIME OF A CODE --> timeit.timeit()
+
+
+
+'''

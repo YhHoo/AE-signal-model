@@ -6,7 +6,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft
-from scipy.signal import spectrogram
+from scipy.signal import spectrogram, correlate
 from scipy.signal import cwt, ricker
 from scipy.signal import filtfilt, butter
 from sklearn.preprocessing import MinMaxScaler
@@ -179,7 +179,7 @@ def butter_bandpass_filtfilt(sampled_data, fs, f_hicut, f_locut, order=5):
     return filtered_signal
 
 
-def one_dim_xcor_freq_band(input_mat, pair_list, verbose):
+def one_dim_xcor_2d_input(input_mat, pair_list, verbose):
     '''
     :param input_mat: a 3d np matrix input, where shape[0] -> no. of phase map (diff sensors),
                                                   shape[1] -> freq band,
@@ -206,7 +206,7 @@ def one_dim_xcor_freq_band(input_mat, pair_list, verbose):
         pb = ProgressBarForLoop(title='One dim Xcor', end=input_mat.shape[1])
         for i in range(input_mat.shape[1]):
             pb.update(now=i)
-            x_cor = np.correlate(input_mat[pair[0], i], input_mat[pair[1], i], 'full')
+            x_cor = correlate(input_mat[pair[0], i], input_mat[pair[1], i], 'full', method='fft')
             xcor_of_each_f_list.append(x_cor)
         pb.destroy()
         # xcor map of 2 phase map, axis[0] is freq, axis[1] is x-cor unit shift

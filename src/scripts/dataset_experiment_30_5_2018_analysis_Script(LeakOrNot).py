@@ -1,5 +1,5 @@
 '''
-This script is to use the
+This script is to use for leak detection on continuous time series AE signal
 '''
 
 import numpy as np
@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import cwt, ricker
 # self lib
 from src.experiment_dataset.dataset_experiment_30_5_2018 import AcousticEmissionDataSet_30_5_2018
-from src.utils.dsp_tools import one_dim_xcor_freq_band, butter_bandpass_filtfilt
+from src.utils.dsp_tools import one_dim_xcor_2d_input, butter_bandpass_filtfilt
 from src.utils.helpers import three_dim_visualizer
 from src.utils.plb_analysis_tools import dual_sensor_xcor_with_stft_qiuckview
 

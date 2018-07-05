@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 # self defined library
 from src.controlled_dataset.ideal_dataset import white_noise
-from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_freq_band
+from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input
 from src.utils.helpers import three_dim_visualizer, break_into_train_test, reshape_3d_to_4d_tocategorical, \
                               ModelLogger, ModelCheckpoint, model_multiclass_evaluate
 from src.model_bank.cnn_model_bank import cnn_general_v1
@@ -65,7 +65,7 @@ for i in range(100):
                                       return_plot=False,
                                       verbose=False)
     l = np.array([mat1, mat2, mat3])
-    xcor_map = one_dim_xcor_freq_band(input_mat=l, pair_list=[(0, 1), (0, 2)], verbose=False)
+    xcor_map = one_dim_xcor_2d_input(input_mat=l, pair_list=[(0, 1), (0, 2)], verbose=False)
     # signal labelling
     class_1.append(xcor_map[0])
     class_2.append(xcor_map[1])

@@ -1,7 +1,9 @@
 import numpy as np
+from timeit import timeit
 import matplotlib.pyplot as plt
 from scipy import signal
-from scipy.signal import find_peaks
+from scipy.signal import correlate as correlate_scipy
+from numpy import correlate as correlate_numpy
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 
@@ -11,18 +13,41 @@ from src.controlled_dataset.ideal_dataset import white_noise
 # l_downsample = l[0:l.shape[0]:10]
 # print(l_downsample.shape)
 
-l = [1, 2, 3]
-m = [5, 6, 7]
-n = [10, 11, 12]
-for i, j, k in zip(l, m, n):
-    print(i+j)
-    print(k)
+l = np.random.rand(10000)
+m = np.random.rand(10000)
+print(l.shape)
+print(m.shape)
 
+setup = '''
 import numpy as np
-t = np.arange(0, 10, 1)
-print(t)
-print('c')
+from scipy.signal import correlate as correlate_scipy
+from numpy import correlate as correlate_numpy
+l = np.random.rand(10000)
+m = np.random.rand(10000)
+'''
+np_code = 'correlate_numpy(l, m, \'full\')'
+sp_code = 'correlate_scipy(l, m, \'full\', method=\'fft\')'
 
+print('Numpy Correlate time: ', timeit(setup=setup, stmt=np_code, number=1))
+print('Scipy Correlate time: ', timeit(setup=setup, stmt=sp_code, number=1))
+
+
+
+# fig = plt.figure(figsize=(5, 8))
+# ax1 = fig.add_subplot(4, 1, 1)
+# ax2 = fig.add_subplot(4, 1, 2)
+# ax3 = fig.add_subplot(4, 1, 3)
+# ax4 = fig.add_subplot(4, 1, 4)
+# ax1.set_title('Signal 1')
+# ax2.set_title('Signal 2')
+# ax3.set_title('Xcor Signal [numpy]')
+# ax4.set_title('Xcor Signal [scipy + fft]')
+# ax1.plot(l)
+# ax2.plot(m)
+# ax3.plot(z)
+# ax4.plot(z2)
+# plt.subplots_adjust(hspace=0.6)
+# plt.show()
 
 # t = np.linspace(0, 10, 11)
 # f = np.linspace(10, 100, 11)

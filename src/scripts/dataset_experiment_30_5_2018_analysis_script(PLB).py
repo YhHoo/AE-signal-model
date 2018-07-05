@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import cwt, ricker
 # self lib
 from src.experiment_dataset.dataset_experiment_30_5_2018 import AcousticEmissionDataSet_30_5_2018
-from src.utils.dsp_tools import one_dim_xcor_freq_band, butter_bandpass_filtfilt
+from src.utils.dsp_tools import one_dim_xcor_2d_input, butter_bandpass_filtfilt
 from src.utils.helpers import three_dim_visualizer
 from src.utils.plb_analysis_tools import dual_sensor_xcor_with_stft_qiuckview
 
@@ -16,7 +16,7 @@ from src.utils.plb_analysis_tools import dual_sensor_xcor_with_stft_qiuckview
 data = AcousticEmissionDataSet_30_5_2018(drive='F')
 set_no = [1, 1, 2, 1]
 pos = [0, 2, 4, 6]
-widths_2 = np.arange(1, 20, 0.5)
+widths_2 = np.arange(1, 20, 1)
 savepath = 'C:/Users/YH/Desktop/hooyuheng.masterWork/MASTER_PAPERWORK/' \
            'My Practical Work------------/Exp30_5_2018/PLB test/'
 
@@ -135,9 +135,9 @@ for s, p in zip(set_no, pos):
     if xcor_in_cwt:
         cwt_map = np.array([cwtmatr_1, cwtmatr_2])
         sensor_pair = [(0, 1)]
-        xcor_map = one_dim_xcor_freq_band(input_mat=cwt_map,
-                                          pair_list=sensor_pair,
-                                          verbose=True)
+        xcor_map = one_dim_xcor_2d_input(input_mat=cwt_map,
+                                         pair_list=sensor_pair,
+                                         verbose=True)
         xcor_map = xcor_map[0, :, 0:xcor_map.shape[2]:10]
         print('DEBUGGING--------->', xcor_map.shape)
         # plotting 4 CWT channels only in a time series plot
@@ -234,9 +234,9 @@ if xcor_analysis:
     filename = 0
     # for all samples sets
     for set in phase_bank:
-        xcor_map = one_dim_xcor_freq_band(input_mat=set,
-                                          pair_list=sensor_pair,
-                                          verbose=True)
+        xcor_map = one_dim_xcor_2d_input(input_mat=set,
+                                         pair_list=sensor_pair,
+                                         verbose=True)
         # max_xscore = []
         # # for all freq bands, take the pos where max xscore happens
         # for row in xcor_map[2]:
