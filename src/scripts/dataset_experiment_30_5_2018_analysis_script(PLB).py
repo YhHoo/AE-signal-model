@@ -43,6 +43,7 @@ ax2.set_title('Sensor[22m] ,Leak @ 4m')
 ax1.plot(filtered_signal_1)
 ax2.plot(filtered_signal_2)
 
+
 fig_cwt_1 = three_dim_visualizer(x_axis=np.arange(1, cwtmatr_1.shape[1] + 1, 1),
                                  y_axis=widths_2,
                                  zxx=cwtmatr_1,
@@ -57,8 +58,10 @@ fig_cwt_2 = three_dim_visualizer(x_axis=np.arange(1, cwtmatr_2.shape[1] + 1, 1),
                                  title='CWT Coef of Sensor[22m], Source @ {}m'.format(pos[2]))
 path_s1 = '{}DEBUG 1'.format(savepath)
 path_s2 = '{}DEBUG 2'.format(savepath)
+path_s3 = '{}DEBUG 3'.format(savepath)
 fig_cwt_1.savefig(path_s1)
 fig_cwt_2.savefig(path_s2)
+fig_time_series.savefig(path_s3)
 plt.close()
 print('Saved !')
 # DEBUG END HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
