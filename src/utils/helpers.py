@@ -319,7 +319,7 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title, vis_range=[N
         # plt.colorbar()
 
     # set to false when we wan to save a series of plot
-    return plt
+    return fig
 
 
 def read_all_tdms_from_folder(folder_path=None):
