@@ -18,6 +18,11 @@ for i, j, k in zip(l, m, n):
     print(i+j)
     print(k)
 
+import numpy as np
+t = np.arange(0, 10, 1)
+print(t)
+print('c')
+
 
 # t = np.linspace(0, 10, 11)
 # f = np.linspace(10, 100, 11)
