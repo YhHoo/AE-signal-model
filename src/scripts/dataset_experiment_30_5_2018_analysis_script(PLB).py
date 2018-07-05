@@ -24,8 +24,8 @@ savepath = 'C:/Users/YH/Desktop/hooyuheng.masterWork/MASTER_PAPERWORK/' \
 n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=pos[2])
 
 # bandpass from 20kHz to 100kHz
-input_signal_1 = n_channel_data[set_no[2], 850000:1000000, 1]
-input_signal_2 = n_channel_data[set_no[2], 850000:1000000, 2]
+input_signal_1 = n_channel_data[set_no[2], 800000:1200000, 1]
+input_signal_2 = n_channel_data[set_no[2], 800000:1200000, 2]
 # input_signal_3 = n_channel_data[set_no, 850000:1000000, 1]
 filtered_signal_1 = butter_bandpass_filtfilt(sampled_data=input_signal_1, fs=1e6, f_hicut=1e5, f_locut=20e3)
 filtered_signal_2 = butter_bandpass_filtfilt(sampled_data=input_signal_2, fs=1e6, f_hicut=1e5, f_locut=20e3)
