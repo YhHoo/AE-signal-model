@@ -13,7 +13,7 @@ from src.utils.plb_analysis_tools import dual_sensor_xcor_with_stft_qiuckview
 
 
 # -------------------[PLB TEST]-------------------
-data = AcousticEmissionDataSet_30_5_2018(drive='E')
+data = AcousticEmissionDataSet_30_5_2018(drive='F')
 # set_no = [1, 1, 2, 1]
 segment = [(1080000, 870000, 660000),
            (700000, 920000, 720000),
@@ -22,17 +22,18 @@ segment = [(1080000, 870000, 660000),
 pos = [0, 2, 4, 6]
 widths_2 = np.arange(1, 20, 1)
 savepath = 'C:/Users/YH/Desktop/hooyuheng.masterWork/MASTER_PAPERWORK/' \
-           'My Practical Work------------/Exp30_5_2018/PLB test/Real Data/STFT + Xcor/using nperseg of 100, nfft=500/'
+           'My Practical Work------------/Exp30_5_2018/PLB test/Real Data/STFT + Xcor/temp/'
 
 # TEMP DEBUGGING THE SENSOR DATA CWT @ 4M <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=6)
-start = segment[3][0]
+leak_pos = 0
+n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=leak_pos)
+start = segment[0][0]
 input_signal_1 = n_channel_data[0, start:start+100000, 1]
 input_signal_2 = n_channel_data[0, start:start+100000, 2]
-start = segment[3][1]
+start = segment[0][1]
 input_signal_3 = n_channel_data[1, start:start+100000, 1]
 input_signal_4 = n_channel_data[1, start:start+100000, 2]
-start = segment[3][2]
+start = segment[0][2]
 input_signal_5 = n_channel_data[2, start:start+100000, 1]
 input_signal_6 = n_channel_data[2, start:start+100000, 2]
 # bandpass from 20kHz to 100kHz
@@ -42,29 +43,26 @@ filtered_signal_3 = butter_bandpass_filtfilt(sampled_data=input_signal_3, fs=1e6
 filtered_signal_4 = butter_bandpass_filtfilt(sampled_data=input_signal_4, fs=1e6, f_hicut=1e5, f_locut=20e3)
 filtered_signal_5 = butter_bandpass_filtfilt(sampled_data=input_signal_5, fs=1e6, f_hicut=1e5, f_locut=20e3)
 filtered_signal_6 = butter_bandpass_filtfilt(sampled_data=input_signal_6, fs=1e6, f_hicut=1e5, f_locut=20e3)
-# plot
-fig_time_series = plt.figure(figsize=(4, 7))
-fig_time_series.suptitle('PLB Source @ 6m')
-ax1 = fig_time_series.add_subplot(6, 1, 1)
-ax2 = fig_time_series.add_subplot(6, 1, 2)
-ax3 = fig_time_series.add_subplot(6, 1, 3)
-ax4 = fig_time_series.add_subplot(6, 1, 4)
-ax5 = fig_time_series.add_subplot(6, 1, 5)
-ax6 = fig_time_series.add_subplot(6, 1, 6)
-ax1.set_title('Set 0 - Sensor[-1m]')
-ax2.set_title('Set 0 - Sensor[22m]')
-ax3.set_title('Set 1 - Sensor[-1m]')
-ax4.set_title('Set 1 - Sensor[22m]')
-ax5.set_title('Set 2 - Sensor[-1m]')
-ax6.set_title('Set 2 - Sensor[22m]')
-ax1.plot(filtered_signal_1)
-ax2.plot(filtered_signal_2)
-ax3.plot(filtered_signal_3)
-ax4.plot(filtered_signal_4)
-ax5.plot(filtered_signal_5)
-ax6.plot(filtered_signal_6)
-plt.subplots_adjust(hspace=0.7, top=0.9, bottom=0.05)
-plt.show()
+
+signal_input_pair = [(filtered_signal_1, filtered_signal_2),
+                     (filtered_signal_3, filtered_signal_4),
+                     (filtered_signal_5, filtered_signal_6)]
+set_no = 0
+for signal in signal_input_pair:
+    fig_time, fig_stft_1, fig_stft_2, fig_xcor = dual_sensor_xcor_with_stft_qiuckview(data_1=signal[0],
+                                                                                      data_2=signal[1],
+                                                                                      stft_mode='magnitude',
+                                                                                      stft_nperseg=100,
+                                                                                      plot_label=['0m', '-1m', '22m'])
+    path_temp = '{}Sensor[-1m]_leak[{}m]_set{}'.format(savepath, leak_pos, set_no)
+    fig_stft_1.savefig(path_temp)
+    path_temp = '{}Sensor[22m]_leak[{}m]_set{}'.format(savepath, leak_pos, set_no)
+    fig_stft_2.savefig(path_temp)
+    path_temp = '{}XcorMap_leak[{}m]_set{}'.format(savepath, leak_pos, set_no)
+    fig_xcor.savefig(path_temp)
+    set_no += 1
+    print('saved')
+    plt.close('all')
 
 # fig_cwt_1 = three_dim_visualizer(x_axis=np.arange(1, cwtmatr_1.shape[1] + 1, 1),
 #                                  y_axis=widths_2,
