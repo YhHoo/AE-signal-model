@@ -63,8 +63,8 @@ if visualize_in_time:
 # signal segmentation
 start = int(100e3)
 set_no = 2
-input_signal_1 = n_channel_data_leak[set_no, start:start+100000, 0]
-input_signal_2 = n_channel_data_leak[set_no, start:start+100000, 3]
+input_signal_1 = n_channel_data_leak[set_no, start:start+100000, 1]
+input_signal_2 = n_channel_data_leak[set_no, start:start+100000, 2]
 # quick peek at the signal
 visualize = False
 if visualize:
@@ -102,11 +102,13 @@ fig_time, fig_stft_1, fig_stft_2, fig_xcor = dual_sensor_xcor_with_stft_qiuckvie
                                                                                   stft_mode='magnitude',
                                                                                   stft_nperseg=100,
                                                                                   plot_label=['0m', '-1m', '22m'])
-path_temp = '{}Sensor[-1m]_leak[{}m]_set{}'.format(savepath, 0, set_no)
-fig_stft_1.savefig(path_temp)
-path_temp = '{}Sensor[22m]_leak[{}m]_set{}'.format(savepath, 0, set_no)
-fig_stft_2.savefig(path_temp)
-path_temp = '{}XcorMap_leak[{}m]_set{}'.format(savepath, 0, set_no)
-fig_xcor.savefig(path_temp)
-print('saved')
-plt.close('all')
+plt.show()
+
+# path_temp = '{}Sensor[-1m]_leak[{}m]_set{}'.format(savepath, 0, set_no)
+# fig_stft_1.savefig(path_temp)
+# path_temp = '{}Sensor[22m]_leak[{}m]_set{}'.format(savepath, 0, set_no)
+# fig_stft_2.savefig(path_temp)
+# path_temp = '{}XcorMap_leak[{}m]_set{}'.format(savepath, 0, set_no)
+# fig_xcor.savefig(path_temp)
+# print('saved')
+# plt.close('all')
