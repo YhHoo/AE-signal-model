@@ -25,7 +25,6 @@ def dual_sensor_xcor_with_stft_qiuckview(data_1, data_2, stft_mode, stft_nperseg
     assert len(data_1) == len(data_2), 'Input data must contains equal no of data points'
     assert len(plot_label) == 3, 'plot_label is incomplete'
 
-    print('\n-----------Dual Sensor Xcor with stft {}---------------'.format(stft_mode))
     # Time series plot of Data 1 n 2 ---------------------------------------------------------
     fig_time = plt.figure()
     fig_time.subplots_adjust(hspace=0.5)
@@ -46,7 +45,7 @@ def dual_sensor_xcor_with_stft_qiuckview(data_1, data_2, stft_mode, stft_nperseg
                                                        return_plot=True,
                                                        plot_title='Freq-Time rep ({}) of sensor [{}] @ {}'
                                                        .format(stft_mode, plot_label[1], plot_label[0]),
-                                                       verbose=True,
+                                                       verbose=False,
                                                        vis_max_freq_range=1e5)  # for now we only visualize up to 100kHz
 
     _, _, sxx2, fig_stft_2 = spectrogram_scipy(sampled_data=data_2,
@@ -70,7 +69,7 @@ def dual_sensor_xcor_with_stft_qiuckview(data_1, data_2, stft_mode, stft_nperseg
                                     y_axis=freq_axis,
                                     zxx=xcor_map[0],
                                     label=['Xcor_steps', 'Frequency', 'Correlation Score'],
-                                    output='2d', vis_range=[0, 1e5, 4000, 6000],
+                                    output='2d', vis_range=[0, 1e5, None, None],
                                     title='PLB {} Map Xcor - Sensor[{}] x Sensor[{}] - @ {}'
                                     .format(stft_mode, plot_label[1], plot_label[2], plot_label[0]))
 

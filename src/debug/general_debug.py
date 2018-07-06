@@ -7,30 +7,35 @@ from numpy import correlate as correlate_numpy
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 
+# setup = '''
+# import numpy as np
+# from scipy.signal import correlate as correlate_scipy
+# from numpy import correlate as correlate_numpy
+# l = np.random.rand(10000)
+# m = np.random.rand(10000)
+# '''
+# np_code = 'correlate_numpy(l, m, \'full\')'
+# sp_code = 'correlate_scipy(l, m, \'full\', method=\'fft\')'
+#
+# print('Numpy Correlate time: ', timeit(setup=setup, stmt=np_code, number=1))
+# print('Scipy Correlate time: ', timeit(setup=setup, stmt=sp_code, number=1))
 
-# l = np.arange(0, 1000000, 1)
-# print(l.shape)
-# l_downsample = l[0:l.shape[0]:10]
-# print(l_downsample.shape)
+pos = [0, 2, 4, 6]
+segment = [(1080000, 870000, 660000),
+           (700000, 920000, 720000),
+           (370000, 1080000, 1000000),
+           (700000, 1130000, 880000)]
+# for all leak pos
+for p in pos:
+    print('pos: ', p)
+    seg = 0
+    # for all 3 sets
+    for i in range(3):
+        start = segment[seg][i]
 
-l = np.random.rand(10000)
-m = np.random.rand(10000)
-print(l.shape)
-print(m.shape)
+        print('{}XcorMap_leak[{}m]_set{}'.format('/test/', p, i))
 
-setup = '''
-import numpy as np
-from scipy.signal import correlate as correlate_scipy
-from numpy import correlate as correlate_numpy
-l = np.random.rand(10000)
-m = np.random.rand(10000)
-'''
-np_code = 'correlate_numpy(l, m, \'full\')'
-sp_code = 'correlate_scipy(l, m, \'full\', method=\'fft\')'
-
-print('Numpy Correlate time: ', timeit(setup=setup, stmt=np_code, number=1))
-print('Scipy Correlate time: ', timeit(setup=setup, stmt=sp_code, number=1))
-
+    seg += 1
 
 
 # fig = plt.figure(figsize=(5, 8))
