@@ -14,11 +14,11 @@ from src.utils.plb_analysis_tools import dual_sensor_xcor_with_stft_qiuckview
 
 # -------------------[PLB TEST]-------------------
 data = AcousticEmissionDataSet_30_5_2018(drive='E')
-set_no = [1, 1, 2, 1]
-segment = [1080000, 870000, 660000,
-           700000, 920000, 720000,
-           370000, 1080000, 1000000,
-           700000, 1130000, 880000]  # +100e3
+# set_no = [1, 1, 2, 1]
+segment = [(1080000, 870000, 660000),
+           (700000, 920000, 720000),
+           (370000, 1080000, 1000000),
+           (700000, 1130000, 880000)]  # +100e3
 pos = [0, 2, 4, 6]
 widths_2 = np.arange(1, 20, 1)
 savepath = 'C:/Users/YH/Desktop/hooyuheng.masterWork/MASTER_PAPERWORK/' \
@@ -73,9 +73,17 @@ plt.show()
 # DEBUG END HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-# -------------------[Xcor testing of spectrogram output]-------------------
+# -------------------[Xcor With STFT]-------------------
 stft_analysis = False
 if stft_analysis:
+    for p in pos:
+        # loading data fr drive
+        n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=p)
+        # index the segment
+        seg = 0
+        for i in range(3):
+            segment[seg][i]
+            seg += 1
     fig1, fig2, fig3, fig4 = dual_sensor_xcor_with_stft_qiuckview(data_1=filtered_signal_1,
                                                                   data_2=filtered_signal_2,
                                                                   stft_mode='magnitude',
