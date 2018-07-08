@@ -13,9 +13,10 @@ from src.utils.plb_analysis_tools import dual_sensor_xcor_with_stft_qiuckview
 
 data = AcousticEmissionDataSet_30_5_2018(drive='F')
 n_channel_data_leak = data.leak_noleak_4_sensor(leak=True)
-n_channel_data_noleak = data.leak_noleak_4_sensor(leak=False)
-set_no = [0, 1, 2]
-savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
+# n_channel_data_noleak = data.leak_noleak_4_sensor(leak=False)
+savepath = 'C:/Users/YH/Desktop/hooyuheng.masterWork/MASTER_PAPERWORK/My Practical Work------------' \
+           '/Exp30_5_2018/LeakNoLeak Data/STFT+Xcor/10mmLeak_1bar_seg=100e3_nperseg=100/'
+
 
 # ----------------------[Visualize in Time and Saving]----------------------------
 visualize_in_time = False
@@ -61,54 +62,36 @@ if visualize_in_time:
 
 # ----------------------[STFT + XCOR]----------------------------
 # signal segmentation
-start = int(100e3)
-set_no = 2
-input_signal_1 = n_channel_data_leak[set_no, start:start+100000, 1]
-input_signal_2 = n_channel_data_leak[set_no, start:start+100000, 2]
-# quick peek at the signal
-visualize = False
-if visualize:
-    fig = plt.figure()
-    ax1 = fig.add_subplot(2, 1, 1)
-    ax2 = fig.add_subplot(2, 1, 2)
-    ax1.plot(input_signal_1)
-    ax2.plot(input_signal_2)
+start = [0.2e6, 0.5e6, 1e6, 1.4e6, 2e6, 2.5e6, 2.8e6, 3.2e6, 3.8e6, 4.3e6, 4.7e6]
+start = [int(i) for i in start]
+segment_len = int(100e3)
+set_no = 0
 
-    plt.show()
-# bandpass
-filtered_signal_1 = butter_bandpass_filtfilt(sampled_data=input_signal_1, fs=1e6, f_hicut=1e5, f_locut=20e3)
-filtered_signal_2 = butter_bandpass_filtfilt(sampled_data=input_signal_2, fs=1e6, f_hicut=1e5, f_locut=20e3)
-# print(filtered_signal_1.shape)
-# print(filtered_signal_2.shape)
-# xcor_map_in_time = correlate(filtered_signal_1,
-#                              filtered_signal_2,
-#                              'full',
-#                              method='fft')
-#
-# widths_2 = np.arange(1, 20, 0.5)
-# cwtmatr_1 = cwt(xcor_map_in_time, ricker, widths_2)
-# fig_cwt_1 = three_dim_visualizer(x_axis=np.arange(1, cwtmatr_1.shape[1] + 1, 1),
-#                                  y_axis=widths_2,
-#                                  zxx=cwtmatr_1,
-#                                  label=['time steps', 'Wavelet Width', 'CWT Coefficient'],
-#                                  output='2d',
-#                                  title='CWT Coef of Xcor Map')
-# plt.show()
+for s in start:
+    # sensor[-1m]
+    input_signal_1 = n_channel_data_leak[set_no, s:(s+segment_len), 1]
+    # sensor[22m]
+    input_signal_2 = n_channel_data_leak[set_no, s:(s+segment_len), 2]
+    # bandpass
+    filtered_signal_1 = butter_bandpass_filtfilt(sampled_data=input_signal_1, fs=1e6, f_hicut=1e5, f_locut=20e3)
+    filtered_signal_2 = butter_bandpass_filtfilt(sampled_data=input_signal_2, fs=1e6, f_hicut=1e5, f_locut=20e3)
+    # STFT + XCOR
+    fig_time, fig_stft_1, fig_stft_2, fig_xcor = dual_sensor_xcor_with_stft_qiuckview(data_1=filtered_signal_1,
+                                                                                      data_2=filtered_signal_2,
+                                                                                      stft_mode='magnitude',
+                                                                                      stft_nperseg=100,
+                                                                                      plot_label=['0m', '-1m', '22m'])
 
+    path_temp = '{}TimeSeries_leak[{}m]_set{}_[{}_{}]'.format(savepath, 0, set_no, s, (s+segment_len))
+    fig_time.savefig(path_temp)
+    path_temp = '{}Sensor[-1m]_leak[{}m]_set{}_[{}_{}]'.format(savepath, 0, set_no, s, (s+segment_len))
+    fig_stft_1.savefig(path_temp)
+    path_temp = '{}Sensor[22m]_leak[{}m]_set{}_[{}_{}]'.format(savepath, 0, set_no, s, (s+segment_len))
+    fig_stft_2.savefig(path_temp)
+    path_temp = '{}XcorMap_leak[{}m]_set{}_[{}_{}]'.format(savepath, 0, set_no, s, (s+segment_len))
+    fig_xcor.savefig(path_temp)
+    # clear memory
+    plt.close('all')
 
-# STFT + XCOR
-fig_time, fig_stft_1, fig_stft_2, fig_xcor = dual_sensor_xcor_with_stft_qiuckview(data_1=filtered_signal_1,
-                                                                                  data_2=filtered_signal_2,
-                                                                                  stft_mode='magnitude',
-                                                                                  stft_nperseg=100,
-                                                                                  plot_label=['0m', '-1m', '22m'])
-plt.show()
+    print('saved')
 
-# path_temp = '{}Sensor[-1m]_leak[{}m]_set{}'.format(savepath, 0, set_no)
-# fig_stft_1.savefig(path_temp)
-# path_temp = '{}Sensor[22m]_leak[{}m]_set{}'.format(savepath, 0, set_no)
-# fig_stft_2.savefig(path_temp)
-# path_temp = '{}XcorMap_leak[{}m]_set{}'.format(savepath, 0, set_no)
-# fig_xcor.savefig(path_temp)
-# print('saved')
-# plt.close('all')

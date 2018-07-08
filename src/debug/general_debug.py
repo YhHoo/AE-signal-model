@@ -20,22 +20,14 @@ from src.controlled_dataset.ideal_dataset import white_noise
 # print('Numpy Correlate time: ', timeit(setup=setup, stmt=np_code, number=1))
 # print('Scipy Correlate time: ', timeit(setup=setup, stmt=sp_code, number=1))
 
-pos = [0, 2, 4, 6]
-segment = [(1080000, 870000, 660000),
-           (700000, 920000, 720000),
-           (370000, 1080000, 1000000),
-           (700000, 1130000, 880000)]
-# for all leak pos
-for p in pos:
-    print('pos: ', p)
-    seg = 0
-    # for all 3 sets
-    for i in range(3):
-        start = segment[seg][i]
+l = np.array([[1, 2, 3, 4],
+              [5, 6, 7, 8]])
 
-        print('{}XcorMap_leak[{}m]_set{}'.format('/test/', p, i))
+test = np.split(l[1], indices_or_sections=2)
+test = np.array(test)
+print(test)
 
-    seg += 1
+
 
 
 # fig = plt.figure(figsize=(5, 8))

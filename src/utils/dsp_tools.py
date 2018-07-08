@@ -122,7 +122,8 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, nfft=None,
 
     # plotting spectrogram
     if return_plot:
-        fig = plt.figure()
+        fig = plt.figure(figsize=(8, 6))  # (x len, y len)
+        fig.suptitle(plot_title)
         ax = fig.add_axes([0.1, 0.1, 0.6, 0.8])
         colorbar_ax = fig.add_axes([0.7, 0.1, 0.05, 0.8])
         i = ax.pcolormesh(t, f, Sxx)
@@ -132,7 +133,6 @@ def spectrogram_scipy(sampled_data=None, fs=1, nperseg=1, noverlap=1, nfft=None,
         ax.set_ylabel('Frequency [Hz]')
         ax.set_ylim(bottom=0, top=vis_max_freq_range, auto=True)
         ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-        ax.set_title(plot_title)
     else:
         fig = None
 
@@ -202,13 +202,12 @@ def one_dim_xcor_2d_input(input_mat, pair_list, verbose):
     xcor_bank = []
     for pair in pair_list:
         xcor_of_each_f_list = []
+
         # for all feature(freq/wavelet width) bands
-        pb = ProgressBarForLoop(title='One dim Xcor', end=input_mat.shape[1])
         for i in range(input_mat.shape[1]):
-            pb.update(now=i)
             x_cor = correlate(input_mat[pair[0], i], input_mat[pair[1], i], 'full', method='fft')
             xcor_of_each_f_list.append(x_cor)
-        pb.destroy()
+
         # xcor map of 2 phase map, axis[0] is freq, axis[1] is x-cor unit shift
         xcor_of_each_f_list = np.array(xcor_of_each_f_list)
 

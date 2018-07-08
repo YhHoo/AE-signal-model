@@ -269,7 +269,7 @@ def break_into_train_test(input, label, num_classes, shuffled_each_class=True, t
     return train_x, train_y, test_x, test_y
 
 
-def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title, vis_range=[None, None, None, None]):
+def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title='None', vis_range=[None, None, None, None]):
     '''
     :param x_axis: the actual x-axis we wish to see in cartesian plane
     :param y_axis: the actual y-axis we wish to see in cartesian plane
@@ -289,8 +289,8 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title, vis_range=[N
 
     if output is '3d':
         fig = plt.figure()
+        fig.suptitle(title)
         ax = fig.add_subplot(111, projection='3d')
-        ax.set_title(title)
         for i in range(y_axis.size):
             ax.bar(x_axis, zxx[i], zs=y_axis[i], zdir='y', alpha=0.8)
         ax.set_xlabel(label[0])
@@ -298,8 +298,8 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title, vis_range=[N
         ax.set_zlabel(label[2])
     elif output is '2d':
         fig = plt.figure(figsize=(9, 5))
+        fig.suptitle(title)
         ax = fig.add_axes([0.1, 0.1, 0.6, 0.8])
-        ax.set_title(title)
         colorbar_ax = fig.add_axes([0.7, 0.1, 0.05, 0.8])
         i = ax.pcolormesh(x_axis, y_axis, zxx)
         fig.colorbar(i, cax=colorbar_ax)
