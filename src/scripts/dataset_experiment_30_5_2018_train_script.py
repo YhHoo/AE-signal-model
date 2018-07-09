@@ -30,8 +30,8 @@ history = model.fit(x=train_x,
                     y=train_y,
                     batch_size=30,
                     validation_data=(test_x, test_y),
-                    epochs=100,
+                    epochs=150,
                     verbose=1)
 
-model_logger.learning_curve(history=history, save=True)
+model_logger.learning_curve(history=history, save=False, show=True)
 model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
