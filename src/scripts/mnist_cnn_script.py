@@ -3,6 +3,7 @@ To test my CNN model with MNIST dataset, because if it works, it shud works for 
 Result: Works
 '''
 from keras.datasets import mnist
+from keras.callbacks import TensorBoard
 import matplotlib.pyplot as plt
 # self declared library
 from src.utils.helpers import ModelLogger, model_multiclass_evaluate, reshape_3d_to_4d_tocategorical
@@ -43,16 +44,21 @@ model = cnn_28_28_mnist_10class()
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 # logging
 model_logger = ModelLogger(model, model_name='CNN_MNIST_28_28')
+
+# tensorboard
+tb_callback = TensorBoard(log_dir='./Graph', histogram_freq=0, write_graph=True, write_images=True)
+
 # train
 history = model.fit(x=train_x,
                     y=train_y,
                     validation_data=(test_x, test_y),
-                    epochs=10,
-                    batch_size=200,
-                    verbose=1)
+                    epochs=5,
+                    batch_size=1000,
+                    verbose=1,
+                    callbacks=[tb_callback])
 model_logger.learning_curve(history=history, show=True, title='CNN_MNIST_28_28')
 
-model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
+# model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
 
 
 

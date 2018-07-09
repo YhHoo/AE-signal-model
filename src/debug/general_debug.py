@@ -1,5 +1,5 @@
 import numpy as np
-from timeit import timeit
+
 import matplotlib.pyplot as plt
 from scipy import signal
 from scipy.signal import correlate as correlate_scipy
@@ -7,18 +7,7 @@ from numpy import correlate as correlate_numpy
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 
-# setup = '''
-# import numpy as np
-# from scipy.signal import correlate as correlate_scipy
-# from numpy import correlate as correlate_numpy
-# l = np.random.rand(10000)
-# m = np.random.rand(10000)
-# '''
-# np_code = 'correlate_numpy(l, m, \'full\')'
-# sp_code = 'correlate_scipy(l, m, \'full\', method=\'fft\')'
-#
-# print('Numpy Correlate time: ', timeit(setup=setup, stmt=np_code, number=1))
-# print('Scipy Correlate time: ', timeit(setup=setup, stmt=sp_code, number=1))
+
 
 l = np.array([[1, 2, 3, 4],
               [5, 6, 7, 8]])
@@ -26,8 +15,6 @@ l = np.array([[1, 2, 3, 4],
 test = np.split(l[1], indices_or_sections=2)
 test = np.array(test)
 print(test)
-
-
 
 
 # fig = plt.figure(figsize=(5, 8))

@@ -46,7 +46,7 @@ class ModelLogger:
 
     def __init__(self, model, model_name):
         self.model = model
-        self.path = 'result/' + model_name
+        self.path = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/' + model_name
 
     def save_architecture(self, save_readable=True):
         # serialize and saving the model structure to JSON
@@ -89,6 +89,7 @@ class ModelLogger:
 
     # this function use the model history returned by fit() to plot learning curve and save it
     def learning_curve(self, history, save=False, show=False, title='Learning Curve'):
+        fig = plt.figure(figsize=(6, 4))
         plt.plot(history.history['loss'], label='train_loss')
         plt.plot(history.history['val_loss'], label='test_loss')
         plt.plot(history.history['acc'], label='train_acc')
@@ -136,7 +137,7 @@ def model_multiclass_evaluate(model, test_x, test_y):
     # visualize the multiclass classification accuracy
     plt.plot(actual, color='r', label='Actual')
     plt.plot(prediction, color='b', label='Prediction', linestyle='None', marker='x')
-    plt.title('Multiclassifer Accuracy Visualization')
+    plt.title('Classifier Evaluation in Visual')
     plt.legend()
     plt.show()
 

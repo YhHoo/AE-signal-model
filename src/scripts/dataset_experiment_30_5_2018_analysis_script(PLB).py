@@ -118,26 +118,7 @@ if stft_analysis:
             print('XcorMap_leak[{}m]_set{} --> saved'.format(p, i))
         seg += 1
 
-# TEMP DEBUGGING THE SENSOR DATA STFT @ 4M <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-debug = False
-if debug:
-    n_channel_data, _, _, _ = data.plb_4_sensor(leak_pos=4)
-    set = 1
-    start = segment[2][set]
-    input_signal_1 = n_channel_data[0, start:start + 100000, 1]
-    input_signal_2 = n_channel_data[0, start:start + 100000, 2]
-    # bandpass the signal
-    filtered_signal_1 = butter_bandpass_filtfilt(sampled_data=input_signal_1, fs=1e6, f_hicut=1e5, f_locut=20e3)
-    filtered_signal_2 = butter_bandpass_filtfilt(sampled_data=input_signal_2, fs=1e6, f_hicut=1e5, f_locut=20e3)
-    # stft + xcor
-    fig1, fig2, fig3, fig4 = dual_sensor_xcor_with_stft_qiuckview(data_1=filtered_signal_1,
-                                                                  data_2=filtered_signal_2,
-                                                                  stft_mode='magnitude',
-                                                                  stft_nperseg=100,
-                                                                  plot_label=['4m', '-1m', '22m'],
-                                                                  save_selection=[0, 0, 0, 0])
-    plt.show()
 # -------------------[Wavelet Transform]-------------------
 # widths = np.array([1, 5, 10, 15])
 # widths_2 = np.arange(1, 20, 0.5)
