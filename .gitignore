@@ -1,3 +1,5 @@
 dataset/
 result/
+.idea/
 src/__pycache__/
+*.pyc
