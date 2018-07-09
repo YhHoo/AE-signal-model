@@ -7,8 +7,6 @@ from numpy import correlate as correlate_numpy
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 
-
-
 l = np.array([[1, 2, 3, 4],
               [5, 6, 7, 8]])
 

@@ -10,37 +10,40 @@ from src.utils.helpers import three_dim_visualizer, break_into_train_test, resha
 from src.model_bank.cnn_model_bank import cnn_general_v1
 
 # Designing Gauss pulse with different time shift, contaminated with white noise
-
-# time setting
-t = np.linspace(0, 2, 5000, endpoint=False)
-# original signal creating
-pulse1 = gausspulse(t-0.5, fc=50)
-pulse2 = gausspulse(t-0.6, fc=50)
-pulse3 = gausspulse(t-0.7, fc=50)
-mix_signal_1, mix_signal_2, mix_signal_3 = [], [], []
-# contaminate pulse 1
-for sig1, sig2 in zip(pulse1, white_noise(time_axis=t, power=0.1)):
-    mix_signal_1.append(sig1+sig2)
-# contaminate pulse 2
-for sig1, sig2 in zip(pulse2, white_noise(time_axis=t, power=0.1)):
-    mix_signal_2.append(sig1+sig2)
-# contaminate pulse 3
-for sig1, sig2 in zip(pulse3, white_noise(time_axis=t, power=0.1)):
-    mix_signal_3.append(sig1+sig2)
-
-
-fig1 = plt.figure()
-ax1 = fig1.add_subplot(3, 1, 1)
-ax2 = fig1.add_subplot(3, 1, 2)
-ax3 = fig1.add_subplot(3, 1, 3)
-ax1.plot(t, mix_signal_1)
-ax2.plot(t, mix_signal_2)
-ax3.plot(t, mix_signal_3)
-
-plt.show()
-
 class_1, class_2 = [], []
+
+# creating n samples for each of the 2 classes
 for i in range(100):
+    # time setting
+    t = np.linspace(0, 2, 5000, endpoint=False)
+    # original signal creating
+    pulse1 = gausspulse(t - 0.5, fc=50)
+    pulse2 = gausspulse(t - 0.6, fc=50)
+    pulse3 = gausspulse(t - 0.7, fc=50)
+
+    mix_signal_1, mix_signal_2, mix_signal_3 = [], [], []
+    # contaminate pulse 1
+    for sig1, sig2 in zip(pulse1, white_noise(time_axis=t, power=0.1)):
+        mix_signal_1.append(sig1 + sig2)
+    # contaminate pulse 2
+    for sig1, sig2 in zip(pulse2, white_noise(time_axis=t, power=0.1)):
+        mix_signal_2.append(sig1 + sig2)
+    # contaminate pulse 3
+    for sig1, sig2 in zip(pulse3, white_noise(time_axis=t, power=0.1)):
+        mix_signal_3.append(sig1 + sig2)
+
+    visualize = False
+    if visualize:
+        fig1 = plt.figure()
+        ax1 = fig1.add_subplot(3, 1, 1)
+        ax2 = fig1.add_subplot(3, 1, 2)
+        ax3 = fig1.add_subplot(3, 1, 3)
+        ax1.plot(t, mix_signal_1)
+        ax2.plot(t, mix_signal_2)
+        ax3.plot(t, mix_signal_3)
+
+        plt.show()
+
     t, f, mat1, _ = spectrogram_scipy(sampled_data=mix_signal_1,
                                       fs=2500,  # because 2500 points per sec
                                       nperseg=200,
@@ -108,7 +111,7 @@ history = model.fit(x=train_x,
                     epochs=100,
                     verbose=1)
 
-model_logger.learning_curve(history=history, save=True)
+model_logger.learning_curve(history=history, show=True)
 model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
 
 # TRAINING SUCCESSFUL !! WAITING FOR REARRANGE THE CODE
