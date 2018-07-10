@@ -346,7 +346,7 @@ def gauss_pulse_timeshift_dataset(class_sample_size, visualize_each_data_in_time
             ax2.plot(t, mix_signal_2)
             ax3.plot(t, mix_signal_3)
 
-        
+
             fig2 = three_dim_visualizer(x_axis=np.arange(1, map.shape[1] + 1, 1),
                                         y_axis=f,
                                         zxx=map,
