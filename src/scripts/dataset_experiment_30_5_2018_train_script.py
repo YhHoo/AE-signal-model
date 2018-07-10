@@ -33,7 +33,7 @@ history = model.fit(x=train_x,
                     y=train_y,
                     batch_size=30,
                     validation_data=(test_x, test_y),
-                    epochs=200,
+                    epochs=250,
                     verbose=1,
                     callbacks=[tb_callback])
 

@@ -93,13 +93,14 @@ class AcousticEmissionDataSet_30_5_2018:
         :return:
         class_1 -> 3d array where shape[0]-> no. of samples(150)
                                   shape[1]-> freq axis (20kHz to 100kHz)
-                                  shape[2]-> xcor steps ()
+                                  shape[2]-> xcor steps (2000 units)
         '''
         n_channel_data = read_all_tdms_from_folder(self.path_leak_1bar_10mm)
         # concat all 3 sets into (15M, 4)
         n_channel_data_all_set = np.concatenate((n_channel_data[0], n_channel_data[1], n_channel_data[2]), axis=0)
         # split 15M points into 150 segments
-        all_segment_of_4_sensor = np.split(n_channel_data_all_set, indices_or_sections=150)
+        sample_size = 150
+        all_segment_of_4_sensor = np.split(n_channel_data_all_set, indices_or_sections=sample_size)
         all_segment_of_4_sensor = np.array(all_segment_of_4_sensor)
 
         # STFT for every sample, for every sensors ----------------------------------
@@ -136,6 +137,7 @@ class AcousticEmissionDataSet_30_5_2018:
             pb.update(now=progress)
             progress += 1
         pb.destroy()
+        # convert to np array
         sensor_0_stft = np.array(sensor_0_stft)
         sensor_1_stft = np.array(sensor_1_stft)
         sensor_2_stft = np.array(sensor_2_stft)
@@ -147,14 +149,14 @@ class AcousticEmissionDataSet_30_5_2018:
         # initiate progressbar
         pb = ProgressBarForLoop(title='Cross Correlation', end=all_segment_of_4_sensor.shape[0])
         progress = 0
-        for i in range(150):
+        for i in range(sample_size):
             # for class 1, sensor[-2m] & [22m]
             stft_map = np.array([sensor_0_stft[i], sensor_2_stft[i]])
             sensor_pair = [(0, 1)]
             xcor_map = one_dim_xcor_2d_input(input_mat=stft_map,
                                              pair_list=sensor_pair,
                                              verbose=False)
-            class_1.append(xcor_map[0, :, 700:1300])
+            class_1.append(xcor_map[0, :, 800:1200])
 
             # for class 1, sensor[-1m] & [23m]
             stft_map = np.array([sensor_1_stft[i], sensor_3_stft[i]])
@@ -162,11 +164,12 @@ class AcousticEmissionDataSet_30_5_2018:
             xcor_map = one_dim_xcor_2d_input(input_mat=stft_map,
                                              pair_list=sensor_pair,
                                              verbose=False)
-            class_2.append(xcor_map[0, :, 700:1300])
+            class_2.append(xcor_map[0, :, 800:1200])
+
             pb.update(now=progress)
         pb.destroy()
 
-        # packaging dataset and lable
+        # packaging dataset and label
         class_1 = np.array(class_1)
         class_2 = np.array(class_2)
         dataset = np.concatenate((class_1, class_2), axis=0)
