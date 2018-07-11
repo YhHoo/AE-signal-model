@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from src.utils.helpers import read_all_tdms_from_folder, three_dim_visualizer, ProgressBarForLoop
 from src.utils.dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, one_dim_xcor_2d_input
 
+
 class AcousticEmissionDataSet_30_5_2018:
     '''
     The sensor position are (-2, -1, 22, 23)m

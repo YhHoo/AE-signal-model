@@ -269,66 +269,50 @@ def noise_time_shift_xcor_return(time_axis, fs, random_seed=None, num_series=1, 
 
 def gauss_pulse_timeshift_dataset(class_sample_size, visualize_each_data_in_time=False):
     '''
+    Designing 3 Gauss pulse with different time shift, contaminated with white noise
     This return 2 classes of xcor map, created from xcor signal[0] & [1] and signal[0] & [2]. 2 classes repr.
-    a shift in the
+    different shift of the pulse in the received signal in sensors.
     :return:
+    a 3d array, where axis[0] -> samples size
+                      axis[1] -> freq axis
+                      axis[2] -> xcor scores
+    # This data set was successfully trained by CNN, proving that this pattern is recognizable
     '''
-    # Designing Gauss pulse with different time shift, contaminated with white noise
-    class_1, class_2 = [], []
+    # time setting
+    t = np.linspace(0, 2, 5000, endpoint=False)
 
+    mix_signal_1, mix_signal_2, mix_signal_3 = [], [], []
     # creating n samples for each of the 2 classes
     for i in range(class_sample_size):
-        # time setting
-        t = np.linspace(0, 2, 5000, endpoint=False)
-        # original signal creating
-        pulse1 = gausspulse(t - 0.5, fc=50)
-        pulse2 = gausspulse(t - 0.6, fc=50)
-        pulse3 = gausspulse(t - 0.7, fc=50)
+        # create noise contaminated gauss pulse
+        mix_signal_1.append(gausspulse(t - 0.5, fc=50) + white_noise(time_axis=t, power=0.1))
+        mix_signal_2.append(gausspulse(t - 0.6, fc=50) + white_noise(time_axis=t, power=0.1))
+        mix_signal_3.append(gausspulse(t - 0.7, fc=50) + white_noise(time_axis=t, power=0.1))
 
-        # contaminate pulse 1
-        for sig1, sig2 in zip(pulse1, white_noise(time_axis=t, power=0.1)):
-            mix_signal_1 = sig1 + sig2
-        # contaminate pulse 2
-        for sig1, sig2 in zip(pulse2, white_noise(time_axis=t, power=0.1)):
-            mix_signal_2 = sig1 + sig2
-        # contaminate pulse 3
-        for sig1, sig2 in zip(pulse3, white_noise(time_axis=t, power=0.1)):
-            mix_signal_3 = sig1 + sig2
-
-        # visualize each of the dataset generated in time series
-        if visualize_each_data_in_time:
-            fig1 = plt.figure()
-            ax1 = fig1.add_subplot(3, 1, 1)
-            ax2 = fig1.add_subplot(3, 1, 2)
-            ax3 = fig1.add_subplot(3, 1, 3)
-            ax1.plot(t, mix_signal_1)
-            ax2.plot(t, mix_signal_2)
-            ax3.plot(t, mix_signal_3)
-
-            plt.show()
-
+    class_1, class_2 = [], []
+    for i in range(class_sample_size):
         # STFT
-        t, f, mat1, _ = spectrogram_scipy(sampled_data=mix_signal_1,
+        t, f, mat1, _ = spectrogram_scipy(sampled_data=mix_signal_1[i],
                                           fs=2500,  # because 2500 points per sec
                                           nperseg=200,
                                           noverlap=0,
-                                          mode='angle',
+                                          mode='magnitude',
                                           return_plot=False,
                                           verbose=False)
 
-        _, _, mat2, _ = spectrogram_scipy(sampled_data=mix_signal_2,
+        _, _, mat2, _ = spectrogram_scipy(sampled_data=mix_signal_2[i],
                                           fs=2500,  # because 2500 points per sec
                                           nperseg=200,
                                           noverlap=0,
-                                          mode='angle',
+                                          mode='magnitude',
                                           return_plot=False,
                                           verbose=False)
 
-        _, _, mat3, _ = spectrogram_scipy(sampled_data=mix_signal_3,
+        _, _, mat3, _ = spectrogram_scipy(sampled_data=mix_signal_3[i],
                                           fs=2500,  # because 2500 points per sec
                                           nperseg=200,
                                           noverlap=0,
-                                          mode='angle',
+                                          mode='magnitude',
                                           return_plot=False,
                                           verbose=False)
         l = np.array([mat1, mat2, mat3])
@@ -336,39 +320,25 @@ def gauss_pulse_timeshift_dataset(class_sample_size, visualize_each_data_in_time
         # signal labelling
         class_1.append(xcor_map[0])
         class_2.append(xcor_map[1])
+        # fig1 = three_dim_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
+        #                             y_axis=f,
+        #                             zxx=xcor_map[0],
+        #                             output='2d',
+        #                             label=['a', 'b', 'cx'])
+        # fig2 = three_dim_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
+        #                             y_axis=f,
+        #                             zxx=xcor_map[1],
+        #                             output='2d',
+        #                             label=['a', 'b', 'cx'])
+        # plt.show()
 
-        if visualize_each_data_in_time:
-            fig1 = plt.figure()
-            ax1 = fig1.add_subplot(3, 1, 1)
-            ax2 = fig1.add_subplot(3, 1, 2)
-            ax3 = fig1.add_subplot(3, 1, 3)
-            ax1.plot(t, mix_signal_1)
-            ax2.plot(t, mix_signal_2)
-            ax3.plot(t, mix_signal_3)
-
-
-            fig2 = three_dim_visualizer(x_axis=np.arange(1, map.shape[1] + 1, 1),
-                                        y_axis=f,
-                                        zxx=map,
-                                        label=['Xcor_steps', 'Frequency', 'Correlation Score'],
-                                        output='2d',
-                                        title='Xcor Map [Mag] of GaussPulse+W.noise with Difference: -0.2s')
-            ax3.show()
+    # convert to np array
     class_1 = np.array(class_1)
     class_2 = np.array(class_2)
-    all_class = [class_1, class_2]
-    dataset = np.concatenate(all_class, axis=0)
+    dataset = np.concatenate((class_1, class_2), axis=0)
     label = np.array([0] * class_1.shape[0] + [1] * class_2.shape[0])
 
     print('Data set Dim: ', dataset.shape)
     print('Label Dim: ', label.shape)
 
     return dataset, label
-
-# # time axis setting
-# fs = 1000
-# duration = 20  # tune this for duration
-# total_point = int(fs * duration)
-# time_axis = np.linspace(0, duration, total_point)
-# noise_time_shift_xcor_return(time_axis=time_axis, fs=fs, num_series=2, visualize_time_series=True,
-#                              visualize_xcor_map=True)

@@ -1,18 +1,12 @@
 import numpy as np
-
+from scipy.signal import gausspulse
 import matplotlib.pyplot as plt
 from scipy import signal
 from scipy.signal import correlate as correlate_scipy
 from numpy import correlate as correlate_numpy
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
-
-l = np.array([[1, 2, 3, 4],
-              [5, 6, 7, 8]])
-
-test = np.split(l[1], indices_or_sections=2)
-test = np.array(test)
-print(test)
+from src.utils.dsp_tools import spectrogram_scipy
 
 
 # fig = plt.figure(figsize=(5, 8))

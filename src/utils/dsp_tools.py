@@ -10,8 +10,6 @@ from scipy.signal import spectrogram, correlate
 from scipy.signal import cwt, ricker
 from scipy.signal import filtfilt, butter
 from sklearn.preprocessing import MinMaxScaler
-# self lib
-from src.utils.helpers import ProgressBarForLoop
 
 
 # FAST FOURIER TRANSFORM (FFT)
@@ -227,27 +225,3 @@ def one_dim_xcor_2d_input(input_mat, pair_list, verbose):
     return xcor_bank
 
 
-# [UNNECESSARY WRAPPER FOR CWT, UNLESS IT SERVES A GREAT SHORTCUT]
-def continuous_wavelet_transform_scipy(input_signal):
-    widths = np.arange(1, 31)
-    cwtmatr = cwt(input_signal, ricker, widths)
-
-    t = 1  # to be defined
-    print(cwtmatr)
-    print(cwtmatr.shape)
-
-    fig1 = plt.figure()
-    ax1 = fig1.add_subplot(2, 1, 1)
-    ax1.set_title('Wavelet Transform')
-    ax2 = fig1.add_subplot(2, 1, 2)
-    ax2.set_title('Input Signal')
-
-    ax1.plot(t, input_signal)
-    ax1.set_xbound(lower=t.min(), upper=t.max())
-
-    i = ax2.imshow(cwtmatr, extent=[-1, 1, 1, 31], cmap='PRGn', aspect='auto',
-                   vmax=abs(cwtmatr).max(), vmin=-abs(cwtmatr).max())
-    ax2.set_xbound(lower=t.min(), upper=t.max())
-    # fig1.colorbar(i)
-    plt.subplots_adjust(hspace=0.3)
-    plt.show()
