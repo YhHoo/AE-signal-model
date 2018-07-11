@@ -15,10 +15,9 @@ data = AcousticEmissionDataSet_30_5_2018(drive='F')
 dataset, label = data.leak_2class()
 
 # Some random data
-values1 = np.random.rand(41, 600)
-values2 = np.random.rand(41, 600)
-values3 = np.random.rand(10, 10)
-values4 = np.random.rand(10, 10)
+values1 = dataset[0]
+values2 = dataset[160]
+
 vals = [values1, values2]
 
 fig = plt.figure(figsize=(5, 7))
@@ -33,7 +32,7 @@ grid = AxesGrid(fig, 111,
                 )
 
 for val, ax in zip(vals, grid):
-    im = ax.imshow(val, vmin=0, vmax=1)  # (left, right, bottom, top)
+    im = ax.imshow(val, vmin=0, vmax=1, extent=(0.1, 0.41, 0.6, 0.39))  # (left, right, bottom, top)
 
 grid.cbar_axes[0].colorbar(im)
 
