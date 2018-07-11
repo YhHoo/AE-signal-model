@@ -14,31 +14,33 @@ from src.experiment_dataset.dataset_experiment_30_5_2018 import AcousticEmission
 data = AcousticEmissionDataSet_30_5_2018(drive='F')
 dataset, label = data.leak_2class()
 
-# Some random data
-values1 = dataset[0]
-values2 = dataset[160]
+savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
+for i in range(40):
+    class_1 = dataset[10 + i]
+    class_2 = dataset[160 + i]
+    val_test = [class_1, class_2]
 
-vals = [values1, values2]
+    fig = plt.figure(figsize=(5, 7))
+    fig.suptitle('Xcor Map of 2 leak class')
+    grid = AxesGrid(fig, 111,
+                    nrows_ncols=(2, 1),
+                    axes_pad=0.05,
+                    share_all=True,
+                    label_mode="L",
+                    cbar_location="right",
+                    cbar_mode="single")
 
-fig = plt.figure(figsize=(5, 7))
+    for val, ax in zip(val_test, grid):
+        im = ax.imshow(val, vmin=0, vmax=1, extent=(0.1, 0.41, 0.6, 0.39))  # (left, right, bottom, top)
 
-grid = AxesGrid(fig, 111,
-                nrows_ncols=(2, 1),
-                axes_pad=0.05,
-                share_all=True,
-                label_mode="L",
-                cbar_location="right",
-                cbar_mode="single",
-                )
+    grid.cbar_axes[0].colorbar(im)
 
-for val, ax in zip(vals, grid):
-    im = ax.imshow(val, vmin=0, vmax=1, extent=(0.1, 0.41, 0.6, 0.39))  # (left, right, bottom, top)
+    for cax in grid.cbar_axes:
+        cax.toggle_label(False)
 
-grid.cbar_axes[0].colorbar(im)
-
-for cax in grid.cbar_axes:
-    cax.toggle_label(False)
-#
+    filename = '{}sample_{}'.format(savepath, i)
+    fig.savefig(filename)
+    plt.close('all')
 
 
 # fig = plt.figure(figsize=(5, 6))
@@ -55,8 +57,6 @@ for cax in grid.cbar_axes:
 # ax1.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 # ax2.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
-
-plt.show()
 
 # -----------------------------------------------------------------------------
 # fig = plt.figure(figsize=(5, 8))
