@@ -1,14 +1,65 @@
 import numpy as np
 from scipy.signal import gausspulse
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import AxesGrid
 from scipy import signal
 from scipy.signal import correlate as correlate_scipy
 from numpy import correlate as correlate_numpy
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy
+from src.experiment_dataset.dataset_experiment_30_5_2018 import AcousticEmissionDataSet_30_5_2018
+
+# dual heat map
+data = AcousticEmissionDataSet_30_5_2018(drive='F')
+dataset, label = data.leak_2class()
+
+# Some random data
+values1 = np.random.rand(41, 600)
+values2 = np.random.rand(41, 600)
+values3 = np.random.rand(10, 10)
+values4 = np.random.rand(10, 10)
+vals = [values1, values2]
+
+fig = plt.figure(figsize=(5, 7))
+
+grid = AxesGrid(fig, 111,
+                nrows_ncols=(2, 1),
+                axes_pad=0.05,
+                share_all=True,
+                label_mode="L",
+                cbar_location="right",
+                cbar_mode="single",
+                )
+
+for val, ax in zip(vals, grid):
+    im = ax.imshow(val, vmin=0, vmax=1)  # (left, right, bottom, top)
+
+grid.cbar_axes[0].colorbar(im)
+
+for cax in grid.cbar_axes:
+    cax.toggle_label(False)
+#
 
 
+# fig = plt.figure(figsize=(5, 6))
+# fig.suptitle('XCOR MAP of Leak Pos 1 & 2')
+# ax1 = fig.add_axes([0.1, 0.51, 0.6, 0.39])  # [left, bottom, width, height]
+# ax2 = fig.add_axes([0.1, 0.1, 0.6, 0.39])
+# colorbar_ax = fig.add_axes([0.7, 0.1, 0.05, 0.8])
+# i = ax1.pcolormesh(np.arange(0, 600), np.arange(0, 41), values1)
+# j = ax2.pcolormesh(np.arange(0, 600), np.arange(0, 41), values2)
+# fig.colorbar(i, cax=colorbar_ax)
+# fig.colorbar(j, cax=colorbar_ax)
+# ax1.grid()
+# ax2.grid()
+# ax1.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+# ax2.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+
+
+plt.show()
+
+# -----------------------------------------------------------------------------
 # fig = plt.figure(figsize=(5, 8))
 # ax1 = fig.add_subplot(4, 1, 1)
 # ax2 = fig.add_subplot(4, 1, 2)

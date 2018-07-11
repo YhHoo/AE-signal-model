@@ -157,7 +157,7 @@ class AcousticEmissionDataSet_30_5_2018:
             xcor_map = one_dim_xcor_2d_input(input_mat=stft_map,
                                              pair_list=sensor_pair,
                                              verbose=False)
-            class_1.append(xcor_map[0, :, 800:1200])
+            class_1.append(xcor_map[0, :, 700:1300])
 
             # for class 1, sensor[-1m] & [23m]
             stft_map = np.array([sensor_1_stft[i], sensor_3_stft[i]])
@@ -165,7 +165,7 @@ class AcousticEmissionDataSet_30_5_2018:
             xcor_map = one_dim_xcor_2d_input(input_mat=stft_map,
                                              pair_list=sensor_pair,
                                              verbose=False)
-            class_2.append(xcor_map[0, :, 800:1200])
+            class_2.append(xcor_map[0, :, 700:1300])
 
             pb.update(now=progress)
         pb.destroy()
