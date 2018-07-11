@@ -38,9 +38,9 @@ for i in range(40):
     for cax in grid.cbar_axes:
         cax.toggle_label(False)
 
-    filename = '{}sample_{}'.format(savepath, i)
-    fig.savefig(filename)
-    plt.close('all')
+    # filename = '{}sample_{}'.format(savepath, i)
+    # fig.savefig(filename)
+    plt.show()
 
 
 # fig = plt.figure(figsize=(5, 6))
