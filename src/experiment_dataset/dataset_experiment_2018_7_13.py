@@ -96,9 +96,8 @@ class AcousticEmissionDataSet_13_7_2018:
 
 data = AcousticEmissionDataSet_13_7_2018(drive='F')
 plb_8_channel = data.test_data(sensor_dist='near', leak='plb')
+# so that axis[0] equal to sensors
+plb_8_channel = np.swapaxes(plb_8_channel, 0, 1)
 
-for i in range(plb_8_channel.shape[1]):
-
-plb_8_channel = np.array([d for d in plb_8_channel[:, ]])
 
 

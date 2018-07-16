@@ -3,6 +3,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.utils import to_categorical
 from keras.models import model_from_json
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import AxesGrid
 from mpl_toolkits.mplot3d import Axes3D  # do not delete
 import numpy as np
 from nptdms import TdmsFile
@@ -375,4 +376,57 @@ def read_single_tdms(filename=None):
     return n_channel_matrix
 
 
-def multiplot_timeseries(input):
+def multiplot_timeseries(input, subplot_titles, main_title):
+    '''
+    Aspect axis[0] of input is no. of sensors/diff features, axis[1] is time steps
+    :param input: a 2d array
+    :param subplot_titles: title for every plot
+    :param main_title: the big title
+    :return: rectangular fig obj
+    '''
+    no_of_plot = input.shape[0]
+    fig = plt.figure(figsize=(5, 8))
+    fig.suptitle(main_title)
+    fig.subplots_adjust(hspace=0.6, top=0.9, bottom=0.03)
+    for i in range(no_of_plot):
+        ax = fig.add_subplot(no_of_plot, 1, i+1)
+        ax.plot(input[i])
+        ax.set_title(subplot_titles[i])
+
+    return fig
+
+
+def dual_heatmap_plot(input_1, input_2):
+    '''
+    This function plot 2 heatmap (e.g. xcor map, FT map) in one fig, for comparison.
+    For best comparison experience by visual, the 2 inputs shud be equal dimension.
+    Note that the values in axis[0] will be plotted top down (for small to big)
+    :param input_1: 2d array
+    :param input_2: 2d array
+    :return: fig up and down plot
+    Suggestion: let Shape[0] always be freq, shape[1] be xcor steps/ time steps
+    '''
+    val_test = [input_1, input_2]
+
+    fig = plt.figure(figsize=(5, 7))
+    fig.suptitle('Xcor Map of 2 leak class')
+    grid = AxesGrid(fig, 111,
+                    nrows_ncols=(2, 1),
+                    axes_pad=0.05,
+                    share_all=True,
+                    label_mode="L",
+                    cbar_location="right",
+                    cbar_mode="single")
+
+    for val, ax in zip(val_test, grid):
+        im = ax.imshow(val, vmin=0, vmax=1, extent=(0.1, 0.41, 0.6, 0.39))  # (left, right, bottom, top)
+
+    grid.cbar_axes[0].colorbar(im)
+
+    for cax in grid.cbar_axes:
+        cax.toggle_label(False)
+
+    return fig
+
+
+
