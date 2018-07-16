@@ -8,7 +8,7 @@ from numpy import correlate as correlate_numpy
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy
-from src.experiment_dataset.dataset_experiment_30_5_2018 import AcousticEmissionDataSet_30_5_2018
+from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 
 # dual heat map
 data = AcousticEmissionDataSet_30_5_2018(drive='F')

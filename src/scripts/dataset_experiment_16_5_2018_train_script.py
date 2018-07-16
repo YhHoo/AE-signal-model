@@ -3,7 +3,7 @@ This file trains the model on dataset_experiment_16_5_2018().
 this model expecting the input data of 0.2 seconds with shape of (3000/1000/700, 40) only.
 '''
 
-from src.experiment_dataset.dataset_experiment_16_5_2018 import AccousticEmissionDataSet_16_5_2018
+from src.experiment_dataset.dataset_experiment_2018_5_16 import AccousticEmissionDataSet_16_5_2018
 from keras.utils import to_categorical
 from keras import optimizers
 # self defined library

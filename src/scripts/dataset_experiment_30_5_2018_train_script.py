@@ -3,7 +3,7 @@ this script train the CNN on recognizing the signal of 2 different leak position
 time series signal -> segmentation -> bandpass -> STFT -> Xcor -> preprocessing -> CNN training
 '''
 from keras.callbacks import TensorBoard
-from src.experiment_dataset.dataset_experiment_30_5_2018 import AcousticEmissionDataSet_30_5_2018
+from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 from src.utils.helpers import break_into_train_test, reshape_3d_to_4d_tocategorical, \
                               ModelLogger, model_multiclass_evaluate
 from src.model_bank.cnn_model_bank import cnn_general_v1

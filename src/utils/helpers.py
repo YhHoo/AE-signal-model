@@ -351,6 +351,28 @@ def read_all_tdms_from_folder(folder_path=None):
     pb.destroy()
     # convert the list matrix
     n_channel_matrix = np.array(n_channel_matrix)
-    print('Read Data Dim: ', n_channel_matrix.shape, '\n')
+    print('Acquired Data Dim: ', n_channel_matrix.shape, '\n')
 
     return n_channel_matrix
+
+
+def read_single_tdms(filename=None):
+    '''
+    While read_all_tdms_from_folder() read all tdms file from a folder, when a folder contains huge no of tdms, it is
+    time consuming to read all when we only want to visualize/test with one single tdms file
+    :param filename: file name and path of the specific tdms file
+    :return:
+    '''
+    print('Reading --> ', filename)
+    tdms_file = TdmsFile(filename)
+    tdms_df = tdms_file.as_dataframe()
+    # store the df values to list
+    n_channel_matrix = tdms_df.values
+    # convert the list matrix
+    n_channel_matrix = np.array(n_channel_matrix)
+    print('Acquired Data Dim: ', n_channel_matrix.shape, '\n')
+
+    return n_channel_matrix
+
+
+def multiplot_timeseries(input):
