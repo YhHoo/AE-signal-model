@@ -11,6 +11,25 @@ from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 
 
+# ax1 = plt.subplot(2, 1, 1)
+# ax1.plot([1, 6, 9, 5, 23, 2, 1])
+# ax2 = plt.subplot(2, 1, 2, sharex=ax1)
+# ax2.plot([1, 2, 3, 4, 5, 6, 9])
+# plt.show()
+
+# fig = plt.figure()
+# ax1 = fig.add_subplot(2, 1, 1)
+# ax2 = fig.add_subplot(2, 1, 2, sharex=ax1)
+# ax1.plot([1, 6, 9, 5, 23, 2, 1])
+# ax2.plot([1, 2, 3, 4, 5, 6, 9])
+#
+# plt.show()
+
+fig, ax = plt.subplots(2, 1, sharey=True)
+
+
+
+
 
 # fig = plt.figure(figsize=(5, 6))
 # fig.suptitle('XCOR MAP of Leak Pos 1 & 2')
