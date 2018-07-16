@@ -326,5 +326,4 @@ def cnn_general_v1(input_shape, num_classes):
     return model
 
 
-cnn_general_v1((41, 600), 2)
 
