@@ -47,9 +47,9 @@ class ModelLogger:
 
     def __init__(self, model, model_name):
         self.model = model
-        self.path = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/' + model_name
+        self.path = 'C:/Users/YH/PycharmProjects/AE-signal-model/src/scripts/saved_model/' + model_name
 
-    def save_architecture(self, save_readable=True):
+    def save_architecture(self, save_readable=False):
         # serialize and saving the model structure to JSON
         model_json = self.model.to_json()
         # path to save
@@ -84,9 +84,7 @@ class ModelLogger:
                                      save_best_only=True,
                                      mode=mode,  # for acc, it should b 'max'; for loss, 'min'
                                      period=period)  # no of epoch btw checkpoints
-        callback_list = [checkpoint]
-
-        return callback_list
+        return checkpoint
 
     # this function use the model history returned by fit() to plot learning curve and save it
     def learning_curve(self, history, save=False, show=False, title='Learning Curve'):
@@ -106,7 +104,7 @@ class ModelLogger:
         plt.close()
 
 
-def model_loader(model_name=None, dir=None):
+def model_loader(model_name=None):
     '''
     :param model_name: The model name
     :param dir: The location that contains .h5, .json of the model
@@ -114,6 +112,7 @@ def model_loader(model_name=None, dir=None):
     AIM: this just simplifies the model loading procedure by wrapping them in one.
     This has to be followed by model.compile() if we wish to train the model later
     '''
+    dir = 'C:/Users/YH/PycharmProjects/AE-signal-model/src/scripts/saved_model/'
     path = dir + model_name
 
     # load architecture from .json
