@@ -104,12 +104,13 @@ class AcousticEmissionDataSet_13_7_2018:
         # swap axis, so shape[0] is sensor (for easy using)
         n_channel_data = np.swapaxes(n_channel_data, 1, 2)  # swap axis[0] and [1]
 
-        # initiate progressbar
-        pb = ProgressBarForLoop(title='Bandpass + STFT', end=n_channel_data.shape[0])
-        progress = 0
+        # -----------[BANDPASS + STFT + XCOR]-------------
+        sensor_pair = [(1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7)]
+        class_1, class_2, class_3, class_4, class_5, class_6 = [], [], [], [], [], []
 
-        # BANDPASS + STFT
-        stft_bank = []
+        # initiate progressbar
+        pb = ProgressBarForLoop(title='Bandpass + STFT + XCOR', end=n_channel_data.shape[0])
+        progress = 0
         # for all plb samples
         for sample in n_channel_data:
             all_channel_stft = []
@@ -120,7 +121,6 @@ class AcousticEmissionDataSet_13_7_2018:
                                                            fs=1e6,
                                                            f_hicut=1e5,
                                                            f_locut=20e3)
-
                 # stft
                 _, _, sxx, _ = spectrogram_scipy(sampled_data=filtered_signal,
                                                  fs=1e6,
@@ -131,17 +131,77 @@ class AcousticEmissionDataSet_13_7_2018:
                                                  return_plot=False,
                                                  verbose=False)
                 all_channel_stft.append(sxx[10:51, :])  # index_10 -> f=20kHz; index_50 -> f=100kHz
-            stft_bank.append(all_channel_stft)
+            all_channel_stft = np.array(all_channel_stft)
+
+            # xcor for sensor pair
+            xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
+                                             pair_list=sensor_pair,
+                                             verbose=False)
+            # visualize and saving the training data
+            savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
+            visualize = False
+            if visualize:
+                fig_1 = three_dim_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
+                                             y_axis=np.arange(0, xcor_map.shape[1], 1),
+                                             zxx=xcor_map[0],
+                                             output='2d',
+                                             label=['xcor step', 'freq'],
+                                             title='(-2, 2)')
+                fig_2 = three_dim_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
+                                             y_axis=np.arange(0, xcor_map.shape[1], 1),
+                                             zxx=xcor_map[1],
+                                             output='2d',
+                                             label=['xcor step', 'freq'],
+                                             title='(-2, 4)')
+                fig_3 = three_dim_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
+                                             y_axis=np.arange(0, xcor_map.shape[1], 1),
+                                             zxx=xcor_map[2],
+                                             output='2d',
+                                             label=['xcor step', 'freq'],
+                                             title='(-2, 6)')
+
+                fig_1_title = '{}sample{}_xcormap(-2, 2)'.format(savepath, progress)
+                fig_2_title = '{}sample{}_xcormap(-2, 4)'.format(savepath, progress)
+                fig_3_title = '{}sample{}_xcormap(-2, 6)'.format(savepath, progress)
+
+                fig_1.savefig(fig_1_title)
+                fig_2.savefig(fig_2_title)
+                fig_3.savefig(fig_3_title)
+
+                plt.close('all')
+
+            class_1.append(xcor_map[0, 10:20, 300:500])
+            class_2.append(xcor_map[1, 10:20, 300:500])
+            class_3.append(xcor_map[2, 10:20, 300:500])
+            class_4.append(xcor_map[3, 10:20, 300:500])
+            class_5.append(xcor_map[4, 10:20, 300:500])
+            class_6.append(xcor_map[5, 10:20, 300:500])
             # update progress
             pb.update(now=progress)
             progress += 1
         pb.destroy()
-        stft_bank = np.array(stft_bank)
-        print(stft_bank.shape)
+
+        # packaging and labeling dataset
+        class_1 = np.array(class_1)
+        class_2 = np.array(class_2)
+        class_3 = np.array(class_3)
+        class_4 = np.array(class_4)
+        class_5 = np.array(class_5)
+        class_6 = np.array(class_6)
+        dataset = np.concatenate((class_1, class_2, class_3, class_4, class_5, class_6), axis=0)
+        label = np.array([0] * class_1.shape[0] + [1] * class_2.shape[0] +
+                         [2] * class_3.shape[0] + [3] * class_4.shape[0] +
+                         [4] * class_5.shape[0] + [5] * class_6.shape[0])
+
+        print('Dataset Dim: ', dataset.shape)
+        print('Label Dim: ', label.shape)
+
+        return dataset, label
 
 
-data = AcousticEmissionDataSet_13_7_2018(drive='F')
-data.plb(sensor_dist='near')
+# data = AcousticEmissionDataSet_13_7_2018(drive='E')
+# dataset, label = data.plb(sensor_dist='near')
+
 
 # plb_8_channel = data.test_data(sensor_dist='near', leak='plb')
 # # so that axis[0] equal to sensors
@@ -168,7 +228,7 @@ data.plb(sensor_dist='near')
 #     stft_map_8_sensors.append(sxx[10:51, :])  # index_10 -> f=20kHz; index_50 -> f=100kHz
 #
 # stft_map_8_sensors = np.array(stft_map_8_sensors)
-
+#
 # sensor_pair = [(1, 2), (1, 3), (1, 7)]
 # xcor_map = one_dim_xcor_2d_input(input_mat=stft_map_8_sensors,
 #                                  pair_list=sensor_pair,
@@ -177,7 +237,7 @@ data.plb(sensor_dist='near')
 # class_1_xcor_map = xcor_map[0]
 # class_2_xcor_map = xcor_map[1]
 # class_3_xcor_map = xcor_map[2]
-#
+# #
 # fig1 = three_dim_visualizer(x_axis=np.arange(0, class_1_xcor_map.shape[1], 1),
 #                             y_axis=np.arange(0, 41, 1),
 #                             zxx=class_1_xcor_map,

@@ -291,33 +291,42 @@ def cnn_51_159_3class_v1():
 def cnn_general_v1(input_shape, num_classes):
     model = Sequential()
 
-    model.add(Conv2D(filters=64, kernel_size=(3, 4), strides=(1, 1),
+    model.add(Conv2D(filters=64, kernel_size=(2, 4), strides=(1, 1),
                      activation='relu', input_shape=(input_shape[0], input_shape[1], 1)))
     model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
     # model.add(Dropout(0.2))
-    model.add(Conv2D(filters=64, kernel_size=(3, 4), strides=(1, 1),
+    # model.add(Conv2D(filters=64, kernel_size=(2, 2), strides=(1, 1),
+    #                  activation='relu'))
+    # model.add(MaxPooling2D(pool_size=(2, 5), strides=(2, 2)))
+    # # model.add(Dropout(0.4))
+    # model.add(Conv2D(filters=64, kernel_size=(2, 2), strides=(1, 1),
+    #                  activation='relu'))
+    # model.add(MaxPooling2D(pool_size=(2, 5), strides=(2, 2)))
+    model.add(Conv2D(filters=96, kernel_size=(2, 4), strides=(1, 1),
                      activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 5), strides=(2, 2)))
-    # model.add(Dropout(0.4))
-    model.add(Conv2D(filters=64, kernel_size=(3, 4), strides=(1, 1),
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+    # # model.add(Dropout(0.3))
+    model.add(Conv2D(filters=128, kernel_size=(2, 4), strides=(1, 1),
                      activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 5), strides=(2, 2)))
-    model.add(Conv2D(filters=96, kernel_size=(2, 5), strides=(1, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 5), strides=(2, 2)))
-    # model.add(Dropout(0.3))
-    model.add(Conv2D(filters=128, kernel_size=(2, 5), strides=(1, 1),
-                     activation='relu'))
-    model.add(GlobalAveragePooling2D())
-    # model.add(Flatten())
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+    # model.add(Conv2D(filters=256, kernel_size=(2, 4), strides=(1, 1),
+    #                  activation='relu'))
+    # model.add(Conv2D(filters=502, kernel_size=(2, 4), strides=(1, 1),
+    #                  activation='relu'))
+    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
+    # model.add(GlobalAveragePooling2D())
+    model.add(Flatten())
     # model.add(Dropout(0.4))
 
     # Fully connected ----------------------------------------
     # model.add(Dense(100, activation='relu'))
     # model.add(Dropout(0.3))
     # model.add(Dense(200, activation='relu'))
-    # model.add(Dropout(0.2))
+    model.add(Dropout(0.2))
+    # model.add(Dense(100, activation='relu'))
     model.add(Dense(100, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(200, activation='relu'))
     # model.add(Dropout(0.2))
     model.add(Dense(num_classes, activation='softmax'))
 
@@ -326,4 +335,4 @@ def cnn_general_v1(input_shape, num_classes):
     return model
 
 
-
+cnn_general_v1(input_shape=(10, 200), num_classes=6)
