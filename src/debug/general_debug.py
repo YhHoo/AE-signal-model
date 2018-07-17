@@ -11,22 +11,14 @@ from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 
 
-# ax1 = plt.subplot(2, 1, 1)
-# ax1.plot([1, 6, 9, 5, 23, 2, 1])
-# ax2 = plt.subplot(2, 1, 2, sharex=ax1)
-# ax2.plot([1, 2, 3, 4, 5, 6, 9])
-# plt.show()
+a = np.array([1, 3, 5, 2, 1])
+print(a.max().index)
 
-# fig = plt.figure()
-# ax1 = fig.add_subplot(2, 1, 1)
-# ax2 = fig.add_subplot(2, 1, 2, sharex=ax1)
-# ax1.plot([1, 6, 9, 5, 23, 2, 1])
-# ax2.plot([1, 2, 3, 4, 5, 6, 9])
-#
-# plt.show()
 
-fig, ax = plt.subplots(2, 1, sharey=True)
-
+# x = np.arange(0, 30, 1).reshape(2, 3, 5)
+# x_shift = np.swapaxes(x, 1, 2)
+# print(x)
+# print(x_shift)
 
 
 

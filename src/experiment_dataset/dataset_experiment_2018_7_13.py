@@ -51,6 +51,8 @@ class AcousticEmissionDataSet_13_7_2018:
         :param leak:
         :return:
         '''
+        # initialize
+        n_channel_data = None
         # sensor [2-12] or [10-22]
         if sensor_dist is 'near':
             if pressure is 0 and leak is True:
@@ -92,70 +94,108 @@ class AcousticEmissionDataSet_13_7_2018:
         :return:
         Xcor map
         '''
+        # initialize
+        n_channel_data = None
         if sensor_dist is 'near':
             n_channel_data = read_all_tdms_from_folder(self.path_plb_2to12)
         elif sensor_dist is 'far':
             n_channel_data = read_all_tdms_from_folder(self.path_plb_10to22)
-        # swap axis, so shape[0] is sensor
-        n_channel_data = np.swapaxes(n_channel_data, 0, 1)  # swap axis[0] and [1]
 
-        # ------[Temp]-------
+        # swap axis, so shape[0] is sensor (for easy using)
+        n_channel_data = np.swapaxes(n_channel_data, 1, 2)  # swap axis[0] and [1]
+
+        # initiate progressbar
+        pb = ProgressBarForLoop(title='Bandpass + STFT', end=n_channel_data.shape[0])
+        progress = 0
+
+        # BANDPASS + STFT
+        stft_bank = []
+        # for all plb samples
+        for sample in n_channel_data:
+            all_channel_stft = []
+            # for all sensors
+            for each_sensor_data in sample:
+                # band pass filter
+                filtered_signal = butter_bandpass_filtfilt(sampled_data=each_sensor_data[90000:130000],
+                                                           fs=1e6,
+                                                           f_hicut=1e5,
+                                                           f_locut=20e3)
+
+                # stft
+                _, _, sxx, _ = spectrogram_scipy(sampled_data=filtered_signal,
+                                                 fs=1e6,
+                                                 mode='magnitude',
+                                                 nperseg=100,
+                                                 nfft=500,
+                                                 noverlap=0,
+                                                 return_plot=False,
+                                                 verbose=False)
+                all_channel_stft.append(sxx[10:51, :])  # index_10 -> f=20kHz; index_50 -> f=100kHz
+            stft_bank.append(all_channel_stft)
+            # update progress
+            pb.update(now=progress)
+            progress += 1
+        pb.destroy()
+        stft_bank = np.array(stft_bank)
+        print(stft_bank.shape)
 
 
 data = AcousticEmissionDataSet_13_7_2018(drive='F')
-plb_8_channel = data.test_data(sensor_dist='near', leak='plb')
-# so that axis[0] equal to sensors
-plb_8_channel = np.swapaxes(plb_8_channel, 0, 1)
-# titles setting
-# subplot_title = ['sensor {}m'.format(s_no) for s_no in [-3, -2, 2, 4, 6, 8, 10, 12]]
+data.plb(sensor_dist='near')
 
-stft_map_8_sensors = []
-# for all sensor data
-for raw_data in plb_8_channel:
-    # band pass filter
-    filtered_signal = butter_bandpass_filtfilt(sampled_data=raw_data, fs=1e6, f_hicut=1e5, f_locut=20e3)
+# plb_8_channel = data.test_data(sensor_dist='near', leak='plb')
+# # so that axis[0] equal to sensors
+# plb_8_channel = np.swapaxes(plb_8_channel, 0, 1)
+# # titles setting
+# # subplot_title = ['sensor {}m'.format(s_no) for s_no in [-3, -2, 2, 4, 6, 8, 10, 12]]
+#
+# stft_map_8_sensors = []
+# # for all sensor data
+# for raw_data in plb_8_channel:
+#     # band pass filter
+#     filtered_signal = butter_bandpass_filtfilt(sampled_data=raw_data, fs=1e6, f_hicut=1e5, f_locut=20e3)
+#
+#     # stft
+#     _, _, sxx, _ = spectrogram_scipy(sampled_data=filtered_signal[90000:130000],
+#                                      fs=1e6,
+#                                      mode='magnitude',
+#                                      nperseg=100,
+#                                      nfft=500,
+#                                      noverlap=0,
+#                                      return_plot=False,
+#                                      verbose=False)
+#
+#     stft_map_8_sensors.append(sxx[10:51, :])  # index_10 -> f=20kHz; index_50 -> f=100kHz
+#
+# stft_map_8_sensors = np.array(stft_map_8_sensors)
 
-    # stft
-    _, _, sxx, _ = spectrogram_scipy(sampled_data=filtered_signal,
-                                     fs=1e6,
-                                     mode='magnitude',
-                                     nperseg=100,
-                                     nfft=500,
-                                     noverlap=0,
-                                     return_plot=False,
-                                     verbose=False)
-    stft_map_8_sensors.append(sxx[10:51, :])  # index_10 -> f=20kHz; index_50 -> f=100kHz
-stft_map_8_sensors = np.array(stft_map_8_sensors)
-# for sectorized stft map of all sensors, perform XCOR
-# xcor sensor pair: (-2, 2), (-2, 4), (-2, 6)
+# sensor_pair = [(1, 2), (1, 3), (1, 7)]
+# xcor_map = one_dim_xcor_2d_input(input_mat=stft_map_8_sensors,
+#                                  pair_list=sensor_pair,
+#                                  verbose=True)
+#
+# class_1_xcor_map = xcor_map[0]
+# class_2_xcor_map = xcor_map[1]
+# class_3_xcor_map = xcor_map[2]
+#
+# fig1 = three_dim_visualizer(x_axis=np.arange(0, class_1_xcor_map.shape[1], 1),
+#                             y_axis=np.arange(0, 41, 1),
+#                             zxx=class_1_xcor_map,
+#                             output='2d',
+#                             label=['timestep', 'freq'],
+#                             title='(-2, 2)')
+# fig2 = three_dim_visualizer(x_axis=np.arange(0, class_2_xcor_map.shape[1], 1),
+#                             y_axis=np.arange(0, 41, 1),
+#                             zxx=class_2_xcor_map,
+#                             output='2d',
+#                             label=['timestep', 'freq'],
+#                             title='(-2, 10)')
+# fig3 = three_dim_visualizer(x_axis=np.arange(0, class_3_xcor_map.shape[1], 1),
+#                             y_axis=np.arange(0, 41, 1),
+#                             zxx=class_3_xcor_map,
+#                             output='2d',
+#                             label=['timestep', 'freq'],
+#                             title='(-2, 12)')
 
-sensor_pair = [(1, 2), (1, 3), (1, 7)]
-xcor_map = one_dim_xcor_2d_input(input_mat=stft_map_8_sensors,
-                                 pair_list=sensor_pair,
-                                 verbose=True)
-
-class_1_xcor_map = xcor_map[0]
-class_2_xcor_map = xcor_map[1]
-class_3_xcor_map = xcor_map[2]
-
-fig1 = three_dim_visualizer(x_axis=np.arange(0, class_1_xcor_map.shape[1], 1),
-                            y_axis=np.arange(0, 41, 1),
-                            zxx=class_1_xcor_map,
-                            output='2d',
-                            label=['timestep', 'freq'],
-                            title='(-2, 2)')
-fig2 = three_dim_visualizer(x_axis=np.arange(0, class_2_xcor_map.shape[1], 1),
-                            y_axis=np.arange(0, 41, 1),
-                            zxx=class_2_xcor_map,
-                            output='2d',
-                            label=['timestep', 'freq'],
-                            title='(-2, 10)')
-fig3 = three_dim_visualizer(x_axis=np.arange(0, class_3_xcor_map.shape[1], 1),
-                            y_axis=np.arange(0, 41, 1),
-                            zxx=class_3_xcor_map,
-                            output='2d',
-                            label=['timestep', 'freq'],
-                            title='(-2, 12)')
-
-plt.show()
+# plt.show()
 
