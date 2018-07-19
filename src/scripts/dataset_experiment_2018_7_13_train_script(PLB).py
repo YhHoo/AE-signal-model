@@ -13,7 +13,7 @@ data = AcousticEmissionDataSet_13_7_2018(drive='F')
 dataset, label = data.plb(sensor_dist='near')
 
 # split to train test data
-num_classes = 6
+num_classes = 11
 train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
                                                          label=label,
                                                          num_classes=num_classes,
@@ -31,14 +31,14 @@ model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accur
 model_logger = ModelLogger(model, model_name='PLB_2018_7_13_Classification_CNN[9.7M]')
 # tensorboard
 tb_callback = TensorBoard(log_dir='./Graph', histogram_freq=2, write_graph=True, write_images=True, write_grads=True)
-sbw_callback = model_logger.save_best_weight_cheakpoint(monitor='val_acc', period=1)
+# sbw_callback = model_logger.save_best_weight_cheakpoint(monitor='val_acc', period=1)
 history = model.fit(x=train_x,
                     y=train_y,
                     batch_size=100,
                     validation_data=(test_x, test_y),
-                    epochs=50,
+                    epochs=80,
                     verbose=1,
-                    callbacks=[sbw_callback, tb_callback])
+                    callbacks=[tb_callback])
 model_logger.learning_curve(history=history, save=False, show=True)
 model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
-model_logger.save_architecture()
+# model_logger.save_architecture()

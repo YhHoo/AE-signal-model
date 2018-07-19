@@ -42,7 +42,7 @@ class AcousticEmissionDataSet_13_7_2018:
 
     def test_data(self, sensor_dist=None, pressure=None, leak=None):
         '''
-        This function returns only a single tdms file once, for the criteria inputted. This is for testing the algorithm
+        This function returns only a SINGLE tdms file once, for the criteria inputted. This is for testing the algorithm
         without loading tdms in entire folder, which will lead to excessive RAM consumption
         :param sensor_dist: 'near' -> [sensor -3, -2, 2, 4, 6, 8, 10, 12]
                              'far' -> [sensor -3, -2, 10, 14, 16, 18, 20, 22]
@@ -85,6 +85,8 @@ class AcousticEmissionDataSet_13_7_2018:
             elif leak is 'plb':
                 n_channel_data = read_single_tdms(self.path_plb_10to22 + 'test_001.tdms')
 
+        # swap axis, so shape[0] is sensor (for easy using)
+        n_channel_data = np.swapaxes(n_channel_data, 0, 1)  # swap axis[0] and [1]
         return n_channel_data
 
     def plb(self, sensor_dist=None):
@@ -100,13 +102,18 @@ class AcousticEmissionDataSet_13_7_2018:
             n_channel_data = read_all_tdms_from_folder(self.path_plb_2to12)
         elif sensor_dist is 'far':
             n_channel_data = read_all_tdms_from_folder(self.path_plb_10to22)
+        elif sensor_dist is 'all':
+            data_near = read_all_tdms_from_folder(self.path_plb_2to12)
+            data_far = read_all_tdms_from_folder(self.path_plb_10to22)
+            n_channel_data = np.concatenate((data_near, data_far))
 
         # swap axis, so shape[0] is sensor (for easy using)
-        n_channel_data = np.swapaxes(n_channel_data, 1, 2)  # swap axis[0] and [1]
+        n_channel_data = np.swapaxes(n_channel_data, 1, 2)  # swap axis[1] and [2]
 
         # -----------[BANDPASS + STFT + XCOR]-------------
-        sensor_pair = [(1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7)]
-        class_1, class_2, class_3, class_4, class_5, class_6 = [], [], [], [], [], []
+        sensor_pair = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+        class_1, class_2, class_3, class_4, class_5, class_6, class_7, class_8, class_9, class_10, class_11 = \
+            [], [], [], [], [], [], [], [], [], [], []
 
         # initiate progressbar
         pb = ProgressBarForLoop(title='Bandpass + STFT + XCOR', end=n_channel_data.shape[0])
@@ -141,34 +148,16 @@ class AcousticEmissionDataSet_13_7_2018:
             savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
             visualize = False
             if visualize:
-                fig_1 = three_dim_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
-                                             y_axis=np.arange(0, xcor_map.shape[1], 1),
-                                             zxx=xcor_map[0],
-                                             output='2d',
-                                             label=['xcor step', 'freq'],
-                                             title='(-2, 2)')
-                fig_2 = three_dim_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
-                                             y_axis=np.arange(0, xcor_map.shape[1], 1),
-                                             zxx=xcor_map[1],
-                                             output='2d',
-                                             label=['xcor step', 'freq'],
-                                             title='(-2, 4)')
-                fig_3 = three_dim_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
-                                             y_axis=np.arange(0, xcor_map.shape[1], 1),
-                                             zxx=xcor_map[2],
-                                             output='2d',
-                                             label=['xcor step', 'freq'],
-                                             title='(-2, 6)')
-
-                fig_1_title = '{}sample{}_xcormap(-2, 2)'.format(savepath, progress)
-                fig_2_title = '{}sample{}_xcormap(-2, 4)'.format(savepath, progress)
-                fig_3_title = '{}sample{}_xcormap(-2, 6)'.format(savepath, progress)
-
-                fig_1.savefig(fig_1_title)
-                fig_2.savefig(fig_2_title)
-                fig_3.savefig(fig_3_title)
-
-                plt.close('all')
+                for i in range(xcor_map.shape[0]):
+                    fig = three_dim_visualizer(x_axis=np.arange(300, 500, 1),
+                                               y_axis=np.arange(10, 20, 1),
+                                               zxx=xcor_map[i, 10:20, 300:500],
+                                               output='2d',
+                                               label=['xcor step', 'freq'],
+                                               title='({}, {}) = {}m'.format(sensor_pair[i][0], sensor_pair[i][1], i))
+                    fig_title = '{}sample{}_xcormap(dist={}m)'.format(savepath, progress, i)
+                    fig.savefig(fig_title)
+                    plt.close('all')
 
             class_1.append(xcor_map[0, 10:20, 300:500])
             class_2.append(xcor_map[1, 10:20, 300:500])
@@ -176,6 +165,11 @@ class AcousticEmissionDataSet_13_7_2018:
             class_4.append(xcor_map[3, 10:20, 300:500])
             class_5.append(xcor_map[4, 10:20, 300:500])
             class_6.append(xcor_map[5, 10:20, 300:500])
+            class_7.append(xcor_map[6, 10:20, 300:500])
+            class_8.append(xcor_map[7, 10:20, 300:500])
+            class_9.append(xcor_map[8, 10:20, 300:500])
+            class_10.append(xcor_map[9, 10:20, 300:500])
+            class_11.append(xcor_map[10, 10:20, 300:500])
             # update progress
             pb.update(now=progress)
             progress += 1
@@ -188,10 +182,19 @@ class AcousticEmissionDataSet_13_7_2018:
         class_4 = np.array(class_4)
         class_5 = np.array(class_5)
         class_6 = np.array(class_6)
-        dataset = np.concatenate((class_1, class_2, class_3, class_4, class_5, class_6), axis=0)
+        class_7 = np.array(class_7)
+        class_8 = np.array(class_8)
+        class_9 = np.array(class_9)
+        class_10 = np.array(class_10)
+        class_11 = np.array(class_11)
+        dataset = np.concatenate((class_1, class_2, class_3, class_4, class_5,
+                                  class_6, class_7, class_8, class_9, class_10, class_11), axis=0)
         label = np.array([0] * class_1.shape[0] + [1] * class_2.shape[0] +
                          [2] * class_3.shape[0] + [3] * class_4.shape[0] +
-                         [4] * class_5.shape[0] + [5] * class_6.shape[0])
+                         [4] * class_5.shape[0] + [5] * class_6.shape[0] +
+                         [6] * class_7.shape[0] + [7] * class_8.shape[0] +
+                         [8] * class_9.shape[0] + [9] * class_10.shape[0] +
+                         [10] * class_11.shape[0])
 
         print('Dataset Dim: ', dataset.shape)
         print('Label Dim: ', label.shape)
@@ -282,64 +285,43 @@ class AcousticEmissionDataSet_13_7_2018:
 
         return class_1
 
+    def plb_raw(self, sensor_dist=None):
+        # initialize
+        n_channel_data = None
+        if sensor_dist is 'near':
+            n_channel_data = read_all_tdms_from_folder(self.path_plb_2to12)
+        elif sensor_dist is 'far':
+            n_channel_data = read_all_tdms_from_folder(self.path_plb_10to22)
+
+        # swap axis, so shape[0] is sensor (for easy using)
+        n_channel_data = np.swapaxes(n_channel_data, 1, 2)  # swap axis[0] and [1]
+
+        return n_channel_data
+
 
 # data = AcousticEmissionDataSet_13_7_2018(drive='F')
-# dataset = data.plb_unseen()
+# data_raw = data.plb(sensor_dist='near')
 
 
-# plb_8_channel = data.test_data(sensor_dist='near', leak='plb')
-# # so that axis[0] equal to sensors
-# plb_8_channel = np.swapaxes(plb_8_channel, 0, 1)
-# # titles setting
-# # subplot_title = ['sensor {}m'.format(s_no) for s_no in [-3, -2, 2, 4, 6, 8, 10, 12]]
-#
-# stft_map_8_sensors = []
-# # for all sensor data
-# for raw_data in plb_8_channel:
-#     # band pass filter
-#     filtered_signal = butter_bandpass_filtfilt(sampled_data=raw_data, fs=1e6, f_hicut=1e5, f_locut=20e3)
-#
-#     # stft
-#     _, _, sxx, _ = spectrogram_scipy(sampled_data=filtered_signal[90000:130000],
-#                                      fs=1e6,
-#                                      mode='magnitude',
-#                                      nperseg=100,
-#                                      nfft=500,
-#                                      noverlap=0,
-#                                      return_plot=False,
-#                                      verbose=False)
-#
-#     stft_map_8_sensors.append(sxx[10:51, :])  # index_10 -> f=20kHz; index_50 -> f=100kHz
-#
-# stft_map_8_sensors = np.array(stft_map_8_sensors)
-#
-# sensor_pair = [(1, 2), (1, 3), (1, 7)]
-# xcor_map = one_dim_xcor_2d_input(input_mat=stft_map_8_sensors,
-#                                  pair_list=sensor_pair,
-#                                  verbose=True)
-#
-# class_1_xcor_map = xcor_map[0]
-# class_2_xcor_map = xcor_map[1]
-# class_3_xcor_map = xcor_map[2]
-# #
-# fig1 = three_dim_visualizer(x_axis=np.arange(0, class_1_xcor_map.shape[1], 1),
-#                             y_axis=np.arange(0, 41, 1),
-#                             zxx=class_1_xcor_map,
-#                             output='2d',
-#                             label=['timestep', 'freq'],
-#                             title='(-2, 2)')
-# fig2 = three_dim_visualizer(x_axis=np.arange(0, class_2_xcor_map.shape[1], 1),
-#                             y_axis=np.arange(0, 41, 1),
-#                             zxx=class_2_xcor_map,
-#                             output='2d',
-#                             label=['timestep', 'freq'],
-#                             title='(-2, 10)')
-# fig3 = three_dim_visualizer(x_axis=np.arange(0, class_3_xcor_map.shape[1], 1),
-#                             y_axis=np.arange(0, 41, 1),
-#                             zxx=class_3_xcor_map,
-#                             output='2d',
-#                             label=['timestep', 'freq'],
-#                             title='(-2, 12)')
+# -------------[VISUALIZE ALL IN TIME]---------------
+# subplot_titles = ['sensor[{}m]'.format(d) for d in [-3, -2, 10, 14, 16, 18, 20, 22]]
+# sample_no = 0
+# savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
+# for sample in data_raw:
+#     fig = multiplot_timeseries(sample[:, 90000:130000],
+#                                subplot_titles=subplot_titles,
+#                                main_title='PLB time series (sample_{})'.format(sample_no))
+#     filename = '{}PLB_time_ser_sample{}'.format(savepath, sample_no)
+#     fig.savefig(filename)
+#     plt.close('all')
+#     print('saved')
+#     sample_no += 1
 
-# plt.show()
+
+
+
+
+
+
+
 

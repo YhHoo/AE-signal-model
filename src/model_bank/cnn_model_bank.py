@@ -314,8 +314,8 @@ def cnn_general_v1(input_shape, num_classes):
     # model.add(Conv2D(filters=502, kernel_size=(2, 4), strides=(1, 1),
     #                  activation='relu'))
     # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
-    # model.add(GlobalAveragePooling2D())
-    model.add(Flatten())
+    model.add(GlobalAveragePooling2D())
+    # model.add(Flatten())
     # model.add(Dropout(0.4))
 
     # Fully connected ----------------------------------------
