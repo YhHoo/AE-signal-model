@@ -1,4 +1,5 @@
 import numpy as np
+from random import shuffle
 import matplotlib.pyplot as plt
 # self library
 from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, multiplot_timeseries, \
@@ -102,12 +103,14 @@ class AcousticEmissionDataSet_13_7_2018:
                                axis[2] -> time step (xcor steps)
         '''
         # initialize
-        data_near = read_all_tdms_from_folder(self.path_plb_2to12)
-        data_far = read_all_tdms_from_folder(self.path_plb_10to22)
-        # n_channel_data = np.concatenate((data_near, data_far[:51]))
+        n_channel_data_near = read_all_tdms_from_folder(self.path_plb_2to12)
+        n_channel_data_far = read_all_tdms_from_folder(self.path_plb_10to22)
+        # take only first 51 samples, so it has same class sizes with data_near
+        n_channel_data_far = n_channel_data_far[:51]
 
         # swap axis, so shape[0] is sensor (for easy using)
-        n_channel_data_near = np.swapaxes(n_channel_data, 1, 2)  # swap axis[1] and [2]
+        n_channel_data_near = np.swapaxes(n_channel_data_near, 1, 2)  # swap axis[1] and [2]
+        n_channel_data_far = np.swapaxes(n_channel_data_far, 1, 2)
 
         # -----------[BANDPASS + STFT + XCOR]-------------
         # xcor pairing commands - [near] = 0m, 1m,..., 10m
@@ -120,14 +123,23 @@ class AcousticEmissionDataSet_13_7_2018:
         # invert the sensor pair to generate the opposite lag
         sensor_pair_far_inv = [(pair[1], pair[0]) for pair in sensor_pair_far]
 
-        class_1, class_2, class_3, class_4, class_5, class_6, class_7, class_8, class_9, class_10 = \
-            [], [], [], [], [], [], [], [], [], []
+        # horizontal segmentation of the xcormap (along xcor step axis)
+        xcormap_extent = (250, 550)
 
+        # initialize a dict of lists for every classes
+        all_class = {}
+        for i in range(-20, 21, 1):
+            all_class['class_[{}]'.format(i)] = []
+
+        # class_1, class_2, class_3, class_4, class_5, class_6, class_7, class_8, class_9, class_10 = \
+        #     [], [], [], [], [], [], [], [], [], []
+
+        # Sensor [Near] -------------------------------------------------
         # initiate progressbar
-        pb = ProgressBarForLoop(title='Bandpass + STFT + XCOR', end=n_channel_data.shape[0])
+        pb = ProgressBarForLoop(title='Bandpass + STFT + XCOR --> [Near]', end=n_channel_data_near.shape[0])
         progress = 0
         # for all plb samples
-        for sample in n_channel_data:
+        for sample in n_channel_data_near:
             all_channel_stft = []
             # for all sensors
             for each_sensor_data in sample:
@@ -148,67 +160,135 @@ class AcousticEmissionDataSet_13_7_2018:
                 all_channel_stft.append(sxx[10:51, :])  # index_10 -> f=20kHz; index_50 -> f=100kHz
             all_channel_stft = np.array(all_channel_stft)
 
-            # xcor for sensor pair
+            # xcor for sensor pair (0m) - (10m)
+            xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
+                                             pair_list=sensor_pair_near,
+                                             verbose=False)
+
+            for i in range(0, 11, 1):
+                all_class['class_[{}]'.format(i)].append(xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+
+            # xcor for sensor pair (0m) - (-10m)
+            xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
+                                             pair_list=sensor_pair_near_inv,
+                                             verbose=False)
+            for i in range(0, -11, 1):
+                all_class['class_[{}]'.format(i)].append(xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+
+            # update progress bar
+            pb.update(now=progress)
+            progress += 1
+        pb.destroy()
+
+        # shuffle the class_0 and truncate only 51 samples
+        shuffle(all_class['class_[0]'])
+        all_class['class_[0]'] = all_class['class_[0]'][:51]
+
+        # Sensor [Far] -------------------------------------------------
+        # initiate progressbar
+        pb = ProgressBarForLoop(title='Bandpass + STFT + XCOR --> [Near]', end=n_channel_data_near.shape[0])
+        progress = 0
+        for sample in n_channel_data_far:
+            all_channel_stft = []
+            # for all sensors
+            for each_sensor_data in sample:
+                # band pass filter
+                filtered_signal = butter_bandpass_filtfilt(sampled_data=each_sensor_data[90000:130000],
+                                                           fs=1e6,
+                                                           f_hicut=1e5,
+                                                           f_locut=20e3)
+                # stft
+                _, _, sxx, _ = spectrogram_scipy(sampled_data=filtered_signal,
+                                                 fs=1e6,
+                                                 mode='magnitude',
+                                                 nperseg=100,
+                                                 nfft=500,
+                                                 noverlap=0,
+                                                 return_plot=False,
+                                                 verbose=False)
+                all_channel_stft.append(sxx[10:51, :])  # index_10 -> f=20kHz; index_50 -> f=100kHz
+            all_channel_stft = np.array(all_channel_stft)
+
+            # horizontal segmentation of the xcormap (along xcor step axis)
+            xcormap_extent = (250, 550)
+
+            # xcor for sensor pair (11m) - (20m)
+            xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
+                                             pair_list=sensor_pair_far,
+                                             verbose=False)
+
+            for i in range(0, 10, 1):
+                all_class['class_[{}]'.format(i + 11)].append(xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+
+            # xcor for sensor pair (11m) - (-20m)
             xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
                                              pair_list=sensor_pair_far_inv,
                                              verbose=False)
-            # horizontal segmentation of the xcormap (along xcor step axis)
-            xcormap_extent = (250, 550)
-            # visualize and saving the training data
-            savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
-            visualize = False
-            if visualize:
-                for i in range(xcor_map.shape[0]):
-                    fig = three_dim_visualizer(x_axis=np.arange(xcormap_extent[0], xcormap_extent[1], 1),
-                                               y_axis=np.arange(10, 20, 1),
-                                               zxx=xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]],
-                                               output='2d',
-                                               label=['xcor step', 'freq'],
-                                               title='({}, {}) = -{}m'.format(sensor_pair_far_inv[i][0], sensor_pair_far_inv[i][1], i+11))
-                    fig_title = '{}sample{}_xcormap(dist=-{}m)'.format(savepath, progress, i+11)
-                    fig.savefig(fig_title)
-                    plt.close('all')
 
-            class_1.append(xcor_map[0, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            class_2.append(xcor_map[1, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            class_3.append(xcor_map[2, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            class_4.append(xcor_map[3, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            class_5.append(xcor_map[4, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            class_6.append(xcor_map[5, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            class_7.append(xcor_map[6, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            class_8.append(xcor_map[7, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            class_9.append(xcor_map[8, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            class_10.append(xcor_map[9, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+            for i in range(0, 10, 1):
+                all_class['class_[{}]'.format(-11-i)].append(xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+
+        for i in range(-20, 21, 1):
+            print('class_[{}] Dim: '.format(i), all_class['class_[{}]'.format(i)].shape)
+
+
+            # visualize and saving the training data
+            # savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
+            # visualize = False
+            # if visualize:
+            #     for i in range(xcor_map.shape[0]):
+            #         fig = three_dim_visualizer(x_axis=np.arange(xcormap_extent[0], xcormap_extent[1], 1),
+            #                                    y_axis=np.arange(10, 20, 1),
+            #                                    zxx=xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]],
+            #                                    output='2d',
+            #                                    label=['xcor step', 'freq'],
+            #                                    title='({}, {}) = -{}m'.format(sensor_pair_far_inv[i][0],
+            #                                                                   sensor_pair_far_inv[i][1],
+            #                                                                   i+11))
+            #         fig_title = '{}sample{}_xcormap(dist=-{}m)'.format(savepath, progress, i+11)
+            #         fig.savefig(fig_title)
+            #         plt.close('all')
+
+            # class_1.append(xcor_map[0, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+            # class_2.append(xcor_map[1, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+            # class_3.append(xcor_map[2, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+            # class_4.append(xcor_map[3, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+            # class_5.append(xcor_map[4, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+            # class_6.append(xcor_map[5, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+            # class_7.append(xcor_map[6, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+            # class_8.append(xcor_map[7, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+            # class_9.append(xcor_map[8, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+            # class_10.append(xcor_map[9, 10:20, xcormap_extent[0]:xcormap_extent[1]])
             # class_11.append(xcor_map[10, 10:20, xcormap_extent[0]:xcormap_extent[1]])
             # update progress
             pb.update(now=progress)
             progress += 1
         pb.destroy()
 
-        # packaging and labeling dataset
-        class_1 = np.array(class_1)
-        class_2 = np.array(class_2)
-        class_3 = np.array(class_3)
-        class_4 = np.array(class_4)
-        class_5 = np.array(class_5)
-        class_6 = np.array(class_6)
-        class_7 = np.array(class_7)
-        class_8 = np.array(class_8)
-        class_9 = np.array(class_9)
-        class_10 = np.array(class_10)
-        # class_11 = np.array(class_11)
-        dataset = np.concatenate((class_1, class_2, class_3, class_4, class_5,
-                                  class_6, class_7, class_8, class_9, class_10), axis=0)
-        label = np.array([0] * class_1.shape[0] + [1] * class_2.shape[0] +
-                         [2] * class_3.shape[0] + [3] * class_4.shape[0] +
-                         [4] * class_5.shape[0] + [5] * class_6.shape[0] +
-                         [6] * class_7.shape[0] + [7] * class_8.shape[0] +
-                         [8] * class_9.shape[0] + [9] * class_10.shape[0])
-
-        print('Dataset Dim: ', dataset.shape)
-        print('Label Dim: ', label.shape)
-
-        return dataset, label
+        # # packaging and labeling dataset
+        # class_1 = np.array(class_1)
+        # class_2 = np.array(class_2)
+        # class_3 = np.array(class_3)
+        # class_4 = np.array(class_4)
+        # class_5 = np.array(class_5)
+        # class_6 = np.array(class_6)
+        # class_7 = np.array(class_7)
+        # class_8 = np.array(class_8)
+        # class_9 = np.array(class_9)
+        # class_10 = np.array(class_10)
+        # # class_11 = np.array(class_11)
+        # dataset = np.concatenate((class_1, class_2, class_3, class_4, class_5,
+        #                           class_6, class_7, class_8, class_9, class_10), axis=0)
+        # label = np.array([0] * class_1.shape[0] + [1] * class_2.shape[0] +
+        #                  [2] * class_3.shape[0] + [3] * class_4.shape[0] +
+        #                  [4] * class_5.shape[0] + [5] * class_6.shape[0] +
+        #                  [6] * class_7.shape[0] + [7] * class_8.shape[0] +
+        #                  [8] * class_9.shape[0] + [9] * class_10.shape[0])
+        #
+        # print('Dataset Dim: ', dataset.shape)
+        # print('Label Dim: ', label.shape)
+        #
+        # return dataset, label
 
     def plb_unseen(self):
         # use near only

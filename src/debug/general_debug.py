@@ -1,4 +1,5 @@
 import numpy as np
+from random import shuffle
 from scipy.signal import gausspulse
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import AxesGrid
@@ -11,17 +12,48 @@ from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 
 
-l = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
-l_inv = [(pair[1], pair[0]) for pair in l]
-print(l_inv)
+# x = [1, 2, 3]
+# dct = {}
+# for i in x:
+#     dct['lst_%s' % i] = []
+#
+# dct['lst_1'].append(np.arange(0, 10).reshape((2, 5)))
+# dct['lst_1'].append(np.arange(5, 15).reshape((2, 5)))
+# print(dct['lst_1'][0])
+
+
+# x = [[i, i+1, i+2] for i in range(10)]
+# print(x)
+# shuffle(x)
+# print(x)
+#
+#
+# all_class = {}
+# for i in range(-20, 21, 1):
+#     all_class['class_[{}]'.format(i)] = []
+#
+# for i in range(5):
+#     all_class['class_[0]'].append(np.linspace(0, i, 5))
+#
+# print(all_class['class_[0]'])
+# shuffle(all_class['class_[0]'])
+# # l = np.array(all_class['class_[0]'])
+# # print(l)
+#
+# print(all_class['class_[0]'])
+#
+# all_class['class_[0]'] = all_class['class_[0]'][:2]
+#
+# print(all_class['class_[0]'])
+
+for i in range(-11, -21, -1):
+    print(i)
+
 
 # x = np.arange(0, 30, 1).reshape(2, 3, 5)
 # x_shift = np.swapaxes(x, 1, 2)
 # print(x)
 # print(x_shift)
-
-
-
 
 # fig = plt.figure(figsize=(5, 6))
 # fig.suptitle('XCOR MAP of Leak Pos 1 & 2')
