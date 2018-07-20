@@ -87,6 +87,8 @@ class AcousticEmissionDataSet_13_7_2018:
 
         # swap axis, so shape[0] is sensor (for easy using)
         n_channel_data = np.swapaxes(n_channel_data, 0, 1)  # swap axis[0] and [1]
+
+        print('After Swapped Dim: ', n_channel_data.shape)
         return n_channel_data
 
     def plb(self, sensor_dist=None):
@@ -232,7 +234,7 @@ class AcousticEmissionDataSet_13_7_2018:
                                                  nfft=500,
                                                  noverlap=0,
                                                  return_plot=False,
-                                                 verbose=False)
+                                                 verbose=True)
                 all_channel_stft.append(sxx[10:51, :])  # index_10 -> f=20kHz; index_50 -> f=100kHz
             all_channel_stft = np.array(all_channel_stft)
 
@@ -299,9 +301,18 @@ class AcousticEmissionDataSet_13_7_2018:
         return n_channel_data
 
 
-# data = AcousticEmissionDataSet_13_7_2018(drive='F')
-# data_raw = data.plb(sensor_dist='near')
+data = AcousticEmissionDataSet_13_7_2018(drive='F')
+data_raw = data.test_data(sensor_dist='near', leak='plb')
 
+_, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],
+                                   fs=1e6,
+                                   mode='magnitude',
+                                   nperseg=100,
+                                   nfft=500,
+                                   noverlap=0,
+                                   return_plot=True,
+                                   verbose=False)
+plt.show()
 
 # -------------[VISUALIZE ALL IN TIME]---------------
 # subplot_titles = ['sensor[{}m]'.format(d) for d in [-3, -2, 10, 14, 16, 18, 20, 22]]
