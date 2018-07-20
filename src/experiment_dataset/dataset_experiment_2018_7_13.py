@@ -48,8 +48,9 @@ class AcousticEmissionDataSet_13_7_2018:
                              'far' -> [sensor -3, -2, 10, 14, 16, 18, 20, 22]
                              'plb' -> pencil lead break
         :param pressure: 0 bar, 1 bar or 2 bar
-        :param leak:
-        :return:
+        :param leak: True -> leak, False -> Noleak, 'plb' -> pencil lead break
+        :return: raw time series data in2 dimensional array, where axis[0] -> sensors channel
+                                                                   axis[1] -> time steps
         '''
         # initialize
         n_channel_data = None
@@ -96,7 +97,9 @@ class AcousticEmissionDataSet_13_7_2018:
         This function returns a dataset of xcor map, each belongs to a class of PLB captured by 2 sensors at different
         distance.
         :return:
-        Xcor map
+        Xcor map dataset where axis[0] -> total sample size of all classes
+                               axis[1] -> frequency bin
+                               axis[2] -> time step (xcor steps)
         '''
         # initialize
         n_channel_data = None
@@ -114,6 +117,8 @@ class AcousticEmissionDataSet_13_7_2018:
 
         # -----------[BANDPASS + STFT + XCOR]-------------
         sensor_pair = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+        # invert the sensor pair to generate the opposite lag
+        sensor_pair_inv = [(pair[1], pair[0]) for pair in sensor_pair]
         class_1, class_2, class_3, class_4, class_5, class_6, class_7, class_8, class_9, class_10, class_11 = \
             [], [], [], [], [], [], [], [], [], [], []
 
@@ -144,11 +149,11 @@ class AcousticEmissionDataSet_13_7_2018:
 
             # xcor for sensor pair
             xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
-                                             pair_list=sensor_pair,
+                                             pair_list=sensor_pair_inv,
                                              verbose=False)
             # visualize and saving the training data
             savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
-            visualize = False
+            visualize = True
             if visualize:
                 for i in range(xcor_map.shape[0]):
                     fig = three_dim_visualizer(x_axis=np.arange(300, 500, 1),
@@ -157,7 +162,7 @@ class AcousticEmissionDataSet_13_7_2018:
                                                output='2d',
                                                label=['xcor step', 'freq'],
                                                title='({}, {}) = {}m'.format(sensor_pair[i][0], sensor_pair[i][1], i))
-                    fig_title = '{}sample{}_xcormap(dist={}m)'.format(savepath, progress, i)
+                    fig_title = '{}sample{}_xcormap(dist=-{}m)'.format(savepath, progress, i)
                     fig.savefig(fig_title)
                     plt.close('all')
 
@@ -302,17 +307,17 @@ class AcousticEmissionDataSet_13_7_2018:
 
 
 data = AcousticEmissionDataSet_13_7_2018(drive='F')
-data_raw = data.test_data(sensor_dist='near', leak='plb')
+data_raw = data.plb(sensor_dist='near')
 
-_, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],
-                                   fs=1e6,
-                                   mode='magnitude',
-                                   nperseg=100,
-                                   nfft=500,
-                                   noverlap=0,
-                                   return_plot=True,
-                                   verbose=False)
-plt.show()
+# _, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],
+#                                    fs=1e6,
+#                                    mode='magnitude',
+#                                    nperseg=100,
+#                                    nfft=500,
+#                                    noverlap=0,
+#                                    return_plot=True,
+#                                    verbose=False)
+# plt.show()
 
 # -------------[VISUALIZE ALL IN TIME]---------------
 # subplot_titles = ['sensor[{}m]'.format(d) for d in [-3, -2, 10, 14, 16, 18, 20, 22]]

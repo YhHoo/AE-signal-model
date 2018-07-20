@@ -11,9 +11,9 @@ from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 
 
-a = np.array([1, 3, 5, 2, 1])
-print(a.max().index)
-
+l = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+l_inv = [(pair[1], pair[0]) for pair in l]
+print(l_inv)
 
 # x = np.arange(0, 30, 1).reshape(2, 3, 5)
 # x_shift = np.swapaxes(x, 1, 2)
