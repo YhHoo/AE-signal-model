@@ -161,7 +161,7 @@ class AcousticEmissionDataSet_13_7_2018:
                                                zxx=xcor_map[i, 10:20, 300:500],
                                                output='2d',
                                                label=['xcor step', 'freq'],
-                                               title='({}, {}) = {}m'.format(sensor_pair[i][0], sensor_pair[i][1], i))
+                                               title='({}, {}) = -{}m'.format(sensor_pair[i][0], sensor_pair[i][1], i))
                     fig_title = '{}sample{}_xcormap(dist=-{}m)'.format(savepath, progress, i)
                     fig.savefig(fig_title)
                     plt.close('all')
