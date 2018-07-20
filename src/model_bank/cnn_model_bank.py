@@ -335,7 +335,7 @@ def cnn_general_v1(input_shape, num_classes):
     return model
 
 
-cnn_general_v1(input_shape=(10, 200), num_classes=11)
+# cnn_general_v1(input_shape=(10, 200), num_classes=11)
 
 
 

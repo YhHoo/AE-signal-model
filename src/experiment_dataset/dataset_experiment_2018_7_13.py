@@ -172,7 +172,7 @@ class AcousticEmissionDataSet_13_7_2018:
             xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
                                              pair_list=sensor_pair_near_inv,
                                              verbose=False)
-            for i in range(0, -11, 1):
+            for i in range(0, -11, -1):
                 all_class['class_[{}]'.format(i)].append(xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]])
 
             # update progress bar
@@ -186,7 +186,7 @@ class AcousticEmissionDataSet_13_7_2018:
 
         # Sensor [Far] -------------------------------------------------
         # initiate progressbar
-        pb = ProgressBarForLoop(title='Bandpass + STFT + XCOR --> [Near]', end=n_channel_data_near.shape[0])
+        pb = ProgressBarForLoop(title='Bandpass + STFT + XCOR --> [Far]', end=n_channel_data_near.shape[0])
         progress = 0
         for sample in n_channel_data_far:
             all_channel_stft = []
@@ -228,10 +228,6 @@ class AcousticEmissionDataSet_13_7_2018:
             for i in range(0, 10, 1):
                 all_class['class_[{}]'.format(-11-i)].append(xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]])
 
-        for i in range(-20, 21, 1):
-            print('class_[{}] Dim: '.format(i), all_class['class_[{}]'.format(i)].shape)
-
-
             # visualize and saving the training data
             # savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
             # visualize = False
@@ -265,6 +261,15 @@ class AcousticEmissionDataSet_13_7_2018:
             progress += 1
         pb.destroy()
 
+        dataset = []
+        for i in range(-20, 21, 1):
+            temp = np.array(all_class['class_[{}]'.format(i)])
+            dataset.append(temp)
+
+        dataset = np.concatenate(dataset, axis=0)
+        label = [[i] * 51 for i in np.arange(-20, 21, 1)]
+        label = np.array([item for l in label for item in l])
+
         # # packaging and labeling dataset
         # class_1 = np.array(class_1)
         # class_2 = np.array(class_2)
@@ -285,10 +290,10 @@ class AcousticEmissionDataSet_13_7_2018:
         #                  [6] * class_7.shape[0] + [7] * class_8.shape[0] +
         #                  [8] * class_9.shape[0] + [9] * class_10.shape[0])
         #
-        # print('Dataset Dim: ', dataset.shape)
-        # print('Label Dim: ', label.shape)
-        #
-        # return dataset, label
+        print('Dataset Dim: ', dataset.shape)
+        print('Label Dim: ', label.shape)
+
+        return dataset, label
 
     def plb_unseen(self):
         # use near only
@@ -388,8 +393,8 @@ class AcousticEmissionDataSet_13_7_2018:
         return n_channel_data
 
 
-data = AcousticEmissionDataSet_13_7_2018(drive='F')
-data.plb()
+# data = AcousticEmissionDataSet_13_7_2018(drive='F')
+# data.plb()
 
 # _, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],
 #                                    fs=1e6,

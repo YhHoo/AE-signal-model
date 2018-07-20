@@ -36,6 +36,16 @@ from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmission
 #     all_class['class_[0]'].append(np.linspace(0, i, 5))
 #
 # print(all_class['class_[0]'])
+# l = np.array(all_class['class_[0]'])
+# print(l)
+# print(l.shape)
+
+label = [[i]*10 for i in np.arange(-20, 21, 1)]
+label = [item for l in label for item in l]
+print(label)
+
+
+
 # shuffle(all_class['class_[0]'])
 # # l = np.array(all_class['class_[0]'])
 # # print(l)
@@ -45,9 +55,6 @@ from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmission
 # all_class['class_[0]'] = all_class['class_[0]'][:2]
 #
 # print(all_class['class_[0]'])
-
-for i in range(-11, -21, -1):
-    print(i)
 
 
 # x = np.arange(0, 30, 1).reshape(2, 3, 5)
