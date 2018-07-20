@@ -102,15 +102,9 @@ class AcousticEmissionDataSet_13_7_2018:
                                axis[2] -> time step (xcor steps)
         '''
         # initialize
-        n_channel_data = None
-        if sensor_dist is 'near':
-            n_channel_data = read_all_tdms_from_folder(self.path_plb_2to12)
-        elif sensor_dist is 'far':
-            n_channel_data = read_all_tdms_from_folder(self.path_plb_10to22)
-        elif sensor_dist is 'all':
-            data_near = read_all_tdms_from_folder(self.path_plb_2to12)
-            data_far = read_all_tdms_from_folder(self.path_plb_10to22)
-            n_channel_data = np.concatenate((data_near, data_far))
+        data_near = read_all_tdms_from_folder(self.path_plb_2to12)
+        data_far = read_all_tdms_from_folder(self.path_plb_10to22)
+        n_channel_data = np.concatenate((data_near, data_far))
 
         # swap axis, so shape[0] is sensor (for easy using)
         n_channel_data = np.swapaxes(n_channel_data, 1, 2)  # swap axis[1] and [2]
@@ -153,7 +147,7 @@ class AcousticEmissionDataSet_13_7_2018:
                                              verbose=False)
             # visualize and saving the training data
             savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
-            visualize = True
+            visualize = False
             if visualize:
                 for i in range(xcor_map.shape[0]):
                     fig = three_dim_visualizer(x_axis=np.arange(300, 500, 1),
