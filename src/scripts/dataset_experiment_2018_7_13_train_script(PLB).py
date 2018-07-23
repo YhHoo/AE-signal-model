@@ -28,7 +28,7 @@ train_x, train_y, test_x, test_y = reshape_3d_to_4d_tocategorical(train_x, train
 
 model = cnn_general_v1(input_shape=(train_x.shape[1], train_x.shape[2]), num_classes=num_classes)
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-model_logger = ModelLogger(model, model_name='PLB_2018_7_13_Classification_CNN[22k]')
+model_logger = ModelLogger(model, model_name='PLB_2018_7_13_Classification_CNN[400k]')
 # tensorboard (folder name in Graph will be used to name the run)
 tb_callback = TensorBoard(log_dir='./Graph', histogram_freq=2, write_graph=True, write_images=True, write_grads=True)
 # sbw_callback = model_logger.save_best_weight_cheakpoint(monitor='val_acc', period=1)

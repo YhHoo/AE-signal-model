@@ -96,7 +96,7 @@ class AcousticEmissionDataSet_13_7_2018:
     def plb(self):
         '''
         This function returns a dataset of xcor map, each belongs to a class of PLB captured by 2 sensors at different
-        distance.
+        distance. 51 samples for each class.
         :return:
         Xcor map dataset where axis[0] -> total sample size of all classes
                                axis[1] -> frequency bin
@@ -270,26 +270,6 @@ class AcousticEmissionDataSet_13_7_2018:
         label = [[i] * 51 for i in np.arange(-20, 21, 1)]
         label = np.array([item for l in label for item in l])
 
-        # # packaging and labeling dataset
-        # class_1 = np.array(class_1)
-        # class_2 = np.array(class_2)
-        # class_3 = np.array(class_3)
-        # class_4 = np.array(class_4)
-        # class_5 = np.array(class_5)
-        # class_6 = np.array(class_6)
-        # class_7 = np.array(class_7)
-        # class_8 = np.array(class_8)
-        # class_9 = np.array(class_9)
-        # class_10 = np.array(class_10)
-        # # class_11 = np.array(class_11)
-        # dataset = np.concatenate((class_1, class_2, class_3, class_4, class_5,
-        #                           class_6, class_7, class_8, class_9, class_10), axis=0)
-        # label = np.array([0] * class_1.shape[0] + [1] * class_2.shape[0] +
-        #                  [2] * class_3.shape[0] + [3] * class_4.shape[0] +
-        #                  [4] * class_5.shape[0] + [5] * class_6.shape[0] +
-        #                  [6] * class_7.shape[0] + [7] * class_8.shape[0] +
-        #                  [8] * class_9.shape[0] + [9] * class_10.shape[0])
-        #
         print('Dataset Dim: ', dataset.shape)
         print('Label Dim: ', label.shape)
 
