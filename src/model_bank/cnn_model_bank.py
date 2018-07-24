@@ -7,7 +7,7 @@ from keras.layers import Dense, Flatten
 from keras.layers import Conv2D, MaxPooling2D, Dropout, GlobalAveragePooling2D, AveragePooling2D
 from keras.models import Sequential
 # self defined library
-
+from src.utils.yh_nn import categorical_crossentropy_yh
 
 def cnn_1000_40_7class_v1():
     '''
@@ -344,13 +344,13 @@ def cnn_general_v1(input_shape, num_classes):
     model.add(Dropout(0.2))
     model.add(Dense(num_classes, activation='softmax'))
 
+    model.compile(optimizer='adam', loss=categorical_crossentropy_yh)
     print(model.summary())
 
     return model
 
 
 # cnn_general_v1(input_shape=(10, 300), num_classes=41)
-
 
 def cnn_1d_plb(input_shape, num_classes):
     model = Sequential()
