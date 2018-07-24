@@ -27,7 +27,7 @@ train_x, train_y, test_x, test_y = reshape_3d_to_4d_tocategorical(train_x, train
                                                                   verbose=True)
 
 model = cnn_general_v1(input_shape=(train_x.shape[1], train_x.shape[2]), num_classes=num_classes)
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer='adam', loss=categorical_crossentropy_yh, metrics=['accuracy'])
 model_logger = ModelLogger(model, model_name='PLB_2018_7_13_Classification_CNN[400k]')
 # tensorboard (folder name in Graph will be used to name the run)
 tb_callback = TensorBoard(log_dir='./Graph', histogram_freq=2, write_graph=True, write_images=True, write_grads=True)
