@@ -245,17 +245,6 @@ class AcousticEmissionDataSet_13_7_2018:
             #         fig.savefig(fig_title)
             #         plt.close('all')
 
-            # class_1.append(xcor_map[0, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            # class_2.append(xcor_map[1, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            # class_3.append(xcor_map[2, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            # class_4.append(xcor_map[3, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            # class_5.append(xcor_map[4, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            # class_6.append(xcor_map[5, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            # class_7.append(xcor_map[6, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            # class_8.append(xcor_map[7, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            # class_9.append(xcor_map[8, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            # class_10.append(xcor_map[9, 10:20, xcormap_extent[0]:xcormap_extent[1]])
-            # class_11.append(xcor_map[10, 10:20, xcormap_extent[0]:xcormap_extent[1]])
             # update progress
             pb.update(now=progress)
             progress += 1

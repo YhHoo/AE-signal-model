@@ -7,7 +7,7 @@ from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmission
 from src.utils.helpers import break_into_train_test, reshape_3d_to_4d_tocategorical, \
                               ModelLogger, model_multiclass_evaluate
 from src.model_bank.cnn_model_bank import cnn_general_v1
-
+from keras.losses import categorical_crossentropy
 
 data = AcousticEmissionDataSet_13_7_2018(drive='F')
 dataset, label = data.plb()
