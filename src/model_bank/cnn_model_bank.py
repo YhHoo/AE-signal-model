@@ -349,7 +349,7 @@ def cnn_general_v1(input_shape, num_classes):
     return model
 
 
-cnn_general_v1(input_shape=(10, 300), num_classes=41)
+# cnn_general_v1(input_shape=(10, 300), num_classes=41)
 
 
 def cnn_1d_plb(input_shape, num_classes):

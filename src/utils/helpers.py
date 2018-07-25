@@ -442,7 +442,7 @@ def recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
     :param y_pred: list or 1d array of model prediction (after argmax())
     :param all_class_label: list or 1d array of integers for labelling the class, e.g. 0, 1, 2, 3, ...
     :param verbose: Print out the recall and precision for each class
-    :return: conf_mat --> a square np matrix
+    :return: conf_mat --> a square dataframe of pandas
              recall_each_class --> list or 1d array of integers (follow order of all_class_label)
              precision_each_class --> list or 1d array of integers (follow order of all_class_label)
     '''
@@ -465,9 +465,22 @@ def recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
     recall_each_class = diag / total_samples_of_each_class
     precision_each_class = diag / total_pred_of_each_class
 
+    # f1 score (own method, pls verify wif xinjie)
+    recall_avg = np.average(recall_each_class)
+    precision_avg = np.average(precision_each_class)
+    # average
+    f1_score = (2*recall_avg*precision_avg) / (recall_avg + precision_avg)
     if verbose:
         print('class recall: ', recall_each_class)
         print('class precision: ', precision_each_class)
 
-    return conf_mat, recall_each_class, precision_each_class
+    return conf_mat, recall_each_class, precision_each_class, f1_score
 
+
+# l = [3, 3, 2, 2, 1, 1]
+# lx = [1, 3, 2, 2, 1, 1]
+# mat, r, p, f1 = recall_precision_multiclass(l, lx, [1, 2, 7], verbose=False)
+# print(mat)
+# print(r)
+# print(p)
+# print(f1)

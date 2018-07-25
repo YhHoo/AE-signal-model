@@ -7,16 +7,14 @@ from scipy import signal
 from scipy.signal import correlate as correlate_scipy
 from numpy import correlate as correlate_numpy
 import pandas as pd
+from keras.utils import to_categorical
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 
-y_true = [0]*100 + [1]*100 + [2]*100
-y_pred = [0]*30 + [1]*50 + [2]*20 + \
-         [0]*20 + [1]*60 + [2]*20 + \
-         [0]*10 + [1]*10 + [2]*80
+
 # print(len(y_true))
 # print(len(y_pred))
 # data = confusion_matrix(y_true=y_true, y_pred=y_pred)
