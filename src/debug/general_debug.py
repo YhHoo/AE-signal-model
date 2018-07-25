@@ -55,11 +55,13 @@ def recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
     total_pred_of_each_class = pd.DataFrame.sum(conf_mat, axis=1).values
     total_samples_of_each_class = pd.DataFrame.sum(conf_mat, axis=0).values
 
+    # Recall = TP_A/(TP_A+FN_A) ; Precision = TP_A/(TP_A+FP_A)
     recall_each_class = diag / total_samples_of_each_class
     precision_each_class = diag / total_pred_of_each_class
 
-    print('class recall: ', recall_each_class)
-    print('class precision: ', precision_each_class)
+    if verbose:
+        print('class recall: ', recall_each_class)
+        print('class precision: ', precision_each_class)
 
     return conf_mat, recall_each_class, precision_each_class
 

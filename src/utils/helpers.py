@@ -4,6 +4,8 @@ from keras.utils import to_categorical
 from keras.models import model_from_json
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import AxesGrid
+from sklearn.metrics import confusion_matrix
+import pandas as pd
 from mpl_toolkits.mplot3d import Axes3D  # do not delete
 import numpy as np
 from nptdms import TdmsFile
@@ -433,4 +435,39 @@ def dual_heatmap_plot(input_1, input_2):
     return fig
 
 
+def recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
+    '''
+    Reference website: http://text-analytics101.rxnlp.com/2014/10/computing-precision-and-recall-for.html
+    :param y_true: list or 1d array of actual labels
+    :param y_pred: list or 1d array of model prediction (after argmax())
+    :param all_class_label: list or 1d array of integers for labelling the class, e.g. 0, 1, 2, 3, ...
+    :param verbose: Print out the recall and precision for each class
+    :return: conf_mat --> a square np matrix
+             recall_each_class --> list or 1d array of integers (follow order of all_class_label)
+             precision_each_class --> list or 1d array of integers (follow order of all_class_label)
+    '''
+    # create labels for index and columns of confusion matrix
+    col_labels = ['Actual_Class[{}]'.format(i) for i in all_class_label]
+    index_labels = ['Predict_Class[{}]'.format(i) for i in all_class_label]
+
+    # arrange all prediction and actual label into confusion matrix
+    data = confusion_matrix(y_true=y_true, y_pred=y_pred)
+    conf_mat = pd.DataFrame(data=data.T, index=index_labels, columns=col_labels)
+
+    # taking all diagonals values into a 1d array
+    diag = np.diag(conf_mat.values)
+
+    # sum across rows and columns of confusion mat
+    total_pred_of_each_class = pd.DataFrame.sum(conf_mat, axis=1).values
+    total_samples_of_each_class = pd.DataFrame.sum(conf_mat, axis=0).values
+
+    # Recall = TP_A/(TP_A+FN_A) ; Precision = TP_A/(TP_A+FP_A)
+    recall_each_class = diag / total_samples_of_each_class
+    precision_each_class = diag / total_pred_of_each_class
+
+    if verbose:
+        print('class recall: ', recall_each_class)
+        print('class precision: ', precision_each_class)
+
+    return conf_mat, recall_each_class, precision_each_class
 
