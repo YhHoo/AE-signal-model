@@ -361,7 +361,7 @@ class AcousticEmissionDataSet_13_7_2018:
 
         return n_channel_data
 
-    def leak_noleak(self, ):
+    # def leak_noleak(self, ):
 
 
 # data = AcousticEmissionDataSet_13_7_2018(drive='F')
