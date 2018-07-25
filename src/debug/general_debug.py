@@ -38,44 +38,6 @@ y_pred = [0]*30 + [1]*50 + [2]*20 + \
 # print('class recall: ', recall_each_class)
 # print('class precision: ', precision_each_class)
 
-
-def recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
-    # create labels for index and columns of confusion matrix
-    col_labels = ['Actual_Class[{}]'.format(i) for i in all_class_label]
-    index_labels = ['Predict_Class[{}]'.format(i) for i in all_class_label]
-
-    # arrange all prediction and actual label into confusion matrix
-    data = confusion_matrix(y_true=y_true, y_pred=y_pred)
-    conf_mat = pd.DataFrame(data=data.T, index=index_labels, columns=col_labels)
-
-    # taking all diagonals values into a 1d array
-    diag = np.diag(conf_mat.values)
-
-    # sum across rows and columns of confusion mat
-    total_pred_of_each_class = pd.DataFrame.sum(conf_mat, axis=1).values
-    total_samples_of_each_class = pd.DataFrame.sum(conf_mat, axis=0).values
-
-    # Recall = TP_A/(TP_A+FN_A) ; Precision = TP_A/(TP_A+FP_A)
-    recall_each_class = diag / total_samples_of_each_class
-    precision_each_class = diag / total_pred_of_each_class
-
-    if verbose:
-        print('class recall: ', recall_each_class)
-        print('class precision: ', precision_each_class)
-
-    return conf_mat, recall_each_class, precision_each_class
-
-
-class_label = np.arange(-1, 2, 1)
-mat, r, p = recall_precision_multiclass(y_true, y_pred, all_class_label=class_label, verbose=True)
-
-print(mat)
-print(r)
-print(p)
-
-
-
-
 # precision_c1 = precision_recall_fscore_support(y_true=y_true, y_pred=y_pred, average='micro')
 # print(precision_c1)
 # print(precision_c2)
