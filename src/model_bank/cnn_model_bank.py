@@ -3,11 +3,11 @@ Model Naming Practice: [model architecture]_[input dimension]_[class]_[variant]_
 e.g. cnn_3000_40_2class_v1 or cnn_3000_40__7class_v1_dropout
 '''
 
-from keras.layers import Dense, Flatten
+from keras.layers import Dense, Flatten, InputLayer
 from keras.layers import Conv2D, MaxPooling2D, Dropout, GlobalAveragePooling2D, AveragePooling2D
 from keras.models import Sequential
 # self defined library
-from src.utils.yh_nn import categorical_crossentropy_yh
+
 
 def cnn_1000_40_7class_v1():
     '''
@@ -305,14 +305,14 @@ def cnn_general_v1(input_shape, num_classes):
     #                  activation='relu'))
     # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
-    model.add(Conv2D(filters=5, kernel_size=(2, 10), strides=(1, 1),
+    model.add(Conv2D(filters=8, kernel_size=(2, 10), strides=(1, 1),
                      activation='relu', input_shape=(input_shape[0], input_shape[1], 1)))
 
-    model.add(Conv2D(filters=5, kernel_size=(2, 10), strides=(1, 1),
+    model.add(Conv2D(filters=8, kernel_size=(2, 10), strides=(1, 1),
                      activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 5), strides=(2, 2)))
 
-    model.add(Conv2D(filters=5, kernel_size=(2, 10), strides=(1, 1),
+    model.add(Conv2D(filters=8, kernel_size=(2, 10), strides=(1, 1),
                      activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 5), strides=(2, 2)))
 
@@ -344,13 +344,13 @@ def cnn_general_v1(input_shape, num_classes):
     model.add(Dropout(0.2))
     model.add(Dense(num_classes, activation='softmax'))
 
-    model.compile(optimizer='adam', loss=categorical_crossentropy_yh)
     print(model.summary())
 
     return model
 
 
-# cnn_general_v1(input_shape=(10, 300), num_classes=41)
+cnn_general_v1(input_shape=(10, 300), num_classes=41)
+
 
 def cnn_1d_plb(input_shape, num_classes):
     model = Sequential()

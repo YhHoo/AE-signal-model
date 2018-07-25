@@ -6,11 +6,62 @@ from mpl_toolkits.axes_grid1 import AxesGrid
 from scipy import signal
 from scipy.signal import correlate as correlate_scipy
 from numpy import correlate as correlate_numpy
+import pandas as pd
+from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 
+y_true = [0]*100 + [1]*100 + [2]*100
+y_pred = [0]*30 + [1]*50 + [2]*20 + \
+         [0]*20 + [1]*60 + [2]*20 + \
+         [0]*10 + [1]*10 + [2]*80
+# print(len(y_true))
+# print(len(y_pred))
+data = confusion_matrix(y_true=y_true, y_pred=y_pred)
+
+col_labels = ['TargetLabel_class_1', 'TargetLabel_class_2', 'TargetLabel_class_3']
+index_labels = ['Predicted_class_1', 'Predicted_class_2', 'Predicted_class_3']
+conf_mat = pd.DataFrame(data=data.T, index=index_labels, columns=col_labels)
+# conf_mat['Total Prediction of Each Class'] = pd.DataFrame.sum(conf_mat, axis=1)
+diag = np.diag(conf_mat.values)
+total_pred_of_each_class = pd.DataFrame.sum(conf_mat, axis=1).values
+total_samples_of_each_class = pd.DataFrame.sum(conf_mat, axis=0).values
+
+recall_each_class = diag / total_samples_of_each_class
+precision_each_class = diag / total_pred_of_each_class
+print(conf_mat)
+print(diag)
+print(total_pred_of_each_class)
+print(total_samples_of_each_class)
+print('class recall: ', recall_each_class)
+print('class precision: ', precision_each_class)
+
+
+def recall_precision_multiclass(y_true, y_pred, all_class_label):
+    # create labels for index and columns of confusion matrix
+    col_labels = ['Actual_Class[{}]'.format(i) for i in all_class_label]
+    index_labels = ['Predict_Class[{}]'.format(i) for i in all_class_label]
+
+    # arrange all prediction and actual label into confusion matrix
+    data = confusion_matrix(y_true=y_true, y_pred=y_pred)
+    conf_mat = pd.DataFrame(data=data.T, index=index_labels, columns=col_labels)
+
+    # taking all diagonals values into a 1d array
+    diag = np.diag(conf_mat.values)
+
+    # sum across rows and columns of confusion mat
+    total_pred_of_each_class = pd.DataFrame.sum(conf_mat, axis=1).values
+    total_samples_of_each_class = pd.DataFrame.sum(conf_mat, axis=0).values
+
+
+
+
+# precision_c1 = precision_recall_fscore_support(y_true=y_true, y_pred=y_pred, average='micro')
+# print(precision_c1)
+# print(precision_c2)
+# print(precision_c3)
 
 # x = [1, 2, 3]
 # dct = {}
@@ -39,12 +90,6 @@ from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmission
 # l = np.array(all_class['class_[0]'])
 # print(l)
 # print(l.shape)
-
-label = [[i]*10 for i in np.arange(-20, 21, 1)]
-label = [item for l in label for item in l]
-print(label)
-
-
 
 # shuffle(all_class['class_[0]'])
 # # l = np.array(all_class['class_[0]'])

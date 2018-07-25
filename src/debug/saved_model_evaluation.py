@@ -3,6 +3,7 @@ This code laod the saved model in .h5 and .json, use predict() to try classifyin
 '''
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.metrics import confusion_matrix, f1_score
 # self defined library
 from src.utils.helpers import model_loader, model_multiclass_evaluate, break_into_train_test, \
                               reshape_3d_to_4d_tocategorical, three_dim_visualizer
@@ -46,6 +47,8 @@ plt.show()
 # print('------------MODEL EVALUATION-------------')
 # model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
 # model_multiclass_evaluate(model, test_x=train_x, test_y=train_y)
+
+
 
 
 
