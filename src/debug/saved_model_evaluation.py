@@ -26,7 +26,11 @@ train_x, train_y, test_x, test_y = reshape_3d_to_4d_tocategorical(train_x, train
                                                                   fourth_dim=1,
                                                                   num_classes=num_classes,
                                                                   verbose=True)
+x = np.concatenate((train_x, test_x), axis=0)
+y = np.concatenate((train_y, test_y), axis=0)
 
+print(x.shape)
+print(y.shape)
 # -------------------[LOADING MODEL]----------------------------
 
 model = model_loader(model_name='PLB_2018_7_13_Classification_CNN[33k]_take2')

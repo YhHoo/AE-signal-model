@@ -105,6 +105,9 @@ class ModelLogger:
         # free up memory
         plt.close()
 
+    # def recall_precision_f1(self, label):
+
+
 
 def model_loader(model_name=None):
     '''
@@ -473,6 +476,7 @@ def recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
     if verbose:
         print('class recall: ', recall_each_class)
         print('class precision: ', precision_each_class)
+        print('Overall F1-score: ', f1_score)
 
     return conf_mat, recall_each_class, precision_each_class, f1_score
 
