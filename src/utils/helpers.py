@@ -107,7 +107,7 @@ class ModelLogger:
         plt.grid()
         plt.title(title)
         if save:
-            fig.savefig(self.path + '.png')
+            fig.savefig(self.path + '_LrCurve.png')
         if show:
             plt.show()
         # free up memory

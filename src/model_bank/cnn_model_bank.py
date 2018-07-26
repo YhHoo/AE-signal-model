@@ -9,187 +9,6 @@ from keras.models import Sequential
 # self defined library
 
 
-def cnn_1000_40_7class_v1():
-    '''
-    :return: a CNN that has input shape of (1000, 40) with 1.6M trainable param
-    '''
-    model = Sequential()
-
-    # Convolutional layer 1 ------------------------------------------
-    model.add(Conv2D(filters=40, kernel_size=(5, 5), strides=(1, 1),  # kernel covers 1kHz, 25ms
-                     activation='relu', input_shape=(1000, 40, 1)))
-    model.add(MaxPooling2D(pool_size=(5, 5), strides=(1, 1)))
-
-    # Convolutional layer 2 ------------------------------------------
-    model.add(Conv2D(filters=60, kernel_size=(5, 5), strides=(1, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
-    #
-    # Convolutional layer 3 ------------------------------------------
-    model.add(Conv2D(filters=108, kernel_size=(5, 5), strides=(2, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
-
-    # Convolutional layer 4 ------------------------------------------
-    model.add(Conv2D(filters=150, kernel_size=(5, 2), strides=(1, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(5, 1), strides=(2, 1)))
-
-    # Fully connected ----------------------------------------
-    model.add(Flatten())
-    model.add(Dense(100, activation='relu'))
-    model.add(Dense(50, activation='relu'))
-    model.add(Dense(7, activation='softmax'))
-
-    return model
-
-
-def cnn_700_40_7class_v1():
-    '''
-    :return: a CNN that has input shape of (700, 40) with 1.3M trainable param
-    '''
-    model = Sequential()
-
-    # Convolutional layer 1 ------------------------------------------
-    model.add(Conv2D(filters=50, kernel_size=(5, 5), strides=(1, 1),  # kernel covers 1kHz, 25ms
-                     activation='relu', input_shape=(700, 40, 1)))
-    model.add(MaxPooling2D(pool_size=(5, 5), strides=(1, 1)))
-
-    # Convolutional layer 2 ------------------------------------------
-    model.add(Conv2D(filters=70, kernel_size=(5, 5), strides=(1, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
-
-    # Convolutional layer 3 ------------------------------------------
-    model.add(Conv2D(filters=108, kernel_size=(5, 5), strides=(1, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
-
-    # Convolutional layer 4 ------------------------------------------
-    model.add(Conv2D(filters=150, kernel_size=(5, 2), strides=(1, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(5, 1), strides=(2, 1)))
-
-    # Fully connected ----------------------------------------
-    model.add(Flatten())
-    model.add(Dense(100, activation='relu'))
-    model.add(Dense(50, activation='relu'))
-    model.add(Dense(7, activation='softmax'))
-
-    return model
-
-
-def cnn_3000_100_12class_v1():
-    '''
-    :return: a CNN that has input shape of (3000, 100) with 0.95M trainable param
-    '''
-    model = Sequential()
-
-    # Convolutional layer 1 ------------------------------------------
-    model.add(Conv2D(filters=36, kernel_size=(10, 10), strides=(1, 1),
-                     activation='relu', input_shape=(3000, 100, 1)))
-    model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
-
-    # Convolutional layer 2 ------------------------------------------
-    model.add(Conv2D(filters=72, kernel_size=(10, 5), strides=(2, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
-
-    # Convolutional layer 3 ------------------------------------------
-    model.add(Conv2D(filters=96, kernel_size=(10, 8), strides=(4, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(5, 5), strides=(3, 3)))
-
-    # Convolutional layer 4 ------------------------------------------
-    model.add(Conv2D(filters=109, kernel_size=(6, 2), strides=(1, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(9, 2), strides=(2, 1)))
-    model.add(Flatten())
-
-    # Fully connected layer 1 ----------------------------------------
-    model.add(Dense(150, activation='relu'))
-    model.add(Dense(80, activation='relu'))
-    model.add(Dense(12, activation='softmax'))
-
-
-def cnn_3000_23_2class_v1():
-    model = Sequential()
-
-    # Convolutional layer 1 ------------------------------------------
-    model.add(Conv2D(filters=36, kernel_size=(10, 5), strides=(1, 1),
-                     activation='relu', input_shape=(3000, 23, 1)))
-    model.add(MaxPooling2D(pool_size=(5, 5), strides=(2, 2)))
-
-    # Convolutional layer 2 ------------------------------------------
-    model.add(Conv2D(filters=72, kernel_size=(10, 5), strides=(2, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(5, 2), strides=(2, 1)))
-
-    # Convolutional layer 3 ------------------------------------------
-    model.add(Conv2D(filters=96, kernel_size=(10, 3), strides=(4, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(5, 1), strides=(3, 1)))
-
-    # Convolutional layer 4 ------------------------------------------
-    model.add(Conv2D(filters=109, kernel_size=(6, 1), strides=(1, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(9, 1), strides=(2, 1)))
-    model.add(Flatten())
-
-    # Fully connected ----------------------------------------
-    model.add(Dense(150, activation='relu'))
-    model.add(Dense(80, activation='relu'))
-    model.add(Dense(2, activation='softmax'))
-
-
-def cnn_2_51_3class_v1(fc):
-    '''
-    Input: phase map of 2 sensors concatenate side by side,
-    where 2 means sensor no, 51 is frequency bin
-    '''
-    model = Sequential()
-
-    # Convolutional layer 1 ------------------------------------------
-    model.add(Conv2D(filters=60, kernel_size=(2, 4), strides=(1, 1),
-                     activation='relu', input_shape=(2, 51, 1)))
-    model.add(MaxPooling2D(pool_size=(1, 2), strides=(1, 1)))
-    model.add(Dropout(0.2))
-
-    # Convolutional layer 2 ------------------------------------------
-    model.add(Conv2D(filters=100, kernel_size=(1, 2), strides=(1, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(1, 2), strides=(1, 1)))
-    model.add(Dropout(0.4))
-
-    # Convolutional layer 3 ------------------------------------------
-    # model.add(Conv2D(filters=96, kernel_size=(1, 3), strides=(4, 1),
-    #                  activation='relu'))
-    # model.add(MaxPooling2D(pool_size=(1, 2), strides=(1, 1)))
-    # model.add(Dropout(0.3))
-
-    # Convolutional layer 4 ------------------------------------------
-    # model.add(Conv2D(filters=109, kernel_size=(1, 3), strides=(1, 1),
-    #                  activation='relu'))
-    # model.add(MaxPooling2D(pool_size=(1, 2), strides=(1, 1)))
-
-    # Flatten all into 1d vector--------------------------------------
-    model.add(Flatten())
-    model.add(Dropout(0.4))
-
-    # Fully connected ----------------------------------------
-    model.add(Dense(fc[0], activation='relu'))
-    model.add(Dropout(0.3))
-    model.add(Dense(fc[1], activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(fc[2], activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(3, activation='softmax'))
-
-    print(model.summary())
-
-    return model
-
-
 def fc_2x51_3class(fc):
     '''
     Input: Flatten phase map of 2 sensors concatenate side by side,
@@ -288,22 +107,14 @@ def cnn_51_159_3class_v1():
     return model
 
 
-def cnn_general_v1(input_shape, num_classes):
+def cnn2d_plb_v1(input_shape, num_classes):
+    '''
+    This CNN takes in 2d segmented xcor map of PLB signals.
+    Classify to their distance difference btw leak and 2 sensors
+    Used on:
+    AcousticEmissionDataSet_13_7_2018.plb()
+    '''
     model = Sequential()
-
-    # model.add(Conv2D(filters=8, kernel_size=(2, 10), strides=(1, 1),
-    #                  activation='relu', input_shape=(input_shape[0], input_shape[1], 1)))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    # # model.add(AveragePooling2D(pool_size=(2, 2), strides=(2, 2)))
-    # # model.add(Dropout(0.2))
-    # model.add(Conv2D(filters=16, kernel_size=(2, 10), strides=(1, 1),
-    #                  activation='relu'))
-    # # model.add(AveragePooling2D(pool_size=(2, 2), strides=(2, 2)))
-    # # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    # # # model.add(Dropout(0.4))
-    # model.add(Conv2D(filters=32, kernel_size=(2, 10), strides=(1, 1),
-    #                  activation='relu'))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
     model.add(Conv2D(filters=8, kernel_size=(2, 10), strides=(1, 1),
                      activation='relu', input_shape=(input_shape[0], input_shape[1], 1)))
@@ -316,31 +127,11 @@ def cnn_general_v1(input_shape, num_classes):
                      activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 5), strides=(2, 2)))
 
-    # model.add(MaxPooling2D(pool_size=(2, 5), strides=(2, 2)))
-    # model.add(Conv2D(filters=10, kernel_size=(2, 2), strides=(1, 1),
-    #                  activation='relu'))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
-    # # model.add(Dropout(0.3))
-    # model.add(Conv2D(filters=10, kernel_size=(2, 2), strides=(1, 1),
-    #                  activation='relu'))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
-    # model.add(Conv2D(filters=256, kernel_size=(2, 4), strides=(1, 1),
-    #                  activation='relu'))
-    # model.add(Conv2D(filters=502, kernel_size=(2, 4), strides=(1, 1),
-    #                  activation='relu'))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1)))
     model.add(Flatten())
     model.add(Dropout(0.2))
 
     # Fully connected ----------------------------------------
-    # model.add(Dense(100, activation='relu'))
-    # model.add(Dropout(0.3))
-    # model.add(Dense(200, activation='relu'))
-    # model.add(Dropout(0.2))
-    # model.add(Dense(100, activation='relu'))
     model.add(Dense(100, activation='relu'))
-    # model.add(Dropout(0.2))
-    # model.add(Dense(200, activation='relu'))
     model.add(Dropout(0.2))
     model.add(Dense(num_classes, activation='softmax'))
 

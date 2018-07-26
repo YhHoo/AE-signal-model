@@ -8,7 +8,7 @@ from keras.callbacks import TensorBoard
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 from src.utils.helpers import break_into_train_test, reshape_3d_to_4d_tocategorical, \
                               ModelLogger, recall_precision_multiclass, model_multiclass_evaluate
-from src.model_bank.cnn_model_bank import cnn_general_v1
+from src.model_bank.cnn_model_bank import cnn2d_plb_v1
 
 
 data = AcousticEmissionDataSet_13_7_2018(drive='F')
@@ -30,7 +30,7 @@ train_x, train_y, test_x, test_y = reshape_3d_to_4d_tocategorical(train_x, train
 
 # iterate several times to find best model with F1-score
 for i in range(2):
-    model = cnn_general_v1(input_shape=(train_x.shape[1], train_x.shape[2]), num_classes=num_classes)
+    model = cnn2d_plb_v1(input_shape=(train_x.shape[1], train_x.shape[2]), num_classes=num_classes)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     model_logger = ModelLogger(model, model_name='PLB_2018_7_13_Classification_CNN[33k]_take{}'.format(i))
     # tensorboard (folder name in Graph will be used to name the run)

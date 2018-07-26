@@ -51,32 +51,21 @@ def plot_confusion_matrix(cm, classes,
     plt.xlabel('Predicted label')
 
 
-# mat = pd.read_csv('C:/Users/YH/Desktop/hooyuheng.masterWork/PLB_2018_7_13_Classification_CNN[33k]_take1_confusionmat.csv', index_col=0)
-# mat = mat.values
+mat = pd.read_csv('C:/Users/YH/Desktop/hooyuheng.masterWork/MASTER_PAPERWORK/My Practical Work------------/'
+                  'Exp_2018_7_13/PLB test/CNN Training Log/41 classes Best Model/take0recall_prec_f1_rearranged.csv',
+                   index_col=0)
+mat = mat.values
+x_axis_value = np.arange(-20, 21, 1)
 
-# mat = np.array([[13, 0, 0],
-#                 [0, 10, 6],
-#                 [0, 0, 9]])
-class_label = [i for i in range(0, 21, 1)] + [j for j in range(-20, 0, 1)]
-recall = np.arange(0, 41, 1)
-precision = np.arange(10, 51, 1)
-f1 = 0.97
-mat = np.array([recall, precision])
+plt.figure(figsize=(7, 3))
+plt.title('Recall and Precision Across 41 Classes')
+plt.plot(x_axis_value, mat[0], label='Recall', marker='x')
+plt.plot(x_axis_value, mat[1], label='Precision', marker='x')
+plt.legend()
+plt.xticks(np.arange(min(x_axis_value), max(x_axis_value)+1, 1.0))
+plt.grid()
+plt.show()
 
-recall_precision_df = pd.DataFrame(mat,
-                                   index=['recall', 'precision'],
-                                   columns=class_label)
-recall_precision_df.loc['f1'] = None
-recall_precision_df.iloc[2, 0] = f1
-
-# f1_df = pd.DataFrame(f1, index=['F1-score'], columns=class_label[0])
-# recall_precision_df.append(f1_df)
-# # recall_precision_df.iloc[0, 3] = f1
-# # # recall_precision_df.to_csv()
-print(recall_precision_df)
-# print(len(y_true))
-# print(len(y_pred))
-# data = confusion_matrix(y_true=y_true, y_pred=y_pred)
 
 # col_labels = ['TargetLabel_class_1', 'TargetLabel_class_2', 'TargetLabel_class_3']
 # index_labels = ['Predicted_class_1', 'Predicted_class_2', 'Predicted_class_3']
