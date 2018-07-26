@@ -1,3 +1,4 @@
+import itertools
 import numpy as np
 from random import shuffle
 from scipy.signal import gausspulse
@@ -15,6 +16,64 @@ from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 
 
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
+
+# mat = pd.read_csv('C:/Users/YH/Desktop/hooyuheng.masterWork/PLB_2018_7_13_Classification_CNN[33k]_take1_confusionmat.csv', index_col=0)
+# mat = mat.values
+
+# mat = np.array([[13, 0, 0],
+#                 [0, 10, 6],
+#                 [0, 0, 9]])
+class_label = [i for i in range(0, 21, 1)] + [j for j in range(-20, 0, 1)]
+recall = np.arange(0, 41, 1)
+precision = np.arange(10, 51, 1)
+f1 = 0.97
+mat = np.array([recall, precision])
+
+recall_precision_df = pd.DataFrame(mat,
+                                   index=['recall', 'precision'],
+                                   columns=class_label)
+recall_precision_df.loc['f1'] = None
+recall_precision_df.iloc[2, 0] = f1
+
+# f1_df = pd.DataFrame(f1, index=['F1-score'], columns=class_label[0])
+# recall_precision_df.append(f1_df)
+# # recall_precision_df.iloc[0, 3] = f1
+# # # recall_precision_df.to_csv()
+print(recall_precision_df)
 # print(len(y_true))
 # print(len(y_pred))
 # data = confusion_matrix(y_true=y_true, y_pred=y_pred)

@@ -90,6 +90,14 @@ class ModelLogger:
 
     # this function use the model history returned by fit() to plot learning curve and save it
     def learning_curve(self, history, save=False, show=False, title='Learning Curve'):
+        '''
+
+        :param history: hist object returned by fit()
+        :param save: save figure
+        :param show: show the plot, set to False for overnight run
+        :param title: fig title
+        :return: :return: None, but it will save fig of learning curve
+        '''
         fig = plt.figure(figsize=(6, 4))
         plt.plot(history.history['loss'], label='train_loss')
         plt.plot(history.history['val_loss'], label='test_loss')
@@ -99,14 +107,36 @@ class ModelLogger:
         plt.grid()
         plt.title(title)
         if save:
-            plt.savefig(self.path + '.png')
+            fig.savefig(self.path + '.png')
         if show:
             plt.show()
         # free up memory
-        plt.close()
+        plt.close('all')
 
-    # def recall_precision_f1(self, label):
+    def save_recall_precision_f1(self, y_true, y_pred, all_class_label):
+        '''
+        :param y_true: list or 1d array of actual labels
+        :param y_pred: list or 1d array of model prediction (after argmax())
+        :param all_class_label: list or 1d array of integers for labelling the class, e.g. 0, 1, 2, 3, ...
+        :return: None, but it will save 2 csv of confusion matrix and recall_precision table
+        '''
+        # Consider this as a wrapper for the recall_precision_multiclass(), for easy saving purpose
+        mat, r, p, f1 = recall_precision_multiclass(y_true=y_true, y_pred=y_pred, all_class_label=all_class_label)
 
+        mat_filename = self.path + 'confusion_mat.csv'
+        recall_precision_df_filename = self.path + 'recall_prec_f1.csv'
+
+        # prepare and save confusion matrix
+        mat.to_csv(mat_filename)
+
+        # prepare and save each class recall n precision n f1
+        mat = np.array([r, p])
+        recall_precision_df = pd.DataFrame(mat,
+                                           index=['recall', 'precision'],
+                                           columns=all_class_label)
+        recall_precision_df.loc['f1'] = None
+        recall_precision_df.iloc[2, 0] = f1
+        recall_precision_df.to_csv(recall_precision_df_filename)
 
 
 def model_loader(model_name=None):

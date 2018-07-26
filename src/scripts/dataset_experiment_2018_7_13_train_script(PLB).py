@@ -44,19 +44,20 @@ for i in range(2):
                         epochs=150,
                         verbose=2,
                         callbacks=[sbw_callback])
+    print('ITERATION ', i)
     model_logger.learning_curve(history=history, save=True, show=False)
     model_logger.save_architecture(save_readable=True)
+
+    # evaluate the model with all train and test data
     x = np.concatenate((train_x, test_x), axis=0)
     y = np.concatenate((train_y, test_y), axis=0)
     prediction = model.predict(x)
     prediction = np.argmax(prediction, axis=1)
     actual = np.argmax(y, axis=1)
-
     class_label = [i for i in range(0, 21, 1)] + [j for j in range(-20, 0, 1)]
-    mat, r, p, f1 = recall_precision_multiclass(y_true=actual, y_pred=prediction, all_class_label=class_label, verbose=True)
-    path = 'C:/Users/YH/PycharmProjects/AE-signal-model/src/scripts/saved_model/PLB_2018_7_13_Classification_CNN[33k]_take{}_confusionmat'.format(i)
-    print('ITERATION ', i)
-    mat.to_csv(path)
+    # save 2 csv of confusion matrix and recall_precision table
+    model_logger.save_recall_precision_f1(y_true=actual, y_pred=prediction, all_class_label=class_label)
+
 
 
 
