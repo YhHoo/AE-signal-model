@@ -3,9 +3,9 @@ Model Naming Practice: [model architecture]_[input dimension]_[class]_[variant]_
 e.g. cnn_3000_40_2class_v1 or cnn_3000_40__7class_v1_dropout
 '''
 
-from keras.layers import Dense, Flatten, InputLayer
+from keras.layers import Dense, Flatten, Input
 from keras.layers import Conv2D, MaxPooling2D, Dropout, GlobalAveragePooling2D, AveragePooling2D
-from keras.models import Sequential
+from keras.models import Sequential, Model
 # self defined library
 
 
@@ -140,8 +140,31 @@ def cnn2d_plb_v1(input_shape, num_classes):
     return model
 
 
+def cnn1d_plb_v1(input_shape, num_classes):
+    inputs = Input(shape=(784,))
+
+    # a layer instance is callable on a tensor, and returns a tensor
+    x = Dense(64, activation='relu')(inputs)
+    x = Dense(64, activation='relu')(x)
+    predictions = Dense(10, activation='softmax')(x)
+
+    # This creates a model that includes
+    # the Input layer and three Dense layers
+    model = Model(inputs=inputs, outputs=predictions)
+
+
 # cnn_general_v1(input_shape=(10, 300), num_classes=41)
 
 
-def cnn_1d_plb(input_shape, num_classes):
-    model = Sequential()
+inputs = Input(shape=(784,))
+
+# a layer instance is callable on a tensor, and returns a tensor
+x = Dense(64, activation='relu')(inputs)
+x = Dense(64, activation='relu')(x)
+predictions = Dense(10, activation='softmax')(x)
+
+# This creates a model that includes
+# the Input layer and three Dense layers
+model = Model(inputs=inputs, outputs=predictions)
+
+print(model.summary())

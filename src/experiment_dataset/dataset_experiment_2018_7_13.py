@@ -361,11 +361,17 @@ class AcousticEmissionDataSet_13_7_2018:
 
         return n_channel_data
 
-    # def leak_noleak(self, ):
+    def leak_noleak(self):
+        # initialize
+        n_channel_data_near_leak = read_all_tdms_from_folder(self.path_leak_1bar_2to12)
+        # n_channel_data_far_leak = read_all_tdms_from_folder(self.path_leak_1bar_10to22)
+
+        return n_channel_data_near_leak
 
 
-# data = AcousticEmissionDataSet_13_7_2018(drive='F')
-# data.plb()
+data = AcousticEmissionDataSet_13_7_2018(drive='F')
+data_near_leak = data.leak_noleak()
+
 
 # _, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],
 #                                    fs=1e6,
