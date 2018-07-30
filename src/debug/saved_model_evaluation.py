@@ -52,7 +52,7 @@ print(actual)
 
 # print('------------MODEL EVALUATION-------------')
 model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
-class_label =[i for i in range(0, 21, 1)] + [j for j in range(-20, 0, 1)]
+class_label = [i for i in range(0, 21, 1)] + [j for j in range(-20, 0, 1)]
 mat, r, p = recall_precision_multiclass(y_true=actual, y_pred=prediction, all_class_label=class_label, verbose=True)
 
 mat.to_csv('PLB_2018_7_13_Classification_CNN[33k]_confusion_mat.csv')
