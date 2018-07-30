@@ -20,7 +20,6 @@ train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
                                                          num_classes=num_classes,
                                                          train_split=0.7,
                                                          verbose=True)
-print(test_y)
 # reshape to satisfy conv2d input shape
 train_x, train_y, test_x, test_y = reshape_3d_to_4d_tocategorical(train_x, train_y, test_x, test_y,
                                                                   fourth_dim=1,

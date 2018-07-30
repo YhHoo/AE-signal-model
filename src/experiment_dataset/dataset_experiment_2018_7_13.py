@@ -369,8 +369,8 @@ class AcousticEmissionDataSet_13_7_2018:
         return n_channel_data_near_leak
 
 
-data = AcousticEmissionDataSet_13_7_2018(drive='F')
-data_near_leak = data.leak_noleak()
+# data = AcousticEmissionDataSet_13_7_2018(drive='F')
+# data_near_leak = data.leak_noleak()
 
 
 # _, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],

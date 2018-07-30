@@ -1,16 +1,11 @@
-'''
-This code is for us to evaluate how fast our code finish execution
-Just update the param setup to the code that run only once e.g. import lib, const initialize,
-np_code, sp_code which represent the 2 codes that are to be compared in exec time.
-'''
-from timeit import timeit
-
-# your only-run-once code
-setup = '''
 import numpy as np
-from src.utils.helpers import model_loader, model_multiclass_evaluate, break_into_train_test, reshape_3d_to_4d_tocategorical
+# self defined library
+from src.utils.helpers import model_loader, get_activations, display_activations, break_into_train_test, \
+                              reshape_3d_to_4d_tocategorical, three_dim_visualizer
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 
+
+# -------------------[LOADING DATA]----------------------------
 data = AcousticEmissionDataSet_13_7_2018(drive='F')
 dataset, label = data.plb()
 
@@ -26,18 +21,18 @@ train_x, train_y, test_x, test_y = reshape_3d_to_4d_tocategorical(train_x, train
                                                                   fourth_dim=1,
                                                                   num_classes=num_classes,
                                                                   verbose=True)
-                                                                  
+
+# -------------------[LOADING MODEL]----------------------------
+
 model = model_loader(model_name='PLB_2018_7_13_Classification_CNN[33k]_take0')
 model.compile(loss='categorical_crossentropy', optimizer='adam')
-'''
 
-# your code that is to be compared
-np_code_title = 'Predicting all Test Data'
-sp_code_title = None
-np_code = 'prediction = model.predict(test_x)'
-# sp_code = 'correlate_scipy(l, m, \'full\', method=\'fft\')'
 
-# result displaying
-print('-----------[Code execution speed test]-------------')
-print('{} exec time: '.format(np_code_title), timeit(setup=setup, stmt=np_code, number=1))
-# print('{} exec time: '.format(sp_code_title), timeit(setup=setup, stmt=sp_code, number=1))
+activation = get_activations(model, model_inputs=test_x,print_shape_only=True, layer_name='conv2d_1')
+
+activation = np.array(activation)
+print(activation.shape)
+
+for i in range(8):
+    display_activations(activation[0, 0, :, :, i])
+
