@@ -14,47 +14,81 @@ from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
+from src.utils.helpers import plot_multiple_horizontal_heatmap
 
-l = [[[1, 2], [2, 3]]]
-print(l[0, 0, 1])
+act_1 = np.random.rand(2619).reshape((9, 291))
+act_2 = np.random.rand(2619).reshape((9, 291))
+act_3 = np.random.rand(2619).reshape((9, 291))
+act_4 = np.random.rand(2619).reshape((9, 291))
+act_5 = np.random.rand(2619).reshape((9, 291))
+act_6 = np.random.rand(2619).reshape((9, 291))
+act_7 = np.random.rand(2619).reshape((9, 291))
+act_8 = np.random.rand(2619).reshape((9, 291))
+
+val_test = [act_1, act_2, act_3, act_4, act_5, act_6, act_7]
+
+fig = plot_multiple_horizontal_heatmap(val_test, 'BIG TITLE', 'BIG TITLE')
+
+# fig = plt.figure(figsize=(5, 7))
+# fig.suptitle('Conv2d_1 Layer Activation')
+# grid = AxesGrid(fig, 111,
+#                 nrows_ncols=(7, 1),
+#                 axes_pad=0.1,
+#                 share_all=True,
+#                 label_mode="L",
+#                 cbar_location="right",
+#                 cbar_mode="single",
+#                 cbar_size='1%')
+#
+# for val, ax in zip(val_test, grid):
+#     # this configure titles for each heat map
+#     ax.set_title('TEST', position=(-0.15, 0.388), fontsize=7, rotation='vertical')
+#     # this configure the dimension of the heat map in the fig object
+#     im = ax.imshow(val, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')  # (left, right, bottom, top)
+#
+# # this simply add color bar instance
+# grid.cbar_axes[0].colorbar(im)
+#
+# # this toggle labels for color bar
+# for cax in grid.cbar_axes:
+#     cax.toggle_label(True)
+
+plt.show()
 
 
-def plot_confusion_matrix(cm, classes,
-                          normalize=False,
-                          title='Confusion matrix',
-                          cmap=plt.cm.Blues):
-    """
-    This function prints and plots the confusion matrix.
-    Normalization can be applied by setting `normalize=True`.
-    """
-    if normalize:
-        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
-    else:
-        print('Confusion matrix, without normalization')
-
-    print(cm)
-
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title)
-    plt.colorbar()
-    tick_marks = np.arange(len(classes))
-    plt.xticks(tick_marks, classes, rotation=45)
-    plt.yticks(tick_marks, classes)
-
-    fmt = '.2f' if normalize else 'd'
-    thresh = cm.max() / 2.
-    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        plt.text(j, i, format(cm[i, j], fmt),
-                 horizontalalignment="center",
-                 color="white" if cm[i, j] > thresh else "black")
-
-    plt.tight_layout()
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
-
-
-
+# def plot_confusion_matrix(cm, classes,
+#                           normalize=False,
+#                           title='Confusion matrix',
+#                           cmap=plt.cm.Blues):
+#     """
+#     This function prints and plots the confusion matrix.
+#     Normalization can be applied by setting `normalize=True`.
+#     """
+#     if normalize:
+#         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+#         print("Normalized confusion matrix")
+#     else:
+#         print('Confusion matrix, without normalization')
+#
+#     print(cm)
+#
+#     plt.imshow(cm, interpolation='nearest', cmap=cmap)
+#     plt.title(title)
+#     plt.colorbar()
+#     tick_marks = np.arange(len(classes))
+#     plt.xticks(tick_marks, classes, rotation=45)
+#     plt.yticks(tick_marks, classes)
+#
+#     fmt = '.2f' if normalize else 'd'
+#     thresh = cm.max() / 2.
+#     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+#         plt.text(j, i, format(cm[i, j], fmt),
+#                  horizontalalignment="center",
+#                  color="white" if cm[i, j] > thresh else "black")
+#
+#     plt.tight_layout()
+#     plt.ylabel('True label')
+#     plt.xlabel('Predicted label')
 
 
 # col_labels = ['TargetLabel_class_1', 'TargetLabel_class_2', 'TargetLabel_class_3']

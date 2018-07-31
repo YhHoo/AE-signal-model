@@ -360,6 +360,10 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label=('x', 'y', 'z'), output='2d'
     return fig
 
 
+def simple_heatmap(zxx):
+    plt.imshow(zxx, interpolation='None', cmap='jet')
+
+
 def read_all_tdms_from_folder(folder_path=None):
     '''
     :param folder_path: The folder which contains several sets data of same setup (Test rig)
@@ -466,6 +470,47 @@ def dual_heatmap_plot(input_1, input_2):
 
     for cax in grid.cbar_axes:
         cax.toggle_label(False)
+
+    return fig
+
+
+def plot_multiple_horizontal_heatmap(zxx_list, title='No Title', subplot_title='No Title'):
+    '''
+    This plot a series of rectangular heatmap in a drop down format, with a shared color bar.
+    This is a extended version of dual_heatmap_plot()
+    :param zxx_list: list of 2d array input
+    :param title: Big title
+    :param subplot_title: title for each of the subplot
+    :return: fig object of the multiple plot in one
+    '''
+    # assert type(zxx_list) == list, 'zxx_list MUST be list dtype'
+    no_of_component = len(zxx_list)
+    fig = plt.figure(figsize=(5, 7))
+    fig.suptitle(title)
+    grid = AxesGrid(fig, 111,
+                    nrows_ncols=(no_of_component, 1),
+                    axes_pad=0.1,
+                    share_all=True,
+                    label_mode="L",
+                    cbar_location="right",
+                    cbar_mode="single",
+                    cbar_size='1%')
+
+    subplot_title_index = 0
+    for val, ax in zip(zxx_list, grid):
+        title = '{}_[{}]'.format(subplot_title, subplot_title_index)
+        # this configure titles for each heat map
+        ax.set_title(title, position=(-0.15, 0.9), fontsize=7, rotation='vertical')
+        # this configure the dimension of the heat map in the fig object
+        im = ax.imshow(val, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')  # (left, right, bottom, top)
+        subplot_title_index += 1
+
+    # this simply add color bar instance
+    grid.cbar_axes[0].colorbar(im)
+
+    # this toggle labels for color bar
+    for cax in grid.cbar_axes:
+        cax.toggle_label(True)
 
     return fig
 

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import keras.backend as K
 # self defined library
 from src.utils.helpers import model_loader, get_activations, display_activations, break_into_train_test, \
-                              reshape_3d_to_4d_tocategorical, three_dim_visualizer
+                              reshape_3d_to_4d_tocategorical, plot_multiple_horizontal_heatmap
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 
 
@@ -42,14 +42,22 @@ activation = get_activations(model, model_inputs=test_x, print_shape_only=True, 
 sample_no = 0
 # for all samples
 for a in activation[0]:
-    # for all feature map
-    for i in range(a.shape[2]):
-        plt.imshow(a[:, :, i], interpolation='None', cmap='jet')
-        label = 'Label=[{}m], fmap_no={}'.format(test_y[sample_no], i)
-        save_filename = save_dir + label
-        plt.title(label)
-        plt.savefig(save_filename)
-        plt.close('all')
+    # put all fmap into 1 list
+    fmap_list = [a[:, :, i] for i in range(a.shape[2])]
+    label = 'Conv2d_1 - Sample_no ={}, Label=[{}m]'.format(sample_no, test_y[sample_no])
+    fig = plot_multiple_horizontal_heatmap(fmap_list,
+                                           title=label,
+                                           subplot_title='F_map')
+    # fig.savefig()
+    plt.show()
+    # # for all feature map
+    # for i in range(a.shape[2]):
+    #     plt.imshow(a[:, :, i], interpolation='None', cmap='jet')
+    #     label = 'Sample_no ={}, Label=[{}m], fmap_no={}'.format(sample_no, test_y[sample_no], i)
+    #     save_filename = save_dir + label
+    #     plt.title(label)
+    #     plt.savefig(save_filename)
+    #     plt.close('all')
     sample_no += 1
 
 # for i in range(8):
