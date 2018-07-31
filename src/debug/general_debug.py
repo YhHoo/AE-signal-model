@@ -15,6 +15,9 @@ from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 
+l = [[[1, 2], [2, 3]]]
+print(l[0, 0, 1])
+
 
 def plot_confusion_matrix(cm, classes,
                           normalize=False,

@@ -156,15 +156,15 @@ def cnn1d_plb_v1(input_shape, num_classes):
 # cnn_general_v1(input_shape=(10, 300), num_classes=41)
 
 
-inputs = Input(shape=(784,))
-
-# a layer instance is callable on a tensor, and returns a tensor
-x = Dense(64, activation='relu')(inputs)
-x = Dense(64, activation='relu')(x)
-predictions = Dense(10, activation='softmax')(x)
-
-# This creates a model that includes
-# the Input layer and three Dense layers
-model = Model(inputs=inputs, outputs=predictions)
-
-print(model.summary())
+# inputs = Input(shape=(784,))
+#
+# # a layer instance is callable on a tensor, and returns a tensor
+# x = Dense(64, activation='relu')(inputs)
+# x = Dense(64, activation='relu')(x)
+# predictions = Dense(10, activation='softmax')(x)
+#
+# # This creates a model that includes
+# # the Input layer and three Dense layers
+# model = Model(inputs=inputs, outputs=predictions)
+#
+# print(model.summary())

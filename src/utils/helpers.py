@@ -306,7 +306,8 @@ def break_into_train_test(input, label, num_classes, shuffled_each_class=True, t
     return train_x, train_y, test_x, test_y
 
 
-def three_dim_visualizer(x_axis, y_axis, zxx, label, output, title='None', vis_range=[None, None, None, None]):
+def three_dim_visualizer(x_axis, y_axis, zxx, label=('x', 'y', 'z'), output='2d',
+                         title='None', vis_range=[None, None, None, None]):
     '''
     :param x_axis: the actual x-axis we wish to see in cartesian plane
     :param y_axis: the actual y-axis we wish to see in cartesian plane
@@ -524,7 +525,7 @@ def get_activations(model, model_inputs, print_shape_only=False, layer_name=None
         model_multi_inputs_cond = False
 
     outputs = [layer.output for layer in model.layers if
-               layer.name == layer_name or layer_name is None]  # all layer outputs
+               layer.name == layer_name or layer_name is None]  # all layer outputs (in tensor)
 
     funcs = [K.function(inp + [K.learning_phase()], [out]) for out in outputs]  # evaluation functions
 
@@ -550,8 +551,8 @@ def get_activations(model, model_inputs, print_shape_only=False, layer_name=None
 
 def display_activations(activation_maps):
 
-    batch_size = activation_maps[0].shape[0]
-    assert batch_size == 1, 'One image at a time to visualize.'
+    # batch_size = activation_maps[0].shape[0]
+    # assert batch_size == 1, 'One image at a time to visualize.'
     for i, activation_map in enumerate(activation_maps):
         print('Displaying activation map {}'.format(i))
         shape = activation_map.shape
