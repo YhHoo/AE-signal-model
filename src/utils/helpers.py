@@ -213,7 +213,7 @@ def break_into_train_test(input, label, num_classes, shuffled_each_class=True, t
     :param num_classes: total classes to break into
     :param shuffled_each_class: it will shuffle the samples in every class
     :param verbose: print the summary of train test size
-    :return: a train and test set
+    :return: a train and test set in ndarray
 
     AIM----------------------------------
     This is when we receive a list of N classes samples(a list of 2D array) all concatenate together sequentially
@@ -361,7 +361,13 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label=('x', 'y', 'z'), output='2d'
 
 
 def simple_heatmap(zxx):
-    plt.imshow(zxx, interpolation='None', cmap='jet')
+    '''
+    :param zxx: a 2d array input
+    :return: a heatmap plot of the zxx
+    '''
+    fig = plt.imshow(zxx, interpolation='None', cmap='jet')
+
+    return fig
 
 
 def read_all_tdms_from_folder(folder_path=None):
@@ -416,7 +422,7 @@ def read_single_tdms(filename=None):
     return n_channel_matrix
 
 
-def multiplot_timeseries(input, subplot_titles, main_title):
+def plot_multiple_timeseries(input, subplot_titles, main_title):
     '''
     Aspect axis[0] of input is no. of sensors/diff features, axis[1] is time steps
     :param input: a 2d array
@@ -443,7 +449,7 @@ def multiplot_timeseries(input, subplot_titles, main_title):
 
 def dual_heatmap_plot(input_1, input_2):
     '''
-    This function plot 2 heatmap (e.g. xcor map, FT map) in one fig, for comparison.
+    This function plot 2 heatmap (e.g. xcor map, FT map) in one fig (up and down, in one column), for comparison.
     For best comparison experience by visual, the 2 inputs shud be equal dimension.
     Note that the values in axis[0] will be plotted top down (for small to big)
     :param input_1: 2d array
@@ -476,7 +482,7 @@ def dual_heatmap_plot(input_1, input_2):
 
 def plot_multiple_horizontal_heatmap(zxx_list, title='No Title', subplot_title='No Title'):
     '''
-    This plot a series of rectangular heatmap in a drop down format, with a shared color bar.
+    This plot a series of rectangular heatmap in a drop down (1 column) format, with a shared color bar.
     This is a extended version of dual_heatmap_plot()
     :param zxx_list: list of 2d array input
     :param title: Big title
@@ -559,6 +565,15 @@ def recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
 
 
 def get_activations(model, model_inputs, print_shape_only=False, layer_name=None):
+    '''
+    retrieved from https://github.com/philipperemy/keras-visualize-activations/blob/master/read_activations.py
+    :param model: Keras model
+    :param model_inputs: Model inputs for which we want to get the activations (e.g. 200 MNIST images)
+    :param print_shape_only: if TRUE print shape of activations arrays of every layer only. If false it will print
+                             entire array
+    :param layer_name: layer where we want to read the activation. If none, it will return all layer activation
+    :return: a list of np array where len(return) = no of layers of interest (by layer name)
+    '''
     print('----- activations -----')
     activations = []
     inp = model.input
@@ -592,30 +607,4 @@ def get_activations(model, model_inputs, print_shape_only=False, layer_name=None
             print(layer_activations)
 
     return activations
-
-
-def display_activations(activation_maps):
-
-    # batch_size = activation_maps[0].shape[0]
-    # assert batch_size == 1, 'One image at a time to visualize.'
-    for i, activation_map in enumerate(activation_maps):
-        print('Displaying activation map {}'.format(i))
-        shape = activation_map.shape
-        if len(shape) == 4:
-            activations = np.hstack(np.transpose(activation_map[0], (2, 0, 1)))
-        elif len(shape) == 2:
-            # try to make it square as much as possible. we can skip some activations.
-            activations = activation_map[0]
-            num_activations = len(activations)
-            if num_activations > 1024:  # too hard to display it on the screen.
-                square_param = int(np.floor(np.sqrt(num_activations)))
-                activations = activations[0: square_param * square_param]
-                activations = np.reshape(activations, (square_param, square_param))
-            else:
-                activations = np.expand_dims(activations, axis=0)
-        else:
-            raise Exception('len(shape) = 3 has not been implemented.')
-        plt.imshow(activations, interpolation='None', cmap='jet')
-        plt.show()
-        plt.close('all')
 
