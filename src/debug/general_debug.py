@@ -14,7 +14,7 @@ from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
-from src.utils.helpers import plot_multiple_horizontal_heatmap
+from src.utils.helpers import plot_heatmap_series_in_one_column
 
 
 input = np.random.rand(3000).reshape((10, 300))

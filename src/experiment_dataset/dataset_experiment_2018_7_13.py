@@ -2,7 +2,7 @@ import numpy as np
 from random import shuffle
 import matplotlib.pyplot as plt
 # self library
-from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, plot_multiple_timeseries, \
+from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, plot_simple_heatmap, \
                               three_dim_visualizer, ProgressBarForLoop
 from src.utils.dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, one_dim_xcor_2d_input
 
@@ -117,6 +117,7 @@ class AcousticEmissionDataSet_13_7_2018:
         sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
         # invert the sensor pair to generate the opposite lag
         sensor_pair_near_inv = [(pair[1], pair[0]) for pair in sensor_pair_near]
+        print(sensor_pair_near_inv)
 
         # xcor pairing commands - [far] = 11m, 12m,..., 20m
         sensor_pair_far = [(0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
@@ -172,8 +173,8 @@ class AcousticEmissionDataSet_13_7_2018:
             xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
                                              pair_list=sensor_pair_near_inv,
                                              verbose=False)
-            for i in range(0, -11, -1):
-                all_class['class_[{}]'.format(i)].append(xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]])
+            for i in range(0, 11, 1):
+                all_class['class_[{}]'.format(-i)].append(xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]])
 
             # update progress bar
             pb.update(now=progress)
@@ -364,13 +365,13 @@ class AcousticEmissionDataSet_13_7_2018:
     def leak_noleak(self):
         # initialize
         n_channel_data_near_leak = read_all_tdms_from_folder(self.path_leak_1bar_2to12)
-        # n_channel_data_far_leak = read_all_tdms_from_folder(self.path_leak_1bar_10to22)
+        n_channel_data_far_leak = read_all_tdms_from_folder(self.path_leak_1bar_10to22)
 
-        return n_channel_data_near_leak
+        # return n_channel_data_near_leak,
 
 
 # data = AcousticEmissionDataSet_13_7_2018(drive='F')
-# data_near_leak = data.leak_noleak()
+# data.leak_noleak()
 
 
 # _, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],

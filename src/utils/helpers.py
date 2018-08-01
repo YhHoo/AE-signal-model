@@ -360,16 +360,6 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label=('x', 'y', 'z'), output='2d'
     return fig
 
 
-def simple_heatmap(zxx):
-    '''
-    :param zxx: a 2d array input
-    :return: a heatmap plot of the zxx
-    '''
-    fig = plt.imshow(zxx, interpolation='None', cmap='jet')
-
-    return fig
-
-
 def read_all_tdms_from_folder(folder_path=None):
     '''
     :param folder_path: The folder which contains several sets data of same setup (Test rig)
@@ -447,6 +437,17 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
     return fig
 
 
+def plot_simple_heatmap(zxx):
+    '''
+    :param zxx: a 2d array input
+    :return: a heatmap plot of the zxx
+    '''
+    print('Input Dim Detected: ', zxx.shape)
+    fig = plt.imshow(zxx, interpolation='None', cmap='jet')
+
+    return fig
+
+
 def dual_heatmap_plot(input_1, input_2):
     '''
     This function plot 2 heatmap (e.g. xcor map, FT map) in one fig (up and down, in one column), for comparison.
@@ -480,8 +481,9 @@ def dual_heatmap_plot(input_1, input_2):
     return fig
 
 
-def plot_multiple_horizontal_heatmap(zxx_list, title='No Title', subplot_title='No Title'):
+def plot_heatmap_series_in_one_column(zxx_list, title='No Title', subplot_title='No Title'):
     '''
+    **Preferably rectangle 2d heatmap, e.g. (10, 300) or (50, 300)
     This plot a series of rectangular heatmap in a drop down (1 column) format, with a shared color bar.
     This is a extended version of dual_heatmap_plot()
     :param zxx_list: list of 2d array input
@@ -525,7 +527,7 @@ def plot_heatmap_series_in_four_column(column_1_heatmap, column_2_heatmap, colum
                                        main_title='No Title', each_column_title=['None', 'None', 'None', 'None'],
                                        each_subplot_title=['None', 'None', 'None']):
     '''
-    For visualizing the layer activation of CNN
+    **For visualizing the layer activation of CNN
     this is for plotting the input 2d array as image(heatmap) in first column, followed by the activation result by
     different filters in following 3 layers of CNN
 
