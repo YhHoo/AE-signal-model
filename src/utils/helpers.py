@@ -122,7 +122,7 @@ class ModelLogger:
         :return: None, but it will save 2 csv of confusion matrix and recall_precision table
         '''
         # Consider this as a wrapper for the recall_precision_multiclass(), for easy saving purpose
-        mat, r, p, f1 = recall_precision_multiclass(y_true=y_true, y_pred=y_pred, all_class_label=all_class_label)
+        mat, r, p, f1 = compute_recall_precision_multiclass(y_true=y_true, y_pred=y_pred, all_class_label=all_class_label)
 
         mat_filename = self.path + 'confusion_mat.csv'
         recall_precision_df_filename = self.path + 'recall_prec_f1.csv'
@@ -521,7 +521,114 @@ def plot_multiple_horizontal_heatmap(zxx_list, title='No Title', subplot_title='
     return fig
 
 
-def recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
+def plot_heatmap_series_in_four_column(column_1_heatmap, column_2_heatmap, column_3_heatmap, column_4_heatmap,
+                                       main_title='No Title', each_column_title='No Title',
+                                       each_subplot_title='No Title'):
+    '''
+    For visualizing the layer activation of CNN
+    this is for plotting the input 2d array as image(heatmap) in first column, followed by the activation result by
+    different filters in following 3 layers of CNN
+
+    :param column_1_heatmap: only a single 2d ndarray input
+    :param column_2_heatmap: a list of 2d ndarray
+    :param column_3_heatmap: a list of 2d ndarray
+    :param column_4_heatmap: a list of 2d ndarray
+    :param main_title: title of the figure
+    :param each_column_title: a list of string for every column title (list of 4 only, for col 1-4)
+    :param each_subplot_title: a list of string (only a same name for every column, an index will be appended after
+                               the name for subplot in every column) (list of 3 only, for col 2-4)
+    :return: a fig of all plots
+    '''
+    # getting the no of heatmap
+    no_of_heatm_in_column_2 = len(column_2_heatmap)
+    no_of_heatm_in_column_3 = len(column_3_heatmap)
+    no_of_heatm_in_column_4 = len(column_4_heatmap)
+
+    fig = plt.figure(figsize=(15, 7))
+    fig.subplots_adjust(left=0.06, right=0.96)
+    # main title of figure
+    fig.suptitle(main_title)
+    # all axes grid's big title
+    fig.text(0.10, 0.9, each_column_title[0])
+    fig.text(0.35, 0.9, each_column_title[1])
+    fig.text(0.58, 0.9, each_column_title[2])
+    fig.text(0.82, 0.9, each_column_title[3])
+
+    grid_0 = AxesGrid(fig, 141,
+                      nrows_ncols=(1, 1),
+                      axes_pad=0.1,
+                      share_all=True,
+                      label_mode="L",
+                      cbar_location="bottom",
+                      cbar_mode="single",
+                      cbar_size='15%')
+
+    grid_1 = AxesGrid(fig, 142,
+                      nrows_ncols=(no_of_heatm_in_column_2, 1),
+                      axes_pad=0.1,
+                      share_all=True,
+                      label_mode="L",
+                      cbar_location="right",
+                      cbar_mode="single",
+                      cbar_size='0.5%')
+    grid_2 = AxesGrid(fig, 143,
+                      nrows_ncols=(no_of_heatm_in_column_3, 1),
+                      axes_pad=0.1,
+                      share_all=True,
+                      label_mode="L",
+                      cbar_location="right",
+                      cbar_mode="single",
+                      cbar_size='0.5%')
+    grid_3 = AxesGrid(fig, 144,
+                      nrows_ncols=(no_of_heatm_in_column_4, 1),
+                      axes_pad=0.1,
+                      share_all=True,
+                      label_mode="L",
+                      cbar_location="right",
+                      cbar_mode="single",
+                      cbar_size='0.5%')
+
+    for ax in grid_0:
+        im = ax.imshow(column_1_heatmap, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')
+
+    for val, ax in zip(column_2_heatmap, grid_1):
+        # this configure titles for each heat map
+        ax.set_title(each_subplot_title[1], position=(-0.15, 0.388), fontsize=7, rotation='vertical')
+        # this configure the dimension of the heat map in the fig object
+        im = ax.imshow(val, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')  # (left, right, bottom, top)
+
+    for val, ax in zip(column_3_heatmap, grid_2):
+        # this configure titles for each heat map
+        ax.set_title(each_subplot_title[2], position=(-0.15, 0.388), fontsize=7, rotation='vertical')
+        # this configure the dimension of the heat map in the fig object
+        im = ax.imshow(val, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')  # (left, right, bottom, top)
+
+    for val, ax in zip(column_4_heatmap, grid_3):
+        # this configure titles for each heat map
+        ax.set_title(each_subplot_title[3], position=(-0.15, 0.388), fontsize=7, rotation='vertical')
+        # this configure the dimension of the heat map in the fig object
+        im = ax.imshow(val, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')  # (left, right, bottom, top)
+
+    # this simply add color bar instance
+    grid_0.cbar_axes[0].colorbar(im)
+    grid_1.cbar_axes[0].colorbar(im)
+    grid_2.cbar_axes[0].colorbar(im)
+    grid_3.cbar_axes[0].colorbar(im)
+
+    # this toggle labels for color bar
+    for cax in grid_0.cbar_axes:
+        cax.toggle_label(True)
+    for cax in grid_1.cbar_axes:
+        cax.toggle_label(True)
+    for cax in grid_2.cbar_axes:
+        cax.toggle_label(True)
+    for cax in grid_3.cbar_axes:
+        cax.toggle_label(True)
+
+    return fig
+
+
+def compute_recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
     '''
     Reference website: http://text-analytics101.rxnlp.com/2014/10/computing-precision-and-recall-for.html
     :param y_true: list or 1d array of actual labels

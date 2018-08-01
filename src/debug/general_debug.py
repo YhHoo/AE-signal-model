@@ -17,6 +17,7 @@ from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmission
 from src.utils.helpers import plot_multiple_horizontal_heatmap
 
 
+input = np.random.rand(3000).reshape((10, 300))
 act_1 = np.random.rand(2619).reshape((9, 291))
 act_2 = np.random.rand(2619).reshape((9, 291))
 act_3 = np.random.rand(2619).reshape((9, 291))
@@ -39,16 +40,26 @@ val_test = [act_1, act_2, act_3, act_4, act_5, act_6, act_7, act_8]
 val_test_2 = [act_11, act_21, act_31, act_41, act_51, act_61, act_71, act_81]
 # fig = plot_multiple_horizontal_heatmap(val_test, 'BIG TITLE', 'BIG TITLE')
 
-fig = plt.figure(figsize=(12, 7))
+fig = plt.figure(figsize=(15, 7))
 fig.subplots_adjust(left=0.06, right=0.96)
 # main title of figure
 fig.suptitle('Conv2d_1 Layer Activation')
 # all axes grid's big title
-fig.text(0.15, 0.9, 'TESTING')
-fig.text(0.5, 0.9, 'TESTING')
-fig.text(0.8, 0.9, 'TESTING')
+fig.text(0.10, 0.9, 'TESTING')
+fig.text(0.35, 0.9, 'TESTING')
+fig.text(0.58, 0.9, 'TESTING')
+fig.text(0.82, 0.9, 'TESTING')
 
-grid_1 = AxesGrid(fig, 131,
+grid_0 = AxesGrid(fig, 141,
+                  nrows_ncols=(1, 1),
+                  axes_pad=0.1,
+                  share_all=True,
+                  label_mode="L",
+                  cbar_location="bottom",
+                  cbar_mode="single",
+                  cbar_size='15%')
+
+grid_1 = AxesGrid(fig, 142,
                   nrows_ncols=(8, 1),
                   axes_pad=0.1,
                   share_all=True,
@@ -56,7 +67,7 @@ grid_1 = AxesGrid(fig, 131,
                   cbar_location="right",
                   cbar_mode="single",
                   cbar_size='0.5%')
-grid_2 = AxesGrid(fig, 132,
+grid_2 = AxesGrid(fig, 143,
                   nrows_ncols=(8, 1),
                   axes_pad=0.1,
                   share_all=True,
@@ -64,7 +75,7 @@ grid_2 = AxesGrid(fig, 132,
                   cbar_location="right",
                   cbar_mode="single",
                   cbar_size='0.5%')
-grid_3 = AxesGrid(fig, 133,
+grid_3 = AxesGrid(fig, 144,
                   nrows_ncols=(8, 1),
                   axes_pad=0.1,
                   share_all=True,
@@ -73,6 +84,8 @@ grid_3 = AxesGrid(fig, 133,
                   cbar_mode="single",
                   cbar_size='0.5%')
 
+for ax in grid_0:
+    im = ax.imshow(input, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')
 
 for val, ax in zip(val_test, grid_1):
     # this configure titles for each heat map
@@ -93,11 +106,14 @@ for val, ax in zip(val_test, grid_3):
     im = ax.imshow(val, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')  # (left, right, bottom, top)
 
 # this simply add color bar instance
+grid_0.cbar_axes[0].colorbar(im)
 grid_1.cbar_axes[0].colorbar(im)
 grid_2.cbar_axes[0].colorbar(im)
 grid_3.cbar_axes[0].colorbar(im)
 
 # this toggle labels for color bar
+for cax in grid_0.cbar_axes:
+    cax.toggle_label(True)
 for cax in grid_1.cbar_axes:
     cax.toggle_label(True)
 for cax in grid_2.cbar_axes:
@@ -106,12 +122,6 @@ for cax in grid_3.cbar_axes:
     cax.toggle_label(True)
 
 plt.show()
-
-
-
-
-
-
 
 
 # def plot_confusion_matrix(cm, classes,
