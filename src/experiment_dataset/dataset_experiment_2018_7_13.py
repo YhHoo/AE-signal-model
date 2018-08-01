@@ -2,7 +2,7 @@ import numpy as np
 from random import shuffle
 import matplotlib.pyplot as plt
 # self library
-from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, multiplot_timeseries, \
+from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, plot_multiple_timeseries, \
                               three_dim_visualizer, ProgressBarForLoop
 from src.utils.dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, one_dim_xcor_2d_input
 

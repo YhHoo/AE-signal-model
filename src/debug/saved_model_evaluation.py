@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix, f1_score
 # self defined library
 from src.utils.helpers import model_loader, model_multiclass_evaluate, break_into_train_test, \
-                              reshape_3d_to_4d_tocategorical, three_dim_visualizer, recall_precision_multiclass
+                              reshape_3d_to_4d_tocategorical, three_dim_visualizer, compute_recall_precision_multiclass
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 
 # -------------------[LOADING DATA]----------------------------
@@ -52,7 +52,7 @@ print(actual)
 # print('------------MODEL EVALUATION-------------')
 model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
 class_label = [i for i in range(0, 21, 1)] + [j for j in range(-20, 0, 1)]
-mat, r, p = recall_precision_multiclass(y_true=actual, y_pred=prediction, all_class_label=class_label, verbose=True)
+mat, r, p = compute_recall_precision_multiclass(y_true=actual, y_pred=prediction, all_class_label=class_label, verbose=True)
 
 mat.to_csv('PLB_2018_7_13_Classification_CNN[33k]_confusion_mat.csv')
 print(r)

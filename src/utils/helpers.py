@@ -122,7 +122,7 @@ class ModelLogger:
         :return: None, but it will save 2 csv of confusion matrix and recall_precision table
         '''
         # Consider this as a wrapper for the recall_precision_multiclass(), for easy saving purpose
-        mat, r, p, f1 = recall_precision_multiclass(y_true=y_true, y_pred=y_pred, all_class_label=all_class_label)
+        mat, r, p, f1 = compute_recall_precision_multiclass(y_true=y_true, y_pred=y_pred, all_class_label=all_class_label)
 
         mat_filename = self.path + 'confusion_mat.csv'
         recall_precision_df_filename = self.path + 'recall_prec_f1.csv'
@@ -213,7 +213,7 @@ def break_into_train_test(input, label, num_classes, shuffled_each_class=True, t
     :param num_classes: total classes to break into
     :param shuffled_each_class: it will shuffle the samples in every class
     :param verbose: print the summary of train test size
-    :return: a train and test set
+    :return: a train and test set in ndarray
 
     AIM----------------------------------
     This is when we receive a list of N classes samples(a list of 2D array) all concatenate together sequentially
@@ -361,7 +361,13 @@ def three_dim_visualizer(x_axis, y_axis, zxx, label=('x', 'y', 'z'), output='2d'
 
 
 def simple_heatmap(zxx):
-    plt.imshow(zxx, interpolation='None', cmap='jet')
+    '''
+    :param zxx: a 2d array input
+    :return: a heatmap plot of the zxx
+    '''
+    fig = plt.imshow(zxx, interpolation='None', cmap='jet')
+
+    return fig
 
 
 def read_all_tdms_from_folder(folder_path=None):
@@ -416,7 +422,7 @@ def read_single_tdms(filename=None):
     return n_channel_matrix
 
 
-def multiplot_timeseries(input, subplot_titles, main_title):
+def plot_multiple_timeseries(input, subplot_titles, main_title):
     '''
     Aspect axis[0] of input is no. of sensors/diff features, axis[1] is time steps
     :param input: a 2d array
@@ -443,7 +449,7 @@ def multiplot_timeseries(input, subplot_titles, main_title):
 
 def dual_heatmap_plot(input_1, input_2):
     '''
-    This function plot 2 heatmap (e.g. xcor map, FT map) in one fig, for comparison.
+    This function plot 2 heatmap (e.g. xcor map, FT map) in one fig (up and down, in one column), for comparison.
     For best comparison experience by visual, the 2 inputs shud be equal dimension.
     Note that the values in axis[0] will be plotted top down (for small to big)
     :param input_1: 2d array
@@ -476,7 +482,7 @@ def dual_heatmap_plot(input_1, input_2):
 
 def plot_multiple_horizontal_heatmap(zxx_list, title='No Title', subplot_title='No Title'):
     '''
-    This plot a series of rectangular heatmap in a drop down format, with a shared color bar.
+    This plot a series of rectangular heatmap in a drop down (1 column) format, with a shared color bar.
     This is a extended version of dual_heatmap_plot()
     :param zxx_list: list of 2d array input
     :param title: Big title
@@ -515,7 +521,114 @@ def plot_multiple_horizontal_heatmap(zxx_list, title='No Title', subplot_title='
     return fig
 
 
-def recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
+def plot_heatmap_series_in_four_column(column_1_heatmap, column_2_heatmap, column_3_heatmap, column_4_heatmap,
+                                       main_title='No Title', each_column_title='No Title',
+                                       each_subplot_title='No Title'):
+    '''
+    For visualizing the layer activation of CNN
+    this is for plotting the input 2d array as image(heatmap) in first column, followed by the activation result by
+    different filters in following 3 layers of CNN
+
+    :param column_1_heatmap: only a single 2d ndarray input
+    :param column_2_heatmap: a list of 2d ndarray
+    :param column_3_heatmap: a list of 2d ndarray
+    :param column_4_heatmap: a list of 2d ndarray
+    :param main_title: title of the figure
+    :param each_column_title: a list of string for every column title (list of 4 only, for col 1-4)
+    :param each_subplot_title: a list of string (only a same name for every column, an index will be appended after
+                               the name for subplot in every column) (list of 3 only, for col 2-4)
+    :return: a fig of all plots
+    '''
+    # getting the no of heatmap
+    no_of_heatm_in_column_2 = len(column_2_heatmap)
+    no_of_heatm_in_column_3 = len(column_3_heatmap)
+    no_of_heatm_in_column_4 = len(column_4_heatmap)
+
+    fig = plt.figure(figsize=(15, 7))
+    fig.subplots_adjust(left=0.06, right=0.96)
+    # main title of figure
+    fig.suptitle(main_title)
+    # all axes grid's big title
+    fig.text(0.10, 0.9, each_column_title[0])
+    fig.text(0.35, 0.9, each_column_title[1])
+    fig.text(0.58, 0.9, each_column_title[2])
+    fig.text(0.82, 0.9, each_column_title[3])
+
+    grid_0 = AxesGrid(fig, 141,
+                      nrows_ncols=(1, 1),
+                      axes_pad=0.1,
+                      share_all=True,
+                      label_mode="L",
+                      cbar_location="bottom",
+                      cbar_mode="single",
+                      cbar_size='15%')
+
+    grid_1 = AxesGrid(fig, 142,
+                      nrows_ncols=(no_of_heatm_in_column_2, 1),
+                      axes_pad=0.1,
+                      share_all=True,
+                      label_mode="L",
+                      cbar_location="right",
+                      cbar_mode="single",
+                      cbar_size='0.5%')
+    grid_2 = AxesGrid(fig, 143,
+                      nrows_ncols=(no_of_heatm_in_column_3, 1),
+                      axes_pad=0.1,
+                      share_all=True,
+                      label_mode="L",
+                      cbar_location="right",
+                      cbar_mode="single",
+                      cbar_size='0.5%')
+    grid_3 = AxesGrid(fig, 144,
+                      nrows_ncols=(no_of_heatm_in_column_4, 1),
+                      axes_pad=0.1,
+                      share_all=True,
+                      label_mode="L",
+                      cbar_location="right",
+                      cbar_mode="single",
+                      cbar_size='0.5%')
+
+    for ax in grid_0:
+        im = ax.imshow(column_1_heatmap, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')
+
+    for val, ax in zip(column_2_heatmap, grid_1):
+        # this configure titles for each heat map
+        ax.set_title(each_subplot_title[1], position=(-0.15, 0.388), fontsize=7, rotation='vertical')
+        # this configure the dimension of the heat map in the fig object
+        im = ax.imshow(val, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')  # (left, right, bottom, top)
+
+    for val, ax in zip(column_3_heatmap, grid_2):
+        # this configure titles for each heat map
+        ax.set_title(each_subplot_title[2], position=(-0.15, 0.388), fontsize=7, rotation='vertical')
+        # this configure the dimension of the heat map in the fig object
+        im = ax.imshow(val, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')  # (left, right, bottom, top)
+
+    for val, ax in zip(column_4_heatmap, grid_3):
+        # this configure titles for each heat map
+        ax.set_title(each_subplot_title[3], position=(-0.15, 0.388), fontsize=7, rotation='vertical')
+        # this configure the dimension of the heat map in the fig object
+        im = ax.imshow(val, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')  # (left, right, bottom, top)
+
+    # this simply add color bar instance
+    grid_0.cbar_axes[0].colorbar(im)
+    grid_1.cbar_axes[0].colorbar(im)
+    grid_2.cbar_axes[0].colorbar(im)
+    grid_3.cbar_axes[0].colorbar(im)
+
+    # this toggle labels for color bar
+    for cax in grid_0.cbar_axes:
+        cax.toggle_label(True)
+    for cax in grid_1.cbar_axes:
+        cax.toggle_label(True)
+    for cax in grid_2.cbar_axes:
+        cax.toggle_label(True)
+    for cax in grid_3.cbar_axes:
+        cax.toggle_label(True)
+
+    return fig
+
+
+def compute_recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
     '''
     Reference website: http://text-analytics101.rxnlp.com/2014/10/computing-precision-and-recall-for.html
     :param y_true: list or 1d array of actual labels
@@ -559,6 +672,15 @@ def recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
 
 
 def get_activations(model, model_inputs, print_shape_only=False, layer_name=None):
+    '''
+    retrieved from https://github.com/philipperemy/keras-visualize-activations/blob/master/read_activations.py
+    :param model: Keras model
+    :param model_inputs: Model inputs for which we want to get the activations (e.g. 200 MNIST images)
+    :param print_shape_only: if TRUE print shape of activations arrays of every layer only. If false it will print
+                             entire array
+    :param layer_name: layer where we want to read the activation. If none, it will return all layer activation
+    :return: a list of np array where len(return) = no of layers of interest (by layer name)
+    '''
     print('----- activations -----')
     activations = []
     inp = model.input
@@ -592,30 +714,4 @@ def get_activations(model, model_inputs, print_shape_only=False, layer_name=None
             print(layer_activations)
 
     return activations
-
-
-def display_activations(activation_maps):
-
-    # batch_size = activation_maps[0].shape[0]
-    # assert batch_size == 1, 'One image at a time to visualize.'
-    for i, activation_map in enumerate(activation_maps):
-        print('Displaying activation map {}'.format(i))
-        shape = activation_map.shape
-        if len(shape) == 4:
-            activations = np.hstack(np.transpose(activation_map[0], (2, 0, 1)))
-        elif len(shape) == 2:
-            # try to make it square as much as possible. we can skip some activations.
-            activations = activation_map[0]
-            num_activations = len(activations)
-            if num_activations > 1024:  # too hard to display it on the screen.
-                square_param = int(np.floor(np.sqrt(num_activations)))
-                activations = activations[0: square_param * square_param]
-                activations = np.reshape(activations, (square_param, square_param))
-            else:
-                activations = np.expand_dims(activations, axis=0)
-        else:
-            raise Exception('len(shape) = 3 has not been implemented.')
-        plt.imshow(activations, interpolation='None', cmap='jet')
-        plt.show()
-        plt.close('all')
 

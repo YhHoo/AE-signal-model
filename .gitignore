@@ -5,3 +5,4 @@ src/__pycache__/
 *.pyc
 src/scripts/Graph/
 src/scripts/saved_model/
+__pycache__/
