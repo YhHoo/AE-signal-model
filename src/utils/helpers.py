@@ -522,8 +522,8 @@ def plot_multiple_horizontal_heatmap(zxx_list, title='No Title', subplot_title='
 
 
 def plot_heatmap_series_in_four_column(column_1_heatmap, column_2_heatmap, column_3_heatmap, column_4_heatmap,
-                                       main_title='No Title', each_column_title='No Title',
-                                       each_subplot_title='No Title'):
+                                       main_title='No Title', each_column_title=['None', 'None', 'None', 'None'],
+                                       each_subplot_title=['None', 'None', 'None']):
     '''
     For visualizing the layer activation of CNN
     this is for plotting the input 2d array as image(heatmap) in first column, followed by the activation result by
@@ -593,19 +593,19 @@ def plot_heatmap_series_in_four_column(column_1_heatmap, column_2_heatmap, colum
 
     for val, ax in zip(column_2_heatmap, grid_1):
         # this configure titles for each heat map
-        ax.set_title(each_subplot_title[1], position=(-0.15, 0.388), fontsize=7, rotation='vertical')
+        ax.set_title(each_subplot_title[0], position=(-0.15, 0.388), fontsize=7, rotation='vertical')
         # this configure the dimension of the heat map in the fig object
         im = ax.imshow(val, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')  # (left, right, bottom, top)
 
     for val, ax in zip(column_3_heatmap, grid_2):
         # this configure titles for each heat map
-        ax.set_title(each_subplot_title[2], position=(-0.15, 0.388), fontsize=7, rotation='vertical')
+        ax.set_title(each_subplot_title[1], position=(-0.15, 0.388), fontsize=7, rotation='vertical')
         # this configure the dimension of the heat map in the fig object
         im = ax.imshow(val, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')  # (left, right, bottom, top)
 
     for val, ax in zip(column_4_heatmap, grid_3):
         # this configure titles for each heat map
-        ax.set_title(each_subplot_title[3], position=(-0.15, 0.388), fontsize=7, rotation='vertical')
+        ax.set_title(each_subplot_title[2], position=(-0.15, 0.388), fontsize=7, rotation='vertical')
         # this configure the dimension of the heat map in the fig object
         im = ax.imshow(val, vmin=0, vmax=1, extent=(0.01, 0.91, 0.6, 0.39), cmap='jet')  # (left, right, bottom, top)
 
