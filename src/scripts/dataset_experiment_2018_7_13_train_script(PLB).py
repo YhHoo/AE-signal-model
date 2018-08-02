@@ -7,7 +7,7 @@ import pandas as pd
 from keras.callbacks import TensorBoard
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 from src.utils.helpers import break_into_train_test, reshape_3d_to_4d_tocategorical, \
-                              ModelLogger, compute_recall_precision_multiclass, model_multiclass_evaluate
+                              ModelLogger, compute_recall_precision_multiclass, evaluate_model_for_all_class
 from src.model_bank.cnn_model_bank import cnn2d_plb_v1
 
 

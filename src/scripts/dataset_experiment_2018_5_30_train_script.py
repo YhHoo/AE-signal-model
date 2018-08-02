@@ -5,7 +5,7 @@ time series signal -> segmentation -> bandpass -> STFT -> Xcor -> preprocessing 
 from keras.callbacks import TensorBoard
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 from src.utils.helpers import break_into_train_test, reshape_3d_to_4d_tocategorical, \
-                              ModelLogger, model_multiclass_evaluate
+                              ModelLogger, evaluate_model_for_all_class
 from src.model_bank.cnn_model_bank import cnn2d_plb_v1
 
 data = AcousticEmissionDataSet_30_5_2018(drive='F')
@@ -38,4 +38,4 @@ history = model.fit(x=train_x,
                     callbacks=[tb_callback])
 
 model_logger.learning_curve(history=history, save=False, show=True)
-model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
+evaluate_model_for_all_class(model, test_x=test_x, test_y=test_y)

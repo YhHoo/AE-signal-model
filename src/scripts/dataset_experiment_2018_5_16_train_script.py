@@ -7,7 +7,7 @@ from src.experiment_dataset.dataset_experiment_2018_5_16 import AccousticEmissio
 from keras.utils import to_categorical
 from keras import optimizers
 # self defined library
-from src.utils.helpers import ModelLogger, model_multiclass_evaluate
+from src.utils.helpers import ModelLogger, evaluate_model_for_all_class
 from src.model_bank.cnn_model_bank import cnn_1000_40_7class_v1, cnn_700_40_7class_v1
 
 # ----------------------------------------------------------------------------------------------TEST 1
@@ -57,7 +57,7 @@ history = model.fit(x=train_x,
 # save the learning curve
 model_logger.learning_curve(history, save=True, title='F-range (0-100kHz)')
 
-model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
+evaluate_model_for_all_class(model, test_x=test_x, test_y=test_y)
 
 # ----------------------------------------------------------------------------------------------TEST 2
 
@@ -101,4 +101,4 @@ history = model.fit(x=train_x,
 # learning curve
 model_logger.learning_curve(history, save=True, title='F-range (0-70kHz)')
 
-model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
+evaluate_model_for_all_class(model, test_x=test_x, test_y=test_y)

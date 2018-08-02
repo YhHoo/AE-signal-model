@@ -14,7 +14,7 @@ However, a time shift for a signal shud
 import numpy as np
 # self declared library
 from src.controlled_dataset.ideal_dataset import noise_time_shift_xcor_return
-from src.utils.helpers import break_into_train_test, ModelLogger, model_multiclass_evaluate, \
+from src.utils.helpers import break_into_train_test, ModelLogger, evaluate_model_for_all_class, \
                               reshape_3d_to_4d_tocategorical
 from src.model_bank.cnn_model_bank import cnn_51_159_3class_v1
 
@@ -52,7 +52,7 @@ history = model.fit(x=train_x,
                     verbose=1,
                     validation_data=(test_x, test_y))
 model_logger.learning_curve(history=history, save=True)
-model_multiclass_evaluate(model, test_x=test_x, test_y=test_y)
+evaluate_model_for_all_class(model, test_x=test_x, test_y=test_y)
 
 
 # # Testing different FC architecture

@@ -140,7 +140,7 @@ class ModelLogger:
         recall_precision_df.to_csv(recall_precision_df_filename)
 
 
-def model_loader(model_name=None):
+def load_model(model_name=None):
     '''
     :param model_name: The model name
     :param dir: The location that contains .h5, .json of the model
@@ -162,7 +162,7 @@ def model_loader(model_name=None):
     return model
 
 
-def model_multiclass_evaluate(model, test_x, test_y):
+def evaluate_model_for_all_class(model, test_x, test_y):
     # manual prediction, convert the output from one-hot encoding bac to class no
     # e.g. [0 1 0 0] --> 1, [0 0 1 0] --> 2
     # Make sure classes in the test_y are at subsequent order
@@ -448,7 +448,7 @@ def plot_simple_heatmap(zxx):
     return fig
 
 
-def dual_heatmap_plot(input_1, input_2):
+def plot_two_heatmap_in_one_column(input_1, input_2):
     '''
     This function plot 2 heatmap (e.g. xcor map, FT map) in one fig (up and down, in one column), for comparison.
     For best comparison experience by visual, the 2 inputs shud be equal dimension.
@@ -716,4 +716,14 @@ def get_activations(model, model_inputs, print_shape_only=False, layer_name=None
             print(layer_activations)
 
     return activations
+
+
+def direct_to_dir(where=None):
+    if where is 'result':
+        return 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
+    elif where is 'tfgraph':
+        return 'C:/Users/YH/PycharmProjects/AE-signal-model/result/Graph/'
+    elif where is 'savedmodel':
+        return 'C:/Users/YH/PycharmProjects/AE-signal-model/result/saved_model/'
+
 
