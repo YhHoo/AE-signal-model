@@ -50,7 +50,7 @@ class ModelLogger:
 
     def __init__(self, model, model_name):
         self.model = model
-        self.path = 'C:/Users/YH/PycharmProjects/AE-signal-model/src/scripts/saved_model/' + model_name
+        self.path = direct_to_dir(where='saved_model') + model_name
 
     def save_architecture(self, save_readable=False):
         # serialize and saving the model structure to JSON
@@ -148,8 +148,7 @@ def load_model(model_name=None):
     AIM: this just simplifies the model loading procedure by wrapping them in one.
     This has to be followed by model.compile() if we wish to train the model later
     '''
-    dir = 'C:/Users/YH/PycharmProjects/AE-signal-model/src/scripts/saved_model/'
-    path = dir + model_name
+    path = direct_to_dir(where='saved_model') + model_name
 
     # load architecture from .json
     with open(path + '.json', 'r') as f:
@@ -721,9 +720,9 @@ def get_activations(model, model_inputs, print_shape_only=False, layer_name=None
 def direct_to_dir(where=None):
     if where is 'result':
         return 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
-    elif where is 'tfgraph':
+    elif where is 'tf_graph':
         return 'C:/Users/YH/PycharmProjects/AE-signal-model/result/Graph/'
-    elif where is 'savedmodel':
+    elif where is 'saved_model':
         return 'C:/Users/YH/PycharmProjects/AE-signal-model/result/saved_model/'
 
 

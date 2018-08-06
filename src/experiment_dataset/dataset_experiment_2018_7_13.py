@@ -117,7 +117,6 @@ class AcousticEmissionDataSet_13_7_2018:
         sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
         # invert the sensor pair to generate the opposite lag
         sensor_pair_near_inv = [(pair[1], pair[0]) for pair in sensor_pair_near]
-        print(sensor_pair_near_inv)
 
         # xcor pairing commands - [far] = 11m, 12m,..., 20m
         sensor_pair_far = [(0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]

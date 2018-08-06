@@ -116,7 +116,7 @@ def cnn2d_plb_v1(input_shape, num_classes):
     '''
     model = Sequential()
 
-    model.add(Conv2D(filters=8, kernel_size=(2, 10), strides=(1, 1),
+    model.add(Conv2D(filters=5, kernel_size=(2, 10), strides=(1, 1),
                      activation='relu', input_shape=(input_shape[0], input_shape[1], 1)))
 
     model.add(Conv2D(filters=8, kernel_size=(2, 10), strides=(1, 1),
@@ -153,7 +153,8 @@ def cnn1d_plb_v1(input_shape, num_classes):
     model = Model(inputs=inputs, outputs=predictions)
 
 
-# cnn_general_v1(input_shape=(10, 300), num_classes=41)
+# cnn2d_plb_v1(input_shape=(10, 300), num_classes=41)
+
 
 
 # inputs = Input(shape=(784,))
