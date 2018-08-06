@@ -55,6 +55,7 @@ class ModelLogger:
     def save_architecture(self, save_readable=False):
         # serialize and saving the model structure to JSON
         model_json = self.model.to_json()
+        model_json_pretty = self.model.to_json(indent=4)
         # path to save
         path = self.path + '.json'
         # saving
@@ -66,6 +67,8 @@ class ModelLogger:
             path = self.path + '.txt'
             with open(path, 'w') as f:
                 self.model.summary(print_fn=lambda x: f.write(x + '\n'))
+                f.write(model_json_pretty)
+        print('Readable Architecture saved -->{}.txt'.format(path))
 
     def save_best_weight_cheakpoint(self, monitor='val_loss', period=1):
         '''

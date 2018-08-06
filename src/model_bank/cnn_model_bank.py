@@ -116,10 +116,10 @@ def cnn2d_plb_v1(input_shape, num_classes):
     '''
     model = Sequential()
 
-    model.add(Conv2D(filters=5, kernel_size=(2, 10), strides=(1, 1),
+    model.add(Conv2D(filters=4, kernel_size=(2, 10), strides=(1, 1),
                      activation='relu', input_shape=(input_shape[0], input_shape[1], 1)))
 
-    model.add(Conv2D(filters=8, kernel_size=(2, 10), strides=(1, 1),
+    model.add(Conv2D(filters=6, kernel_size=(2, 10), strides=(1, 1),
                      activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 5), strides=(2, 2)))
 

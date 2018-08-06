@@ -30,9 +30,10 @@ train_x, train_y, test_x, test_y = reshape_3d_to_4d_tocategorical(train_x, train
 
 # iterate several times to find best model with F1-score
 for i in range(1):
+    print('ITERATION ', i)
     model = cnn2d_plb_v1(input_shape=(train_x.shape[1], train_x.shape[2]), num_classes=num_classes)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    model_logger = ModelLogger(model, model_name='PLB_2018_7_13_Classification_CNN[55k]_take3')
+    model_logger = ModelLogger(model, model_name='PLB_2018_7_13_Classification_CNN[55k]_take4')
     # tensorboard (folder name in Graph will be used to name the run)
     # tb_callback = TensorBoard(log_dir='./Graph', histogram_freq=2,
     #                           write_graph=True, write_images=True, write_grads=True)
@@ -44,7 +45,7 @@ for i in range(1):
                         epochs=150,
                         verbose=2,
                         callbacks=[sbw_callback])
-    print('ITERATION ', i)
+
     model_logger.learning_curve(history=history, save=True, show=False)
     model_logger.save_architecture(save_readable=True)
 
