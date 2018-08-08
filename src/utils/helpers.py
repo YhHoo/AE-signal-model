@@ -416,7 +416,8 @@ def read_single_tdms(filename=None):
 
 def plot_multiple_timeseries(input, subplot_titles, main_title):
     '''
-    Aspect axis[0] of input is no. of sensors/diff features, axis[1] is time steps
+    Aspect axis[0] of input is no. of sensors/diff features, axis[1] is time steps. All time series has to be
+    SAME length !
     :param input: a 2d array
     :param subplot_titles: title for every plot
     :param main_title: the big title
