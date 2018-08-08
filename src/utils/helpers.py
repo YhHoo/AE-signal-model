@@ -127,8 +127,8 @@ class ModelLogger:
         # Consider this as a wrapper for the recall_precision_multiclass(), for easy saving purpose
         mat, r, p, f1 = compute_recall_precision_multiclass(y_true=y_true, y_pred=y_pred, all_class_label=all_class_label)
 
-        mat_filename = self.path + 'confusion_mat.csv'
-        recall_precision_df_filename = self.path + 'recall_prec_f1.csv'
+        mat_filename = self.path + '_confusion_mat.csv'
+        recall_precision_df_filename = self.path + '_recall_prec_f1.csv'
 
         # prepare and save confusion matrix
         mat.to_csv(mat_filename)

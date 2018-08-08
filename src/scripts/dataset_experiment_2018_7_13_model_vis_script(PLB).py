@@ -32,7 +32,7 @@ _, _, test_x_reshape, _ = reshape_3d_to_4d_tocategorical(train_x, train_y, test_
 
 # -------------------[LOADING MODEL]----------------------------
 
-model = load_model(model_name='PLB_2018_7_13_Classification_CNN[55k]_take3')
+model = load_model(model_name='PLB_2018_7_13_Classification_CNN[55k]_take4')
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 
 activation = get_activations(model, model_inputs=test_x_reshape, print_shape_only=True)
