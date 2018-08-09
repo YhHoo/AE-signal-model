@@ -17,27 +17,35 @@ from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmission
 from src.utils.helpers import plot_heatmap_series_in_one_column
 
 
-input = np.random.rand(3000).reshape((10, 300))
-act_1 = np.random.rand(2619).reshape((9, 291))
-act_2 = np.random.rand(2619).reshape((9, 291))
-act_3 = np.random.rand(2619).reshape((9, 291))
-act_4 = np.random.rand(2619).reshape((9, 291))
-act_5 = np.random.rand(2619).reshape((9, 291))
-act_6 = np.random.rand(2619).reshape((9, 291))
-act_7 = np.random.rand(2619).reshape((9, 291))
-act_8 = np.random.rand(2619).reshape((9, 291))
+mat = np.linspace(0, 3000, 200).reshape((10, 20))
+print(mat)
 
-act_11 = np.linspace(0, 1, 2619).reshape((9, 291))
-act_21 = np.linspace(0, 1, 2619).reshape((9, 291))
-act_31 = np.linspace(0, 1, 2619).reshape((9, 291))
-act_41 = np.linspace(0, 1, 2619).reshape((9, 291))
-act_51 = np.linspace(0, 1, 2619).reshape((9, 291))
-act_61 = np.linspace(0, 1, 2619).reshape((9, 291))
-act_71 = np.linspace(0, 1, 2619).reshape((9, 291))
-act_81 = np.linspace(0, 1, 2619).reshape((9, 291))
+fig = plt.figure()
+ax1 = fig.add_subplot(1, 1, 1)
+ax1.imshow(mat)
 
-val_test = [act_1, act_2, act_3, act_4, act_5, act_6, act_7, act_8]
-val_test_2 = [act_11, act_21, act_31, act_41, act_51, act_61, act_71, act_81]
+plt.show()
+# input = np.random.rand(3000).reshape((10, 300))
+# act_1 = np.random.rand(2619).reshape((9, 291))
+# act_2 = np.random.rand(2619).reshape((9, 291))
+# act_3 = np.random.rand(2619).reshape((9, 291))
+# act_4 = np.random.rand(2619).reshape((9, 291))
+# act_5 = np.random.rand(2619).reshape((9, 291))
+# act_6 = np.random.rand(2619).reshape((9, 291))
+# act_7 = np.random.rand(2619).reshape((9, 291))
+# act_8 = np.random.rand(2619).reshape((9, 291))
+#
+# act_11 = np.linspace(0, 1, 2619).reshape((9, 291))
+# act_21 = np.linspace(0, 1, 2619).reshape((9, 291))
+# act_31 = np.linspace(0, 1, 2619).reshape((9, 291))
+# act_41 = np.linspace(0, 1, 2619).reshape((9, 291))
+# act_51 = np.linspace(0, 1, 2619).reshape((9, 291))
+# act_61 = np.linspace(0, 1, 2619).reshape((9, 291))
+# act_71 = np.linspace(0, 1, 2619).reshape((9, 291))
+# act_81 = np.linspace(0, 1, 2619).reshape((9, 291))
+#
+# val_test = [act_1, act_2, act_3, act_4, act_5, act_6, act_7, act_8]
+# val_test_2 = [act_11, act_21, act_31, act_41, act_51, act_61, act_71, act_81]
 # fig = plot_multiple_horizontal_heatmap(val_test, 'BIG TITLE', 'BIG TITLE')
 
 

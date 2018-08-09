@@ -728,5 +728,6 @@ def direct_to_dir(where=None):
         return 'C:/Users/YH/PycharmProjects/AE-signal-model/result/Graph/'
     elif where is 'saved_model':
         return 'C:/Users/YH/PycharmProjects/AE-signal-model/result/saved_model/'
-
+    elif where is 'yh_laptop_test_data':
+        return 'C:/Users/YH/Desktop/Experiment_2018_7_13/'
 
