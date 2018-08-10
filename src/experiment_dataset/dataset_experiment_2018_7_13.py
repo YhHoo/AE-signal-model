@@ -161,17 +161,17 @@ class AcousticEmissionDataSet_13_7_2018:
             all_channel_stft = np.array(all_channel_stft)
 
             # xcor for sensor pair (0m) - (10m)
-            xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
-                                             pair_list=sensor_pair_near,
-                                             verbose=False)
+            xcor_map, _ = one_dim_xcor_2d_input(input_mat=all_channel_stft,
+                                                pair_list=sensor_pair_near,
+                                                verbose=False)
 
             for i in range(0, 11, 1):
                 all_class['class_[{}]'.format(i)].append(xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]])
 
             # xcor for sensor pair (0m) - (-10m)
-            xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
-                                             pair_list=sensor_pair_near_inv,
-                                             verbose=False)
+            xcor_map, _ = one_dim_xcor_2d_input(input_mat=all_channel_stft,
+                                                pair_list=sensor_pair_near_inv,
+                                                verbose=False)
             for i in range(0, 11, 1):
                 all_class['class_[{}]'.format(-i)].append(xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]])
 
@@ -213,17 +213,17 @@ class AcousticEmissionDataSet_13_7_2018:
             xcormap_extent = (250, 550)
 
             # xcor for sensor pair (11m) - (20m)
-            xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
-                                             pair_list=sensor_pair_far,
-                                             verbose=False)
+            xcor_map, _ = one_dim_xcor_2d_input(input_mat=all_channel_stft,
+                                                pair_list=sensor_pair_far,
+                                                verbose=False)
 
             for i in range(0, 10, 1):
                 all_class['class_[{}]'.format(i + 11)].append(xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]])
 
             # xcor for sensor pair (11m) - (-20m)
-            xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
-                                             pair_list=sensor_pair_far_inv,
-                                             verbose=False)
+            xcor_map, _ = one_dim_xcor_2d_input(input_mat=all_channel_stft,
+                                                pair_list=sensor_pair_far_inv,
+                                                verbose=False)
 
             for i in range(0, 10, 1):
                 all_class['class_[{}]'.format(-11-i)].append(xcor_map[i, 10:20, xcormap_extent[0]:xcormap_extent[1]])
@@ -300,9 +300,9 @@ class AcousticEmissionDataSet_13_7_2018:
             all_channel_stft = np.array(all_channel_stft)
 
             # xcor for sensor pair
-            xcor_map = one_dim_xcor_2d_input(input_mat=all_channel_stft,
-                                             pair_list=sensor_pair,
-                                             verbose=False)
+            xcor_map, _ = one_dim_xcor_2d_input(input_mat=all_channel_stft,
+                                                pair_list=sensor_pair,
+                                                verbose=False)
             # visualize and saving the training data
             savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
             visualize = False

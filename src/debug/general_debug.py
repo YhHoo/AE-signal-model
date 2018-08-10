@@ -17,14 +17,13 @@ from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmission
 from src.utils.helpers import plot_heatmap_series_in_one_column
 
 
-mat = np.linspace(0, 3000, 200).reshape((10, 20))
-print(mat)
+len = 9
+print(np.arange(1, len+1, 1))
+print(len//2 + 1)
 
-fig = plt.figure()
-ax1 = fig.add_subplot(1, 1, 1)
-ax1.imshow(mat)
+# print(np.arange(1, len+1, 1) - len//2 - 1)
 
-plt.show()
+
 # input = np.random.rand(3000).reshape((10, 300))
 # act_1 = np.random.rand(2619).reshape((9, 291))
 # act_2 = np.random.rand(2619).reshape((9, 291))

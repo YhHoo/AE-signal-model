@@ -6,82 +6,84 @@ from scipy.fftpack import fft, ifft
 import matplotlib.pyplot as plt
 import pywt
 # self lib
-from src.utils.dsp_tools import spectrogram_scipy
+from src.utils.dsp_tools import spectrogram_scipy, fft_scipy, one_dim_xcor_2d_input
 from src.utils.helpers import direct_to_dir, read_all_tdms_from_folder
 
+# data slicing and reading
 data_dir = direct_to_dir(where='yh_laptop_test_data') + 'plb/'
 n_channel_data_near = read_all_tdms_from_folder(data_dir)
 n_channel_data_near = np.swapaxes(n_channel_data_near, 1, 2)
-print('Swap Axis: ', n_channel_data_near.shape)
-signal = n_channel_data_near[0, 7, 90000:130000]
-width = np.linspace(1, 30, 50)
-samp_period = 1/1000000
-# CWT--------------------------------
-# using scipy
-# cwtmatr = cwt(signal, ricker, width)
-# using pywt
-cwt_out, freq = pywt.cwt(signal, scales=width, wavelet='gaus2')
-print(freq)
-print(freq.shape)
-fig = plt.figure()
-fig.subplots_adjust(hspace=0.3)
-# ax1 = fig.add_subplot(2, 1, 1)
-# ax2 = fig.add_subplot(2, 1, 2, sharex=ax1)
-ax1 = fig.add_axes([0.1, 0.7, 0.8, 0.2])
-ax2 = fig.add_axes([0.1, 0.2, 0.8, 0.4], sharex=ax1)
-colorbar_ax = fig.add_axes([0.1, 0.1, 0.8, 0.01])
-ax1.set_title('Time Series ')
-ax2.set_title('CWT using Gaus1')
-ax1.plot(signal)
-i = ax2.imshow(cwt_out, extent=[0, 40000, 1, 10], cmap='seismic', aspect='auto')  # extent=[x_start, x_end, y_start, y_end]
-plt.colorbar(i, cax=colorbar_ax, orientation='horizontal')
+n_channel_data_near = n_channel_data_near[0]
+print(n_channel_data_near.shape)
 
-_, _, _, fig2 = spectrogram_scipy(sampled_data=signal, fs=1e6, nperseg=100,
-                                  noverlap=0, nfft=500, return_plot=True, mode='magnitude')
+# CWT --> XCOR---------------
+op_1 = False
+if op_1:
+    # data slicing and reading
+    data_dir = direct_to_dir(where='yh_laptop_test_data') + 'plb/'
+    n_channel_data_near = read_all_tdms_from_folder(data_dir)
+    n_channel_data_near = np.swapaxes(n_channel_data_near, 1, 2)
+    # wavelet scale
+    m_wavelet = 'gaus1'
+    scale = np.linspace(2, 30, 50)
+    fs = 1e6
+    sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
 
-plt.show()
+    n_channel_cwt = []
+    for sensor in range(n_channel_data_near.shape[1]):
+        n_channel_cwt.append(pywt.cwt(n_channel_data_near[0, sensor, 90000:130000],
+                                      scales=scale, wavelet=m_wavelet, sampling_period=1/fs)[0])
+    n_channel_cwt = np.array(n_channel_cwt)
+    print(n_channel_cwt.shape)
+
+    # xcor
+    xcor, _ = one_dim_xcor_2d_input(input_mat=n_channel_cwt, pair_list=sensor_pair_near, verbose=True)
+    dist = 0
+    for map in xcor:
+        fig2 = plt.figure()
+        title = 'XCOR_CWT_DistDiff[{}m]'.format(dist)
+        fig2.suptitle(title)
+        ax1 = fig2.add_axes([0.1, 0.6, 0.8, 0.1])
+        ax2 = fig2.add_axes([0.1, 0.8, 0.8, 0.1])
+        cwt_ax = fig2.add_axes([0.1, 0.2, 0.8, 0.3])
+        colorbar_ax = fig2.add_axes([0.1, 0.1, 0.8, 0.01])
+        # title
+        ax1.set_title('Sensor Index: {}'.format(sensor_pair_near[dist][0]))
+        ax2.set_title('Sensor Index: {}'.format(sensor_pair_near[dist][1]))
+        cwt_ax.set_title('Xcor of CWT')
+        # plot
+        ax1.plot(n_channel_data_near[0, sensor_pair_near[dist][0], 90000:130000])
+        ax2.plot(n_channel_data_near[0, sensor_pair_near[dist][1], 90000:130000])
+        cwt_ax.grid(linestyle='dotted')
+        cwt_ax.axvline(x=xcor.shape[2]//2 + 1, linestyle='dotted')
+        cwt_ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        i = cwt_ax.imshow(map, cmap='seismic', aspect='auto')
+        plt.colorbar(i, cax=colorbar_ax, orientation='horizontal')
+        # saving
+        filename = direct_to_dir(where='result') + title
+        fig2.savefig(filename)
+
+        plt.close('all')
+
+        print('SAVED --> ', title)
+        dist += 1
+
+
+# ax1.set_title('Time Series ')
+# ax2.set_title('CWT using {}'.format(m_wavelet))
+# ax2.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+# ax1.plot(signal)
+# # extent=[x_start, x_end, y_start, y_end]
+# i = ax2.imshow(cwt_out, extent=[0, 40000, freq[-1], freq[0]], cmap='seismic', aspect='auto')
+# plt.colorbar(i, cax=colorbar_ax, orientation='horizontal')
+
+# _, _, _, fig2 = spectrogram_scipy(sampled_data=signal, fs=1e6, nperseg=100,
+#                                   noverlap=0, nfft=500, return_plot=True, mode='magnitude', verbose=True)
 
 
 
 
 
-# fs = 8000
-# T = 10
-# t = np.linspace(0, T, T*fs, endpoint=False)
-# w = chirp(t, f0=1000, f1=50, t1=10, method='linear')
-# print(w.shape)
-# cA, cD = pywt.dwt(w, 'db2')
-#
-# _, _, _, fig1 = spectrogram_scipy(sampled_data=w, fs=fs, nperseg=100, nfft=500, plot_title='Ori',
-#                                   noverlap=50, return_plot=True, verbose=True)
-# _, _, _, fig2 = spectrogram_scipy(sampled_data=cA, fs=fs, nperseg=100, nfft=500, plot_title='cA',
-#                                   noverlap=50, return_plot=True, verbose=True)
-# _, _, _, fig3 = spectrogram_scipy(sampled_data=cD, fs=fs, nperseg=100, nfft=500, plot_title='cD',
-#                                   noverlap=50, return_plot=True, verbose=True)
 
-
-# # --------------[FFT on mix of 2 frequency Sine Wave]--------------------
-# # Number of sample points
-# N = 600
-# # sample spacing
-# T = 1.0 / 800.0
-# x = np.linspace(0.0, N*T, N)
-# # 80 Hz and 50Hz sine wave
-# y = np.sin(50.0 * 2.0*np.pi*x) + 0.5*np.sin(80.0 * 2.0*np.pi*x)
-# # yf = fft(y)
-# # xf = np.linspace(0.0, 1.0/(2.0*T), N//2)
-# # plt.plot(xf, (2/N) * np.abs(yf[0:N//2]))
-# # plt.show()
-# print(y.size)
-#
-#
-# # SPECTROGRAM
-# f, t, Sxx = spectrogram(y, fs=800)
-# plt.pcolormesh(t, f, Sxx)
-# plt.ylabel('Frequency [Hz]')
-# plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-# plt.xlabel('Time [Sec]')
-# plt.savefig('test')
-# plt.show()
 
 

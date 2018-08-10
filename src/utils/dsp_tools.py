@@ -218,10 +218,14 @@ def one_dim_xcor_2d_input(input_mat, pair_list, verbose):
         xcor_bank.append(xcor_of_each_f_list)
     xcor_bank = np.array(xcor_bank)
 
+    # xcor axis
+    xcor_len = xcor_bank.shape[2]
+    xcor_axis = np.arange(1, xcor_len + 1, 1) - xcor_len // 2 - 1
+
     if verbose:
         print('\n---------One-Dimensional X-correlation---------')
         print('Xcor Map Dim (No. of xcor map, freq band, xcor steps): ', xcor_bank.shape)
 
-    return xcor_bank
+    return xcor_bank, xcor_axis
 
 
