@@ -17,9 +17,7 @@ from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmission
 from src.utils.helpers import plot_heatmap_series_in_one_column
 
 
-len = 9
-print(np.arange(1, len+1, 1))
-print(len//2 + 1)
+
 
 # print(np.arange(1, len+1, 1) - len//2 - 1)
 

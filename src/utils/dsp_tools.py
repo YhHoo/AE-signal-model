@@ -177,7 +177,7 @@ def butter_bandpass_filtfilt(sampled_data, fs, f_hicut, f_locut, order=5):
     return filtered_signal
 
 
-def one_dim_xcor_2d_input(input_mat, pair_list, verbose):
+def one_dim_xcor_2d_input(input_mat, pair_list, verbose=False):
     '''
     :param input_mat: a 3d np matrix input, where shape[0] -> no. of phase map (diff sensors),
                                                   shape[1] -> freq band,

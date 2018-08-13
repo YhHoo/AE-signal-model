@@ -8,44 +8,39 @@ import pywt
 # self lib
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 from src.utils.dsp_tools import spectrogram_scipy, fft_scipy, one_dim_xcor_2d_input
-from src.utils.helpers import direct_to_dir, read_all_tdms_from_folder, plot_two_heatmap_in_one_column
+from src.utils.helpers import direct_to_dir, read_all_tdms_from_folder, plot_heatmap_series_in_one_column, \
+                              plot_multiple_timeseries
 
-ae_data = AcousticEmissionDataSet_13_7_2018(drive='F')
-n_channel_leak = ae_data.test_data(sensor_dist='near', pressure=1, leak=True)
-n_channel_noleak = ae_data.test_data(sensor_dist='near', pressure=1, leak=False)
+# ae_data = AcousticEmissionDataSet_13_7_2018(drive='F')
+# n_channel_leak = ae_data.test_data(sensor_dist='near', pressure=1, leak=True)
+# n_channel_noleak = ae_data.test_data(sensor_dist='near', pressure=1, leak=False)
+#
+# # wavelet scale
+# m_wavelet = 'gaus1'
+# scale = np.linspace(2, 30, 50)
+# fs = 1e6
+#
+# stft_bank = []
+# for i in range(n_channel_leak.shape[0]):
+#     _, _, leak_stft, _ = spectrogram_scipy(sampled_data=n_channel_leak[i, 0:500000],
+#                                            fs=1e6,
+#                                            nperseg=100,
+#                                            vis_max_freq_range=100e3,
+#                                            noverlap=0,
+#                                            nfft=500,
+#                                            return_plot=False,
+#                                            mode='magnitude',
+#                                            verbose=False)
+#     stft_bank.append(leak_stft)
+#
+# fig = plt.figure(figsize=(8, 5))
+# ax1 = fig.add_subplot([0.1, 0.2, 0.8, 0.3])
+# ax2 = fig.add_subplot([0.1, 0.6, 0.8, 0.3])
+# colorbar_ax = fig.add_axes([0.1, 0.1, 0.8, 0.01])
+# i = ax1.imshow(map, cmap='seismic', aspect='auto')
 
-# wavelet scale
-m_wavelet = 'gaus1'
-scale = np.linspace(2, 30, 50)
-fs = 1e6
 
-stft_bank = []
-for i in range(n_channel_leak.shape[0]):
-    _, _, leak_stft, _ = spectrogram_scipy(sampled_data=n_channel_leak[i, 0:500000],
-                                           fs=1e6,
-                                           nperseg=100,
-                                           vis_max_freq_range=100e3,
-                                           noverlap=0,
-                                           nfft=500,
-                                           return_plot=False,
-                                           mode='magnitude',
-                                           verbose=False)
-    stft_bank.append(leak_stft)
-
-fig = plt.figure(figsize=(8, 5))
-ax1 = fig.add_subplot([0.1, 0.2, 0.8, 0.3])
-ax2 = fig.add_subplot([0.1, 0.6, 0.8, 0.3])
-colorbar_ax = fig.add_axes([0.1, 0.1, 0.8, 0.01])
-i = ax1.imshow(map, cmap='seismic', aspect='auto')
-
-# data slicing and reading
-# data_dir = direct_to_dir(where='yh_laptop_test_data') + 'plb/'
-# n_channel_data_near = read_all_tdms_from_folder(data_dir)
-# n_channel_data_near = np.swapaxes(n_channel_data_near, 1, 2)
-# n_channel_data_near = n_channel_data_near[0]
-# print(n_channel_data_near.shape)
-
-# CWT --> XCOR---------------
+# CWT --> XCOR (using LAPTOP PLB test data)---------------
 op_1 = False
 if op_1:
     # data slicing and reading
@@ -98,16 +93,72 @@ if op_1:
         dist += 1
 
 
-# ax1.set_title('Time Series ')
-# ax2.set_title('CWT using {}'.format(m_wavelet))
-# ax2.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-# ax1.plot(signal)
-# # extent=[x_start, x_end, y_start, y_end]
-# i = ax2.imshow(cwt_out, extent=[0, 40000, freq[-1], freq[0]], cmap='seismic', aspect='auto')
-# plt.colorbar(i, cax=colorbar_ax, orientation='horizontal')
+# CWT --> XCOR (using LAPTOP Leak no Leak test data)---------------
+op_2 = True
+if op_2:
+    # wavelet scale
+    m_wavelet = 'gaus1'
+    scale = np.linspace(2, 30, 50)
+    fs = 1e6
 
-# _, _, _, fig2 = spectrogram_scipy(sampled_data=signal, fs=1e6, nperseg=100,
-#                                   noverlap=0, nfft=500, return_plot=True, mode='magnitude', verbose=True)
+    # leak data
+    data_dir = direct_to_dir(where='yh_laptop_test_data') + '1bar_leak/'
+    n_channel_leak = read_all_tdms_from_folder(data_dir)
+    n_channel_leak = np.swapaxes(n_channel_leak, 1, 2)
+    n_channel_leak = n_channel_leak[0, 1:3, :100000]
+    # no leak data
+    data_dir = direct_to_dir(where='yh_laptop_test_data') + '1bar_noleak/'
+    n_channel_noleak = read_all_tdms_from_folder(data_dir)
+    n_channel_noleak = np.swapaxes(n_channel_noleak, 1, 2)
+    n_channel_noleak = n_channel_noleak[0, 1:3, :100000]
+
+    # break into a list of segmented points
+    no_of_segment = 100
+    n_channel_leak = np.split(n_channel_leak, axis=1, indices_or_sections=no_of_segment)
+    n_channel_noleak = np.split(n_channel_noleak, axis=1, indices_or_sections=no_of_segment)
+
+    print(len(n_channel_leak))
+    cwt_bank_pos1, cwt_bank_pos2 = [], []
+    # for leak data at -2 and 2m only
+    for segment in n_channel_leak:
+        pos1_leak_cwt, _ = pywt.cwt(segment[0], scales=scale, wavelet=m_wavelet, sampling_period=1 / fs)
+        pos2_leak_cwt, _ = pywt.cwt(segment[1], scales=scale, wavelet=m_wavelet, sampling_period=1 / fs)
+        cwt_bank_pos1.append(pos1_leak_cwt)
+        cwt_bank_pos2.append(pos2_leak_cwt)
+
+    # xcor
+    cwt_xcor_bank = []
+    for cwt_pair in zip(cwt_bank_pos1, cwt_bank_pos2):
+        xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([cwt_pair[0], cwt_pair[1]]), pair_list=[(0, 1)])
+        cwt_xcor_bank.append(xcor[0])
+
+    # visualizing
+    for i in range(no_of_segment):
+        fig = plt.figure()
+        title = 'XCOR_CWT_DistDiff[0m]_Sample[{}]'.format(i)
+        fig.suptitle(title, style='bold')
+        ax1 = fig.add_axes([0.1, 0.6, 0.8, 0.1])
+        ax2 = fig.add_axes([0.1, 0.8, 0.8, 0.1])
+        cwt_ax = fig.add_axes([0.1, 0.2, 0.8, 0.3])
+        colorbar_ax = fig.add_axes([0.1, 0.1, 0.8, 0.01])
+        # title
+        ax1.set_title('Sensor[-2m]')
+        ax2.set_title('Sensor[2m]')
+        cwt_ax.set_title('Xcor of CWT')
+        # plot
+        ax1.plot(n_channel_leak[i][0, :])
+        ax2.plot(n_channel_leak[i][1, :])
+        cwt_ax.grid(linestyle='dotted')
+        cwt_ax.axvline(x=cwt_xcor_bank[i].shape[1] // 2 + 1, linestyle='dotted')
+        cwt_ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        i = cwt_ax.imshow(cwt_xcor_bank[i], cmap='seismic', aspect='auto')
+        plt.colorbar(i, cax=colorbar_ax, orientation='horizontal')
+        # saving
+        # filename = direct_to_dir(where='result') + title
+        # fig.savefig(filename)
+
+        plt.show()
+
 
 
 
