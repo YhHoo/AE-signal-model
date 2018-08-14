@@ -366,7 +366,7 @@ class AcousticEmissionDataSet_13_7_2018:
         n_channel_data_near_leak = read_all_tdms_from_folder(self.path_leak_1bar_2to12)
         n_channel_data_far_leak = read_all_tdms_from_folder(self.path_leak_1bar_10to22)
 
-        # return n_channel_data_near_leak,
+        return n_channel_data_near_leak
 
 
 # data = AcousticEmissionDataSet_13_7_2018(drive='F')

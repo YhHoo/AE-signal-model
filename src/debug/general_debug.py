@@ -16,10 +16,33 @@ from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 from src.utils.helpers import plot_heatmap_series_in_one_column
 
+l = np.arange(10)
+print(l)
+x = np.flip(l, axis=0)
+print(x)
 
 
+# input = np.arange(300).reshape((10, 30))
+#
+# x = np.unravel_index(np.argmax(input, axis=None), input.shape)
+# print(x)
+# print(x[0])
+# fig = plt.figure()
+# cwt_ax = fig.add_axes([0.1, 0.2, 0.8, 0.7])
+# colorbar_ax = fig.add_axes([0.1, 0.1, 0.8, 0.01])
+# # title
+# cwt_ax.set_title('Xcor of CWT')
+# # plot
+# cwt_ax.grid(linestyle='dotted')
+# cwt_ax.axvline(x=input.shape[1] // 2 + 1, linestyle='dotted')
+# cwt_ax.scatter(x[1], x[0], s=70, c='black', marker='x')
+# cwt_ax.set_yticks([10, 50, 60, 70, 80, 82, 85, 89, 93, 99])
+# i = cwt_ax.imshow(input, cmap='jet', aspect='auto', extent=[0, 30, 10, 100])
+# plt.colorbar(i, cax=colorbar_ax, orientation='horizontal')
+#
+#
+# plt.show()
 
-# print(np.arange(1, len+1, 1) - len//2 - 1)
 
 
 # input = np.random.rand(3000).reshape((10, 300))

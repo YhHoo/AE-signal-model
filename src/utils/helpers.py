@@ -730,4 +730,81 @@ def direct_to_dir(where=None):
         return 'C:/Users/YH/PycharmProjects/AE-signal-model/result/saved_model/'
     elif where is 'yh_laptop_test_data':
         return 'C:/Users/YH/Desktop/Experiment_2018_7_13/'
+    elif where is 'google_drive':
+        return 'C:/Users/YH/Desktop/hooyuheng.masterWork/MASTER_PAPERWORK/temp_data_store/'
 
+
+def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale, title='No Title'):
+    '''
+    Usage Recommendation:
+
+    Usage_1[only cwt] ----
+    When we just wan to aligned the time series signal with its CWT
+
+    Usage_2[xcor of cwt] ----
+    When we are doing correlation of cwt of the 2 time series signals, we wan to aligned and
+    inspect the 2 time series signal, meanwhile also display the correlation of the CWT
+
+    :param time_series: a 1d array of a list of 2 1d array
+    :param no_of_time_series: 1 -> Usage_1 , 2 -> Usage_2
+    :param cwt_mat: a 2d array
+    :param cwt_scale: the scale passed into CWT function, with values in ascending order
+    :return: a figure of time series and cwt heatmap
+    '''
+
+    fig = plt.figure(figsize=(10, 7.5))
+    fig.suptitle(title, fontweight='bold')
+
+    if no_of_time_series is 1:
+        # config the position
+        ax1 = fig.add_axes([0.1, 0.8, 0.8, 0.1])
+        cwt_ax = fig.add_axes([0.1, 0.2, 0.8, 0.5], sharex=ax1)
+        colorbar_ax = fig.add_axes([0.1, 0.1, 0.8, 0.01])
+
+        # set title
+        ax1.set_title('Signal in Time')
+        cwt_ax.set_title('CWT of Signal')
+
+        # plot time series
+        ax1.plot(time_series)
+
+    elif no_of_time_series is 2:
+        ax1 = fig.add_axes([0.1, 0.6, 0.8, 0.1])
+        ax2 = fig.add_axes([0.1, 0.8, 0.8, 0.1], sharex=ax1)
+        cwt_ax = fig.add_axes([0.1, 0.2, 0.8, 0.3])
+        colorbar_ax = fig.add_axes([0.1, 0.1, 0.8, 0.01])
+
+        # set title
+        ax1.set_title('Signal 1 in Time')
+        ax2.set_title('Signal 2 in Time')
+        cwt_ax.set_title('XCOR of CWT of Signal 1 and 2')
+
+        # plot time series
+        ax1.plot(time_series[0])
+        ax2.plot(time_series[1])
+
+        # plot middle line
+        cwt_ax.axvline(x=cwt_mat.shape[1] // 2 + 1, linestyle='dotted')
+
+        # plot max point
+        for row_no in range(cwt_mat.shape[0]):
+            max_along_x = np.argmax(cwt_mat[row_no])
+            cwt_ax.scatter(max_along_x, cwt_scale[row_no], s=70, c='black', marker='x')
+
+        # max = np.unravel_index(np.argmax(cwt_mat, axis=None), cwt_mat.shape)
+        # the y-coord of the max point is set to use the real cwt scale value because setting the extent
+        # in imshow has forced us to use the real value scale value and not index
+        # cwt_ax.scatter(max[1], cwt_scale[max[0]], s=70, c='black', marker='x')
+
+    else:
+        raise ValueError('param: no_of_time_series can only be 1 or 2')
+
+    # plot heatmap
+    ix = cwt_ax.imshow(cwt_mat, cmap='seismic', aspect='auto',
+                       extent=[0, cwt_mat.shape[1], cwt_scale[-1], cwt_scale[0]])
+    plt.colorbar(ix, cax=colorbar_ax, orientation='horizontal')
+    cwt_ax.grid(linestyle='dotted')
+    cwt_ax.set_xlabel('Xcor step')
+    cwt_ax.set_ylabel('Scale')
+
+    return fig
