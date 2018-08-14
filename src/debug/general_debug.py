@@ -16,10 +16,7 @@ from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 from src.utils.helpers import plot_heatmap_series_in_one_column
 
-l = np.arange(10)
-print(l)
-x = np.flip(l, axis=0)
-print(x)
+
 
 
 # input = np.arange(300).reshape((10, 30))

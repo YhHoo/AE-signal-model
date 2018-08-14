@@ -789,11 +789,11 @@ def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale
         # plot max point
         for row_no in range(cwt_mat.shape[0]):
             max_along_x = np.argmax(cwt_mat[row_no])
+            # the y-coord of the max point is set to use the real cwt scale value because setting the extent
+            # in imshow has forced us to use the real value scale value and not index
             cwt_ax.scatter(max_along_x, cwt_scale[row_no], s=70, c='black', marker='x')
 
         # max = np.unravel_index(np.argmax(cwt_mat, axis=None), cwt_mat.shape)
-        # the y-coord of the max point is set to use the real cwt scale value because setting the extent
-        # in imshow has forced us to use the real value scale value and not index
         # cwt_ax.scatter(max[1], cwt_scale[max[0]], s=70, c='black', marker='x')
 
     else:

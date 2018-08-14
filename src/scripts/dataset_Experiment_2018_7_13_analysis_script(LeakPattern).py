@@ -7,7 +7,7 @@ from src.utils.helpers import direct_to_dir, read_all_tdms_from_folder, plot_cwt
 from src.utils.dsp_tools import one_dim_xcor_2d_input
 
 
-# CONFIG -------------
+# CONFIG --------------------------------------------------------------------------------------------------------------
 # wavelet
 m_wavelet = 'gaus1'
 scale = np.linspace(2, 30, 50)
@@ -16,43 +16,62 @@ fs = 1e6
 # segmentation
 no_of_segment = 50
 
-# DATA POINT ---------
-# leak data
-# data = AcousticEmissionDataSet_13_7_2018(drive='F')
-# n_channel_leak = data.test_data(sensor_dist='near', pressure=1, leak=True)
+# DATA POINT ----------------------------------------------------------------------------------------------------------
+# read leak data
+on_pc = True
+if on_pc:
+    data = AcousticEmissionDataSet_13_7_2018(drive='F')
+    n_channel_leak = data.test_data(sensor_dist='near', pressure=1, leak=True)
+else:
+    data_dir = direct_to_dir(where='yh_laptop_test_data') + '1bar_leak/'
+    n_channel_leak = read_all_tdms_from_folder(data_dir)
+    n_channel_leak = np.swapaxes(n_channel_leak, 1, 2)
+    n_channel_leak = n_channel_leak[0, 1:3, :]
 
-data_dir = direct_to_dir(where='yh_laptop_test_data') + '1bar_leak/'
-n_channel_leak = read_all_tdms_from_folder(data_dir)
-n_channel_leak = np.swapaxes(n_channel_leak, 1, 2)
-n_channel_leak = n_channel_leak[0, 1:3, :]
+# processing
+print(n_channel_leak.shape)
 
 # break into a list of segmented points
 n_channel_leak = np.split(n_channel_leak, axis=1, indices_or_sections=no_of_segment)
 print('Total Segment: ', len(n_channel_leak))
+print('Each Segment Dim: ', n_channel_leak[0].shape)
 
-# CWT + XCOR + VISUALIZE SCRIPT ---------------
-cwt_bank_pos1, cwt_bank_pos2 = [], []
-for segment in n_channel_leak:
-    pos1_leak_cwt, _ = pywt.cwt(segment[0], scales=scale, wavelet=m_wavelet, sampling_period=1 / fs)
-    pos2_leak_cwt, _ = pywt.cwt(segment[1], scales=scale, wavelet=m_wavelet, sampling_period=1 / fs)
-    cwt_bank_pos1.append(pos1_leak_cwt)
-    cwt_bank_pos2.append(pos2_leak_cwt)
 
-# xcor
-cwt_xcor_bank = []
-max_point = []
-for cwt_pair in zip(cwt_bank_pos1, cwt_bank_pos2):
-    xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([cwt_pair[0], cwt_pair[1]]), pair_list=[(0, 1)])
-    cwt_xcor_bank.append(xcor[0])
-    max_point.append(np.unravel_index(np.argmax(xcor[0], axis=None), xcor[0].shape))
+# CWT + XCOR + VISUALIZE SCRIPT ---------------------------------------------------------------------------------------
+# xcor pairing commands - [near] = 0m, 1m,..., 10m
+sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
 
-# visualizing
-for i in range(no_of_segment):
-    fig2 = plot_cwt_with_time_series(time_series=[n_channel_leak[i][0, :], n_channel_leak[i][1, :]],
-                                     no_of_time_series=2,
-                                     cwt_mat=cwt_xcor_bank[i],
-                                     cwt_scale=scale,
-                                     title='XCOR OF CWT OF 2 TIME SERIES, Sample[{}]'.format(i))
-    filename = direct_to_dir(where='google_drive') + 'xcor_cwt_sample[{}]'.format(i)
-    fig2.savefig(filename)
-    plt.close('all')
+dist_diff = 0
+# for all sensor combination
+for sensor_pair in sensor_pair_near:
+    sample_no = 0
+    # for all segmented signals
+    for segment in n_channel_leak:
+        pos1_leak_cwt, _ = pywt.cwt(segment[sensor_pair[0]], scales=scale, wavelet=m_wavelet, sampling_period=1 / fs)
+        pos2_leak_cwt, _ = pywt.cwt(segment[sensor_pair[1]], scales=scale, wavelet=m_wavelet, sampling_period=1 / fs)
+
+        # xcor for every pair of cwt
+        xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
+
+        # visualizing
+        fig_title = 'Xcor of CWT of Sensor[{}] and Sensor[{}] -- Dist_Diff[{}m] -- Sample[{}]'.format(sensor_pair[0],
+                                                                                                      sensor_pair[1],
+                                                                                                      dist_diff,
+                                                                                                      sample_no)
+        fig = plot_cwt_with_time_series(time_series=[segment[sensor_pair[0]], segment[sensor_pair[1]]],
+                                        no_of_time_series=2,
+                                        cwt_mat=xcor[0],
+                                        cwt_scale=scale,
+                                        title=fig_title)
+        filename = direct_to_dir(where='result') + 'xcor_cwt_DistDiff[{}m]_sample[{}]'.format(dist_diff, sample_no)
+        fig.savefig(filename)
+        plt.close('all')
+        print('Dist_diff: {}m, Sample: {}'.format(dist_diff, sample_no))
+        sample_no += 1
+
+    dist_diff += 1
+
+
+
+
+
