@@ -32,7 +32,6 @@ all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('
 
 # for all tdms file in folder
 for tdms_file in all_file_path:
-    print('Accessing-->', tdms_file)
     # read raw from drive
     n_channel_data_near_leak = read_single_tdms(tdms_file)
 

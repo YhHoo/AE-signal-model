@@ -18,7 +18,7 @@ no_of_segment = 50
 
 # DATA POINT ----------------------------------------------------------------------------------------------------------
 # read leak data
-on_pc = True
+on_pc = False
 if on_pc:
     data = AcousticEmissionDataSet_13_7_2018(drive='F')
     n_channel_leak = data.test_data(sensor_dist='near', pressure=1, leak=True)
@@ -26,7 +26,7 @@ else:
     data_dir = direct_to_dir(where='yh_laptop_test_data') + '1bar_leak/'
     n_channel_leak = read_all_tdms_from_folder(data_dir)
     n_channel_leak = np.swapaxes(n_channel_leak, 1, 2)
-    n_channel_leak = n_channel_leak[0, 1:3, :]
+    n_channel_leak = n_channel_leak[0]
 
 # processing
 print(n_channel_leak.shape)
@@ -52,7 +52,7 @@ for sensor_pair in sensor_pair_near:
 
         # xcor for every pair of cwt
         xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
-
+        xcor = xcor[0]
         # visualizing
         fig_title = 'Xcor of CWT of Sensor[{}] and Sensor[{}] -- Dist_Diff[{}m] -- Sample[{}]'.format(sensor_pair[0],
                                                                                                       sensor_pair[1],
@@ -60,16 +60,24 @@ for sensor_pair in sensor_pair_near:
                                                                                                       sample_no)
         fig = plot_cwt_with_time_series(time_series=[segment[sensor_pair[0]], segment[sensor_pair[1]]],
                                         no_of_time_series=2,
-                                        cwt_mat=xcor[0],
+                                        cwt_mat=xcor,
                                         cwt_scale=scale,
                                         title=fig_title)
+        mid = xcor.shape[1] // 2 + 1
+        max_xcor_vector = []
+        for row in xcor:
+            max_along_x = np.argmax(row)
+            max_xcor_vector.append(max_along_x - mid)
+        print(mid)
+        print(max_xcor_vector)
 
+        plt.show()
         # saving
-        filename = direct_to_dir(where='result') + 'xcor_cwt_DistDiff[{}m]_sample[{}]'.format(dist_diff, sample_no)
-        fig.savefig(filename)
-        plt.close('all')
-        print('Dist_diff: {}m, Sample: {}'.format(dist_diff, sample_no))
-        sample_no += 1
+        # filename = direct_to_dir(where='result') + 'xcor_cwt_DistDiff[{}m]_sample[{}]'.format(dist_diff, sample_no)
+        # fig.savefig(filename)
+        # plt.close('all')
+        # print('Dist_diff: {}m, Sample: {}'.format(dist_diff, sample_no))
+        # sample_no += 1
 
     dist_diff += 1
 

@@ -1,5 +1,6 @@
 import numpy as np
 import pywt
+import gc
 from random import shuffle
 import matplotlib.pyplot as plt
 from os import listdir
@@ -391,7 +392,7 @@ class AcousticEmissionDataSet_13_7_2018:
 
         # for all tdms file in folder
         for tdms_file in all_file_path:
-            print('Accessing-->', tdms_file)
+
             # read raw from drive
             n_channel_data_near_leak = read_single_tdms(tdms_file)
             n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
@@ -402,7 +403,6 @@ class AcousticEmissionDataSet_13_7_2018:
             dist_diff = 0
             # for all sensor combination
             for sensor_pair in self.sensor_pair_near:
-                sample_no = 0
                 # for all segmented signals
                 for segment in n_channel_leak:
                     pos1_leak_cwt, _ = pywt.cwt(segment[sensor_pair[0]], scales=scale, wavelet=m_wavelet,
@@ -413,6 +413,25 @@ class AcousticEmissionDataSet_13_7_2018:
                     # xcor for every pair of cwt
                     xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]),
                                                     pair_list=[(0, 1)])
+                    xcor = xcor[0]
+
+                    # midpoint in xcor
+                    mid = xcor.shape[1] // 2 + 1
+
+                    max_xcor_vector = []
+                    # for every row of xcor, find max point index
+                    for row in xcor:
+                        max_along_x = np.argmax(row)
+                        max_xcor_vector.append(max_along_x - mid)
+                    print(max_xcor_vector)
+
+                    # store all feature vector for same class
+                    all_class['class_[{}]'.format(dist_diff)].append(max_xcor_vector)
+                dist_diff += 1
+
+            # free up memory
+            pos1_leak_cwt, pos2_leak_cwt, n_channel_data_near_leak = None, None, None
+            gc.collect()
 
 # data = AcousticEmissionDataSet_13_7_2018(drive='F')
 # data.leak_noleak()
