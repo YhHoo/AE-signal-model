@@ -1,6 +1,8 @@
 import numpy as np
+import pywt
 from random import shuffle
 import matplotlib.pyplot as plt
+from os import listdir
 # self library
 from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, plot_simple_heatmap, \
                               three_dim_visualizer, ProgressBarForLoop
@@ -40,6 +42,12 @@ class AcousticEmissionDataSet_13_7_2018:
         self.path_noleak_2bar_10to22 = self.drive + 'Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/2 bar/No_Leak/'
         # PLB (no water flow)
         self.path_plb_10to22 = self.drive + 'Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/PLB/0m/'
+
+        # sensor pairing
+        # xcor pairing commands - [near] = 0m, 1m,..., 10m
+        self.sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+        # xcor pairing commands - [far] = 11m, 12m,..., 20m
+        self.sensor_pair_far = [(0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
 
     def test_data(self, sensor_dist=None, pressure=None, leak=None):
         '''
@@ -114,12 +122,12 @@ class AcousticEmissionDataSet_13_7_2018:
 
         # -----------[BANDPASS + STFT + XCOR]-------------
         # xcor pairing commands - [near] = 0m, 1m,..., 10m
-        sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+        sensor_pair_near = self.sensor_pair_near
         # invert the sensor pair to generate the opposite lag
         sensor_pair_near_inv = [(pair[1], pair[0]) for pair in sensor_pair_near]
 
         # xcor pairing commands - [far] = 11m, 12m,..., 20m
-        sensor_pair_far = [(0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+        sensor_pair_far = self.sensor_pair_far
         # invert the sensor pair to generate the opposite lag
         sensor_pair_far_inv = [(pair[1], pair[0]) for pair in sensor_pair_far]
 
@@ -361,13 +369,50 @@ class AcousticEmissionDataSet_13_7_2018:
 
         return n_channel_data
 
-    def leak_noleak(self):
-        # initialize
-        n_channel_data_near_leak = read_all_tdms_from_folder(self.path_leak_1bar_2to12)
-        n_channel_data_far_leak = read_all_tdms_from_folder(self.path_leak_1bar_10to22)
+    def generate_leak_1bar_in_cwt_xcor_maxpoints_vector(self):
+        # CONFIG -------------------------------------------------------------------------------------------------------
+        # wavelet
+        m_wavelet = 'gaus1'
+        scale = np.linspace(2, 30, 50)
+        fs = 1e6
 
-        return n_channel_data_near_leak
+        # segmentation per tdms (sample size by each tdms)
+        no_of_segment = 50
 
+        # list full path of all tdms file in the specified folder
+        folder_path = self.path_leak_1bar_2to12
+        all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
+
+        # DATA READING -------------------------------------------------------------------------------------------------
+        # creating dict to store each class data
+        all_class = {}
+        for i in range(0, 11, 1):
+            all_class['class_[{}]'.format(i)] = []
+
+        # for all tdms file in folder
+        for tdms_file in all_file_path:
+            print('Accessing-->', tdms_file)
+            # read raw from drive
+            n_channel_data_near_leak = read_single_tdms(tdms_file)
+            n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+
+            # split on time axis into no_of_segment
+            n_channel_leak = np.split(n_channel_data_near_leak, axis=1, indices_or_sections=no_of_segment)
+
+            dist_diff = 0
+            # for all sensor combination
+            for sensor_pair in self.sensor_pair_near:
+                sample_no = 0
+                # for all segmented signals
+                for segment in n_channel_leak:
+                    pos1_leak_cwt, _ = pywt.cwt(segment[sensor_pair[0]], scales=scale, wavelet=m_wavelet,
+                                                sampling_period=1 / fs)
+                    pos2_leak_cwt, _ = pywt.cwt(segment[sensor_pair[1]], scales=scale, wavelet=m_wavelet,
+                                                sampling_period=1 / fs)
+
+                    # xcor for every pair of cwt
+                    xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]),
+                                                    pair_list=[(0, 1)])
 
 # data = AcousticEmissionDataSet_13_7_2018(drive='F')
 # data.leak_noleak()

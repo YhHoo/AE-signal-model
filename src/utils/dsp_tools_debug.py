@@ -9,35 +9,10 @@ import pywt
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 from src.utils.dsp_tools import spectrogram_scipy, fft_scipy, one_dim_xcor_2d_input
 from src.utils.helpers import direct_to_dir, read_all_tdms_from_folder, plot_heatmap_series_in_one_column, \
-                              plot_multiple_timeseries, plot_cwt_with_time_series
+                              plot_multiple_timeseries, plot_cwt_with_time_series, read_single_tdms
 
-# ae_data = AcousticEmissionDataSet_13_7_2018(drive='F')
-# n_channel_leak = ae_data.test_data(sensor_dist='near', pressure=1, leak=True)
-# n_channel_noleak = ae_data.test_data(sensor_dist='near', pressure=1, leak=False)
-#
-# # wavelet scale
-# m_wavelet = 'gaus1'
-# scale = np.linspace(2, 30, 50)
-# fs = 1e6
-#
-# stft_bank = []
-# for i in range(n_channel_leak.shape[0]):
-#     _, _, leak_stft, _ = spectrogram_scipy(sampled_data=n_channel_leak[i, 0:500000],
-#                                            fs=1e6,
-#                                            nperseg=100,
-#                                            vis_max_freq_range=100e3,
-#                                            noverlap=0,
-#                                            nfft=500,
-#                                            return_plot=False,
-#                                            mode='magnitude',
-#                                            verbose=False)
-#     stft_bank.append(leak_stft)
-#
-# fig = plt.figure(figsize=(8, 5))
-# ax1 = fig.add_subplot([0.1, 0.2, 0.8, 0.3])
-# ax2 = fig.add_subplot([0.1, 0.6, 0.8, 0.3])
-# colorbar_ax = fig.add_axes([0.1, 0.1, 0.8, 0.01])
-# i = ax1.imshow(map, cmap='seismic', aspect='auto')
+data_dir = direct_to_dir(where='yh_laptop_test_data') + 'plb/test_001.tdms'
+data = read_single_tdms(data_dir)
 
 
 # CWT --> XCOR (using LAPTOP PLB test data)---------------
@@ -94,7 +69,7 @@ if op_1:
 
 
 # CWT --> XCOR (using LAPTOP Leak no Leak test data)---------------
-op_2 = True
+op_2 = False
 if op_2:
     # wavelet scale
     m_wavelet = 'gaus1'

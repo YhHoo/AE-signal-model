@@ -63,6 +63,8 @@ for sensor_pair in sensor_pair_near:
                                         cwt_mat=xcor[0],
                                         cwt_scale=scale,
                                         title=fig_title)
+
+        # saving
         filename = direct_to_dir(where='result') + 'xcor_cwt_DistDiff[{}m]_sample[{}]'.format(dist_diff, sample_no)
         fig.savefig(filename)
         plt.close('all')
