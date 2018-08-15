@@ -15,25 +15,36 @@ from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
-from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms
+from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir
 
-# initialize a dict of lists for every classes
+
 # all_class = {}
 # for i in range(0, 11, 1):
 #     all_class['class_[{}]'.format(i)] = []
+#     all_class['class_[{}]'.format(i)].append([1, 2, 3, 4, 5, 6])
+
+dataset = np.arange(0, 20, 1).reshape((4, 5))
+label = np.arange(0, 4, 1).reshape((4, 1))
+print(dataset.shape)
+print(label.shape)
+
+x = np.concatenate([dataset, label], axis=1)
+print(x)
+
+df = pd.DataFrame(x, columns=['a', 'b', 'c', 'd', 'e', 'label'])
+filename = direct_to_dir(where='result') + 'test.csv'
+df.to_csv(filename)
+
+
+
+
+# l = []
+# for key, value in all_class.items():
+#     l.append(value)
 #
-# all_class['class_[1]'].append(np.array([0, 1, 2, 4, 3, 2, 1, 9, 2, 8]))
-#
-# print(all_class['class_[1]'][0].shape)
+# l = np.array(l)
+# print(l.shape)
 
-
-folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
-all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
-
-# for all tdms file in folder
-for tdms_file in all_file_path:
-    # read raw from drive
-    n_channel_data_near_leak = read_single_tdms(tdms_file)
 
 # input = np.arange(300).reshape((10, 30))
 #

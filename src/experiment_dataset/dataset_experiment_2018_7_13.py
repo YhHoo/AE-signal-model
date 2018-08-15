@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import pywt
 import gc
 from random import shuffle
@@ -6,7 +7,7 @@ import matplotlib.pyplot as plt
 from os import listdir
 # self library
 from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, plot_simple_heatmap, \
-                              three_dim_visualizer, ProgressBarForLoop
+                              three_dim_visualizer, ProgressBarForLoop, direct_to_dir
 from src.utils.dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, one_dim_xcor_2d_input
 
 
@@ -403,6 +404,7 @@ class AcousticEmissionDataSet_13_7_2018:
             dist_diff = 0
             # for all sensor combination
             for sensor_pair in self.sensor_pair_near:
+                print('Sensor Pair-->', sensor_pair)
                 # for all segmented signals
                 for segment in n_channel_leak:
                     pos1_leak_cwt, _ = pywt.cwt(segment[sensor_pair[0]], scales=scale, wavelet=m_wavelet,
@@ -423,18 +425,47 @@ class AcousticEmissionDataSet_13_7_2018:
                     for row in xcor:
                         max_along_x = np.argmax(row)
                         max_xcor_vector.append(max_along_x - mid)
-                    print(max_xcor_vector)
 
                     # store all feature vector for same class
                     all_class['class_[{}]'.format(dist_diff)].append(max_xcor_vector)
                 dist_diff += 1
 
-            # free up memory
-            pos1_leak_cwt, pos2_leak_cwt, n_channel_data_near_leak = None, None, None
+            # just to display the dict full dim
+            l = []
+            for _, value in all_class.items():
+                l.append(value)
+            l = np.array(l)
+            print(l.shape)
+
+            # free up memory for unwanted variable
+            pos1_leak_cwt, pos2_leak_cwt, n_channel_data_near_leak, l = None, None, None, None
             gc.collect()
 
-# data = AcousticEmissionDataSet_13_7_2018(drive='F')
-# data.leak_noleak()
+        dataset = []
+        label = []
+        for i in range(0, 11, 1):
+            max_vec_list_of_each_class = all_class['class_[{}]'.format(i)]
+            dataset.append(max_vec_list_of_each_class)
+            label.append([i]*len(max_vec_list_of_each_class))
+        dataset = np.concatenate(dataset, axis=0)
+
+        # convert to array
+        dataset = np.array(dataset)
+        label = np.array(label)
+        print('Dataset Dim: ', dataset.shape)
+        print('Label Dim: ', label.shape)
+
+        # save to csv
+        label = label.reshape((-1, 1))
+        all_in_one = np.concatenate([dataset, label], axis=1)
+        column_label = ['Scale_{}'.format(i) for i in scale] + ['label']
+        df = pd.DataFrame(all_in_one, columns=column_label)
+        filename = direct_to_dir(where='result') + 'test.csv'
+        df.to_csv(filename)
+
+
+data = AcousticEmissionDataSet_13_7_2018(drive='F')
+data.generate_leak_1bar_in_cwt_xcor_maxpoints_vector()
 
 
 # _, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],

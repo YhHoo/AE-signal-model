@@ -18,7 +18,7 @@ no_of_segment = 50
 
 # DATA POINT ----------------------------------------------------------------------------------------------------------
 # read leak data
-on_pc = False
+on_pc = True
 if on_pc:
     data = AcousticEmissionDataSet_13_7_2018(drive='F')
     n_channel_leak = data.test_data(sensor_dist='near', pressure=1, leak=True)
