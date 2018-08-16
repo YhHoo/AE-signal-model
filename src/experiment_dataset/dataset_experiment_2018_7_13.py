@@ -459,7 +459,9 @@ class AcousticEmissionDataSet_13_7_2018:
         # save to csv
         label = label.reshape((-1, 1))
         all_in_one = np.concatenate([dataset, label], axis=1)
-        column_label = ['Scale_{}'.format(i) for i in scale] + ['label']
+        # column label
+        freq = pywt.scale2frequency(wavelet=m_wavelet, scale=scale) * fs
+        column_label = ['Scale_{:.4f}_Freq_{:.4f}Hz'.format(i, j) for i, j in zip(scale, freq)] + ['label']
         df = pd.DataFrame(all_in_one, columns=column_label)
         filename = direct_to_dir(where='result') + 'test.csv'
         df.to_csv(filename)
