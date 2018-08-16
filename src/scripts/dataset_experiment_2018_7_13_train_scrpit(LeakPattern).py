@@ -31,7 +31,7 @@ history = model.fit(x=train_x,
                     y=train_y_cat,
                     batch_size=200,
                     validation_data=(test_x, test_y_cat),
-                    epochs=1500,
+                    epochs=200,
                     verbose=2)
 model_logger.learning_curve(history=history, save=False, show=True)
 
