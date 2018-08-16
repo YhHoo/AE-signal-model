@@ -372,11 +372,11 @@ class AcousticEmissionDataSet_13_7_2018:
 
         return n_channel_data
 
-    def generate_leak_1bar_in_cwt_xcor_maxpoints_vector(self):
+    def generate_leak_1bar_in_cwt_xcor_maxpoints_vector(self, dataset_no):
         # CONFIG -------------------------------------------------------------------------------------------------------
         # wavelet
         m_wavelet = 'gaus1'
-        scale = np.linspace(2, 30, 50)
+        scale = np.linspace(2, 10, 100)
         fs = 1e6
 
         # segmentation per tdms (sample size by each tdms)
@@ -405,7 +405,8 @@ class AcousticEmissionDataSet_13_7_2018:
             dist_diff = 0
             # for all sensor combination
             for sensor_pair in self.sensor_pair_near:
-                print('Sensor Pair-->', sensor_pair)
+                segment_no = 0
+                pb = ProgressBarForLoop(title='CWT+Xcor using {}'.format(sensor_pair), end=len(n_channel_leak))
                 # for all segmented signals
                 for segment in n_channel_leak:
                     pos1_leak_cwt, _ = pywt.cwt(segment[sensor_pair[0]], scales=scale, wavelet=m_wavelet,
@@ -429,6 +430,11 @@ class AcousticEmissionDataSet_13_7_2018:
 
                     # store all feature vector for same class
                     all_class['class_[{}]'.format(dist_diff)].append(max_xcor_vector)
+
+                    # progress
+                    pb.update(now=segment_no)
+                    segment_no += 1
+
                 dist_diff += 1
 
             # just to display the dict full dim
@@ -463,7 +469,7 @@ class AcousticEmissionDataSet_13_7_2018:
         freq = pywt.scale2frequency(wavelet=m_wavelet, scale=scale) * fs
         column_label = ['Scale_{:.4f}_Freq_{:.4f}Hz'.format(i, j) for i, j in zip(scale, freq)] + ['label']
         df = pd.DataFrame(all_in_one, columns=column_label)
-        filename = direct_to_dir(where='result') + 'test.csv'
+        filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(dataset_no)
         df.to_csv(filename)
 
     def leak_1bar_in_cwt_xcor_maxpoints_vector(self):
@@ -487,9 +493,9 @@ class AcousticEmissionDataSet_13_7_2018:
 
         return dataset, label
 
-#
-# data = AcousticEmissionDataSet_13_7_2018(drive='F')
-# data.generate_leak_1bar_in_cwt_xcor_maxpoints_vector()
+
+data = AcousticEmissionDataSet_13_7_2018(drive='F')
+data.generate_leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_no=2)
 
 
 # _, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],
