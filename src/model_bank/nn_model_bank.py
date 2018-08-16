@@ -153,7 +153,16 @@ def cnn1d_plb_v1(input_shape, num_classes):
     model = Model(inputs=inputs, outputs=predictions)
 
 
-# cnn2d_plb_v1(input_shape=(10, 300), num_classes=41)
+def fc_leak_1bar_max_vec(input_shape, num_classes):
+    model = Sequential()
+    model.add(Dense(50, activation='relu', input_dim=50))
+    model.add(Dense(30, activation='relu'))
+    model.add(Dense(num_classes, activation='softmax'))
+
+    print(model.summary())
+
+    return model
+
 
 
 

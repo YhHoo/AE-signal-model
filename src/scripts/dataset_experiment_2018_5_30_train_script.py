@@ -6,7 +6,7 @@ from keras.callbacks import TensorBoard
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 from src.utils.helpers import break_into_train_test, reshape_3d_to_4d_tocategorical, \
                               ModelLogger, evaluate_model_for_all_class
-from src.model_bank.cnn_model_bank import cnn2d_plb_v1
+from src.model_bank.nn_model_bank import cnn2d_plb_v1
 
 data = AcousticEmissionDataSet_30_5_2018(drive='F')
 dataset, label = data.leak_2class()

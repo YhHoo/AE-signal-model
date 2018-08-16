@@ -16,7 +16,7 @@ import numpy as np
 from src.controlled_dataset.ideal_dataset import noise_time_shift_xcor_return
 from src.utils.helpers import break_into_train_test, ModelLogger, evaluate_model_for_all_class, \
                               reshape_3d_to_4d_tocategorical
-from src.model_bank.cnn_model_bank import cnn_51_159_3class_v1
+from src.model_bank.nn_model_bank import cnn_51_159_3class_v1
 
 # ------------------------------------------------------------------------------------- Dataset 1
 

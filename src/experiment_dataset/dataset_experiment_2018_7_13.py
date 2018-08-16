@@ -5,6 +5,7 @@ import gc
 from random import shuffle
 import matplotlib.pyplot as plt
 from os import listdir
+from sklearn.preprocessing import StandardScaler
 # self library
 from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, plot_simple_heatmap, \
                               three_dim_visualizer, ProgressBarForLoop, direct_to_dir
@@ -391,7 +392,7 @@ class AcousticEmissionDataSet_13_7_2018:
         for i in range(0, 11, 1):
             all_class['class_[{}]'.format(i)] = []
 
-        # for all tdms file in folder
+        # for all tdms file in folder (Warning: It takes 24min for 1 tdms file)
         for tdms_file in all_file_path:
 
             # read raw from drive
@@ -463,9 +464,30 @@ class AcousticEmissionDataSet_13_7_2018:
         filename = direct_to_dir(where='result') + 'test.csv'
         df.to_csv(filename)
 
+    def leak_1bar_in_cwt_xcor_maxpoints_vector(self):
+        # accessing file
+        dir = self.path_leak_1bar_2to12 + 'processed/cwt_xcor_maxpoints_vector_dataset_1.csv'
+        data = pd.read_csv(dir)
+        data_mat = data.values
 
-data = AcousticEmissionDataSet_13_7_2018(drive='F')
-data.generate_leak_1bar_in_cwt_xcor_maxpoints_vector()
+        # drop the first column, segment the 2d mat into dataset and label
+        dataset = data_mat[:, 1:-1]
+        label = data_mat[:, -1]
+
+        # std normalize the data
+        dataset_shape = dataset.shape
+        scaler = StandardScaler()
+        dataset = scaler.fit_transform(dataset.ravel().reshape(-1, 1).astype('float64'))
+        dataset = dataset.reshape(dataset_shape)
+
+        print('Dataset Dim: ', dataset.shape)
+        print('Label Dim: ', label.shape)
+
+        return dataset, label
+
+#
+# data = AcousticEmissionDataSet_13_7_2018(drive='F')
+# data.generate_leak_1bar_in_cwt_xcor_maxpoints_vector()
 
 
 # _, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],

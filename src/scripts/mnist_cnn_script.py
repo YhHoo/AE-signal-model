@@ -7,7 +7,7 @@ from keras.callbacks import TensorBoard
 import matplotlib.pyplot as plt
 # self declared library
 from src.utils.helpers import ModelLogger, evaluate_model_for_all_class, reshape_3d_to_4d_tocategorical
-from src.model_bank.cnn_model_bank import cnn_28_28_mnist_10class
+from src.model_bank.nn_model_bank import cnn_28_28_mnist_10class
 
 
 # Plot ad hoc mnist instances

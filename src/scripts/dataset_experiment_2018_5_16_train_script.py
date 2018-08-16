@@ -8,7 +8,7 @@ from keras.utils import to_categorical
 from keras import optimizers
 # self defined library
 from src.utils.helpers import ModelLogger, evaluate_model_for_all_class
-from src.model_bank.cnn_model_bank import cnn_1000_40_7class_v1, cnn_700_40_7class_v1
+from src.model_bank.nn_model_bank import cnn_1000_40_7class_v1, cnn_700_40_7class_v1
 
 # ----------------------------------------------------------------------------------------------TEST 1
 # data set

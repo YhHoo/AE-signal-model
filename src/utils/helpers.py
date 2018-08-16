@@ -17,6 +17,7 @@ class ProgressBarForLoop:
     '''
     Try out more progressbar from https://github.com/coagulant/progressbar-python3/blob/master/examples.py
     progress bar, maxval is like max value in a ruler, and set the progress with update()
+    The 'now' starts from 0
     '''
     # progress bar setup, set the title and max value
     def __init__(self, title, end=100):
@@ -104,9 +105,9 @@ class ModelLogger:
         '''
         fig = plt.figure(figsize=(6, 4))
         plt.plot(history.history['loss'], label='train_loss')
-        plt.plot(history.history['val_loss'], label='test_loss')
+        plt.plot(history.history['val_loss'], label='val_loss')
         plt.plot(history.history['acc'], label='train_acc')
-        plt.plot(history.history['val_acc'], label='test_acc')
+        plt.plot(history.history['val_acc'], label='val_acc')
         plt.legend()
         plt.grid()
         plt.title(title)
