@@ -10,9 +10,12 @@ from keras.models import Sequential, Model
 
 def fc_leak_1bar_max_vec_v1(input_shape, num_classes):
     model = Sequential()
-    model.add(Dense(100, activation='relu', input_shape=input_shape))
-    model.add(Dropout(0.5))
+    model.add(Dense(500, activation='relu', input_shape=input_shape))
+    model.add(Dropout(0.2))
+    model.add(Dense(800, activation='relu'))
+    model.add(Dropout(0.3))
     model.add(Dense(50, activation='relu'))
+    # model.add(Dropout(0.3))
     model.add(Dense(num_classes, activation='softmax'))
 
     print(model.summary())
