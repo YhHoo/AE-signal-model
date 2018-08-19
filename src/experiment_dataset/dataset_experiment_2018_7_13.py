@@ -434,13 +434,13 @@ class AcousticEmissionDataSet_13_7_2018:
                     # progress
                     pb.update(now=segment_no)
                     segment_no += 1
-
+                pb.destroy()
                 dist_diff += 1
 
             # just to display the dict full dim
             l = []
             for _, value in all_class.items():
-                l.append(value)
+                l.append(value[0])
             l = np.array(l)
             print(l.shape)
 
@@ -472,9 +472,9 @@ class AcousticEmissionDataSet_13_7_2018:
         filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(dataset_no)
         df.to_csv(filename)
 
-    def leak_1bar_in_cwt_xcor_maxpoints_vector(self):
+    def leak_1bar_in_cwt_xcor_maxpoints_vector(self, dataset_no):
         # accessing file
-        dir = self.path_leak_1bar_2to12 + 'processed/cwt_xcor_maxpoints_vector_dataset_1.csv'
+        dir = self.path_leak_1bar_2to12 + 'processed/cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(dataset_no)
         data = pd.read_csv(dir)
         data_mat = data.values
 
@@ -494,8 +494,8 @@ class AcousticEmissionDataSet_13_7_2018:
         return dataset, label
 
 
-data = AcousticEmissionDataSet_13_7_2018(drive='F')
-data.generate_leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_no=2)
+# data = AcousticEmissionDataSet_13_7_2018(drive='F')
+# data.generate_leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_no=2)
 
 
 # _, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],

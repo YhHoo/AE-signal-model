@@ -8,12 +8,36 @@ from keras.layers import Conv2D, MaxPooling2D, Dropout, GlobalAveragePooling2D, 
 from keras.models import Sequential, Model
 
 
+# compact shallow NN
 def fc_leak_1bar_max_vec_v1(input_shape, num_classes):
     model = Sequential()
-    model.add(Dense(500, activation='relu', input_shape=input_shape))
+    model.add(Dense(1000, activation='relu', input_shape=input_shape))
+    model.add(Dropout(0.2))
+    model.add(Dense(800, activation='relu'))
+    model.add(Dense(300, activation='relu'))
+    model.add(Dropout(0.3))
+    model.add(Dense(50, activation='relu'))
+    # model.add(Dropout(0.3))
+    model.add(Dense(num_classes, activation='softmax'))
+
+    print(model.summary())
+
+    return model
+
+
+# more deeper NN
+def fc_leak_1bar_max_vec_v2(input_shape, num_classes):
+    model = Sequential()
+    model.add(Dense(200, activation='relu', input_shape=input_shape))
     model.add(Dropout(0.2))
     model.add(Dense(300, activation='relu'))
     model.add(Dropout(0.3))
+    model.add(Dense(500, activation='relu'))
+    model.add(Dropout(0.4))
+    model.add(Dense(300, activation='relu'))
+    model.add(Dropout(0.3))
+    model.add(Dense(100, activation='relu'))
+    model.add(Dropout(0.1))
     model.add(Dense(50, activation='relu'))
     # model.add(Dropout(0.3))
     model.add(Dense(num_classes, activation='softmax'))
