@@ -23,59 +23,13 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               break_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
 from src.model_bank.dataset_2018_7_13_leak_model import fc_leak_1bar_max_vec_v1
 
-# wavelet
-m_wavelet = 'gaus1'
-scale = np.linspace(2, 10, 100)
-fs = 1e6
+folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
+all_file_path = np.array([(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')])
+print(all_file_path.shape)
+all_file_path_split = np.split(all_file_path, indices_or_sections=2, axis=0)
 
-freq = pywt.scale2frequency(wavelet=m_wavelet, scale=scale) * fs
-print(freq)
-# # creating dict to store each class data
-# all_class = {}
-# for i in range(0, 11, 1):
-#     all_class['class_[{}]'.format(i)] = []
-#
-# data = AcousticEmissionDataSet_13_7_2018(drive='F')
-# n_channel_leak = data.test_data(sensor_dist='near', pressure=1, leak=True)
-#
-#
-# # split on time axis into no_of_segment
-# n_channel_leak = np.split(n_channel_leak, axis=1, indices_or_sections=50)
-#
-#
-# def cwt_xcor_multithread(n_channel_segment):
-#     print('xcor cwt 1 segment using 11 combinations')
-#     sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
-#     dist_diff = 0
-#     for sensor_pair in sensor_pair_near:
-#         pos1_leak_cwt, _ = pywt.cwt(n_channel_segment[sensor_pair[0]], scales=scale, wavelet=m_wavelet,
-#                                     sampling_period=1 / fs)
-#         pos2_leak_cwt, _ = pywt.cwt(n_channel_segment[sensor_pair[1]], scales=scale, wavelet=m_wavelet,
-#                                     sampling_period=1 / fs)
-#         # xcor for every pair of cwt
-#         xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]),
-#                                         pair_list=[(0, 1)])
-#         xcor = xcor[0]
-#
-#         # midpoint in xcor
-#         mid = xcor.shape[1] // 2 + 1
-#
-#         max_xcor_vector = []
-#         # for every row of xcor, find max point index
-#         for row in xcor:
-#             max_along_x = np.argmax(row)
-#             max_xcor_vector.append(max_along_x - mid)
-#         # store all feature vector for same class
-#         all_class['class_[{}]'.format(dist_diff)].append(max_xcor_vector)
-#
-#         dist_diff += 1
-#
-#
-# if __name__ == '__main__':
-#     pool = Pool()                         # Create a multiprocessing Pool
-#     pool.map(cwt_xcor_multithread, n_channel_leak)
-
-
+print(all_file_path)
+print(all_file_path_split)
 # ------------------------------------[TESTING MAX VEC GENERATOR]-------------------------------------------------------
 # # wavelet
 # m_wavelet = 'gaus1'

@@ -512,7 +512,7 @@ class AcousticEmissionDataSet_13_7_2018:
             # take all range
             f_range_to_keep = (0, len(data_df_col_name))
         else:
-            dataset = dataset[f_range_to_keep[0]:f_range_to_keep[1]]
+            dataset = dataset[:, f_range_to_keep[0]:f_range_to_keep[1]]
 
         # std normalize the data
         dataset_shape = dataset.shape
