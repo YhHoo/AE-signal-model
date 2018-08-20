@@ -1,5 +1,6 @@
 import pywt
 import time
+import pandas as pd
 import numpy as np
 import multiprocessing as mp
 from src.utils.dsp_tools import one_dim_xcor_2d_input
@@ -41,6 +42,11 @@ def multiprocess(n_channel_segment):
 
 
 if __name__ == '__main__':
+    # wavelet
+    m_wavelet = 'gaus1'
+    scale = np.linspace(2, 30, 50)
+    fs = 1e6
+
     # creating dict to store each class data
     all_class = {}
     for i in range(0, 11, 1):
@@ -72,10 +78,37 @@ if __name__ == '__main__':
     # just to display the dict full dim
     temp = []
     for _, value in all_class.items():
-        temp.append(value)
+        temp.append(value[0])
     temp = np.array(temp)
     print('all_class dim: ', temp.shape)
 
-    print('Exec Time: {:.3f} s'.format(time.time() - start_time))
+    print('Exec Time: {:.3f} s'.format(time.time() - start_time))  # this pool code takes 18mins
+
+    dataset = []
+    label = []
+    for i in range(0, 11, 1):
+        # for all samples in each class
+        for sample in all_class['class_[{}]'.format(i)][0]:
+            dataset.append(sample)
+            label.append(i)
+
+    # convert to array
+    dataset = np.array(dataset)
+    label = np.array(label)
+    print('Dataset Dim: ', dataset.shape)
+    print('Label Dim: ', label.shape)
+
+    # save to csv
+    label = label.reshape((-1, 1))
+    all_in_one = np.concatenate([dataset, label], axis=1)
+    # column label
+    freq = pywt.scale2frequency(wavelet=m_wavelet, scale=scale) * fs
+    column_label = ['Scale_{:.4f}_Freq_{:.4f}Hz'.format(i, j) for i, j in zip(scale, freq)] + ['label']
+    df = pd.DataFrame(all_in_one, columns=column_label)
+    filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(2)
+    df.to_csv(filename)
+
+
+
 
 

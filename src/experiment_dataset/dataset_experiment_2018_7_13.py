@@ -373,6 +373,15 @@ class AcousticEmissionDataSet_13_7_2018:
         return n_channel_data
 
     def generate_leak_1bar_in_cwt_xcor_maxpoints_vector(self, dataset_no):
+        '''
+        this method read all tdms file from a folder, split each of them into certain parts, perform CWT follow by XCOR
+        according to the sensor pair list, then append into a dataset with labels
+        :param dataset_no: filename Label for the dataset generated
+        :return: dataset where shape[0] -> no of samples of all classes
+                               shape[1] -> no of elements in a vector
+                 label where shape[0] -> aligned with the shape[0] of dataset
+                             shape[1] -> 1
+        '''
         # CONFIG -------------------------------------------------------------------------------------------------------
         # wavelet
         m_wavelet = 'gaus1'
@@ -409,10 +418,8 @@ class AcousticEmissionDataSet_13_7_2018:
                 pb = ProgressBarForLoop(title='CWT+Xcor using {}'.format(sensor_pair), end=len(n_channel_leak))
                 # for all segmented signals
                 for segment in n_channel_leak:
-                    pos1_leak_cwt, _ = pywt.cwt(segment[sensor_pair[0]], scales=scale, wavelet=m_wavelet,
-                                                sampling_period=1 / fs)
-                    pos2_leak_cwt, _ = pywt.cwt(segment[sensor_pair[1]], scales=scale, wavelet=m_wavelet,
-                                                sampling_period=1 / fs)
+                    pos1_leak_cwt, _ = pywt.cwt(segment[sensor_pair[0]], scales=scale, wavelet=m_wavelet)
+                    pos2_leak_cwt, _ = pywt.cwt(segment[sensor_pair[1]], scales=scale, wavelet=m_wavelet)
 
                     # xcor for every pair of cwt
                     xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]),
@@ -438,23 +445,25 @@ class AcousticEmissionDataSet_13_7_2018:
                 dist_diff += 1
 
             # just to display the dict full dim
-            l = []
+            temp = []
             for _, value in all_class.items():
-                l.append(value[0])
-            l = np.array(l)
-            print(l.shape)
+                temp.append(value[0])
+            temp = np.array(temp)
+            print('all_class dim: ', temp.shape)
 
             # free up memory for unwanted variable
             pos1_leak_cwt, pos2_leak_cwt, n_channel_data_near_leak, l = None, None, None, None
             gc.collect()
 
+        # transfer all data from dict to array
         dataset = []
         label = []
+        # for all class
         for i in range(0, 11, 1):
-            max_vec_list_of_each_class = all_class['class_[{}]'.format(i)]
-            dataset.append(max_vec_list_of_each_class)
-            label.append([i]*len(max_vec_list_of_each_class))
-        dataset = np.concatenate(dataset, axis=0)
+            # for all samples in a class
+            for sample in all_class['class_[{}]'.format(i)]:  # a list of list(max vec)
+                dataset.append(sample)
+                label.append(i)
 
         # convert to array
         dataset = np.array(dataset)
@@ -472,15 +481,38 @@ class AcousticEmissionDataSet_13_7_2018:
         filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(dataset_no)
         df.to_csv(filename)
 
-    def leak_1bar_in_cwt_xcor_maxpoints_vector(self, dataset_no):
+    def leak_1bar_in_cwt_xcor_maxpoints_vector(self, dataset_no, f_range_to_keep, class_to_keep):
+        '''
+        :param dataset_no: filename index of the csv to be read
+        :param f_range_to_keep: tuple (start, end) where start and end is index along the freq/scale axis
+        :param class_to_keep: a list of labels(int), e.g. [0, 2, 3, 5] -> take only those rows with label 0, 2, 3, 5
+                              a string 'all' means it will take [0, 1, 2..., 10]
+        :return: dataset, label
+        '''
         # accessing file
         dir = self.path_leak_1bar_2to12 + 'processed/cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(dataset_no)
-        data = pd.read_csv(dir)
-        data_mat = data.values
+        data_df = pd.read_csv(dir)
+        data_df_col_name = data_df.columns[1:-1]
+
+        # take only certain labels
+        if class_to_keep is 'all':
+            pass
+        elif type(class_to_keep) is list:
+            data_df = data_df.loc[data_df['label'].isin(class_to_keep)]
+
+        # convert df values to arrays
+        data_mat = data_df.values
 
         # drop the first column, segment the 2d mat into dataset and label
         dataset = data_mat[:, 1:-1]
         label = data_mat[:, -1]
+
+        # discard the freq range
+        if f_range_to_keep is None:
+            # take all range
+            f_range_to_keep = (0, len(data_df_col_name))
+        else:
+            dataset = dataset[f_range_to_keep[0]:f_range_to_keep[1]]
 
         # std normalize the data
         dataset_shape = dataset.shape
@@ -488,6 +520,8 @@ class AcousticEmissionDataSet_13_7_2018:
         dataset = scaler.fit_transform(dataset.ravel().reshape(-1, 1).astype('float64'))
         dataset = dataset.reshape(dataset_shape)
 
+        print('Freq Hi: ', data_df_col_name[f_range_to_keep[0]])
+        print('Freq Lo: ', data_df_col_name[f_range_to_keep[1]])
         print('Dataset Dim: ', dataset.shape)
         print('Label Dim: ', label.shape)
 
