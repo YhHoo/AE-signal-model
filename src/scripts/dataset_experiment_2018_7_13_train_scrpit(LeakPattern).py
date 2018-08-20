@@ -8,15 +8,14 @@ from src.model_bank.dataset_2018_7_13_leak_model import fc_leak_1bar_max_vec_v2,
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 
 # Config
-num_classes = 11
-nn_input_shape = (81, )
+num_classes = 3
+nn_input_shape = (100, )
 
 # reading data ---------------------------------------------------------------------------------------------------------
 data = AcousticEmissionDataSet_13_7_2018(drive='F')
 dataset, label = data.leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_no=2,
-                                                             f_range_to_keep=(18, 99),
-                                                             class_to_keep='all')
-
+                                                             f_range_to_keep=(0, 100),
+                                                             class_to_keep=[0, 1, 2])
 # data pre-processing
 train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
                                                          label=label,
@@ -38,7 +37,7 @@ model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['ac
 model_logger = ModelLogger(model, model_name='fc_leak_1bar_max_vec_v2')
 history = model.fit(x=train_x,
                     y=train_y_cat,
-                    batch_size=500,
+                    batch_size=100,
                     validation_data=(test_x, test_y_cat),
                     epochs=100,
                     verbose=2)
