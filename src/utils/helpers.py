@@ -809,3 +809,16 @@ def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale
     cwt_ax.set_ylabel('Scale')
 
     return fig
+
+
+def shuffle_in_unison(a, b):
+    '''
+    Shuffle 2 np array with the same pattern
+    :param a:
+    :param b:
+    :return:
+    '''
+    assert len(a) == len(b)
+    p = np.random.permutation(len(a))
+    return a[p], b[p]
+

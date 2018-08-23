@@ -8,7 +8,7 @@ from os import listdir
 from sklearn.preprocessing import StandardScaler
 # self library
 from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, plot_simple_heatmap, \
-                              three_dim_visualizer, ProgressBarForLoop, direct_to_dir
+                              three_dim_visualizer, ProgressBarForLoop, direct_to_dir, shuffle_in_unison
 from src.utils.dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, one_dim_xcor_2d_input
 
 
@@ -481,7 +481,7 @@ class AcousticEmissionDataSet_13_7_2018:
         filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(dataset_no)
         df.to_csv(filename)
 
-    def leak_1bar_in_cwt_xcor_maxpoints_vector(self, dataset_no, f_range_to_keep, class_to_keep):
+    def leak_1bar_in_cwt_xcor_maxpoints_vector(self, dataset_no, f_range_to_keep, class_to_keep, shuffle=True):
         '''
         :param dataset_no: filename index of the csv to be read
         :param f_range_to_keep: tuple (start, end) where start and end is index along the freq/scale axis
@@ -521,16 +521,16 @@ class AcousticEmissionDataSet_13_7_2018:
         dataset = scaler.fit_transform(dataset.ravel().reshape(-1, 1).astype('float64'))
         dataset = dataset.reshape(dataset_shape)
 
+        # shuffle the data so that output is not class0 -> class1 -> class2
+        if shuffle:
+            dataset, label = shuffle_in_unison(dataset, label)
+
         print('Freq Hi: ', data_df_col_name[f_range_to_keep[0]])
         print('Freq Lo: ', data_df_col_name[f_range_to_keep[1]-1])
         print('Dataset Dim: ', dataset.shape)
         print('Label Dim: ', label.shape)
 
         return dataset, label
-
-
-# data = AcousticEmissionDataSet_13_7_2018(drive='F')
-# data.generate_leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_no=2)
 
 
 # _, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],
