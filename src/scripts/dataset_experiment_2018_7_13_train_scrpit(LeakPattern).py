@@ -76,42 +76,28 @@ label_cat = to_categorical(label, num_classes=num_classes)
 # Grid search hyperparam -----------------------------------------------------------------------------------------------
 
 
-def create_model():
-    model = Sequential()
-    model.add(Dense(200, activation='relu', input_shape=nn_input_shape))
-    model.add(Dropout(0.2))
-    model.add(Dense(300, activation='relu'))
-    model.add(Dropout(0.3))
-    model.add(Dense(500, activation='relu'))
-    model.add(Dropout(0.4))
-    model.add(Dense(300, activation='relu'))
-    model.add(Dropout(0.3))
-    model.add(Dense(100, activation='relu'))
-    model.add(Dropout(0.1))
-    model.add(Dense(50, activation='relu'))
-    # model.add(Dropout(0.3))
-    model.add(Dense(num_classes, activation='softmax'))
+def create_model(optimizer='adam'):
+    model = fc_leak_1bar_max_vec_v2(input_shape=nn_input_shape, num_classes=num_classes)
     # optimizer
-    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
     return model
 
 
 seed = 7
 np.random.seed(seed)
-model = KerasClassifier(build_fn=create_model, verbose=0, epochs=20)
-scorer = make_scorer(accuracy_score)
+model = KerasClassifier(build_fn=create_model, verbose=0, epochs=100)
 
 # grid search param
 batch_size = [500, 600]
-# optimizer = ['SGD', 'RMSprop']  #, 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam'
+optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
 param_grid = dict(batch_size=batch_size)
 grid = GridSearchCV(model,
                     param_grid=param_grid,
                     n_jobs=1,
                     return_train_score=True,
                     cv=2,
-                    verbose=2)
+                    verbose=1)
 grid_result = grid.fit(dataset, label)
 
 # summarize results
@@ -120,6 +106,5 @@ means = grid_result.cv_results_['mean_test_score']
 stds = grid_result.cv_results_['std_test_score']
 params = grid_result.cv_results_['params']
 for mean, stdev, param in zip(means, stds, params):
-    print("{} ({}) with: {}".format(mean, stdev, param))
+    print("Test_score: {} with std_dev: ({}) with: {}".format(mean, stdev, param))
 
-print(grid_result.cv_results_)
