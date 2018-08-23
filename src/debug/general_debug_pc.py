@@ -6,6 +6,7 @@ import gc
 from random import shuffle
 from scipy.signal import gausspulse
 import matplotlib.pyplot as plt
+from matplotlib import cm
 from mpl_toolkits.axes_grid1 import AxesGrid
 from scipy import signal
 from scipy.signal import correlate as correlate_scipy
@@ -24,21 +25,15 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               break_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
+x = np.arange(0, 10)
+y = np.arange(0, 10)
+color = [0, 0, 0, 1, 1, 1, 2, 2, 2, 2]
 
-# Config
-num_classes = 11
-nn_input_shape = (60, )
+rgba = cmap(0.9)
 
-# reading data ---------------------------------------------------------------------------------------------------------
-data = AcousticEmissionDataSet_13_7_2018(drive='F')
-dataset, label = data.leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_no=2,
-                                                             f_range_to_keep=(40, 100),
-                                                             class_to_keep='all')
+plt.scatter(x, y, c=rgba, cmap=cm.rainbow)
 
-label_cat = to_categorical(label, num_classes=num_classes)
-
-print(label_cat.shape)
-
+plt.show()
 # # data pre-processing
 # train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
 #                                                          label=label,
@@ -54,7 +49,6 @@ print(label_cat.shape)
 # for train, test in kfold.split(dataset, label):
 #     print(train.shape)
 #     print(test.shape)
-
 
 
 # testing grid search CV of sklearn ------------------------------------------------------------------------------------

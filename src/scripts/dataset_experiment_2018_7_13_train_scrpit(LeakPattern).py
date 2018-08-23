@@ -89,14 +89,15 @@ np.random.seed(seed)
 model = KerasClassifier(build_fn=create_model, verbose=0, epochs=100)
 
 # grid search param
-batch_size = [500, 600]
-optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
-param_grid = dict(batch_size=batch_size)
+batch_size = [200, 500, 600, 700, 800, 1000, 2000]
+optimizer = ['SGD', 'adam', 'RMSprop']
+# optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
+param_grid = dict(batch_size=batch_size, optimizer=optimizer)
 grid = GridSearchCV(model,
                     param_grid=param_grid,
                     n_jobs=1,
                     return_train_score=True,
-                    cv=2,
+                    cv=3,
                     verbose=1)
 grid_result = grid.fit(dataset, label)
 
