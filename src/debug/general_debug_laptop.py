@@ -17,6 +17,7 @@ from os import listdir
 from keras.utils import to_categorical
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
+import matplotlib.cm as cm
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input
@@ -25,19 +26,13 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               break_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-filename = direct_to_dir(where='result') + 'test.csv'
-data_df = pd.read_csv(filename)
-data_df_col_name = data_df.columns[1:-1]
+x = [0, 2, 4, 6]
+y = [1, 2, 3, 4]
 
-f_range_to_discard = (1, 5)
+plt.scatter(1, 2, c=0.2, cmap=cm.get_cmap('rainbow'))
+plt.show()
 
-print('head: ', data_df_col_name[f_range_to_discard[0]])
-print('end: ', data_df_col_name[f_range_to_discard[1]])
 
-index = 0
-for col in data_df_col_name:
-    print(index, '-->', col)
-    index += 1
 
 #
 # label_to_take = [1, 3]

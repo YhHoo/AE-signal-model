@@ -493,7 +493,6 @@ class AcousticEmissionDataSet_13_7_2018:
         dir = self.path_leak_1bar_2to12 + 'processed/cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(dataset_no)
         data_df = pd.read_csv(dir)
         data_df_col_name = data_df.columns[1:-1]
-        print(len(data_df_col_name))
 
         # take only certain labels
         if class_to_keep is 'all':
