@@ -11,7 +11,7 @@ from mpl_toolkits.mplot3d import Axes3D  # do not delete
 import numpy as np
 from nptdms import TdmsFile
 from os import listdir
-
+from matplotlib import cm
 
 class ProgressBarForLoop:
     '''
@@ -312,6 +312,7 @@ def break_into_train_test(input, label, num_classes, shuffled_each_class=True, t
 def three_dim_visualizer(x_axis, y_axis, zxx, label=('x', 'y', 'z'), output='2d',
                          title='None', vis_range=[None, None, None, None]):
     '''
+    Recommend for heatmap
     :param x_axis: the actual x-axis we wish to see in cartesian plane
     :param y_axis: the actual y-axis we wish to see in cartesian plane
     :param zxx: Zxx is a matrix of dim: (y_axis.size, x_axis.size)
@@ -822,3 +823,68 @@ def shuffle_in_unison(a, b):
     p = np.random.permutation(len(a))
     return a[p], b[p]
 
+
+def scatter_plot(dataset, label, num_classes, feature_to_plot, annotate_all_point=True, title='No Title'):
+    '''
+    This plot is recommended for usage on PCA and T-sne data, from 2d to 3d
+    :param dataset: a 2d np array, where shape[0] -> sample size, shape[1] -> no of features
+    :param label: label is a 1d np array (not in one hot encoding), which must aligned with dataset
+    :param num_classes: num of labels present
+    :param feature_to_plot: tuple of 2 or 3, the shape[1] of the dataset to be plotted. e.g. (0, 1), (0, 2, 3)
+    :param annotate_all_point: label every points with classes index.
+    :param title: big title on the scatter plot
+    :return: a fig object
+    '''
+    # transfer data from array to pandas df
+    dim_red_n_label = np.concatenate((dataset, label.reshape((-1, 1))), axis=1)
+    dl_df = pd.DataFrame(dim_red_n_label, columns=['c_{}'.format(i) for i in range(dataset.shape[1])] + ['label'])
+
+    # create class label
+    legend_label = ['class[{}m]'.format(i) for i in range(11)]
+
+    # config color scheme for scatter plot
+    cmap = cm.get_cmap('rainbow')
+
+    # create fig
+    fig = plt.figure()
+    fig.suptitle(title)
+    # for 2d plot
+    if len(feature_to_plot) is 2:
+        ax = fig.add_subplot(1, 1, 1)
+        ax.set_xlabel('component_{}'.format(feature_to_plot[0]))
+        ax.set_ylabel('component_{}'.format(feature_to_plot[1]))
+        # for all classes
+        for i in range(num_classes):
+            # pick all rows with label == i
+            one_class_vec = dl_df.loc[dl_df['label'] == i].values
+            ax.scatter(x=one_class_vec[:, feature_to_plot[0]],
+                       y=one_class_vec[:, feature_to_plot[1]],
+                       c=cmap((i+1)/num_classes),
+                       cmap=cm.rainbow,
+                       label=legend_label[i])
+            if annotate_all_point:
+                # for each point in a class
+                for j in range(one_class_vec.shape[0]):
+                    plt.annotate(i, (one_class_vec[j, feature_to_plot[0]], one_class_vec[j, feature_to_plot[1]]))
+    # for 3d plot
+    elif len(feature_to_plot) is 3:
+        ax = Axes3D(fig)
+        ax.set_xlabel('component_{}'.format(feature_to_plot[0]))
+        ax.set_ylabel('component_{}'.format(feature_to_plot[1]))
+        ax.set_zlabel('component_{}'.format(feature_to_plot[2]))
+        # scatter class by class
+        for i in range(num_classes):
+            # pick all rows with label == i
+            one_class_vec = dl_df.loc[dl_df['label'] == i].values
+            ax.scatter(xs=one_class_vec[:, feature_to_plot[0]],
+                       ys=one_class_vec[:, feature_to_plot[1]],
+                       zs=one_class_vec[:, feature_to_plot[2]],
+                       c=cmap((i + 1) / num_classes),
+                       cmap=cm.rainbow,
+                       label=legend_label[i])
+            if annotate_all_point:
+                # for each point in a class
+                for j in range(one_class_vec.shape[0]):
+                    ax.text(one_class_vec[j, 0], one_class_vec[j, 1], one_class_vec[j, 2], i)
+
+    return fig

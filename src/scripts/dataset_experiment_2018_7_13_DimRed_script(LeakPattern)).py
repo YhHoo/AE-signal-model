@@ -1,18 +1,25 @@
+'''
+This script applies dimensionality reduction on the multidimensional feature vectors, using T-sne or PCA, followed by
+scatter plot visualization
+'''
 import numpy as np
 import pandas as pd
+import time
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from matplotlib import cm
+from mpl_toolkits.mplot3d import Axes3D
 # self lib
-from src.utils.helpers import direct_to_dir, shuffle_in_unison
+from src.utils.helpers import direct_to_dir, shuffle_in_unison, scatter_plot
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 
 # data preprocessing ---------------------------------------------------------------------------------------------------
-on_pc = True
+on_pc = False
 
 if on_pc is False:
-    f_range_to_keep = (40, 100)
+    f_range_to_keep = (0, 50)
 
     filename = direct_to_dir(where='result') + 'test.csv'
     data_df = pd.read_csv(filename)
@@ -47,46 +54,33 @@ else:
                                                                  shuffle=False)
 
 # PCA OPERATION --------------------------------------------------------------------------------------------------------
-no_of_pc = 5
-pca = PCA(n_components=no_of_pc)  # the num of PCA
-pca_result = pca.fit_transform(dataset)
+pca_op = False
 
-print(pca_result.shape)
-print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
+if pca_op:
+    pca = PCA(n_components=3)  # the num of PCA
+    reduced_result = pca.fit_transform(dataset)
 
-pca_n_label = np.concatenate((pca_result, label.reshape((-1, 1))), axis=1)
-print(pca_n_label.shape)
-pca_df = pd.DataFrame(pca_n_label, columns=['pc_{}'.format(i) for i in range(no_of_pc)] + ['label'])
+    print('PCA output DIM: ', reduced_result.shape)
+    print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
 
 
-num_classes = 11
-cmap = cm.get_cmap('rainbow')
-legend_label = ['class[{}m]'.format(i) for i in range(11)]
-pca_on_xaxix = 0
-pca_on_yaxix = 4
-# fig, ax = plt.subplots()
-for i in range(num_classes):
-    one_class_vec = pca_df.loc[pca_df['label'] == i].values
-    plt.scatter(x=one_class_vec[:, pca_on_xaxix],
-                y=one_class_vec[:, pca_on_yaxix],
-                c=cmap((i+1)/num_classes),
-                cmap=cm.rainbow,
-                label=legend_label[i])
-plt.xlabel('PCA_{}'.format(pca_on_xaxix))
-plt.ylabel('PCA_{}'.format(pca_on_yaxix))
-plt.legend()
+# T-sne Operation ------------------------------------------------------------------------------------------------------
+tsne_op = False
+
+if tsne_op:
+    time_start = time.time()
+    # the more complex the data, set perplexity higher
+    tsne = TSNE(n_components=2, verbose=1, perplexity=70, n_iter=1300)
+    reduced_result = tsne.fit_transform(dataset)
+    print('t-SNE done! Time elapsed: {} seconds'.format(time.time()-time_start))
+    print('TSNE output DIM: ', reduced_result.shape)
+
+
+# visualize in scatter plot --------------------------------------------------------------------------------------------
+fig = scatter_plot(dataset=reduced_result, label=label, num_classes=11, feature_to_plot=(0, 1),
+                   annotate_all_point=True, title='TSNE')
+
 plt.show()
-
-#
-# # take only first 100 data
-# first_n_to_plot = 100
-
-# # scatter plot
-
-# for sample, sample_y in zip(dataset[:first_n_to_plot], label[:first_n_to_plot]):
-#     plt.scatter(x=sample[0], y=sample[1], c=sample_y, cmap=cm.get_cmap('rainbow'))
-#
-# plt.show()
 
 
 

@@ -18,6 +18,7 @@ from keras.utils import to_categorical
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 import matplotlib.cm as cm
+from mpl_toolkits.mplot3d import Axes3D
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input
@@ -26,15 +27,30 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               break_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
+
 x = [0, 2, 4, 6]
 y = [1, 2, 3, 4]
+z = [9, 7, 5, 3]
 
-plt.scatter(1, 2, c=0.2, cmap=cm.get_cmap('rainbow'))
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+cmap = cm.get_cmap('rainbow')
+ax.scatter(x, y, cmap=cm.rainbow, c=[0, 0.5, 0.7, 1])
+
+for i in range(4):
+    ax.text(x[i], y[i], s=str(i))
+
 plt.show()
 
 
+# ax = Axes3D(fig)
 
 #
+# ax.scatter(x, y, z, cmap=cm.rainbow, c=[0, 0.5, 0.9])
+
+# plt.show()
+
+
 # label_to_take = [1, 3]
 # data_selected = data_df.loc[data_df['label'].isin(label_to_take)]
 # print(data_selected)
