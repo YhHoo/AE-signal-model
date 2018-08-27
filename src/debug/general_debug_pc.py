@@ -1,39 +1,33 @@
-import itertools
-import numpy as np
-import pywt
-from multiprocessing import Pool
-import gc
-from random import shuffle
-from scipy.signal import gausspulse
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from mpl_toolkits.axes_grid1 import AxesGrid
-from scipy import signal
-from scipy.signal import correlate as correlate_scipy
-from numpy import correlate as correlate_numpy
-import pandas as pd
-from os import listdir
-from keras.utils import to_categorical
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
-from sklearn.model_selection import StratifiedKFold
-# self lib
-from src.controlled_dataset.ideal_dataset import white_noise
-from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input
-from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
-from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
-                              break_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
-from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
+# import itertools
+# import numpy as np
+# import pywt
+# from multiprocessing import Pool
+# import gc
+# from random import shuffle
+# from scipy.signal import gausspulse
+# import matplotlib.pyplot as plt
+# from matplotlib import cm
+# from mpl_toolkits.axes_grid1 import AxesGrid
+# from scipy import signal
+# from scipy.signal import correlate as correlate_scipy
+# from numpy import correlate as correlate_numpy
+# import pandas as pd
+# from os import listdir
+# from keras.utils import to_categorical
+# from sklearn.preprocessing import StandardScaler, MinMaxScaler
+# from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
+# from sklearn.model_selection import StratifiedKFold
+from tensorflow.python.client import device_lib
+# # self lib
+# from src.controlled_dataset.ideal_dataset import white_noise
+# from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input
+# from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
+# from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
+#                               break_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
+# from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-x = np.arange(0, 10)
-y = np.arange(0, 10)
-color = [0, 0, 0, 1, 1, 1, 2, 2, 2, 2]
+print(device_lib.list_local_devices())
 
-rgba = cmap(0.9)
-
-plt.scatter(x, y, c=rgba, cmap=cm.rainbow)
-
-plt.show()
 # # data pre-processing
 # train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
 #                                                          label=label,
