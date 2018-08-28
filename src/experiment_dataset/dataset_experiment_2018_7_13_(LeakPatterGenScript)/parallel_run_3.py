@@ -10,8 +10,9 @@ print('FILE TO PROCESSED:')
 for f in all_file_path:
     print(f)
 
+
 ae_data = AcousticEmissionDataSet_13_7_2018(drive='F')
 time_start = time.time()
-ae_data.generate_leak_1bar_in_cwt_xcor_maxpoints_vector(saved_filename='sliced_xcor_p1', file_to_process=all_file_path)
-print('Time taken: {:.4f}'.format(time.time()-time_start))
+ae_data.generate_leak_1bar_in_cwt_xcor_maxpoints_vector(saved_filename='sliced_xcor_p3', file_to_process=all_file_path)
+print('Time taken: {:.4f}s'.format(time.time()-time_start))
 
