@@ -779,8 +779,8 @@ def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale
         colorbar_ax = fig.add_axes([0.1, 0.1, 0.8, 0.01])
 
         # set title
-        ax1.set_title('Signal 2 in Time')
-        ax2.set_title('Signal 1 in Time')
+        ax1.set_title('Signal 1 in Time')
+        ax2.set_title('Signal 2 in Time')
         cwt_ax.set_title('XCOR of CWT of Signal 1 and 2')
 
         # plot time series
