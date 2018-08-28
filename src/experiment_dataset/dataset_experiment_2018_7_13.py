@@ -372,11 +372,13 @@ class AcousticEmissionDataSet_13_7_2018:
 
         return n_channel_data
 
-    def generate_leak_1bar_in_cwt_xcor_maxpoints_vector(self, dataset_no):
+    def generate_leak_1bar_in_cwt_xcor_maxpoints_vector(self, saved_filename=None, file_to_process=None):
         '''
         this method read all tdms file from a folder, split each of them into certain parts, perform CWT follow by XCOR
         according to the sensor pair list, then append into a dataset with labels
-        :param dataset_no: filename Label for the dataset generated
+        :param saved_filename: filename Label for the dataset generated
+        :param file_to_process: a list of strings, which is full dir and filename of the tdms to be processed. if none,
+                                it is taken as all tdms in the 1bar leak
         :return: dataset where shape[0] -> no of samples of all classes
                                shape[1] -> no of elements in a vector
                  label where shape[0] -> aligned with the shape[0] of dataset
@@ -391,9 +393,13 @@ class AcousticEmissionDataSet_13_7_2018:
         # segmentation per tdms (sample size by each tdms)
         no_of_segment = 50
 
-        # list full path of all tdms file in the specified folder
-        folder_path = self.path_leak_1bar_2to12
-        all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
+        # file dir
+        if file_to_process is None:
+            # list full path of all tdms file in the specified folder
+            folder_path = self.path_leak_1bar_2to12
+            all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
+        else:
+            all_file_path = file_to_process
 
         # DATA READING -------------------------------------------------------------------------------------------------
         # creating dict to store each class data
@@ -430,10 +436,13 @@ class AcousticEmissionDataSet_13_7_2018:
                     mid = xcor.shape[1] // 2 + 1
 
                     max_xcor_vector = []
+                    # 24000 = fs*24ms(max deviation in ToA)
+                    upper_xcor_bound = mid + 24000
+                    lower_xcor_bound = mid - 24000
                     # for every row of xcor, find max point index
                     for row in xcor:
-                        max_along_x = np.argmax(row)
-                        max_xcor_vector.append(max_along_x - mid)
+                        max_along_x = np.argmax(row[lower_xcor_bound:upper_xcor_bound])
+                        max_xcor_vector.append(max_along_x + lower_xcor_bound - mid)
 
                     # store all feature vector for same class
                     all_class['class_[{}]'.format(dist_diff)].append(max_xcor_vector)
@@ -478,7 +487,7 @@ class AcousticEmissionDataSet_13_7_2018:
         freq = pywt.scale2frequency(wavelet=m_wavelet, scale=scale) * fs
         column_label = ['Scale_{:.4f}_Freq_{:.4f}Hz'.format(i, j) for i, j in zip(scale, freq)] + ['label']
         df = pd.DataFrame(all_in_one, columns=column_label)
-        filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(dataset_no)
+        filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(saved_filename)
         df.to_csv(filename)
 
     def leak_1bar_in_cwt_xcor_maxpoints_vector(self, dataset_no, f_range_to_keep, class_to_keep, shuffle=True):
