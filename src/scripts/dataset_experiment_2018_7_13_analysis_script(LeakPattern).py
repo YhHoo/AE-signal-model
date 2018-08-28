@@ -63,21 +63,23 @@ for sensor_pair in sensor_pair_near:
                                         cwt_mat=xcor,
                                         cwt_scale=scale,
                                         title=fig_title)
-        mid = xcor.shape[1] // 2 + 1
-        max_xcor_vector = []
-        for row in xcor:
-            max_along_x = np.argmax(row)
-            max_xcor_vector.append(max_along_x - mid)
-        print(mid)
-        print(max_xcor_vector)
 
-        plt.show()
+        # only for showing the max point vector
+        # mid = xcor.shape[1] // 2 + 1
+        # max_xcor_vector = []
+        # for row in xcor:
+        #     max_along_x = np.argmax(row)
+        #     max_xcor_vector.append(max_along_x - mid)
+        # print(mid)
+        # print(max_xcor_vector)
+
+        # plt.show()
         # saving
-        # filename = direct_to_dir(where='result') + 'xcor_cwt_DistDiff[{}m]_sample[{}]'.format(dist_diff, sample_no)
-        # fig.savefig(filename)
-        # plt.close('all')
-        # print('Dist_diff: {}m, Sample: {}'.format(dist_diff, sample_no))
-        # sample_no += 1
+        filename = direct_to_dir(where='result') + 'xcor_cwt_DistDiff[{}m]_sample[{}]'.format(dist_diff, sample_no)
+        fig.savefig(filename)
+        plt.close('all')
+        print('Saving --> Dist_diff: {}m, Sample: {}'.format(dist_diff, sample_no))
+        sample_no += 1
 
     dist_diff += 1
 

@@ -736,21 +736,23 @@ def direct_to_dir(where=None):
         return 'C:/Users/YH/Desktop/hooyuheng.masterWork/MASTER_PAPERWORK/temp_data_store/'
 
 
-def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale, title='No Title'):
+def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale,
+                              maxpoint_searching_bound=24000, title='No Title'):
     '''
     Usage Recommendation:
 
-    Usage_1[only cwt] ----
+    Usage_1 [1x time series + 1x cwt] ----
     When we just wan to aligned the time series signal with its CWT
 
-    Usage_2[xcor of cwt] ----
+    Usage_2 [2x time series + 1x cwt_xcor] ----
     When we are doing correlation of cwt of the 2 time series signals, we wan to aligned and
     inspect the 2 time series signal, meanwhile also display the correlation of the CWT
-
-    :param time_series: a 1d array of a list of 2 1d array
+    -----------------------------------------------------------------------------------------------
+    :param time_series: a 1d array (or) a list of 2 1d array
     :param no_of_time_series: 1 -> Usage_1 , 2 -> Usage_2
     :param cwt_mat: a 2d array
     :param cwt_scale: the scale passed into CWT function, with values in ascending order
+    :param maxpoint_searching_bound: (applies to usgae 2 only) the horizontal bound on the xcor where max point is found
     :return: a figure of time series and cwt heatmap
     '''
 
@@ -786,14 +788,19 @@ def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale
         ax2.plot(time_series[1])
 
         # plot middle line
-        cwt_ax.axvline(x=cwt_mat.shape[1] // 2 + 1, linestyle='dotted')
+        mid = cwt_mat.shape[1] // 2 + 1
+        cwt_ax.axvline(x=mid, linestyle='dotted')
+
+        # set bound for max point searching in xcor map
+        upper_xcor_bound = mid + maxpoint_searching_bound
+        lower_xcor_bound = mid - maxpoint_searching_bound
 
         # plot max point
         for row_no in range(cwt_mat.shape[0]):
-            max_along_x = np.argmax(cwt_mat[row_no])
+            max_along_x = np.argmax(cwt_mat[row_no, lower_xcor_bound:upper_xcor_bound])
             # the y-coord of the max point is set to use the real cwt scale value because setting the extent
             # in imshow has forced us to use the real value scale value and not index
-            cwt_ax.scatter(max_along_x, cwt_scale[row_no], s=70, c='black', marker='x')
+            cwt_ax.scatter(max_along_x + lower_xcor_bound, cwt_scale[row_no], s=70, c='black', marker='x')
 
         # max = np.unravel_index(np.argmax(cwt_mat, axis=None), cwt_mat.shape)
         # cwt_ax.scatter(max[1], cwt_scale[max[0]], s=70, c='black', marker='x')

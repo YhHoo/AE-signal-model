@@ -27,20 +27,11 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               break_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-
-x = [0, 2, 4, 6]
-y = [1, 2, 3, 4]
-z = [9, 7, 5, 3]
-
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-cmap = cm.get_cmap('rainbow')
-ax.scatter(x, y, cmap=cm.rainbow, c=[0, 0.5, 0.7, 1])
-
-for i in range(4):
-    ax.text(x[i], y[i], s=str(i))
-
-plt.show()
+dir = direct_to_dir(where='result') + 'test.csv'
+df = pd.read_csv(dir)
+x = df.loc[df['label'] == 0].values[:, 1:]
+print(x.shape)
+print(x)
 
 
 # ax = Axes3D(fig)
