@@ -29,14 +29,18 @@ from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_ma
 
 dir = direct_to_dir(where='result') + 'test.csv'
 df = pd.read_csv(dir)
-x = df.loc[df['label'] == 0].values[:, 1:]
-print(x.shape)
-print(x)
+
+column_names = df.columns.get_values()
+print(column_names)
+
+
+
+
+
 
 
 # ax = Axes3D(fig)
 
-#
 # ax.scatter(x, y, z, cmap=cm.rainbow, c=[0, 0.5, 0.9])
 
 # plt.show()

@@ -14,7 +14,7 @@ scale = np.linspace(2, 30, 50)
 fs = 1e6
 
 # segmentation
-no_of_segment = 50
+no_of_segment = 1
 
 # DATA POINT ----------------------------------------------------------------------------------------------------------
 # read leak data
@@ -23,7 +23,7 @@ if on_pc:
     data = AcousticEmissionDataSet_13_7_2018(drive='F')
     n_channel_leak = data.test_data(sensor_dist='near', pressure=1, leak=True)
 else:
-    data_dir = direct_to_dir(where='yh_laptop_test_data') + '1bar_leak/'
+    data_dir = direct_to_dir(where='yh_laptop_test_data') + 'plb/'
     n_channel_leak = read_all_tdms_from_folder(data_dir)
     n_channel_leak = np.swapaxes(n_channel_leak, 1, 2)
     n_channel_leak = n_channel_leak[0]
@@ -73,13 +73,14 @@ for sensor_pair in sensor_pair_near:
         # print(mid)
         # print(max_xcor_vector)
 
-        # plt.show()
-        # saving
-        filename = direct_to_dir(where='result') + 'xcor_cwt_DistDiff[{}m]_sample[{}]'.format(dist_diff, sample_no)
-        fig.savefig(filename)
-        plt.close('all')
-        print('Saving --> Dist_diff: {}m, Sample: {}'.format(dist_diff, sample_no))
-        sample_no += 1
+        plt.show()
+
+        # saving -------------------------------------------------------------------------------------------------------
+        # filename = direct_to_dir(where='result') + 'xcor_cwt_DistDiff[{}m]_sample[{}]'.format(dist_diff, sample_no)
+        # fig.savefig(filename)
+        # plt.close('all')
+        # print('Saving --> Dist_diff: {}m, Sample: {}'.format(dist_diff, sample_no))
+        # sample_no += 1
 
     dist_diff += 1
 
