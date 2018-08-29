@@ -490,16 +490,17 @@ class AcousticEmissionDataSet_13_7_2018:
         filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(saved_filename)
         df.to_csv(filename)
 
-    def leak_1bar_in_cwt_xcor_maxpoints_vector(self, dataset_no, f_range_to_keep, class_to_keep, shuffle=True):
+    def leak_1bar_in_cwt_xcor_maxpoints_vector(self, dataset_name, f_range_to_keep, class_to_keep, shuffle=True):
         '''
-        :param dataset_no: filename index of the csv to be read
+        :param dataset_name: name of the csv to be read (it is the name after '...dataset_')
         :param f_range_to_keep: tuple (start, end) where start and end is index along the freq/scale axis
         :param class_to_keep: a list of labels(int), e.g. [0, 2, 3, 5] -> take only those rows with label 0, 2, 3, 5
                               a string 'all' means it will take [0, 1, 2..., 10]
+        :param shuffle: this will shuffle so that dataset output is not in order by classes, class0 -> class1 -> class2
         :return: dataset, label
         '''
         # accessing file
-        dir = self.path_leak_1bar_2to12 + 'processed/cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(dataset_no)
+        dir = self.path_leak_1bar_2to12 + 'processed/cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(dataset_name)
         data_df = pd.read_csv(dir)
         data_df_col_name = data_df.columns[1:-1]
 

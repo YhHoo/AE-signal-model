@@ -16,7 +16,7 @@ from src.utils.helpers import direct_to_dir, shuffle_in_unison, scatter_plot
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 
 # data preprocessing ---------------------------------------------------------------------------------------------------
-on_pc = False
+on_pc = True
 
 if on_pc is False:
     f_range_to_keep = (0, 50)
@@ -48,10 +48,10 @@ if on_pc is False:
 
 else:
     data = AcousticEmissionDataSet_13_7_2018(drive='F')
-    dataset, label = data.leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_no=2,
-                                                                 f_range_to_keep=(40, 100),
+    dataset, label = data.leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_name='bounded_xcor',
+                                                                 f_range_to_keep=(0, 100),
                                                                  class_to_keep='all',
-                                                                 shuffle=False)
+                                                                 shuffle=True)
 
 # PCA OPERATION --------------------------------------------------------------------------------------------------------
 pca_op = False
@@ -65,19 +65,19 @@ if pca_op:
 
 
 # T-sne Operation ------------------------------------------------------------------------------------------------------
-tsne_op = False
+tsne_op = True
 
 if tsne_op:
     time_start = time.time()
     # the more complex the data, set perplexity higher
     tsne = TSNE(n_components=2, verbose=1, perplexity=70, n_iter=1300)
-    reduced_result = tsne.fit_transform(dataset)
+    reduced_result = tsne.fit_transform(dataset[:1000])
     print('t-SNE done! Time elapsed: {} seconds'.format(time.time()-time_start))
     print('TSNE output DIM: ', reduced_result.shape)
 
 
 # visualize in scatter plot --------------------------------------------------------------------------------------------
-fig = scatter_plot(dataset=reduced_result, label=label, num_classes=11, feature_to_plot=(0, 1),
+fig = scatter_plot(dataset=reduced_result, label=label[:1000], num_classes=11, feature_to_plot=(0, 1),
                    annotate_all_point=True, title='TSNE')
 
 plt.show()
