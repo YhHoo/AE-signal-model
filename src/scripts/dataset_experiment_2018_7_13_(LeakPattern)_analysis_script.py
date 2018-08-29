@@ -39,7 +39,8 @@ print('Each Segment Dim: ', n_channel_leak[0].shape)
 
 # CWT + XCOR + VISUALIZE SCRIPT ---------------------------------------------------------------------------------------
 # xcor pairing commands - [near] = 0m, 1m,..., 10m
-sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+# sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+sensor_pair_near = [(1, 7)]
 
 dist_diff = 0
 # for all sensor combination
