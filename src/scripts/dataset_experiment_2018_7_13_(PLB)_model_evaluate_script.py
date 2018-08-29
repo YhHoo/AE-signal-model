@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix, f1_score
 # self defined library
-from src.utils.helpers import load_model, evaluate_model_for_all_class, break_into_train_test, \
+from src.utils.helpers import load_model, evaluate_model_for_all_class, break_balanced_class_into_train_test, \
                               reshape_3d_to_4d_tocategorical, three_dim_visualizer, compute_recall_precision_multiclass
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 
@@ -15,11 +15,11 @@ dataset, label = data.plb()
 
 # split to train test data
 num_classes = 41
-train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
-                                                         label=label,
-                                                         num_classes=num_classes,
-                                                         train_split=0.7,
-                                                         verbose=True)
+train_x, train_y, test_x, test_y = break_balanced_class_into_train_test(input=dataset,
+                                                                        label=label,
+                                                                        num_classes=num_classes,
+                                                                        train_split=0.7,
+                                                                        verbose=True)
 # reshape to satisfy conv2d input shape
 train_x, train_y, test_x, test_y = reshape_3d_to_4d_tocategorical(train_x, train_y, test_x, test_y,
                                                                   fourth_dim=1,

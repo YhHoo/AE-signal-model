@@ -209,7 +209,8 @@ def reshape_3d_to_4d_tocategorical(train_x, train_y, test_x, test_y, fourth_dim=
     return train_x_4d, train_y_cat, test_x_4d, test_y_cat
 
 
-def break_into_train_test(input, label, num_classes, shuffled_each_class=True, train_split=0.7, verbose=False):
+def break_balanced_class_into_train_test(input, label, num_classes, shuffled_each_class=True,
+                                         train_split=0.7, verbose=False):
     '''
     :param input: expect a 3d np array where 1st index is total sample size
     :param label: expect a 1d np array of same size as input.shape[0]

@@ -3,7 +3,7 @@ from nptdms import TdmsFile
 from src.utils.dsp_tools import spectrogram_scipy
 from os import listdir
 # self defined library
-from src.utils.helpers import ProgressBarForLoop, break_into_train_test, read_all_tdms_from_folder
+from src.utils.helpers import ProgressBarForLoop, break_balanced_class_into_train_test, read_all_tdms_from_folder
 
 
 class AccousticEmissionDataSet_16_5_2018:
@@ -80,11 +80,11 @@ class AccousticEmissionDataSet_16_5_2018:
         print('Label Dim:', ft_bank_label.shape)
 
         # slicing them into train and test set
-        train_x, test_x, train_y, test_y = break_into_train_test(input=ft_bank,
-                                                                 label=ft_bank_label,
-                                                                 num_classes=7,
-                                                                 train_split=train_split,
-                                                                 verbose=True)
+        train_x, test_x, train_y, test_y = break_balanced_class_into_train_test(input=ft_bank,
+                                                                                label=ft_bank_label,
+                                                                                num_classes=7,
+                                                                                train_split=train_split,
+                                                                                verbose=True)
         return train_x, test_x, train_y, test_y
 
     # def noleak_1bar_7pos(self):

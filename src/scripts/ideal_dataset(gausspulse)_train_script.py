@@ -1,18 +1,18 @@
 import keras as kr
 # self defined library
 from src.controlled_dataset.ideal_dataset import gauss_pulse_timeshift_dataset
-from src.utils.helpers import break_into_train_test, reshape_3d_to_4d_tocategorical, \
+from src.utils.helpers import break_balanced_class_into_train_test, reshape_3d_to_4d_tocategorical, \
                               ModelLogger, evaluate_model_for_all_class
 
 dataset, label = gauss_pulse_timeshift_dataset(class_sample_size=100)
 
 # training ------------------------------
 num_classes = 2
-train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
-                                                         label=label,
-                                                         num_classes=num_classes,
-                                                         train_split=0.7,
-                                                         verbose=True)
+train_x, train_y, test_x, test_y = break_balanced_class_into_train_test(input=dataset,
+                                                                        label=label,
+                                                                        num_classes=num_classes,
+                                                                        train_split=0.7,
+                                                                        verbose=True)
 # reshape to satisfy conv2d input shape
 train_x, train_y, test_x, test_y = reshape_3d_to_4d_tocategorical(train_x, train_y, test_x, test_y,
                                                                   fourth_dim=1, num_classes=num_classes, verbose=True)

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import keras.backend as K
 # self defined library
-from src.utils.helpers import load_model, get_activations, break_into_train_test, \
+from src.utils.helpers import load_model, get_activations, break_balanced_class_into_train_test, \
                               reshape_3d_to_4d_tocategorical, plot_heatmap_series_in_one_column, \
                               plot_heatmap_series_in_four_column, plot_simple_heatmap
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
@@ -16,12 +16,12 @@ dataset, label = data.plb()
 
 # split to train test data
 num_classes = 41
-train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
-                                                         label=label,
-                                                         num_classes=num_classes,
-                                                         train_split=0.95,
-                                                         verbose=True,
-                                                         shuffled_each_class=False)
+train_x, train_y, test_x, test_y = break_balanced_class_into_train_test(input=dataset,
+                                                                        label=label,
+                                                                        num_classes=num_classes,
+                                                                        train_split=0.95,
+                                                                        verbose=True,
+                                                                        shuffled_each_class=False)
 
 # reshape to satisfy conv2d input shape
 _, _, test_x_reshape, _ = reshape_3d_to_4d_tocategorical(train_x, train_y, test_x, test_y,

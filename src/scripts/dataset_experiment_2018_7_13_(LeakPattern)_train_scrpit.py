@@ -7,7 +7,7 @@ from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.metrics import accuracy_score, make_scorer
 # self lib
-from src.utils.helpers import direct_to_dir, break_into_train_test, ModelLogger
+from src.utils.helpers import direct_to_dir, break_balanced_class_into_train_test, ModelLogger
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v2, fc_leak_1bar_max_vec_v1
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 

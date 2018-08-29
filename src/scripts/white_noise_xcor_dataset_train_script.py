@@ -14,7 +14,7 @@ However, a time shift for a signal shud
 import numpy as np
 # self declared library
 from src.controlled_dataset.ideal_dataset import noise_time_shift_xcor_return
-from src.utils.helpers import break_into_train_test, ModelLogger, evaluate_model_for_all_class, \
+from src.utils.helpers import break_balanced_class_into_train_test, ModelLogger, evaluate_model_for_all_class, \
                               reshape_3d_to_4d_tocategorical
 from src.model_bank.nn_model_bank import cnn_51_159_3class_v1
 
@@ -32,11 +32,11 @@ time_axis = np.linspace(0, duration, total_point)
 # ------[Data Acquisition n Preprocessing]------
 dataset, label = noise_time_shift_xcor_return(time_axis, fs=fs, num_series=100)
 
-train_x, train_y, test_x, test_y = break_into_train_test(input=dataset,
-                                                         label=label,
-                                                         num_classes=num_classes,
-                                                         train_split=0.7,
-                                                         verbose=True)
+train_x, train_y, test_x, test_y = break_balanced_class_into_train_test(input=dataset,
+                                                                        label=label,
+                                                                        num_classes=num_classes,
+                                                                        train_split=0.7,
+                                                                        verbose=True)
 
 # reshape to satisfy conv2d input shape
 train_x, train_y, test_x, test_y = reshape_3d_to_4d_tocategorical(train_x, train_y, test_x, test_y,
