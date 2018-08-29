@@ -9,7 +9,7 @@ from keras.models import Sequential, Model
 
 
 # compact shallow NN
-def fc_leak_1bar_max_vec_v1(input_shape, num_classes):
+def fc_leak_1bar_max_vec_v1(input_shape, output_neuron):
     model = Sequential()
     model.add(Dense(1000, activation='relu', input_shape=input_shape))
     model.add(Dropout(0.2))
@@ -18,7 +18,7 @@ def fc_leak_1bar_max_vec_v1(input_shape, num_classes):
     model.add(Dropout(0.3))
     model.add(Dense(50, activation='relu'))
     # model.add(Dropout(0.3))
-    model.add(Dense(num_classes, activation='softmax'))
+    model.add(Dense(output_neuron, activation='softmax'))
 
     print(model.summary())
 
@@ -26,7 +26,7 @@ def fc_leak_1bar_max_vec_v1(input_shape, num_classes):
 
 
 # more deeper NN
-def fc_leak_1bar_max_vec_v2(input_shape, num_classes):
+def fc_leak_1bar_max_vec_v2(input_shape, output_neuron):
     model = Sequential()
     model.add(Dense(200, activation='relu', input_shape=input_shape))
     model.add(Dropout(0.2))
@@ -34,13 +34,13 @@ def fc_leak_1bar_max_vec_v2(input_shape, num_classes):
     model.add(Dropout(0.3))
     model.add(Dense(500, activation='relu'))
     model.add(Dropout(0.4))
-    # model.add(Dense(300, activation='relu'))
-    # model.add(Dropout(0.3))
-    # model.add(Dense(100, activation='relu'))
-    # model.add(Dropout(0.1))
+    model.add(Dense(300, activation='relu'))
+    model.add(Dropout(0.3))
+    model.add(Dense(100, activation='relu'))
+    model.add(Dropout(0.1))
     model.add(Dense(50, activation='relu'))
     # model.add(Dropout(0.3))
-    model.add(Dense(num_classes, activation='softmax'))
+    model.add(Dense(output_neuron, activation='softmax'))
 
     print(model.summary())
 
