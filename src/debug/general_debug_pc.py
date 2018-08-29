@@ -14,7 +14,7 @@ from numpy import correlate as correlate_numpy
 import pandas as pd
 from os import listdir
 from keras.utils import to_categorical
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, LabelBinarizer
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 from sklearn.model_selection import StratifiedKFold
 
@@ -26,10 +26,16 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-
-folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
-all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
-
+l = [0, 2, 4]
+m = [-1, 0, 1, 2]
+n = ['a', 'b', 'c']
+# label = to_categorical(n, num_classes=3)
+# l2 = [str(i) for i in l]
+# encoder = LabelEncoder()
+# label = encoder.fit_transform(l)
+encoder2 = LabelBinarizer()
+label = encoder2.fit_transform(m)
+print(label)
 
 # testing grid search CV of sklearn ------------------------------------------------------------------------------------
 

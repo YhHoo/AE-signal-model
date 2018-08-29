@@ -1,4 +1,5 @@
 '''
+By Using Parallel Run, the total time taken to process all 59 tdms files reduces from 27hrs to 12 hrs
 This script is to combine all 3 csv of max vector generated in to one. All 3 csv must contains all same classes.
 This script will gather samples of same class and append into a continuous rows of vector.
 '''
