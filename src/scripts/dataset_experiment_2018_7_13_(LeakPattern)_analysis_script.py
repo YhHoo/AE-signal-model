@@ -14,16 +14,16 @@ scale = np.linspace(2, 30, 100)
 fs = 1e6
 
 # segmentation
-no_of_segment = 1
+no_of_segment = 10  # 10 is showing a consistent pattern
 
 # DATA POINT ----------------------------------------------------------------------------------------------------------
 # read leak data
-on_pc = True
+on_pc = False
 if on_pc:
     data = AcousticEmissionDataSet_13_7_2018(drive='F')
     n_channel_leak = data.test_data(sensor_dist='near', leak='plb')
 else:
-    data_dir = direct_to_dir(where='yh_laptop_test_data') + 'plb/'
+    data_dir = direct_to_dir(where='yh_laptop_test_data') + '1bar_leak/'
     n_channel_leak = read_all_tdms_from_folder(data_dir)
     n_channel_leak = np.swapaxes(n_channel_leak, 1, 2)
     n_channel_leak = n_channel_leak[0]
@@ -39,8 +39,8 @@ print('Each Segment Dim: ', n_channel_leak[0].shape)
 
 # CWT + XCOR + VISUALIZE SCRIPT ---------------------------------------------------------------------------------------
 # xcor pairing commands - [near] = 0m, 1m,..., 10m
-# sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
-sensor_pair_near = [(1, 7)]
+sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+# sensor_pair_near = [(1, 7)]
 
 dist_diff = 0
 # for all sensor combination
@@ -75,13 +75,13 @@ for sensor_pair in sensor_pair_near:
         # print(mid)
         # print(max_xcor_vector)
 
-        plt.show()
+        # plt.show()
 
         # saving -------------------------------------------------------------------------------------------------------
-        # filename = direct_to_dir(where='result') + 'xcor_cwt_DistDiff[{}m]_sample[{}]'.format(dist_diff, sample_no)
-        # fig.savefig(filename)
-        # plt.close('all')
-        # print('Saving --> Dist_diff: {}m, Sample: {}'.format(dist_diff, sample_no))
+        filename = direct_to_dir(where='result') + 'xcor_cwt_DistDiff[{}m]_sample[{}]'.format(dist_diff, sample_no)
+        fig.savefig(filename)
+        plt.close('all')
+        print('Saving --> Dist_diff: {}m, Sample: {}'.format(dist_diff, sample_no))
 
         sample_no += 1
 
