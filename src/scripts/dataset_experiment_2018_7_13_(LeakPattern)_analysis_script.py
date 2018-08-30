@@ -10,7 +10,7 @@ from src.utils.dsp_tools import one_dim_xcor_2d_input
 # CONFIG --------------------------------------------------------------------------------------------------------------
 # wavelet
 m_wavelet = 'gaus1'
-scale = np.linspace(2, 30, 50)
+scale = np.linspace(2, 30, 100)
 fs = 1e6
 
 # segmentation
@@ -18,10 +18,10 @@ no_of_segment = 1
 
 # DATA POINT ----------------------------------------------------------------------------------------------------------
 # read leak data
-on_pc = False
+on_pc = True
 if on_pc:
     data = AcousticEmissionDataSet_13_7_2018(drive='F')
-    n_channel_leak = data.test_data(sensor_dist='near', pressure=1, leak=True)
+    n_channel_leak = data.test_data(sensor_dist='near', leak='plb')
 else:
     data_dir = direct_to_dir(where='yh_laptop_test_data') + 'plb/'
     n_channel_leak = read_all_tdms_from_folder(data_dir)
@@ -63,7 +63,8 @@ for sensor_pair in sensor_pair_near:
                                         no_of_time_series=2,
                                         cwt_mat=xcor,
                                         cwt_scale=scale,
-                                        title=fig_title)
+                                        title=fig_title,
+                                        maxpoint_searching_bound=24000)
 
         # only for showing the max point vector
         # mid = xcor.shape[1] // 2 + 1
@@ -81,7 +82,8 @@ for sensor_pair in sensor_pair_near:
         # fig.savefig(filename)
         # plt.close('all')
         # print('Saving --> Dist_diff: {}m, Sample: {}'.format(dist_diff, sample_no))
-        # sample_no += 1
+
+        sample_no += 1
 
     dist_diff += 1
 

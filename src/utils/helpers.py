@@ -774,19 +774,19 @@ def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale
         ax1.plot(time_series)
 
     elif no_of_time_series is 2:
-        ax1 = fig.add_axes([0.1, 0.6, 0.8, 0.1])
-        ax2 = fig.add_axes([0.1, 0.8, 0.8, 0.1], sharex=ax1)
+        ax1 = fig.add_axes([0.1, 0.6, 0.8, 0.1])  # lower
+        ax2 = fig.add_axes([0.1, 0.8, 0.8, 0.1], sharex=ax1)  # upper
         cwt_ax = fig.add_axes([0.1, 0.2, 0.8, 0.3])
         colorbar_ax = fig.add_axes([0.1, 0.1, 0.8, 0.01])
 
         # set title
-        ax1.set_title('Signal 1 in Time')
-        ax2.set_title('Signal 2 in Time')
+        ax1.set_title('Signal 2 in Time')
+        ax2.set_title('Signal 1 in Time')
         cwt_ax.set_title('XCOR of CWT of Signal 1 and 2')
 
         # plot time series
-        ax1.plot(time_series[0])
-        ax2.plot(time_series[1])
+        ax1.plot(time_series[1])
+        ax2.plot(time_series[0])
 
         # plot middle line
         mid = cwt_mat.shape[1] // 2 + 1
@@ -832,7 +832,8 @@ def shuffle_in_unison(a, b):
     return a[p], b[p]
 
 
-def scatter_plot(dataset, label, num_classes, feature_to_plot, annotate_all_point=True, title='No Title'):
+def scatter_plot(dataset, label, num_classes, feature_to_plot, annotate_all_point=True, title='No Title',
+                 save_data_to_csv=False):
     '''
     This plot is recommended for usage on PCA and T-sne data, from 2d to 3d
     :param dataset: a 2d np array, where shape[0] -> sample size, shape[1] -> no of features
@@ -846,6 +847,12 @@ def scatter_plot(dataset, label, num_classes, feature_to_plot, annotate_all_poin
     # transfer data from array to pandas df
     dim_red_n_label = np.concatenate((dataset, label.reshape((-1, 1))), axis=1)
     dl_df = pd.DataFrame(dim_red_n_label, columns=['c_{}'.format(i) for i in range(dataset.shape[1])] + ['label'])
+
+    # saving
+    if save_data_to_csv:
+        save_filename = direct_to_dir(where='result') + title
+        dl_df.to_csv(save_filename)
+        print('Scatter plot Saved --> {}.csv'.format(title))
 
     # create class label
     legend_label = ['class[{}m]'.format(i) for i in range(11)]

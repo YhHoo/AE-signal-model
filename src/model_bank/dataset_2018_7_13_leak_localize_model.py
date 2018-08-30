@@ -42,7 +42,7 @@ def fc_leak_1bar_max_vec_v2(input_shape, output_neuron):
     # model.add(Dropout(0.3))
     model.add(Dense(output_neuron, activation='softmax'))
 
-    print(model.summary())
+    # print(model.summary())
 
     return model
 

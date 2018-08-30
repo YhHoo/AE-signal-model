@@ -179,6 +179,9 @@ def butter_bandpass_filtfilt(sampled_data, fs, f_hicut, f_locut, order=5):
 
 def one_dim_xcor_2d_input(input_mat, pair_list, verbose=False):
     '''
+    The scipy.signal.correlate is used. Here the algorithm will starts sliding the 2 signals by bumping
+    input_mat[0]'s head into the input_mat[1]'s tail. E.G. If input_mat[0] is faster, max correlation occurs at
+    left side of the centre points.
     :param input_mat: a 3d np matrix input, where shape[0] -> no. of phase map (diff sensors),
                                                   shape[1] -> freq band,
                                                   shape[2] -> time steps

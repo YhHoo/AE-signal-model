@@ -1,6 +1,4 @@
-# import itertools
-# import numpy as np
-# import pywt
+
 from multiprocessing import Pool
 import gc
 from random import shuffle
@@ -26,16 +24,10 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-l = [0, 2, 4]
-m = [-1, 0, 1, 2]
-n = ['a', 'b', 'c']
-# label = to_categorical(n, num_classes=3)
-# l2 = [str(i) for i in l]
-# encoder = LabelEncoder()
-# label = encoder.fit_transform(l)
-encoder2 = LabelBinarizer()
-label = encoder2.fit_transform(m)
-print(label)
+l = [0, 0, 1, 0, 7, 11, 5, 2, 0, 0]
+m = [0, 7, 11, 5, 2, 0, 0, 1, 2, 2]
+z = correlate_scipy(in1=l, in2=m, mode='full', method='fft')
+print(z)
 
 # testing grid search CV of sklearn ------------------------------------------------------------------------------------
 
