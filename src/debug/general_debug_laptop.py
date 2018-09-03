@@ -27,15 +27,11 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-dir = direct_to_dir(where='result') + 'test.csv'
-df = pd.read_csv(dir)
-
-column_names = df.columns.get_values()
-print(column_names)
-
-
-
-
+# dir = direct_to_dir(where='result') + 'test.csv'
+# df = pd.read_csv(dir)
+#
+# column_names = df.columns.get_values()
+# print(column_names)
 
 
 
