@@ -13,14 +13,14 @@ from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_ma
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 
 # Config
-num_classes = 3
-nn_input_shape = (30, )
+num_classes = 11
+nn_input_shape = (100, )
 
 # reading data ---------------------------------------------------------------------------------------------------------
 data = AcousticEmissionDataSet_13_7_2018(drive='F')
-dataset, label = data.leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_name='bounded_xcor',
-                                                             f_range_to_keep=(70, 100),
-                                                             class_to_keep=[0, 5, 10],
+dataset, label = data.leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_name='bounded_xcor_2',
+                                                             f_range_to_keep=(0, 100),
+                                                             class_to_keep=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                                                              shuffle=False)
 
 # train_y_cat = to_categorical(train_y, num_classes=num_classes)
@@ -68,14 +68,14 @@ train_x, train_y, test_x, test_y = break_balanced_class_into_train_test(input=da
 lb_encoder = LabelBinarizer()
 train_y_cat = lb_encoder.fit_transform(train_y)
 test_y_cat = lb_encoder.fit_transform(test_y)
-model = fc_leak_1bar_max_vec_v2(input_shape=nn_input_shape, output_neuron=3)
+model = fc_leak_1bar_max_vec_v2(input_shape=nn_input_shape, output_neuron=11)
 model.compile(optimizer='adadelta', loss='categorical_crossentropy', metrics=['acc'])
 model_logger = ModelLogger(model, model_name='fc_leak_1bar_max_vec_v2')
 history = model.fit(x=train_x,
                     y=train_y_cat,
-                    batch_size=100,
+                    batch_size=300,
                     validation_data=(test_x, test_y_cat),
-                    epochs=100,
+                    epochs=1000,
                     verbose=2)
 model_logger.learning_curve(history=history, save=False, show=True, title='Using ADADELTA')
 

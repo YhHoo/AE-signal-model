@@ -77,9 +77,9 @@ if tsne_op:
 
 
 # visualize in scatter plot --------------------------------------------------------------------------------------------
-# fig = scatter_plot(dataset=reduced_result, label=label, num_classes=11, feature_to_plot=(0, 1),
-#                    annotate_all_point=True, title='leak_1bar_cwt_xcor_max_vector_(TSNE)',
-#                    save_data_to_csv=True)
+fig = scatter_plot(dataset=reduced_result, label=label, num_classes=11, feature_to_plot=(0, 1),
+                   annotate_all_point=True, title='leak_1bar_cwt_xcor_max_vector_(TSNE)',
+                   save_data_to_csv=True)
 #
 # fig_filename = direct_to_dir(where='result') + 'scatter_plot_(bounded_xcor)'
 # fig.savefig(fig_filename)

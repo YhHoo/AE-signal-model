@@ -391,7 +391,7 @@ class AcousticEmissionDataSet_13_7_2018:
         fs = 1e6
 
         # segmentation per tdms (sample size by each tdms)
-        no_of_segment = 10
+        no_of_segment = 5
 
         # file dir
         if file_to_process is None:
