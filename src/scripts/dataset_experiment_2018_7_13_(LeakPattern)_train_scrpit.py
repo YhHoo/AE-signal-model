@@ -8,7 +8,7 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.metrics import accuracy_score, make_scorer
 from sklearn.preprocessing import LabelBinarizer, LabelEncoder
 # self lib
-from src.utils.helpers import direct_to_dir, break_balanced_class_into_train_test, ModelLogger
+from src.utils.helpers import direct_to_dir, break_balanced_class_into_train_test, ModelLogger, evaluate_model_for_all_class
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v2, fc_leak_1bar_max_vec_v1
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 
@@ -18,7 +18,7 @@ nn_input_shape = (100, )
 
 # reading data ---------------------------------------------------------------------------------------------------------
 data = AcousticEmissionDataSet_13_7_2018(drive='F')
-dataset, label = data.leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_name='bounded_xcor_2',
+dataset, label = data.leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_name='bounded_xcor_3',
                                                              f_range_to_keep=(0, 100),
                                                              class_to_keep=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                                                              shuffle=False)
@@ -75,10 +75,16 @@ history = model.fit(x=train_x,
                     y=train_y_cat,
                     batch_size=300,
                     validation_data=(test_x, test_y_cat),
-                    epochs=1000,
+                    epochs=10,
                     verbose=2)
+# find best val acc
+best_val_acc_index = np.argmax(history.history['val_acc'])
+print('Best Validation Accuracy: {:.4f} at Epoch {}'.format(history.history['val_acc'][best_val_acc_index],
+                                                            best_val_acc_index))
 model_logger.learning_curve(history=history, save=False, show=True, title='Using ADADELTA')
 
+# evaluate
+evaluate_model_for_all_class(model, test_x=test_x, test_y=test_y_cat)
 
 # Grid search hyperparam -----------------------------------------------------------------------------------------------
 # WARNING: PLEASE SHUFFLE THE DATASET BEFORE PASSING FOR gridsearchcv.fit

@@ -166,6 +166,12 @@ def load_model(model_name=None):
 
 
 def evaluate_model_for_all_class(model, test_x, test_y):
+    '''
+    :param model: trained model
+    :param test_x: 2d ndarray
+    :param test_y: in one-hot encoding
+    :return:
+    '''
     # manual prediction, convert the output from one-hot encoding bac to class no
     # e.g. [0 1 0 0] --> 1, [0 0 1 0] --> 2
     # Make sure classes in the test_y are at subsequent order
