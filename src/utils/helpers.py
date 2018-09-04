@@ -822,6 +822,7 @@ def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale
     cwt_ax.grid(linestyle='dotted')
     cwt_ax.set_xlabel('Xcor step')
     cwt_ax.set_ylabel('Scale')
+    cwt_ax.set_xlim(left=lower_xcor_bound, right=upper_xcor_bound)
 
     return fig
 
