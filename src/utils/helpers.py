@@ -763,7 +763,7 @@ def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale
     :return: a figure of time series and cwt heatmap
     '''
 
-    fig = plt.figure(figsize=(8, 5.5))  # ori(10, 7.5)
+    fig = plt.figure(figsize=(10, 7.5))  # ori(10, 7.5)
     fig.suptitle(title, fontweight='bold')
 
     if no_of_time_series is 1:

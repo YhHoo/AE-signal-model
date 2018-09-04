@@ -75,13 +75,14 @@ for sensor_pair in sensor_pair_near:
         # print(mid)
         # print(max_xcor_vector)
 
-        plt.show()
+        # plt.show()
 
         # saving -------------------------------------------------------------------------------------------------------
-        # filename = direct_to_dir(where='result') + 'xcor_cwt_DistDiff[{}m]_sample[{}]'.format(dist_diff, sample_no)
-        # fig.savefig(filename)
-        # plt.close('all')
-        # print('Saving --> Dist_diff: {}m, Sample: {}'.format(dist_diff, sample_no))
+        filename = direct_to_dir(where='google_drive') + \
+                   'xcor_cwt_DistDiff[{}m]_sample[{}]'.format(dist_diff, sample_no)
+        fig.savefig(filename)
+        plt.close('all')
+        print('Saving --> Dist_diff: {}m, Sample: {}'.format(dist_diff, sample_no))
 
         sample_no += 1
 
