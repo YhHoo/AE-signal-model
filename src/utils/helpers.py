@@ -857,9 +857,9 @@ def scatter_plot(dataset, label, num_classes, feature_to_plot, annotate_all_poin
 
     # saving
     if save_data_to_csv:
-        save_filename = direct_to_dir(where='result') + title
+        save_filename = direct_to_dir(where='result') + title + '.csv'
         dl_df.to_csv(save_filename)
-        print('Scatter plot Saved --> {}.csv'.format(title))
+        print('Scatter plot Saved --> {}'.format(save_filename))
 
     # create class label
     legend_label = ['class[{}m]'.format(i) for i in range(11)]
