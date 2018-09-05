@@ -813,6 +813,7 @@ def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale
             # in imshow has forced us to use the real value scale value and not index
             cwt_ax.scatter(max_along_x + lower_xcor_bound, cwt_scale[row_no], s=70, c='black', marker='x')
 
+        cwt_ax.set_xlim(left=lower_xcor_bound, right=upper_xcor_bound)
         # max = np.unravel_index(np.argmax(cwt_mat, axis=None), cwt_mat.shape)
         # cwt_ax.scatter(max[1], cwt_scale[max[0]], s=70, c='black', marker='x')
 
@@ -826,7 +827,7 @@ def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale
     cwt_ax.grid(linestyle='dotted')
     cwt_ax.set_xlabel('Xcor step')
     cwt_ax.set_ylabel('Scale')
-    cwt_ax.set_xlim(left=lower_xcor_bound, right=upper_xcor_bound)
+
 
     return fig
 

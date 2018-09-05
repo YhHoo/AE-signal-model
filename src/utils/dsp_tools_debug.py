@@ -26,7 +26,19 @@ for i, j in zip(sine, w_noise):
     sine_w_noise.append(i+j)
 
 
-plt.plot(sine_w_noise)
+# plt.plot(sine_w_noise)
+# plt.show()
+
+# wavelet
+m_wavelet = 'gaus1'
+scale = np.linspace(2, 30, 100)
+fs = 1e6
+pos1_leak_cwt, _ = pywt.cwt(sine_w_noise, scales=scale, wavelet=m_wavelet, sampling_period=1 / fs)
+fig = plot_cwt_with_time_series(time_series=sine_w_noise,
+                                no_of_time_series=1,
+                                cwt_mat=pos1_leak_cwt,
+                                cwt_scale=scale)
+
 plt.show()
 
 
