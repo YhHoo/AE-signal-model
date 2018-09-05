@@ -73,9 +73,9 @@ model.compile(optimizer='adadelta', loss='categorical_crossentropy', metrics=['a
 model_logger = ModelLogger(model, model_name='fc_leak_1bar_max_vec_v2')
 history = model.fit(x=train_x,
                     y=train_y_cat,
-                    batch_size=300,
+                    batch_size=400,
                     validation_data=(test_x, test_y_cat),
-                    epochs=10,
+                    epochs=1000,
                     verbose=2)
 # find best val acc
 best_val_acc_index = np.argmax(history.history['val_acc'])

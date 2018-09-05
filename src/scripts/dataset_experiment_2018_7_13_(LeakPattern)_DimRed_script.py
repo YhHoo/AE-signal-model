@@ -70,7 +70,7 @@ tsne_op = True
 if tsne_op:
     time_start = time.time()
     # the more complex the data, set perplexity higher
-    tsne = TSNE(n_components=3, verbose=1, perplexity=70, n_iter=3000)
+    tsne = TSNE(n_components=3, verbose=1, perplexity=70, n_iter=10000)
     reduced_result = tsne.fit_transform(dataset)
     print('t-SNE done! Time elapsed: {} seconds'.format(time.time()-time_start))
     print('TSNE output DIM: ', reduced_result.shape)
@@ -78,7 +78,7 @@ if tsne_op:
 
 # visualize in scatter plot --------------------------------------------------------------------------------------------
 fig = scatter_plot(dataset=reduced_result, label=label, num_classes=11, feature_to_plot=(0, 1, 2),
-                   annotate_all_point=True, title='cwt_xcor_maxpoints_vector_dataset_bounded_xcor_3_(TSNE)',
+                   annotate_all_point=True, title='cwt_xcor_maxpoints_vector_dataset_bounded_xcor_3_(TSNE_10k_epoch)',
                    save_data_to_csv=True)
 plt.show()
 # fig_filename = direct_to_dir(where='result') + 'scatter_plot_(bounded_xcor)'

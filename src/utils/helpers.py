@@ -6,12 +6,16 @@ import keras.backend as K
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import AxesGrid
 from sklearn.metrics import confusion_matrix
+from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 from mpl_toolkits.mplot3d import Axes3D  # do not delete
 import numpy as np
 from nptdms import TdmsFile
 from os import listdir
 from matplotlib import cm
+import sys
+from vispy import app, visuals, scene
+
 
 class ProgressBarForLoop:
     '''
@@ -910,3 +914,48 @@ def scatter_plot(dataset, label, num_classes, feature_to_plot, annotate_all_poin
                     ax.text(one_class_vec[j, 0], one_class_vec[j, 1], one_class_vec[j, 2], i)
 
     return fig
+
+
+def scatter_plot_3d_vispy(dataset, label):
+    '''
+    :param dataset: 2d ndarray, where shape[0] -> sample size, shape[1] -> no of features
+    :param label: a 1d ndarray, non-one-hot-encoded
+    :return: ntg, jz plot
+    '''
+
+    # create class label
+    legend_label = ['class[{}m]'.format(i) for i in range(11)]
+
+    # config color scheme for scatter plot
+    cmap = cm.get_cmap('rainbow')
+
+    # convert the label to RGBA
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    label_normalized = scaler.fit_transform(label.reshape((-1, 1)).astype('float64'))
+    color_label_rgba = np.array([cmap(i) for i in label_normalized.ravel()])
+
+    # vispy code -------------------------------------------------------------------------------------------------------
+    # build your visuals, that's all
+    Scatter3D = scene.visuals.create_visual_node(visuals.MarkersVisual)
+
+    # The real-things : plot using scene
+    # build canvas
+    canvas = scene.SceneCanvas(keys='interactive', show=True)
+
+    # Add a ViewBox to let the user zoom/rotate
+    view = canvas.central_widget.add_view()
+    view.camera = 'turntable'
+    view.camera.fov = 45
+    view.camera.distance = 500
+
+    # plot ! note the parent parameter
+    p1 = Scatter3D(parent=view.scene)
+    p1.set_gl_state('translucent', blend=True, depth_test=True)
+    p1.set_data(dataset, face_color=color_label_rgba, symbol='o', size=10,
+                edge_width=0.5, edge_color='blue')
+
+    # run
+    app.run()
+    # if __name__ == '__main__':
+    #     if sys.flags.interactive != 1:
+    #         app.run()

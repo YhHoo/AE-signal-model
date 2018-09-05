@@ -22,57 +22,32 @@ from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
-                              break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
+                              break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical, \
+                              scatter_plot_3d_vispy
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-# pylint: disable=no-member
-""" scatter using MarkersVisual """
+tsne_filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_bounded_xcor_3_(TSNE_10k_epoch).csv'
 
-import numpy as np
-import sys
+tsne_df = pd.read_csv(tsne_filename, index_col=0)
+print(tsne_df.head())
 
-from vispy import app, visuals, scene
+dataset = tsne_df.values[:, :3]
+label = tsne_df.values[:, -1]
+print(dataset)
+print(label)
 
-
-# build your visuals, that's all
-Scatter3D = scene.visuals.create_visual_node(visuals.MarkersVisual)
-
-# The real-things : plot using scene
-# build canvas
-canvas = scene.SceneCanvas(keys='interactive', show=True)
-
-# Add a ViewBox to let the user zoom/rotate
-view = canvas.central_widget.add_view()
-view.camera = 'turntable'
-view.camera.fov = 45
-view.camera.distance = 500
-
-# data
-n = 500
-# generate 2 point clouds
-cloud1 = np.random.rand(n, 3) * 100
-cloud2 = np.random.rand(n, 3) * 100
-# cloud1 -> orange
-# cloud2 -> white
-color1 = np.array([[1, 0.4, 0]] * n)
-color2 = np.ones((n, 3))
-
-# stack point clouds and colors
-pos = np.vstack((cloud1, cloud2))
-colors = np.vstack((color1, color2))
-
-
-# plot ! note the parent parameter
-p1 = Scatter3D(parent=view.scene)
-p1.set_gl_state('translucent', blend=True, depth_test=True)
-p1.set_data(pos, face_color=colors, symbol='o', size=10,
-            edge_width=0.5, edge_color='blue')
-
-# run
-if __name__ == '__main__':
-    if sys.flags.interactive != 1:
-        app.run()
+# # data
+# n = 3000
+# # generate 2 point clouds
+# dataset = np.random.rand(n, 3) * 100
+#
+# color = np.array([0]*1500 + [1]*1500)
+# print(color.shape)
+# print(color)
+#
+#
+scatter_plot_3d_vispy(dataset=dataset, label=label)
 
 
 # l = [0, 0, 1, 0, 7, 11, 5, 2, 0, 0]
