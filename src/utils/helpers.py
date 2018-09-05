@@ -918,6 +918,7 @@ def scatter_plot(dataset, label, num_classes, feature_to_plot, annotate_all_poin
 
 def scatter_plot_3d_vispy(dataset, label):
     '''
+    code modified from https://stackoverflow.com/questions/44766591/vispy-two-data-sets-on-same-plot-with-colors
     :param dataset: 2d ndarray, where shape[0] -> sample size, shape[1] -> no of features
     :param label: a 1d ndarray, non-one-hot-encoded
     :return: ntg, jz plot
@@ -956,6 +957,8 @@ def scatter_plot_3d_vispy(dataset, label):
 
     # run
     app.run()
+
+
     # if __name__ == '__main__':
     #     if sys.flags.interactive != 1:
     #         app.run()
