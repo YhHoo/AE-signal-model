@@ -1,4 +1,4 @@
-
+import numpy as np
 from multiprocessing import Pool
 import gc
 from random import shuffle
@@ -15,6 +15,7 @@ from keras.utils import to_categorical
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, LabelBinarizer
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 from sklearn.model_selection import StratifiedKFold
+import mayavi.mlab as mlab
 
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
@@ -24,19 +25,69 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-l = [0, 0, 1, 0, 7, 11, 5, 2, 0, 0]
-m = [0, 7, 11, 5, 2, 0, 0, 1, 2, 2]
-z = correlate_scipy(in1=l, in2=m, mode='full', method='fft')
-print(z)
+
+# pylint: disable=no-member
+""" scatter using MarkersVisual """
+
+import numpy as np
+import sys
+
+from vispy import app, visuals, scene
+
+
+# build your visuals, that's all
+Scatter3D = scene.visuals.create_visual_node(visuals.MarkersVisual)
+
+# The real-things : plot using scene
+# build canvas
+canvas = scene.SceneCanvas(keys='interactive', show=True)
+
+# Add a ViewBox to let the user zoom/rotate
+view = canvas.central_widget.add_view()
+view.camera = 'turntable'
+view.camera.fov = 45
+view.camera.distance = 500
+
+# data
+n = 500
+# generate 2 point clouds
+cloud1 = np.random.rand(n, 3) * 100
+cloud2 = np.random.rand(n, 3) * 100
+# cloud1 -> orange
+# cloud2 -> white
+color1 = np.array([[1, 0.4, 0]] * n)
+color2 = np.ones((n, 3))
+
+# stack point clouds and colors
+pos = np.vstack((cloud1, cloud2))
+colors = np.vstack((color1, color2))
+
+
+# plot ! note the parent parameter
+p1 = Scatter3D(parent=view.scene)
+p1.set_gl_state('translucent', blend=True, depth_test=True)
+p1.set_data(pos, face_color=colors, symbol='o', size=10,
+            edge_width=0.5, edge_color='blue')
+
+# run
+if __name__ == '__main__':
+    if sys.flags.interactive != 1:
+        app.run()
+
+
+# l = [0, 0, 1, 0, 7, 11, 5, 2, 0, 0]
+# m = [0, 7, 11, 5, 2, 0, 0, 1, 2, 2]
+# z = correlate_scipy(in1=l, in2=m, mode='full', method='fft')
+# print(z)
 
 # testing grid search CV of sklearn ------------------------------------------------------------------------------------
 
 # Use scikit-learn to grid search the batch size and epochs
-import numpy
-from sklearn.model_selection import GridSearchCV
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.wrappers.scikit_learn import KerasClassifier
+# import numpy
+# from sklearn.model_selection import GridSearchCV
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from keras.wrappers.scikit_learn import KerasClassifier
 # Function to create model, required for KerasClassifier
 
 # def create_model():
