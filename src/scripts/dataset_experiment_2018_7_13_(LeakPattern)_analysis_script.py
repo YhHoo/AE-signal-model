@@ -14,7 +14,7 @@ scale = np.linspace(2, 30, 100)
 fs = 1e6
 
 # segmentation
-no_of_segment = 5  # 10 is showing a consistent pattern
+no_of_segment = 2  # 10 is showing a consistent pattern
 
 # DATA POINT ----------------------------------------------------------------------------------------------------------
 # read leak data

@@ -24,8 +24,11 @@ from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
-                              break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical
+                              break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical, \
+                              scatter_plot, scatter_plot_3d_vispy
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
+
+
 
 # dir = direct_to_dir(where='result') + 'test.csv'
 # df = pd.read_csv(dir)

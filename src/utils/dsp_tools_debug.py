@@ -10,9 +10,24 @@ from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmission
 from src.utils.dsp_tools import spectrogram_scipy, fft_scipy, one_dim_xcor_2d_input
 from src.utils.helpers import direct_to_dir, read_all_tdms_from_folder, plot_heatmap_series_in_one_column, \
                               plot_multiple_timeseries, plot_cwt_with_time_series, read_single_tdms
+from src.controlled_dataset.ideal_dataset import sine_wave_continuous, white_noise
 
-data_dir = direct_to_dir(where='yh_laptop_test_data') + 'plb/test_001.tdms'
-data = read_single_tdms(data_dir)
+fs = 200
+time_duration = 2
+time_axis = np.linspace(0, time_duration, time_duration*fs)
+sine = sine_wave_continuous(time_axis=time_axis, amplitude=2, fo=5, phase=0)
+w_noise = white_noise(time_axis=time_axis, power=0.1)
+
+print(sine.shape)
+print(w_noise.shape)
+# summing 2 signal
+sine_w_noise = []
+for i, j in zip(sine, w_noise):
+    sine_w_noise.append(i+j)
+
+
+plt.plot(sine_w_noise)
+plt.show()
 
 
 # CWT --> XCOR (using LAPTOP PLB test data)---------------
