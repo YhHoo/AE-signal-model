@@ -3,11 +3,12 @@
 # The Raw signal is sampled at 5MHz, So time btw points = 2e-7 s
 # ------------------------------------------------------
 
+import pywt
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft
 from scipy.signal import spectrogram, correlate
-from scipy.signal import cwt, ricker
+from statsmodels.robust import mad
 from scipy.signal import filtfilt, butter
 from sklearn.preprocessing import MinMaxScaler
 
@@ -26,7 +27,9 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=None):
         vis_max_freq_range = fs/2
 
     # Sample points and sampling frequency
-    N = sampled_data.size
+    # N = sampled_data.size  # deprecated on 6/9/18
+    N = len(sampled_data)
+
     # fft
     print('Scipy.FFT on {} points...'.format(N), end='')
     # take only half of the FFT output because it is a reflection
@@ -232,3 +235,24 @@ def one_dim_xcor_2d_input(input_mat, pair_list, verbose=False):
     return xcor_bank, xcor_axis
 
 
+def signal_smoothing_wavelet(x, wavelet="db4", level=1, title=None):
+    # calculate the wavelet coefficients
+    coeff = pywt.wavedec(x, wavelet, mode="per")
+    # calculate a threshold (Median Absolute Deviation) - find deviation of every item from median in a 1d array, then
+    # find the median of the deviation again.
+    sigma = mad(coeff[-level])
+    # changing this threshold also changes the behavior. This is universal threshold
+    uthresh = sigma * np.sqrt(2 * np.log(len(x)))
+    coeff[1:] = (pywt.threshold(i, value=uthresh, mode="soft") for i in coeff[1:])
+    # reconstruct the signal using the thresholded coefficients
+    x_smoothed = pywt.waverec(coeff, wavelet, mode="per")
+    # f, ax = plt.subplots()
+    # ax.plot(x, color="b", alpha=0.5)
+    # ax.plot(y, color="r")
+    # if title:
+    #     ax.set_title(title)
+    # ax.set_xlim((0, len(y)))
+    #
+    # plt.show()
+
+    return x_smoothed

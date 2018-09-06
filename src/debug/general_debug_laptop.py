@@ -28,7 +28,8 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               scatter_plot, scatter_plot_3d_vispy
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-
+for i in range(5, 1, -1):
+    print(i)
 
 # dir = direct_to_dir(where='result') + 'test.csv'
 # df = pd.read_csv(dir)

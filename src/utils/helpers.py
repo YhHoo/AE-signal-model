@@ -431,12 +431,12 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
     '''
     Aspect axis[0] of input is no. of sensors/diff features, axis[1] is time steps. All time series has to be
     SAME length !
-    :param input: a 2d array
+    :param input: a 2d-array / list
     :param subplot_titles: title for every plot
     :param main_title: the big title
     :return: rectangular fig obj
     '''
-    no_of_plot = input.shape[0]
+    no_of_plot = len(input)
     fig = plt.figure(figsize=(5, 8))
     fig.suptitle(main_title, fontweight="bold")
     fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
@@ -449,6 +449,39 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
         ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1)  # add in sharey=ax1 if wan to share y axis too
         ax.plot(input[i])
         ax.set_title(subplot_titles[i], size=8)
+
+    return fig
+
+
+def plot_multiple_level_decomposition(ori_signal, dec_signal, dec_titles, main_title, fs):
+    '''
+    Time series signal need not be same length, but the axis will be different
+    :param ori_signal: 1d-array
+    :param dec_signal: a 2d-array / list
+    :param dec_titles: title for every dec, starting fr
+    :param main_title: the big title
+    :param show_fft_of_each_plot: show fft on the right of every plot
+    :return: rectangular fig obj
+    '''
+    no_of_plot = len(dec_signal)
+    fig = plt.figure(figsize=(5, 8))
+    fig.suptitle(main_title, fontweight="bold")
+    fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
+
+    # left plot
+    ax1 = fig.add_subplot(no_of_plot+1, 2, 1)
+    ax1.plot(ori_signal)
+    ax1.set_title('Original Signal', size=8)
+    ax1.grid(linestyle='dotted')
+    # the rest of the plot
+    for i in range(0, no_of_plot, 1):
+        ax = fig.add_subplot(no_of_plot+1, 2, i+2)  # add in sharey=ax1 if wan to share y axis too
+        ax.plot(dec_signal[i])
+        ax.set_title(dec_titles[i], size=8)
+        ax.grid(linestyle='dotted')
+
+    # right plot
+    all_signal =
 
     return fig
 
@@ -827,7 +860,6 @@ def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale
     cwt_ax.grid(linestyle='dotted')
     cwt_ax.set_xlabel('Xcor step')
     cwt_ax.set_ylabel('Scale')
-
 
     return fig
 
