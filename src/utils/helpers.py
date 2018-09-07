@@ -15,6 +15,8 @@ from os import listdir
 from matplotlib import cm
 import sys
 from vispy import app, visuals, scene
+# self lib
+from src.utils.dsp_tools import fft_scipy
 
 
 class ProgressBarForLoop:
@@ -320,8 +322,8 @@ def break_balanced_class_into_train_test(input, label, num_classes, shuffled_eac
     return train_x, train_y, test_x, test_y
 
 
-def three_dim_visualizer(x_axis, y_axis, zxx, label=('x', 'y', 'z'), output='2d',
-                         title='None', vis_range=[None, None, None, None]):
+def heatmap_visualizer(x_axis, y_axis, zxx, label=('x', 'y', 'z'), output='2d',
+                       title='None', vis_range=[None, None, None, None]):
     '''
     Recommend for heatmap
     :param x_axis: the actual x-axis we wish to see in cartesian plane
@@ -453,35 +455,67 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
     return fig
 
 
-def plot_multiple_level_decomposition(ori_signal, dec_signal, dec_titles, main_title, fs):
+def plot_multiple_level_decomposition(ori_signal, dec_signal, dec_level, main_title, fs):
     '''
-    Time series signal need not be same length, but the axis will be different
+    Recommendation:
+    This fn plot the output from pywt.wavdec(), ideal for plotting original and dec signal on the left column, tgt
+    with their fft on the right column.
+
+    Generally:
+    It will append the ori_signal and dec_signal into a list. Then find fft of each of them, plot all of them on 2 col
+
+    Warning:
+    Time series signal need not be same length, but the axis values will be different. all signal will
+    b stretched to the same length.
+
     :param ori_signal: 1d-array
-    :param dec_signal: a 2d-array / list
+    :param dec_signal: a 2d-array / list of 1d array (** i.e. output of pywt.wavedec() )
     :param dec_titles: title for every dec, starting fr
     :param main_title: the big title
-    :param show_fft_of_each_plot: show fft on the right of every plot
-    :return: rectangular fig obj
+    :return: fig obj
     '''
-    no_of_plot = len(dec_signal)
+
     fig = plt.figure(figsize=(5, 8))
     fig.suptitle(main_title, fontweight="bold")
-    fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
+    fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03, left=0.08, right=0.95)
 
-    # left plot
-    ax1 = fig.add_subplot(no_of_plot+1, 2, 1)
-    ax1.plot(ori_signal)
-    ax1.set_title('Original Signal', size=8)
-    ax1.grid(linestyle='dotted')
-    # the rest of the plot
-    for i in range(0, no_of_plot, 1):
-        ax = fig.add_subplot(no_of_plot+1, 2, i+2)  # add in sharey=ax1 if wan to share y axis too
-        ax.plot(dec_signal[i])
-        ax.set_title(dec_titles[i], size=8)
+    # append all signal into a list
+    all_signal = list()
+    all_signal.append(ori_signal)
+    for arr in dec_signal:
+        all_signal.append(arr.tolist())
+
+    no_of_column_plot = len(all_signal)
+
+    # create labels for plots
+    plot_label = ['original'] + ['cA_{}'.format(dec_level)] + ['cD_{}'.format(i) for i in range(dec_level, 0, -1)]
+
+    # fft for all signal
+    fft_mag_store = list()
+    f_axis_store = list()
+    for signal in all_signal:
+        f_mag, _, f_axis = fft_scipy(sampled_data=signal, fs=fs, visualize=False)
+        fft_mag_store.append(f_mag)
+        f_axis_store.append(f_axis)
+
+    # plot all
+    for i in range(0, no_of_column_plot, 1):
+        # left column, 1, 3, 5, 7 ... for dec signal
+        ax = fig.add_subplot(no_of_column_plot, 2, i*2 + 1)
+        ax.plot(all_signal[i])
         ax.grid(linestyle='dotted')
+        ax.set_title(plot_label[i], size=8)
 
-    # right plot
-    all_signal =
+        # odd plot 1, 3, 5, ... for fft of dec signal
+        ax = fig.add_subplot(no_of_column_plot, 2, i*2 + 2)
+        ax.plot(f_axis_store[i], fft_mag_store[i])
+        ax.grid(linestyle='dotted')
+        ax.set_title(plot_label[i], size=8)
+        ax.set_xlabel('Freq (Hz)')
+        ax.set_ylabel('Amplitude')
+
+        # use scitific notation on y axis of fft plot
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
     return fig
 
@@ -880,6 +914,10 @@ def scatter_plot(dataset, label, num_classes, feature_to_plot, annotate_all_poin
                  save_data_to_csv=False):
     '''
     This plot is recommended for usage on PCA and T-sne data, from 2d to 3d
+
+    Drawbacks:
+    3d visualizing lags when the points exceed 1000, use scatter_plot_3d_vispy()
+
     :param dataset: a 2d np array, where shape[0] -> sample size, shape[1] -> no of features
     :param label: label is a 1d np array (not in one hot encoding), which must aligned with dataset
     :param num_classes: num of labels present
@@ -952,13 +990,20 @@ def scatter_plot(dataset, label, num_classes, feature_to_plot, annotate_all_poin
 def scatter_plot_3d_vispy(dataset, label):
     '''
     code modified from https://stackoverflow.com/questions/44766591/vispy-two-data-sets-on-same-plot-with-colors
-    :param dataset: 2d ndarray, where shape[0] -> sample size, shape[1] -> no of features
+    :param dataset: 2d ndarray, where shape[0] -> sample size, shape[1] -> no of features(i.e. mz be 3**)
     :param label: a 1d ndarray, non-one-hot-encoded
     :return: ntg, jz plot
-    '''
 
-    # create class label
-    legend_label = ['class[{}m]'.format(i) for i in range(11)]
+    e.g. if the tsne has to be read from a csv file, where first 3 cols are the coordinate, last col is the label,
+    use the quick code suggested below:
+
+    tsne_filename = direct_to_dir(where='result') + 'xxx.csv'
+    tsne_df = pd.read_csv(tsne_filename, index_col=0)
+    dataset = tsne_df.values[:, :3]
+    label = tsne_df.values[:, -1]
+    scatter_plot_3d_vispy(dataset=dataset, label=label)
+
+    '''
 
     # config color scheme for scatter plot
     cmap = cm.get_cmap('rainbow')
@@ -990,8 +1035,3 @@ def scatter_plot_3d_vispy(dataset, label):
 
     # run
     app.run()
-
-
-    # if __name__ == '__main__':
-    #     if sys.flags.interactive != 1:
-    #         app.run()

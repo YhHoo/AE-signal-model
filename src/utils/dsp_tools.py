@@ -31,7 +31,7 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=None):
     N = len(sampled_data)
 
     # fft
-    print('Scipy.FFT on {} points...'.format(N), end='')
+    # print('Scipy.FFT on {} points...'.format(N), end='')
     # take only half of the FFT output because it is a reflection
     # take abs because the FFT output is complex
     # divide by N to reduce the amplitude to correct one
@@ -65,7 +65,6 @@ def fft_scipy(sampled_data=None, fs=1, visualize=True, vis_max_freq_range=None):
         plt.ylabel('Phase')
 
         plt.show()
-    print('[Done]')
 
     return y_fft_mag, y_fft_phase, f_axis
 
@@ -235,24 +234,27 @@ def one_dim_xcor_2d_input(input_mat, pair_list, verbose=False):
     return xcor_bank, xcor_axis
 
 
-def signal_smoothing_wavelet(x, wavelet="db4", level=1, title=None):
+def dwt_smoothing(x, wavelet="db4", level=1):
+    '''
+    :param x: 1d array / list of points (1d signal)
+    :param wavelet: wavelet of pywt
+    :param level: the approximate level that is taken to calc the universal threshold for threshold-ing
+    :return: 1d array
+    '''
     # calculate the wavelet coefficients
     coeff = pywt.wavedec(x, wavelet, mode="per")
+
     # calculate a threshold (Median Absolute Deviation) - find deviation of every item from median in a 1d array, then
     # find the median of the deviation again.
     sigma = mad(coeff[-level])
+
     # changing this threshold also changes the behavior. This is universal threshold
     uthresh = sigma * np.sqrt(2 * np.log(len(x)))
+
+    # thresholding on all the detail components, using universal threshold from the level (-level)
     coeff[1:] = (pywt.threshold(i, value=uthresh, mode="soft") for i in coeff[1:])
+
     # reconstruct the signal using the thresholded coefficients
     x_smoothed = pywt.waverec(coeff, wavelet, mode="per")
-    # f, ax = plt.subplots()
-    # ax.plot(x, color="b", alpha=0.5)
-    # ax.plot(y, color="r")
-    # if title:
-    #     ax.set_title(title)
-    # ax.set_xlim((0, len(y)))
-    #
-    # plt.show()
 
     return x_smoothed

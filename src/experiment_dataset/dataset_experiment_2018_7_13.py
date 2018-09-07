@@ -8,7 +8,7 @@ from os import listdir
 from sklearn.preprocessing import StandardScaler
 # self library
 from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, plot_simple_heatmap, \
-                              three_dim_visualizer, ProgressBarForLoop, direct_to_dir, shuffle_in_unison
+                              heatmap_visualizer, ProgressBarForLoop, direct_to_dir, shuffle_in_unison
 from src.utils.dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, one_dim_xcor_2d_input
 
 
@@ -318,24 +318,24 @@ class AcousticEmissionDataSet_13_7_2018:
             savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
             visualize = False
             if visualize:
-                fig_1 = three_dim_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
-                                             y_axis=np.arange(0, xcor_map.shape[1], 1),
-                                             zxx=xcor_map[0],
-                                             output='2d',
-                                             label=['xcor step', 'freq'],
-                                             title='(-2, 2)')
-                fig_2 = three_dim_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
-                                             y_axis=np.arange(0, xcor_map.shape[1], 1),
-                                             zxx=xcor_map[1],
-                                             output='2d',
-                                             label=['xcor step', 'freq'],
-                                             title='(-2, 4)')
-                fig_3 = three_dim_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
-                                             y_axis=np.arange(0, xcor_map.shape[1], 1),
-                                             zxx=xcor_map[2],
-                                             output='2d',
-                                             label=['xcor step', 'freq'],
-                                             title='(-2, 6)')
+                fig_1 = heatmap_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
+                                           y_axis=np.arange(0, xcor_map.shape[1], 1),
+                                           zxx=xcor_map[0],
+                                           output='2d',
+                                           label=['xcor step', 'freq'],
+                                           title='(-2, 2)')
+                fig_2 = heatmap_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
+                                           y_axis=np.arange(0, xcor_map.shape[1], 1),
+                                           zxx=xcor_map[1],
+                                           output='2d',
+                                           label=['xcor step', 'freq'],
+                                           title='(-2, 4)')
+                fig_3 = heatmap_visualizer(x_axis=np.arange(0, xcor_map.shape[2], 1),
+                                           y_axis=np.arange(0, xcor_map.shape[1], 1),
+                                           zxx=xcor_map[2],
+                                           output='2d',
+                                           label=['xcor step', 'freq'],
+                                           title='(-2, 6)')
 
                 fig_1_title = '{}sample{}_xcormap(-2, 2)'.format(savepath, progress)
                 fig_2_title = '{}sample{}_xcormap(-2, 4)'.format(savepath, progress)
@@ -461,7 +461,7 @@ class AcousticEmissionDataSet_13_7_2018:
             print('all_class dim: ', temp.shape)
 
             # free up memory for unwanted variable
-            pos1_leak_cwt, pos2_leak_cwt, n_channel_data_near_leak, l = None, None, None, None
+            pos1_leak_cwt, pos2_leak_cwt, n_channel_data_near_leak = None, None, None
             gc.collect()
 
         # transfer all data from dict to array

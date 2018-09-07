@@ -27,26 +27,10 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-tsne_filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_bounded_xcor_3_(TSNE_10k_epoch).csv'
-
+tsne_filename = direct_to_dir(where='result') + 'xxx.csv'
 tsne_df = pd.read_csv(tsne_filename, index_col=0)
-print(tsne_df.head())
-
 dataset = tsne_df.values[:, :3]
 label = tsne_df.values[:, -1]
-print(dataset)
-print(label)
-
-# # data
-# n = 3000
-# # generate 2 point clouds
-# dataset = np.random.rand(n, 3) * 100
-#
-# color = np.array([0]*1500 + [1]*1500)
-# print(color.shape)
-# print(color)
-#
-#
 scatter_plot_3d_vispy(dataset=dataset, label=label)
 
 

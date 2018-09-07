@@ -6,7 +6,21 @@ from sklearn.preprocessing import MinMaxScaler
 from scipy.signal import gausspulse
 # self defined library
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input
-from src.utils.helpers import three_dim_visualizer, ProgressBarForLoop
+from src.utils.helpers import heatmap_visualizer, ProgressBarForLoop
+
+
+def bumps(x):
+    """
+    A sum of bumps with locations t at the same places as jumps in blocks.
+    The heights h and widths s vary and the individual bumps are of the
+    form K(t) = 1/(1+|x|)**4
+    """
+    K = lambda x: (1. + np.abs(x)) ** -4.
+    t = np.array([[.1, .13, .15, .23, .25, .4, .44, .65, .76, .78, .81]]).T
+    h = np.array([[4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 2.1, 4.2]]).T
+    w = np.array([[.005, .005, .006, .01, .01, .03, .01, .01, .005, .008, .005]]).T
+
+    return np.sum(h * K((x - t) / w), axis=0)
 
 
 # --------------[Sine wave of increasing freq]--------------------
@@ -236,11 +250,11 @@ def noise_time_shift_xcor_return(time_axis, fs, random_seed=None, num_series=1, 
 
             # Print all xcor_map
             if visualize_xcor_map:
-                three_dim_visualizer(x_axis=np.arange(1, xcor_of_each_f_list.shape[1] + 1, 1),
-                                     y_axis=f,
-                                     zxx=xcor_of_each_f_list,
-                                     label=['Xcor_steps', 'Frequency', 'Correlation Score'],
-                                     output='color_map')
+                heatmap_visualizer(x_axis=np.arange(1, xcor_of_each_f_list.shape[1] + 1, 1),
+                                   y_axis=f,
+                                   zxx=xcor_of_each_f_list,
+                                   label=['Xcor_steps', 'Frequency', 'Correlation Score'],
+                                   output='color_map')
             # put into different classes according to their shift
             if j is 1:
                 class_1.append(xcor_of_each_f_list)

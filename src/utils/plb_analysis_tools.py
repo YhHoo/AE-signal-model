@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 # self lib
 from src.utils.dsp_tools import one_dim_xcor_2d_input, spectrogram_scipy
-from src.utils.helpers import three_dim_visualizer
+from src.utils.helpers import heatmap_visualizer
 
 
 def dual_sensor_xcor_with_stft_qiuckview(data_1, data_2, stft_mode, stft_nperseg=500, plot_label=None,
@@ -65,13 +65,13 @@ def dual_sensor_xcor_with_stft_qiuckview(data_1, data_2, stft_mode, stft_nperseg
     xcor_map = one_dim_xcor_2d_input(input_mat=stft_map,
                                      pair_list=sensor_pair,
                                      verbose=True)
-    fig_xcor = three_dim_visualizer(x_axis=np.arange(1, xcor_map.shape[2] + 1, 1),
-                                    y_axis=freq_axis,
-                                    zxx=xcor_map[0],
-                                    label=['Xcor_steps', 'Frequency', 'Correlation Score'],
-                                    output='2d', vis_range=[0, 1e5, None, None],
-                                    title='PLB {} Map Xcor - Sensor[{}] x Sensor[{}] - @ {}'
-                                    .format(stft_mode, plot_label[1], plot_label[2], plot_label[0]))
+    fig_xcor = heatmap_visualizer(x_axis=np.arange(1, xcor_map.shape[2] + 1, 1),
+                                  y_axis=freq_axis,
+                                  zxx=xcor_map[0],
+                                  label=['Xcor_steps', 'Frequency', 'Correlation Score'],
+                                  output='2d', vis_range=[0, 1e5, None, None],
+                                  title='PLB {} Map Xcor - Sensor[{}] x Sensor[{}] - @ {}'
+                                  .format(stft_mode, plot_label[1], plot_label[2], plot_label[0]))
 
     # saving 4 fig ---------------------------------------------------------------
     dir = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'

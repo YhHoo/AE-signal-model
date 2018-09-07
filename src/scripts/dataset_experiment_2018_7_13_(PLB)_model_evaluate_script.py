@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix, f1_score
 # self defined library
 from src.utils.helpers import load_model, evaluate_model_for_all_class, break_balanced_class_into_train_test, \
-                              reshape_3d_to_4d_tocategorical, three_dim_visualizer, compute_recall_precision_multiclass
+                              reshape_3d_to_4d_tocategorical, heatmap_visualizer, compute_recall_precision_multiclass
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 
 # -------------------[LOADING DATA]----------------------------

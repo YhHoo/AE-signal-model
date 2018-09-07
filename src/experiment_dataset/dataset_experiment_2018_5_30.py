@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 # self library
-from src.utils.helpers import read_all_tdms_from_folder, three_dim_visualizer, ProgressBarForLoop
+from src.utils.helpers import read_all_tdms_from_folder, heatmap_visualizer, ProgressBarForLoop
 from src.utils.dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, one_dim_xcor_2d_input
 
 

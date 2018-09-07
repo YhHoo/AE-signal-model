@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import pywt
 # self lib
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
-from src.utils.dsp_tools import spectrogram_scipy, fft_scipy, one_dim_xcor_2d_input, signal_smoothing_wavelet
+from src.utils.dsp_tools import spectrogram_scipy, fft_scipy, one_dim_xcor_2d_input, dwt_smoothing
 from src.utils.helpers import direct_to_dir, read_all_tdms_from_folder, plot_heatmap_series_in_one_column, \
                               plot_multiple_timeseries, plot_cwt_with_time_series, read_single_tdms, \
                               plot_multiple_level_decomposition
@@ -15,108 +15,7 @@ from src.controlled_dataset.ideal_dataset import sine_wave_continuous, white_noi
 from statsmodels.robust import mad
 
 
-def waveletSmooth(x, wavelet="db4", level=1, title=None):
-    # calculate the wavelet coefficients (take level as dwt_max_level)
-    coeff = pywt.wavedec(x, wavelet, mode="per")
-    # calculate a threshold (Median Absolute Deviation) - find deviation of every item from median in a 1d array, then
-    # find the median of the deviation again.
-    sigma = mad(coeff[-level])
-    # changing this threshold also changes the behavior. This is universal threshold
-    uthresh = sigma * np.sqrt(2 * np.log(len(x)))
-    # thresholding on all the detail components, using universal threshold from the level (-level)
-    coeff[1:] = (pywt.threshold(i, value=uthresh, mode="soft") for i in coeff[1:])
-    # reconstruct the signal using the thresholded coefficients
-    y = pywt.waverec(coeff, wavelet, mode="per")
-    f, ax = plt.subplots()
-    ax.plot(x, color="b", alpha=0.5)
-    ax.plot(y, color="r")
-    if title:
-        ax.set_title(title)
-    ax.set_xlim((0, len(y)))
-
-    plt.show()
-
-
-def bumps(x):
-    """
-    A sum of bumps with locations t at the same places as jumps in blocks.
-    The heights h and widths s vary and the individual bumps are of the
-    form K(t) = 1/(1+|x|)**4
-    """
-    K = lambda x : (1. + np.abs(x)) ** -4.
-    t = np.array([[.1, .13, .15, .23, .25, .4, .44, .65, .76, .78, .81]]).T
-    h = np.array([[4, 5, 3, 4, 5, 4.2, 2.1, 4.3, 3.1, 2.1, 4.2]]).T
-    w = np.array([[.005, .005, .006, .01, .01, .03, .01, .01, .005, .008, .005]]).T
-    return np.sum(h*K((x-t)/w), axis=0)
-
-
-# time domain setting
-fs = 1000
-time_duration = 1
-time_axis = np.linspace(0, time_duration, time_duration*fs)
-
-# bump signal
-bump_sig = bumps(x=time_axis)
-
-
-# noise signal
-w_noise = white_noise(time_axis=time_axis, power=0.01)
-# sine = sine_wave_continuous(time_axis=time_axis, amplitude=2, fo=100, phase=0)
-
-# summing 2 signal
-sig_mix = []
-for i, j in zip(bump_sig, w_noise):
-    sig_mix.append(i+j)
-
-# denoised_sig = signal_smoothing_wavelet(x=sig_mix)
-# print(denoised_sig.shape)
-
-
-# wavelet decomposition
-w = pywt.Wavelet('db4')
-dec_level = 3
-print('MAX DEC LEVEL: ', pywt.dwt_max_level(data_len=len(time_axis), filter_len=w.dec_len))
-coeff = pywt.wavedec(sig_mix, w, mode="per", level=dec_level)
-dec_titles = ['cA_{}'.format(dec_level)] + ['cD_{}'.format(i) for i in range(dec_level, 0, -1)]
-print(dec_titles)
-fig = plot_multiple_level_decomposition(ori_signal=sig_mix,
-                                        dec_signal=coeff,
-                                        dec_titles=dec_titles,
-                                        main_title='wavelet decomposition')
-
-f_mag, _, f_axis = fft_scipy(sampled_data=coeff[0],
-                             fs=fs,
-                             visualize=False)
-fig2 = plt.figure()
-ax = fig2.add_subplot(1, 1, 1)
-ax.plot(f_axis, f_mag)
-
-# for arr in coeff:
-#     print(arr.shape)
-#
-# ax_dec_1.plot(coeff[0])
-# ax_dec_2.plot(coeff[-1])
-
-
-# fft_scipy(sampled_data=sig_mix, fs=fs, visualize=True)
-# # waveletSmooth(x=sine_w_noise, level=4)
-#
-# # wavelet
-# m_wavelet = 'gaus2'
-# scale = np.linspace(1, 30, 100)
-# cwt_out, freq = pywt.cwt(sine, scales=scale, wavelet=m_wavelet, sampling_period=1 / fs)
-# fig = plot_cwt_with_time_series(time_series=sine,
-#                                 no_of_time_series=1,
-#                                 cwt_mat=cwt_out,
-#                                 cwt_scale=scale)
-# print(freq)
-
-# plt.grid(linestyle='dotted')
-plt.show()
-
-
-
-# # CWT --> XCOR (using LAPTOP PLB test data)-----------------------------------------------------------------------------
+# # CWT --> XCOR (using LAPTOP PLB test data)---------------------------------------------------------------------------
 # op_1 = False
 # if op_1:
 #     # data slicing and reading

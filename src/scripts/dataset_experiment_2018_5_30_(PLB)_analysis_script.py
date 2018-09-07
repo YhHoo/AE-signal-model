@@ -8,7 +8,7 @@ from scipy.signal import cwt, ricker, find_peaks_cwt
 # self lib
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 from src.utils.dsp_tools import one_dim_xcor_2d_input, butter_bandpass_filtfilt
-from src.utils.helpers import three_dim_visualizer
+from src.utils.helpers import heatmap_visualizer
 from src.utils.plb_analysis_tools import dual_sensor_xcor_with_stft_qiuckview
 
 
