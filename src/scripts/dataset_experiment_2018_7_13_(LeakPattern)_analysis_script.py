@@ -15,7 +15,10 @@ from src.utils.dsp_tools import one_dim_xcor_2d_input, dwt_smoothing
 
 # CONFIG --------------------------------------------------------------------------------------------------------------
 # wavelet
-m_wavelet = 'gaus1'
+dwt_wavelet = 'db2'
+dwt_smooth_level = 3
+
+cwt_wavelet = 'gaus1'
 scale = np.linspace(2, 30, 100)
 fs = 1e6
 
@@ -47,6 +50,7 @@ print('Each Segment Dim: ', n_channel_leak[0].shape)
 # CWT + XCOR + VISUALIZE SCRIPT ---------------------------------------------------------------------------------------
 # xcor pairing commands - [near] = 0m, 1m,..., 10m
 sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+# sensor_dwt_level = np.array([4, 4, 4, 5, 4, 5, 5, 5]) - 1
 # sensor_pair_near = [(1, 7)]
 
 dist_diff = 0
@@ -56,11 +60,15 @@ for sensor_pair in sensor_pair_near:
     # for all segmented signals
     for segment in n_channel_leak:
         # signal denoising
-        signal_1_denoised = dwt_smoothing(x=segment[sensor_pair[0]], wavelet='db4', level=3)
-        signal_2_denoised = dwt_smoothing(x=segment[sensor_pair[1]], wavelet='db4', level=3)
+        signal_1_denoised = dwt_smoothing(x=segment[sensor_pair[0]],
+                                          wavelet=dwt_wavelet,
+                                          level=dwt_smooth_level)
+        signal_2_denoised = dwt_smoothing(x=segment[sensor_pair[1]],
+                                          wavelet=dwt_wavelet,
+                                          level=dwt_smooth_level)
 
-        pos1_leak_cwt, _ = pywt.cwt(signal_1_denoised, scales=scale, wavelet=m_wavelet, sampling_period=1 / fs)
-        pos2_leak_cwt, _ = pywt.cwt(signal_2_denoised, scales=scale, wavelet=m_wavelet, sampling_period=1 / fs)
+        pos1_leak_cwt, _ = pywt.cwt(signal_1_denoised, scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
+        pos2_leak_cwt, _ = pywt.cwt(signal_2_denoised, scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
 
         # xcor for every pair of cwt
         xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
@@ -71,7 +79,7 @@ for sensor_pair in sensor_pair_near:
                                                                                                       dist_diff,
                                                                                                       sample_no)
 
-        fig = plot_cwt_with_time_series(time_series=[segment[sensor_pair[0]], segment[sensor_pair[1]]],
+        fig = plot_cwt_with_time_series(time_series=[signal_1_denoised, signal_2_denoised],
                                         no_of_time_series=2,
                                         cwt_mat=xcor,
                                         cwt_scale=scale,
@@ -81,15 +89,8 @@ for sensor_pair in sensor_pair_near:
         # only for showing the max point vector
         show_xcor = False
         if show_xcor:
-            mid = xcor.shape[1] // 2 + 1
-            max_xcor_vector = []
-            for row in xcor:
-                max_along_x = np.argmax(row)
-                max_xcor_vector.append(max_along_x - mid)
-            print(max_xcor_vector)
-
             plt.show()
-            plt.close('all')
+            # plt.close('all')
 
         # saving the plot ----------------------------------------------------------------------------------------------
         saving = True

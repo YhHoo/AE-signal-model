@@ -10,12 +10,16 @@ from src.utils.helpers import direct_to_dir, read_all_tdms_from_folder, plot_mul
 from src.utils.dsp_tools import dwt_smoothing
 
 # CONFIG --------------------------------------------------------------------------------------------------------------
-# CWT
-m_wavelet = 'gaus1'
+# wavelet
+cwt_wavelet = 'gaus1'
+dwt_wavelet = 'db2'
+dwt_smooth_level = 3
+# dwt_dec_level = 5
 scale = np.linspace(2, 30, 100)
 fs = 1e6
-# for splitting the 5M points signal
-no_of_segment = 50
+
+# segmentation
+no_of_segment = 10  # 10 is showing a consistent pattern
 
 # DATA READING ---------------------------------------------------------------------------------------------------------
 on_pc = True
@@ -29,29 +33,40 @@ else:
     n_channel_leak = np.swapaxes(n_channel_leak, 1, 2)
     n_channel_leak = n_channel_leak[0]
 
-# processing
-
-
 # break into a list of segmented points
 n_channel_leak = np.split(n_channel_leak, axis=1, indices_or_sections=no_of_segment)
 print('Total Segment: ', len(n_channel_leak))
 print('Each Segment Dim: ', n_channel_leak[0].shape)
 
-# DWT DENOISING --------------------------------------------------------------------------------------------------------
-input_signal = n_channel_leak[0][1, :]
+# signal selection
+input_signal_1 = n_channel_leak[0][1, :]
+input_signal_2 = n_channel_leak[0][5, :]
 
-w = pywt.Wavelet('db4')
-dec_level = 5
-print('MAX DEC LEVEL: ', pywt.dwt_max_level(data_len=len(input_signal), filter_len=w.dec_len))
+# DWT DENOISING --------------------------------------------------------------------------------------------------------
+
+print('MAX DEC LEVEL: ', pywt.dwt_max_level(data_len=len(input_signal_1), filter_len=pywt.Wavelet(dwt_wavelet).dec_len))
 
 # smoothing using dwt
-input_signal_denoised = dwt_smoothing(x=input_signal, wavelet='db4', level=3)
-print(len(input_signal_denoised))
+input_signal_denoised_1 = dwt_smoothing(x=input_signal_1, wavelet=dwt_wavelet, level=dwt_smooth_level)
+input_signal_denoised_2 = dwt_smoothing(x=input_signal_2, wavelet=dwt_wavelet, level=dwt_smooth_level)
 
-plt.plot(input_signal, c='b', label='Ori')
-plt.plot(input_signal_denoised, alpha=0.5, c='r', label='Denoised')
-plt.legend()
-plt.grid(linestyle='dotted')
+fig = plt.figure()
+fig.suptitle('{} + smooth using level: {}'.format(dwt_wavelet, dwt_smooth_level))
+ax1 = fig.add_subplot(2, 1, 1)
+ax2 = fig.add_subplot(2, 1, 2)
+
+ax1.plot(input_signal_1, c='b', label='Ori')
+ax1.plot(input_signal_denoised_1, alpha=0.5, c='r', label='Denoised')
+ax1.legend()
+ax1.grid(linestyle='dotted')
+ax1.set_title('Sensor 1')
+
+ax2.plot(input_signal_2, c='b', label='Ori')
+ax2.plot(input_signal_denoised_2, alpha=0.5, c='r', label='Denoised')
+ax2.legend()
+ax2.grid(linestyle='dotted')
+ax2.set_title('Sensor 2')
+
 
 # # decomposition
 # coeff = pywt.wavedec(input_signal, wavelet='db4', mode="per", level=dec_level)

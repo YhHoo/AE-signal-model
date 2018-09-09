@@ -27,12 +27,9 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-tsne_filename = direct_to_dir(where='result') + 'xxx.csv'
-tsne_df = pd.read_csv(tsne_filename, index_col=0)
-dataset = tsne_df.values[:, :3]
-label = tsne_df.values[:, -1]
-scatter_plot_3d_vispy(dataset=dataset, label=label)
-
+l = np.array([1, 2, 3])
+l2 = l - 1
+print(l2)
 
 # l = [0, 0, 1, 0, 7, 11, 5, 2, 0, 0]
 # m = [0, 7, 11, 5, 2, 0, 0, 1, 2, 2]
