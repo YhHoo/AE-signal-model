@@ -27,8 +27,8 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               scatter_plot_3d_vispy, scatter_plot, plot_multiple_timeseries, plot_cwt_with_time_series
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-dwt_wavelet = 'db2'
-dwt_smooth_level = 4
+dwt_wavelet = 'haar'
+dwt_smooth_level = 5
 cwt_wavelet = 'gaus1'
 scale = np.linspace(2, 30, 100)
 fs = 1e6
@@ -48,7 +48,7 @@ for signal in n_channel_data_near_leak:
     temp.append(denoised_signal)
 n_channel_data_near_leak = np.array(temp)
 # segment of interest
-n_channel_data_near_leak = n_channel_data_near_leak[:, 1100000:1117500]
+n_channel_data_near_leak = n_channel_data_near_leak[:, 3278910:3296410]
 
 # visualize in time
 title = np.arange(0, 8, 1)
@@ -75,7 +75,7 @@ for sensor_pair in sensor_pair_near:
     xcor = xcor[0]
 
     # visualizing
-    fig_title = 'Xcor of CWT of Sensor[{}] and Sensor[{}] -- Dist_Diff[{}m] --[1100000:1117500]'.format(sensor_pair[0],
+    fig_title = 'Xcor of CWT of Sensor[{}] and Sensor[{}] -- Dist_Diff[{}m] --[3278910:3296410]'.format(sensor_pair[0],
                                                                                                       sensor_pair[1],
                                                                                                       dist_diff)
 
@@ -84,14 +84,14 @@ for sensor_pair in sensor_pair_near:
                                     cwt_mat=xcor,
                                     cwt_scale=scale,
                                     title=fig_title,
-                                    maxpoint_searching_bound=(1117500-1100000))
+                                    maxpoint_searching_bound=(3296410-3278910))
 
     # plt.show()
 
     saving = True
     if saving:
         filename = direct_to_dir(where='result') + \
-                   'xcor_cwt_DistDiff[{}m]--[1100000_1117500]'.format(dist_diff)
+                   'xcor_cwt_DistDiff[{}m]--[3278910_3296410]'.format(dist_diff)
 
         fig.savefig(filename)
         plt.close('all')

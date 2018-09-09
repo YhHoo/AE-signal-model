@@ -9,7 +9,7 @@ from sklearn.preprocessing import StandardScaler
 # self library
 from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, plot_simple_heatmap, \
                               heatmap_visualizer, ProgressBarForLoop, direct_to_dir, shuffle_in_unison
-from src.utils.dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, one_dim_xcor_2d_input
+from src.utils.dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, one_dim_xcor_2d_input, dwt_smoothing
 
 
 class AcousticEmissionDataSet_13_7_2018:
@@ -372,26 +372,31 @@ class AcousticEmissionDataSet_13_7_2018:
 
         return n_channel_data
 
-    def generate_leak_1bar_in_cwt_xcor_maxpoints_vector(self, saved_filename=None, file_to_process=None):
+    def generate_leak_1bar_in_cwt_xcor_maxpoints_vector(self, saved_filename=None, file_to_process=None, denoise=False):
         '''
         this method read all tdms file from a folder, split each of them into certain parts, perform CWT follow by XCOR
         according to the sensor pair list, then append into a dataset with labels
         :param saved_filename: filename Label for the dataset generated
         :param file_to_process: a list of strings, which is full dir and filename of the tdms to be processed. if none,
                                 it is taken as all tdms in the 1bar leak
+        :param denoise: True it will denoise the signal bfore CWT and xcor
         :return: dataset where shape[0] -> no of samples of all classes
                                shape[1] -> no of elements in a vector
                  label where shape[0] -> aligned with the shape[0] of dataset
                              shape[1] -> 1
         '''
         # CONFIG -------------------------------------------------------------------------------------------------------
-        # wavelet
+        # DWT
+        dwt_wavelet = 'db2'
+        dwt_smooth_level = 2
+
+        # CWT
         m_wavelet = 'gaus1'
         scale = np.linspace(2, 10, 100)
         fs = 1e6
 
         # segmentation per tdms (sample size by each tdms)
-        no_of_segment = 5
+        no_of_segment = 2
 
         # file dir
         if file_to_process is None:
@@ -416,6 +421,13 @@ class AcousticEmissionDataSet_13_7_2018:
 
             # split on time axis into no_of_segment
             n_channel_leak = np.split(n_channel_data_near_leak, axis=1, indices_or_sections=no_of_segment)
+
+            if denoise:
+                temp = []
+                for signal in n_channel_leak:
+                    denoised_signal = dwt_smoothing(x=signal, wavelet=dwt_wavelet, level=dwt_smooth_level)
+                    temp.append(denoised_signal)
+                n_channel_leak = temp
 
             dist_diff = 0
             # for all sensor combination
@@ -450,6 +462,11 @@ class AcousticEmissionDataSet_13_7_2018:
                     # progress
                     pb.update(now=segment_no)
                     segment_no += 1
+
+                    # free up memory for unwanted variable
+                    pos1_leak_cwt, pos2_leak_cwt, xcor = None, None, None
+                    gc.collect()
+
                 pb.destroy()
                 dist_diff += 1
 

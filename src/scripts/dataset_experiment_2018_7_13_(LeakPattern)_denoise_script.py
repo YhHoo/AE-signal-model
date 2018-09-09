@@ -12,7 +12,7 @@ from src.utils.dsp_tools import dwt_smoothing
 # CONFIG --------------------------------------------------------------------------------------------------------------
 # wavelet
 cwt_wavelet = 'gaus1'
-dwt_wavelet = 'db2'
+dwt_wavelet = 'haar'
 dwt_smooth_level = 2
 # dwt_dec_level = 5
 scale = np.linspace(2, 30, 100)
