@@ -446,12 +446,13 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
     ax1 = fig.add_subplot(no_of_plot, 1, 1)
     ax1.plot(input[0])
     ax1.set_title(subplot_titles[0], size=8)
+    ax1.set_ylim(bottom=-1, top=1)
     # the rest of the plot
     for i in range(1, no_of_plot, 1):
         ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1)  # add in sharey=ax1 if wan to share y axis too
         ax.plot(input[i])
         ax.set_title(subplot_titles[i], size=8)
-
+        ax.set_ylim(bottom=-1, top=1)
     return fig
 
 
@@ -831,6 +832,7 @@ def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale
     :param cwt_mat: a 2d array
     :param cwt_scale: the scale passed into CWT function, with values in ascending order
     :param maxpoint_searching_bound: (applies to usgae 2 only) the horizontal bound on the xcor where max point is found
+                                     it is recommended to be 24000 by weitang
     :return: a figure of time series and cwt heatmap
     '''
 
@@ -871,6 +873,7 @@ def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale
 
         # set bound for max point searching in xcor map
         upper_xcor_bound = mid + maxpoint_searching_bound
+        # upper_xcor_bound = mid
         lower_xcor_bound = mid - maxpoint_searching_bound
 
         # plot max point
@@ -943,7 +946,7 @@ def scatter_plot(dataset, label, num_classes, feature_to_plot, annotate_all_poin
     cmap = cm.get_cmap('rainbow')
 
     # create fig
-    fig = plt.figure()
+    fig = plt.figure(figsize=(10, 7.5))
     fig.suptitle(title)
     # for 2d plot
     if len(feature_to_plot) is 2:

@@ -10,6 +10,7 @@ from scipy import signal
 from scipy.signal import correlate as correlate_scipy
 from numpy import correlate as correlate_numpy
 import pandas as pd
+import pywt
 from os import listdir
 from keras.utils import to_categorical
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, LabelBinarizer
@@ -19,17 +20,125 @@ import mayavi.mlab as mlab
 
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
-from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input
+from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, dwt_smoothing
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
                               break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical, \
-                              scatter_plot_3d_vispy
+                              scatter_plot_3d_vispy, scatter_plot, plot_multiple_timeseries, plot_cwt_with_time_series
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
+dwt_wavelet = 'db2'
+dwt_smooth_level = 4
+cwt_wavelet = 'gaus1'
+scale = np.linspace(2, 30, 100)
+fs = 1e6
 
-l = np.array([1, 2, 3])
-l2 = l - 1
-print(l2)
+
+folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
+all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
+
+# read oni one tdms
+n_channel_data_near_leak = read_single_tdms(all_file_path[0])
+n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+
+# denoising
+temp = []
+for signal in n_channel_data_near_leak:
+    denoised_signal = dwt_smoothing(x=signal, wavelet=dwt_wavelet, level=dwt_smooth_level)
+    temp.append(denoised_signal)
+n_channel_data_near_leak = np.array(temp)
+# segment of interest
+n_channel_data_near_leak = n_channel_data_near_leak[:, 1100000:1117500]
+
+# visualize in time
+title = np.arange(0, 8, 1)
+fig_1 = plot_multiple_timeseries(input=n_channel_data_near_leak,
+                                 subplot_titles=title,
+                                 main_title='5 sec AE data of 1bar leak')
+# plt.show()
+
+
+sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+
+dist_diff = 0
+# for all sensor combination
+for sensor_pair in sensor_pair_near:
+    signal_1 = n_channel_data_near_leak[sensor_pair[0]]
+    signal_2 = n_channel_data_near_leak[sensor_pair[1]]
+
+    # cwt
+    pos1_leak_cwt, _ = pywt.cwt(signal_1, scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
+    pos2_leak_cwt, _ = pywt.cwt(signal_2, scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
+
+    # xcor for every pair of cwt
+    xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
+    xcor = xcor[0]
+
+    # visualizing
+    fig_title = 'Xcor of CWT of Sensor[{}] and Sensor[{}] -- Dist_Diff[{}m] --[1100000:1117500]'.format(sensor_pair[0],
+                                                                                                      sensor_pair[1],
+                                                                                                      dist_diff)
+
+    fig = plot_cwt_with_time_series(time_series=[signal_1, signal_2],
+                                    no_of_time_series=2,
+                                    cwt_mat=xcor,
+                                    cwt_scale=scale,
+                                    title=fig_title,
+                                    maxpoint_searching_bound=(1117500-1100000))
+
+    # plt.show()
+
+    saving = True
+    if saving:
+        filename = direct_to_dir(where='result') + \
+                   'xcor_cwt_DistDiff[{}m]--[1100000_1117500]'.format(dist_diff)
+
+        fig.savefig(filename)
+        plt.close('all')
+        print('Saving --> Dist_diff: {}m'.format(dist_diff))
+
+    dist_diff += 1
+
+
+
+
+
+
+
+# # for all tdms
+# for tdms_file in all_file_path:
+#     # read raw from drive
+#     n_channel_data_near_leak = read_single_tdms(tdms_file)
+#     n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+#
+#     temp = []
+#     for signal in n_channel_data_near_leak:
+#         denoised_signal = dwt_smoothing(x=signal, wavelet=dwt_wavelet, level=dwt_smooth_level)
+#         temp.append(denoised_signal)
+#     n_channel_data_near_leak = np.array(temp)
+#     print(n_channel_data_near_leak.shape)
+#
+#     title = np.arange(0, 8, 1)
+#     fig = plot_multiple_timeseries(input=n_channel_data_near_leak,
+#                                    subplot_titles=title,
+#                                    main_title='5 sec AE data of 1bar leak')
+#     plt.show()
+
+
+# SCRIPT FOR VISUALIZING TSNE DATA SAVED IN CSV-------------------------------------------------------------------------
+# tsne_filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_bounded_xcor_3_(TSNE_5k_epoch_100_per).csv'
+# tsne_df = pd.read_csv(tsne_filename, index_col=0)
+# dataset = tsne_df.values[:, :2]
+# label = tsne_df.values[:, -1]
+# fig = scatter_plot(dataset=dataset,
+#                    label=label,
+#                    num_classes=11,
+#                    feature_to_plot=(0, 1),
+#                    annotate_all_point=True,
+#                    title='cwt_xcor_maxpoints_vector_dataset_bounded_xcor_3_(TSNE_5k_epoch_100_per)')
+#
+# plt.show()
+
 
 # l = [0, 0, 1, 0, 7, 11, 5, 2, 0, 0]
 # m = [0, 7, 11, 5, 2, 0, 0, 1, 2, 2]

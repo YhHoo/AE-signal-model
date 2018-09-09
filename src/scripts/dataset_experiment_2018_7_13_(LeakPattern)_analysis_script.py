@@ -16,14 +16,14 @@ from src.utils.dsp_tools import one_dim_xcor_2d_input, dwt_smoothing
 # CONFIG --------------------------------------------------------------------------------------------------------------
 # wavelet
 dwt_wavelet = 'db2'
-dwt_smooth_level = 3
+dwt_smooth_level = 2
 
 cwt_wavelet = 'gaus1'
 scale = np.linspace(2, 30, 100)
 fs = 1e6
 
 # segmentation
-no_of_segment = 10  # 10 is showing a consistent pattern
+no_of_segment = 2  # 10 is showing a consistent pattern
 
 # DATA POINT ----------------------------------------------------------------------------------------------------------
 # read leak data

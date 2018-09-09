@@ -13,7 +13,7 @@ from src.utils.dsp_tools import dwt_smoothing
 # wavelet
 cwt_wavelet = 'gaus1'
 dwt_wavelet = 'db2'
-dwt_smooth_level = 3
+dwt_smooth_level = 2
 # dwt_dec_level = 5
 scale = np.linspace(2, 30, 100)
 fs = 1e6
@@ -39,8 +39,8 @@ print('Total Segment: ', len(n_channel_leak))
 print('Each Segment Dim: ', n_channel_leak[0].shape)
 
 # signal selection
-input_signal_1 = n_channel_leak[0][1, :]
-input_signal_2 = n_channel_leak[0][5, :]
+input_signal_1 = n_channel_leak[3][1, :]
+input_signal_2 = n_channel_leak[3][7, :]
 
 # DWT DENOISING --------------------------------------------------------------------------------------------------------
 
@@ -53,19 +53,23 @@ input_signal_denoised_2 = dwt_smoothing(x=input_signal_2, wavelet=dwt_wavelet, l
 fig = plt.figure()
 fig.suptitle('{} + smooth using level: {}'.format(dwt_wavelet, dwt_smooth_level))
 ax1 = fig.add_subplot(2, 1, 1)
-ax2 = fig.add_subplot(2, 1, 2)
+ax2 = fig.add_subplot(2, 1, 2, sharex=ax1)
 
+ax1.set_title('Sensor 1')
 ax1.plot(input_signal_1, c='b', label='Ori')
 ax1.plot(input_signal_denoised_1, alpha=0.5, c='r', label='Denoised')
 ax1.legend()
 ax1.grid(linestyle='dotted')
-ax1.set_title('Sensor 1')
+ax1.set_ylim(bottom=-0.4, top=0.4)
 
+
+ax2.set_title('Sensor 2')
 ax2.plot(input_signal_2, c='b', label='Ori')
 ax2.plot(input_signal_denoised_2, alpha=0.5, c='r', label='Denoised')
 ax2.legend()
 ax2.grid(linestyle='dotted')
-ax2.set_title('Sensor 2')
+ax2.set_ylim(bottom=-0.4, top=0.4)
+
 
 
 # # decomposition
