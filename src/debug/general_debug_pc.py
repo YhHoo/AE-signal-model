@@ -11,6 +11,7 @@ from scipy.signal import correlate as correlate_scipy
 from numpy import correlate as correlate_numpy
 import pandas as pd
 import pywt
+import time
 from os import listdir
 from keras.utils import to_categorical
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, LabelBinarizer
@@ -20,7 +21,7 @@ import mayavi.mlab as mlab
 
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
-from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, dwt_smoothing
+from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, dwt_smoothing, one_dim_xcor_1d_input
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
                               break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical, \
@@ -41,65 +42,72 @@ all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('
 n_channel_data_near_leak = read_single_tdms(all_file_path[0])
 n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
-# denoising
-temp = []
-for signal in n_channel_data_near_leak:
-    denoised_signal = dwt_smoothing(x=signal, wavelet=dwt_wavelet, level=dwt_smooth_level)
-    temp.append(denoised_signal)
-n_channel_data_near_leak = np.array(temp)
-# segment of interest
-n_channel_data_near_leak = n_channel_data_near_leak[:, 3278910:3296410]
 
-# visualize in time
-title = np.arange(0, 8, 1)
-fig_1 = plot_multiple_timeseries(input=n_channel_data_near_leak,
-                                 subplot_titles=title,
-                                 main_title='5 sec AE data of 1bar leak')
-# plt.show()
+time_start = time.time()
+pos1_leak_cwt, _ = pywt.cwt(n_channel_data_near_leak[0], scales=scale[0], wavelet=cwt_wavelet, sampling_period=1 / fs)
+pos2_leak_cwt, _ = pywt.cwt(n_channel_data_near_leak[2], scales=scale[0], wavelet=cwt_wavelet, sampling_period=1 / fs)
+xcor, _ = one_dim_xcor_1d_input(input_mat=[pos1_leak_cwt, pos2_leak_cwt], pair_list=[(0, 1)], verbose=True)
+print('CWT done: {}'.format(time.time() - time_start))
 
+print(xcor.shape)
 
-sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
-
-dist_diff = 0
-# for all sensor combination
-for sensor_pair in sensor_pair_near:
-    signal_1 = n_channel_data_near_leak[sensor_pair[0]]
-    signal_2 = n_channel_data_near_leak[sensor_pair[1]]
-
-    # cwt
-    pos1_leak_cwt, _ = pywt.cwt(signal_1, scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
-    pos2_leak_cwt, _ = pywt.cwt(signal_2, scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
-
-    # xcor for every pair of cwt
-    xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
-    xcor = xcor[0]
-
-    # visualizing
-    fig_title = 'Xcor of CWT of Sensor[{}] and Sensor[{}] -- Dist_Diff[{}m] --[3278910:3296410]'.format(sensor_pair[0],
-                                                                                                      sensor_pair[1],
-                                                                                                      dist_diff)
-
-    fig = plot_cwt_with_time_series(time_series=[signal_1, signal_2],
-                                    no_of_time_series=2,
-                                    cwt_mat=xcor,
-                                    cwt_scale=scale,
-                                    title=fig_title,
-                                    maxpoint_searching_bound=(3296410-3278910))
-
-    # plt.show()
-
-    saving = True
-    if saving:
-        filename = direct_to_dir(where='result') + \
-                   'xcor_cwt_DistDiff[{}m]--[3278910_3296410]'.format(dist_diff)
-
-        fig.savefig(filename)
-        plt.close('all')
-        print('Saving --> Dist_diff: {}m'.format(dist_diff))
-
-    dist_diff += 1
-
-
+# # denoising
+# temp = []
+# for signal in n_channel_data_near_leak:
+#     denoised_signal = dwt_smoothing(x=signal, wavelet=dwt_wavelet, level=dwt_smooth_level)
+#     temp.append(denoised_signal)
+# n_channel_data_near_leak = np.array(temp)
+# # segment of interest
+# n_channel_data_near_leak = n_channel_data_near_leak[:, 3278910:3296410]
+#
+# # visualize in time
+# title = np.arange(0, 8, 1)
+# fig_1 = plot_multiple_timeseries(input=n_channel_data_near_leak,
+#                                  subplot_titles=title,
+#                                  main_title='5 sec AE data of 1bar leak')
+# # plt.show()
+#
+#
+# sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+#
+# dist_diff = 0
+# # for all sensor combination
+# for sensor_pair in sensor_pair_near:
+#     signal_1 = n_channel_data_near_leak[sensor_pair[0]]
+#     signal_2 = n_channel_data_near_leak[sensor_pair[1]]
+#
+#     # cwt
+#     pos1_leak_cwt, _ = pywt.cwt(signal_1, scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
+#     pos2_leak_cwt, _ = pywt.cwt(signal_2, scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
+#
+#     # xcor for every pair of cwt
+#     xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
+#     xcor = xcor[0]
+#
+#     # visualizing
+#     fig_title = 'Xcor of CWT of Sensor[{}] and Sensor[{}] -- Dist_Diff[{}m] --[3278910:3296410]'.format(sensor_pair[0],
+#                                                                                                       sensor_pair[1],
+#                                                                                                       dist_diff)
+#
+#     fig = plot_cwt_with_time_series(time_series=[signal_1, signal_2],
+#                                     no_of_time_series=2,
+#                                     cwt_mat=xcor,
+#                                     cwt_scale=scale,
+#                                     title=fig_title,
+#                                     maxpoint_searching_bound=(3296410-3278910))
+#
+#     # plt.show()
+#
+#     saving = True
+#     if saving:
+#         filename = direct_to_dir(where='result') + \
+#                    'xcor_cwt_DistDiff[{}m]--[3278910_3296410]'.format(dist_diff)
+#
+#         fig.savefig(filename)
+#         plt.close('all')
+#         print('Saving --> Dist_diff: {}m'.format(dist_diff))
+#
+#     dist_diff += 1
 
 
 

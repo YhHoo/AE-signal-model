@@ -9,7 +9,8 @@ from sklearn.preprocessing import StandardScaler
 # self library
 from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, plot_simple_heatmap, \
                               heatmap_visualizer, ProgressBarForLoop, direct_to_dir, shuffle_in_unison
-from src.utils.dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, one_dim_xcor_2d_input, dwt_smoothing
+from src.utils.dsp_tools import spectrogram_scipy, butter_bandpass_filtfilt, one_dim_xcor_2d_input, dwt_smoothing, \
+    one_dim_xcor_1d_input
 
 
 class AcousticEmissionDataSet_13_7_2018:
@@ -466,6 +467,145 @@ class AcousticEmissionDataSet_13_7_2018:
                     # free up memory for unwanted variable
                     pos1_leak_cwt, pos2_leak_cwt, xcor = None, None, None
                     gc.collect()
+
+                pb.destroy()
+                dist_diff += 1
+
+            # just to display the dict full dim
+            temp = []
+            for _, value in all_class.items():
+                temp.append(value[0])
+            temp = np.array(temp)
+            print('all_class dim: ', temp.shape)
+
+            # free up memory for unwanted variable
+            pos1_leak_cwt, pos2_leak_cwt, n_channel_data_near_leak = None, None, None
+            gc.collect()
+
+        # transfer all data from dict to array
+        dataset = []
+        label = []
+        # for all class
+        for i in range(0, 11, 1):
+            # for all samples in a class
+            for sample in all_class['class_[{}]'.format(i)]:  # a list of list(max vec)
+                dataset.append(sample)
+                label.append(i)
+
+        # convert to array
+        dataset = np.array(dataset)
+        label = np.array(label)
+        print('Dataset Dim: ', dataset.shape)
+        print('Label Dim: ', label.shape)
+
+        # save to csv
+        label = label.reshape((-1, 1))
+        all_in_one = np.concatenate([dataset, label], axis=1)
+        # column label
+        freq = pywt.scale2frequency(wavelet=m_wavelet, scale=scale) * fs
+        column_label = ['Scale_{:.4f}_Freq_{:.4f}Hz'.format(i, j) for i, j in zip(scale, freq)] + ['label']
+        df = pd.DataFrame(all_in_one, columns=column_label)
+        filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(saved_filename)
+        df.to_csv(filename)
+
+    def generate_leak_1bar_in_cwt_xcor_maxpoints_vector_2(self, saved_filename=None, file_to_process=None, denoise=False):
+        '''
+        version 2: Instead of cwt for all points, we use cwt for single point
+        this method read all tdms file from a folder, split each of them into certain parts, perform CWT follow by XCOR
+        according to the sensor pair list, then append into a dataset with labels
+        :param saved_filename: filename Label for the dataset generated
+        :param file_to_process: a list of strings, which is full dir and filename of the tdms to be processed. if none,
+                                it is taken as all tdms in the 1bar leak
+        :param denoise: True it will denoise the signal bfore CWT and xcor
+        :return: dataset where shape[0] -> no of samples of all classes
+                               shape[1] -> no of elements in a vector
+                 label where shape[0] -> aligned with the shape[0] of dataset
+                             shape[1] -> 1
+        '''
+        # CONFIG -------------------------------------------------------------------------------------------------------
+        # DWT
+        dwt_wavelet = 'db2'
+        dwt_smooth_level = 2
+
+        # CWT
+        m_wavelet = 'gaus1'
+        scale = np.linspace(2, 10, 100)
+        fs = 1e6
+
+        # segmentation per tdms (sample size by each tdms)
+        no_of_segment = 2
+
+        # file dir
+        if file_to_process is None:
+            # list full path of all tdms file in the specified folder
+            folder_path = self.path_leak_1bar_2to12
+            all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
+        else:
+            all_file_path = file_to_process
+
+        # DATA READING -------------------------------------------------------------------------------------------------
+        # creating dict to store each class data
+        all_class = {}
+        for i in range(0, 11, 1):
+            all_class['class_[{}]'.format(i)] = []
+
+        # for all tdms file in folder (Warning: It takes 24min for 1 tdms file)
+        for tdms_file in all_file_path:
+
+            # read raw from drive
+            n_channel_data_near_leak = read_single_tdms(tdms_file)
+            n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+
+            # split on time axis into no_of_segment
+            n_channel_leak = np.split(n_channel_data_near_leak, axis=1, indices_or_sections=no_of_segment)
+
+            if denoise:
+                temp = []
+                for signal in n_channel_leak:
+                    denoised_signal = dwt_smoothing(x=signal, wavelet=dwt_wavelet, level=dwt_smooth_level)
+                    temp.append(denoised_signal)
+                n_channel_leak = temp
+
+            dist_diff = 0
+            # for all sensor combination
+            for sensor_pair in self.sensor_pair_near:
+                segment_no = 0
+                pb = ProgressBarForLoop(title='CWT+Xcor using {}'.format(sensor_pair), end=len(n_channel_leak))
+                # for all segmented signals
+                for segment in n_channel_leak:
+
+                    max_xcor_vector = []
+                    # for all scales
+                    for s in scale:
+                        pos1_leak_cwt, _ = pywt.cwt(segment[sensor_pair[0]], scales=s, wavelet=m_wavelet)
+                        pos2_leak_cwt, _ = pywt.cwt(segment[sensor_pair[1]], scales=s, wavelet=m_wavelet)
+
+                        # xcor for every pair of cwt
+                        xcor, _ = one_dim_xcor_1d_input(input_mat=[pos1_leak_cwt, pos2_leak_cwt],
+                                                        pair_list=[(0, 1)])
+                        xcor = xcor[0]
+
+                        # midpoint in xcor
+                        mid = xcor.shape[0] // 2 + 1
+
+                        # 24000 = fs*24ms(max deviation in ToA)
+                        upper_xcor_bound = mid + 24000
+                        lower_xcor_bound = mid - 24000
+
+                        # for every row of xcor, find max point index
+                        max_along_x = np.argmax(xcor[lower_xcor_bound:upper_xcor_bound])
+                        max_xcor_vector.append(max_along_x + lower_xcor_bound - mid)
+
+                        # free up memory for unwanted variable
+                        pos1_leak_cwt, pos2_leak_cwt, xcor = None, None, None
+                        gc.collect()
+
+                    # store all feature vector for same class
+                    all_class['class_[{}]'.format(dist_diff)].append(max_xcor_vector)
+
+                    # progress
+                    pb.update(now=segment_no)
+                    segment_no += 1
 
                 pb.destroy()
                 dist_diff += 1

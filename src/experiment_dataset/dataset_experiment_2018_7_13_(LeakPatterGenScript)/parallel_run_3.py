@@ -13,6 +13,8 @@ for f in all_file_path:
 
 ae_data = AcousticEmissionDataSet_13_7_2018(drive='F')
 time_start = time.time()
-ae_data.generate_leak_1bar_in_cwt_xcor_maxpoints_vector(saved_filename='bounded_xcor_3_p3', file_to_process=all_file_path)
+ae_data.generate_leak_1bar_in_cwt_xcor_maxpoints_vector_2(saved_filename='bounded_xcor_4_p3',
+                                                          file_to_process=all_file_path,
+                                                          denoise=True)
 print('Time taken: {:.4f}s'.format(time.time()-time_start))
 

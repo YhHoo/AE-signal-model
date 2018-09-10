@@ -181,6 +181,7 @@ def butter_bandpass_filtfilt(sampled_data, fs, f_hicut, f_locut, order=5):
 
 def one_dim_xcor_2d_input(input_mat, pair_list, verbose=False):
     '''
+    XCOR every band --> overall normalize
     The scipy.signal.correlate is used. Here the algorithm will starts sliding the 2 signals by bumping
     input_mat[0]'s head into the input_mat[1]'s tail. E.G. If input_mat[0] is faster, max correlation occurs at
     left side of the centre points.
@@ -192,7 +193,7 @@ def one_dim_xcor_2d_input(input_mat, pair_list, verbose=False):
     :param verbose: print the output xcor map dimension
     :return: 3d normalized xcor map whr shape[0] -> no. of xcor maps,
                                         shape[1] -> freq band,
-                                        shape[1] -> xcor steps
+                                        shape[2] -> xcor steps
     '''
     # ensure they hv equal number of axis[1] or freq band
     try:
@@ -225,6 +226,38 @@ def one_dim_xcor_2d_input(input_mat, pair_list, verbose=False):
 
     # xcor axis
     xcor_len = xcor_bank.shape[2]
+    xcor_axis = np.arange(1, xcor_len + 1, 1) - xcor_len // 2 - 1
+
+    if verbose:
+        print('\n---------One-Dimensional X-correlation---------')
+        print('Xcor Map Dim (No. of xcor map, freq band, xcor steps): ', xcor_bank.shape)
+
+    return xcor_bank, xcor_axis
+
+
+def one_dim_xcor_1d_input(input_mat, pair_list, verbose=False):
+    '''
+    This is same as the one_dim_xcor_2d_input(), except here takes only 1 frequency band, and no normalize of the
+    xcor result.
+
+    :param input_mat: a 2d np matrix input, where shape[0] -> no. of phase map (diff sensors),
+                                                  shape[1] -> time steps
+    :param pair_list: list of 2d tuples, e.g. [(0, 1), (1, 2)], such that input_mat[0] and input_mat[1] is xcor, and
+                      input_mat[1] and input_mat[2] is xcor.
+    :param verbose: print the output xcor map dimension
+    :return: 3d normalized xcor map whr shape[0] -> no. of xcor maps,
+                                        shape[1] -> xcor steps
+    '''
+
+    xcor_bank = []
+    for pair in pair_list:
+        x_cor = correlate(input_mat[pair[0]], input_mat[pair[1]], 'full', method='fft')
+        # store the xcor map for a pair of phase map
+        xcor_bank.append(x_cor[0])
+    xcor_bank = np.array(xcor_bank)
+
+    # xcor axis
+    xcor_len = xcor_bank.shape[1]
     xcor_axis = np.arange(1, xcor_len + 1, 1) - xcor_len // 2 - 1
 
     if verbose:
