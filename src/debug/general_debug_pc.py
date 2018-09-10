@@ -43,13 +43,13 @@ n_channel_data_near_leak = read_single_tdms(all_file_path[0])
 n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
 
-time_start = time.time()
-pos1_leak_cwt, _ = pywt.cwt(n_channel_data_near_leak[0], scales=scale[0], wavelet=cwt_wavelet, sampling_period=1 / fs)
-pos2_leak_cwt, _ = pywt.cwt(n_channel_data_near_leak[2], scales=scale[0], wavelet=cwt_wavelet, sampling_period=1 / fs)
-xcor, _ = one_dim_xcor_1d_input(input_mat=[pos1_leak_cwt, pos2_leak_cwt], pair_list=[(0, 1)], verbose=True)
-print('CWT done: {}'.format(time.time() - time_start))
-
-print(xcor.shape)
+# time_start = time.time()
+# pos1_leak_cwt, _ = pywt.cwt(n_channel_data_near_leak[0], scales=scale[0], wavelet=cwt_wavelet, sampling_period=1 / fs)
+# pos2_leak_cwt, _ = pywt.cwt(n_channel_data_near_leak[2], scales=scale[0], wavelet=cwt_wavelet, sampling_period=1 / fs)
+# xcor, _ = one_dim_xcor_1d_input(input_mat=[pos1_leak_cwt, pos2_leak_cwt], pair_list=[(0, 1)], verbose=True)
+# print('CWT done: {}'.format(time.time() - time_start))
+#
+# print(xcor.shape)
 
 # # denoising
 # temp = []

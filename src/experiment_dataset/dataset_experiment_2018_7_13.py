@@ -508,7 +508,8 @@ class AcousticEmissionDataSet_13_7_2018:
         filename = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_{}.csv'.format(saved_filename)
         df.to_csv(filename)
 
-    def generate_leak_1bar_in_cwt_xcor_maxpoints_vector_2(self, saved_filename=None, file_to_process=None, denoise=False):
+    def generate_leak_1bar_in_cwt_xcor_maxpoints_vector_2(self, saved_filename=None,
+                                                          file_to_process=None, denoise=False):
         '''
         version 2: Instead of cwt for all points, we use cwt for single point
         this method read all tdms file from a folder, split each of them into certain parts, perform CWT follow by XCOR
@@ -556,15 +557,15 @@ class AcousticEmissionDataSet_13_7_2018:
             n_channel_data_near_leak = read_single_tdms(tdms_file)
             n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
-            # split on time axis into no_of_segment
-            n_channel_leak = np.split(n_channel_data_near_leak, axis=1, indices_or_sections=no_of_segment)
-
             if denoise:
                 temp = []
-                for signal in n_channel_leak:
+                for signal in n_channel_data_near_leak:
                     denoised_signal = dwt_smoothing(x=signal, wavelet=dwt_wavelet, level=dwt_smooth_level)
                     temp.append(denoised_signal)
-                n_channel_leak = temp
+                n_channel_data_near_leak = np.array(temp)
+
+            # split on time axis into no_of_segment
+            n_channel_leak = np.split(n_channel_data_near_leak, axis=1, indices_or_sections=no_of_segment)
 
             dist_diff = 0
             # for all sensor combination
