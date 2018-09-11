@@ -8,7 +8,7 @@ import pandas as pd
 from src.utils.helpers import direct_to_dir
 
 # change the filename here only
-folder_dir = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_bounded_xcor_3'
+folder_dir = direct_to_dir(where='result') + 'cwt_xcor_maxpoints_vector_dataset_bounded_xcor_4'
 filename_1 = folder_dir + '_p1.csv'
 filename_2 = folder_dir + '_p2.csv'
 filename_3 = folder_dir + '_p3.csv'

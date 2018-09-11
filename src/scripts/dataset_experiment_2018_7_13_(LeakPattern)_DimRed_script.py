@@ -48,7 +48,7 @@ if on_pc is False:
 
 else:
     data = AcousticEmissionDataSet_13_7_2018(drive='F')
-    dataset, label = data.leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_name='bounded_xcor_3',
+    dataset, label = data.leak_1bar_in_cwt_xcor_maxpoints_vector(dataset_name='bounded_xcor_4',
                                                                  f_range_to_keep=(0, 100),
                                                                  class_to_keep='all',
                                                                  shuffle=True)
@@ -67,40 +67,37 @@ if pca_op:
 # T-sne Operation ------------------------------------------------------------------------------------------------------
 tsne_op = True
 
-per = [70, 100, 120, 150]
-count = 0
+
 if tsne_op:
-    for p in per:
-        time_start = time.time()
-        # the more complex the data, set perplexity higher
-        tsne = TSNE(n_components=2, verbose=1, perplexity=p, n_iter=3000)
-        reduced_result = tsne.fit_transform(dataset)
-        print('t-SNE done! Time elapsed: {} seconds'.format(time.time()-time_start))
-        print('TSNE output DIM: ', reduced_result.shape)
 
-        fig = scatter_plot(dataset=reduced_result, label=label, num_classes=11, feature_to_plot=(0, 1),
-                           annotate_all_point=True,
-                           title='cwt_xcor_maxpoints_vector_dataset_bounded_xcor_3_(TSNE_5k_epoch_{}_per)'.format(p),
-                           save_data_to_csv=True)
+    time_start = time.time()
+    # the more complex the data, set perplexity higher
+    tsne = TSNE(n_components=2, verbose=1, perplexity=70, n_iter=1000)
+    reduced_result = tsne.fit_transform(dataset)
+    print('t-SNE done! Time elapsed: {} seconds'.format(time.time()-time_start))
+    print('TSNE output DIM: ', reduced_result.shape)
 
-        # saving
-        fig_filename = direct_to_dir(where='result') + 'tsne_{}'.format(count)
-        fig.savefig(fig_filename)
+    # fig = scatter_plot(dataset=reduced_result, label=label, num_classes=11, feature_to_plot=(0, 1),
+    #                    annotate_all_point=True,
+    #                    title='cwt_xcor_maxpoints_vector_dataset_bounded_xcor_4_(TSNE_3k_epoch)',
+    #                    save_data_to_csv=True)
 
-        count += 1
+    # saving
+    # fig_filename = direct_to_dir(where='result') + 'tsne_{}'.format(count)
+    # fig.savefig(fig_filename)
 
-        plt.close('all')
+    plt.close('all')
 
 
 # visualize in scatter plot --------------------------------------------------------------------------------------------
 
 # for points less than 1k
-# fig = scatter_plot(dataset=reduced_result, label=label, num_classes=11, feature_to_plot=(0, 1),
-#                    annotate_all_point=True,
-#                    title='cwt_xcor_maxpoints_vector_dataset_bounded_xcor_3_(TSNE_5k_epoch_70_per)',
-#                    save_data_to_csv=True)
-#
-# plt.show()
+fig = scatter_plot(dataset=reduced_result, label=label, num_classes=11, feature_to_plot=(0, 1),
+                   annotate_all_point=True,
+                   title='cwt_xcor_maxpoints_vector_dataset_bounded_xcor_4_(TSNE_1k_epoch)',
+                   save_data_to_csv=False)
+
+plt.show()
 # saving
 # fig_filename = direct_to_dir(where='result') + 'scatter_plot_(bounded_xcor)'
 # fig.savefig(fig_filename)

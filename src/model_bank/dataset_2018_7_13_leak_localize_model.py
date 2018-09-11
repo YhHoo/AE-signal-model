@@ -28,10 +28,10 @@ def fc_leak_1bar_max_vec_v1(input_shape, output_neuron):
 # more deeper NN
 def fc_leak_1bar_max_vec_v2(input_shape, output_neuron):
     model = Sequential()
-    model.add(Dense(100, activation='relu', input_shape=input_shape))
+    model.add(Dense(200, activation='relu', input_shape=input_shape))
     model.add(Dropout(0.2))
-    model.add(Dense(100, activation='relu'))
-    model.add(Dropout(0.3))
+    # model.add(Dense(100, activation='relu'))
+    # model.add(Dropout(0.3))
     # model.add(Dense(500, activation='relu'))
     # model.add(Dropout(0.4))
     # model.add(Dense(300, activation='relu'))
@@ -42,7 +42,7 @@ def fc_leak_1bar_max_vec_v2(input_shape, output_neuron):
     # model.add(Dropout(0.3))
     model.add(Dense(output_neuron, activation='softmax'))
 
-    # print(model.summary())
+    print(model.summary())
 
     return model
 
