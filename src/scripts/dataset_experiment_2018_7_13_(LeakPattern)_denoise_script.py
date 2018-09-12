@@ -24,6 +24,7 @@ no_of_segment = 10  # 10 is showing a consistent pattern
 # DATA READING ---------------------------------------------------------------------------------------------------------
 on_pc = False
 
+# test data (1 tdms file only)
 if on_pc:
     data = AcousticEmissionDataSet_13_7_2018(drive='F')
     n_channel_leak = data.test_data(sensor_dist='near', pressure=1, leak=True)
@@ -71,9 +72,7 @@ ax2.legend()
 ax2.grid(linestyle='dotted')
 ax2.set_ylim(bottom=-0.4, top=0.4)
 
-
-
-# # decomposition
+# DWT ------------------------------------------------------------------------------------------------------------------
 # coeff = pywt.wavedec(input_signal_1, wavelet='db4', mode="per", level=5)
 #
 # # visualize

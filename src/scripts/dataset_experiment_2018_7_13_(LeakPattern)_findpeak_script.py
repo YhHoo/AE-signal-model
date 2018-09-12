@@ -31,7 +31,7 @@ from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmission
 from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
                               break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical, \
                               scatter_plot_3d_vispy, scatter_plot, plot_multiple_timeseries, plot_cwt_with_time_series, \
-                              plot_multiple_timeseries_with_peak
+                              plot_multiple_timeseries_with_roi, lollipop_plot, detect_close_value
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
@@ -39,7 +39,7 @@ from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_ma
 fs = 1e6
 # dwt denoising setting
 dwt_wavelet = 'db2'
-dwt_smooth_level = 4
+dwt_smooth_level = 3
 
 # cwt
 cwt_wavelet = 'gaus1'
@@ -48,10 +48,12 @@ scale = np.linspace(2, 30, 100)
 # segmentation
 no_of_segment = 1
 
+# roi
+roi_width = (int(5e3), int(15e3))
 
 # DATA READING AND PRE-PROCESSING --------------------------------------------------------------------------------------
 # tdms file reading
-folder_path = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
+folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
 all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 
 # file of interest
@@ -62,10 +64,10 @@ n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 print('Read Data Dim: ', n_channel_data_near_leak.shape)
 
 # SIGNAL PROCESSING ----------------------------------------------------------------------------------------------------
-
 # denoising
-denoise = False
+denoise = True
 if denoise:
+    print('DWT Denoising with wavelet: {}, level: {}'.format(dwt_wavelet, dwt_smooth_level))
     temp = []
     # for all channel of sensor
     for channel in n_channel_data_near_leak:
@@ -74,51 +76,92 @@ if denoise:
     n_channel_data_near_leak = np.array(temp)
 
 # segment of interest
-soi = 0
-n_channel_data_near_leak = np.split(n_channel_data_near_leak, indices_or_sections=no_of_segment, axis=1)
-signal_1 = n_channel_data_near_leak[soi]
+# soi = 0
+# n_channel_data_near_leak = np.split(n_channel_data_near_leak, indices_or_sections=no_of_segment, axis=1)
+# signal_1 = n_channel_data_near_leak[soi]
 
-# peak finding
+
+# PEAK DETECTION AND ROI -----------------------------------------------------------------------------------------------
+# peak finding for sensor [-2m] and [2m] only
 peak_list = []
 time_start = time.time()
-for channel in signal_1[1:3]:
+for channel in n_channel_data_near_leak[1:3]:
     peak_list.append(peakutils.indexes(channel, thres=0.7, min_dist=10000))
-print('Time Taken for peakutils.indexes(): {:.4f}'.format(time.time()-time_start))
+print('Time Taken for peakutils.indexes(): {:.4f}s'.format(time.time()-time_start))
 
-# visualize
-# main_title = '{}--Segment_{}'.format(foi, soi)
-# subplot_titles = np.arange(0, 8, 1)
-# fig_timeseries = plot_multiple_timeseries_with_peak(input=signal_1,
-#                                                     subplot_titles=subplot_titles,
-#                                                     main_title=main_title,
-#                                                     peak_list=peak_list)
+# detect leak caused peaks
+leak_caused_peak = detect_close_value(x1=peak_list[0], x2=peak_list[1], threshold1=1000, threshold2=100000)
 
-l = [1, 6, 9]
-m = [12, 4, 8]
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-markerline, stemlines, baseline = ax.stem(peak_list[0], signal_1[1][peak_list[0]], '-', label='Sensor[-2m]')
-markerline2, stemlines2, baseline2 = ax.stem(peak_list[1], signal_1[2][peak_list[1]], '-', label='Sensor[2m]')
+# just to duplicate the list for plot_multiple_timeseries_with_roi() usage
+temp = []
+for _ in range(8):
+    temp.append(leak_caused_peak)
 
-plt.setp(markerline, markerfacecolor='b')
-plt.setp(stemlines, color='b', linewidth=1, linestyle='dotted')
-plt.setp(baseline, visible=False)
+# VISUALIZING ----------------------------------------------------------------------------------------------------------
 
-plt.setp(markerline2, markerfacecolor='r', markeredgecolor='r')
-plt.setp(stemlines2, color='r', linewidth=1, linestyle='dotted')
-plt.setp(baseline2, visible=False)
-
-ax.grid(linestyle='dotted')
-ax.legend()
-plt.show()
+subplot_titles = np.arange(0, 8, 1)
+fig_timeseries = plot_multiple_timeseries_with_roi(input=n_channel_data_near_leak,
+                                                   subplot_titles=subplot_titles,
+                                                   main_title=foi,
+                                                   peak_center_list=temp,
+                                                   roi_width=roi_width)
 
 
+# fig_lollipop = lollipop_plot(x=peak_list,
+#                              y=[signal_1[1][peak_list[0]], signal_1[2][peak_list[1]]],
+#                              test_point=leak_caused_peak,
+#                              label=['Sensor[-2m]', 'Sensor[2m]'])
 
 
+# plt.show()
 
+# CWT + XCOR -----------------------------------------------------------------------------------------------------------
+# xcor pairing commands - [near] = 0m, 1m,..., 10m
+sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
 
+sample_no = 0
+# for all roi segments
+for p in leak_caused_peak:
+    signal_roi = n_channel_data_near_leak[:, (p-roi_width[0]):(p+roi_width[1])]
+    dist_diff = 0
+    # for all sensor combination
+    for sensor_pair in sensor_pair_near:
+        pos1_leak_cwt, _ = pywt.cwt(signal_roi[sensor_pair[0]], scales=scale, wavelet=cwt_wavelet)
+        pos2_leak_cwt, _ = pywt.cwt(signal_roi[sensor_pair[1]], scales=scale, wavelet=cwt_wavelet)
 
+        xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
+        xcor = xcor[0]
 
+        fig_title = 'Xcor of CWT of Sensor[{}] and Sensor[{}] -- Dist_Diff[{}m] -- Roi[{}]'.format(sensor_pair[0],
+                                                                                                   sensor_pair[1],
+                                                                                                   dist_diff,
+                                                                                                   sample_no)
+
+        fig_cwt = plot_cwt_with_time_series(time_series=[signal_roi[sensor_pair[0]], signal_roi[sensor_pair[1]]],
+                                            no_of_time_series=2,
+                                            cwt_mat=xcor,
+                                            cwt_scale=scale,
+                                            title=fig_title,
+                                            maxpoint_searching_bound=(roi_width[1]-roi_width[0]-1))
+
+        # only for showing the max point vector
+        show_xcor = False
+        if show_xcor:
+            plt.show()
+
+        # saving the plot ----------------------------------------------------------------------------------------------
+        saving = True
+        if saving:
+            filename = direct_to_dir(where='google_drive') + \
+                       'xcor_cwt_DistDiff[{}m]_roi[{}]'.format(dist_diff, sample_no)
+
+            fig_cwt.savefig(filename)
+            plt.close('all')
+            print('Saving --> Dist_diff: {}m, Roi: {}'.format(dist_diff, sample_no))
+
+        dist_diff += 1
+
+    sample_no += 1
 
 
 

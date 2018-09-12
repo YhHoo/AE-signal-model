@@ -28,27 +28,58 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               scatter_plot_3d_vispy, scatter_plot, plot_multiple_timeseries, plot_cwt_with_time_series
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-dwt_wavelet = 'db2'
-dwt_smooth_level = 4
-cwt_wavelet = 'gaus1'
-scale = np.linspace(2, 30, 100)
-fs = 1e6
+
+# l = [123, 145, 178]
+# l2 = [126, 172, 190]
+#
+# leak_caused_peak_list = []
+#
+# # find index tat has abs dist of less that ...
+# for p1 in l:
+#     for p2 in l2:
+#         abs_diff = np.abs(p2-p1)
+#         if abs_diff < 10:
+#             leak_caused_peak_list.append(p2)
+#             break
+#
+# print(leak_caused_peak_list)
 
 
-folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/No_Leak/'
-all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
+t = [1, 5, 19, 20, 56, 78]
 
-# read oni one tdms
-n_channel_data_near_leak = read_single_tdms(all_file_path[0])
-n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+# eliminate the peak that are too closed tgt, to avoid duplicate segmentation.
+item_to_del = []
+# note down either one of the 2 items tat too close in a delete list
+for i in range(len(t)-1):
+    if np.abs(t[i+1] - t[i]) < 10:
+        item_to_del.append(t[i])
+# remove items according to the delete list
+for d in item_to_del:
+    t.remove(d)
 
-# visualize in time
-title = np.arange(0, 8, 1)
-fig_0 = plot_multiple_timeseries(input=n_channel_data_near_leak,
-                                 subplot_titles=title,
-                                 main_title='5 sec AE data of 1bar leak')
 
-plt.show()
+
+# dwt_wavelet = 'db2'
+# dwt_smooth_level = 4
+# cwt_wavelet = 'gaus1'
+# scale = np.linspace(2, 30, 100)
+# fs = 1e6
+#
+#
+# folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/No_Leak/'
+# all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
+#
+# # read oni one tdms
+# n_channel_data_near_leak = read_single_tdms(all_file_path[0])
+# n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+#
+# # visualize in time
+# title = np.arange(0, 8, 1)
+# fig_0 = plot_multiple_timeseries(input=n_channel_data_near_leak,
+#                                  subplot_titles=title,
+#                                  main_title='5 sec AE data of 1bar leak')
+#
+# plt.show()
 # # denoising
 # temp = []
 # # for all channel of sensor

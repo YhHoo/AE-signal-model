@@ -511,7 +511,7 @@ class AcousticEmissionDataSet_13_7_2018:
     def generate_leak_1bar_in_cwt_xcor_maxpoints_vector_2(self, saved_filename=None,
                                                           file_to_process=None, denoise=False):
         '''
-        version 2: Instead of cwt for all points, we use cwt for single point
+        version 2: Instead of cwt for all scale in one shot, we do cwt scale by scale
         this method read all tdms file from a folder, split each of them into certain parts, perform CWT follow by XCOR
         according to the sensor pair list, then append into a dataset with labels
         :param saved_filename: filename Label for the dataset generated

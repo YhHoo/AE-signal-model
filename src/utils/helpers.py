@@ -456,15 +456,16 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
     return fig
 
 
-def plot_multiple_timeseries_with_peak(input, subplot_titles, main_title, peak_list):
+def plot_multiple_timeseries_with_roi(input, subplot_titles, main_title, peak_center_list, roi_width=None):
     '''
     Aspect axis[0] of input is no. of sensors/diff features, axis[1] is time steps. All time series has to be
     SAME length !
     :param input: a 2d-array / list
     :param subplot_titles: title for every plot
     :param main_title: the big title
-    :param peak_list: a list of 1d array, where len(peak_list) is no of channels, and 1d-array inside is index
+    :param peak_center_list: a list of 1d array, where len(peak_list) is no of channels, and 1d-array inside is index
                       of the peak in particular channel
+    :param roi_width: tuple of 2, e.g. (a, b) --> the roi will b [c-a, c+b]
     :return: rectangular fig obj
     '''
     no_of_plot = len(input)
@@ -474,7 +475,14 @@ def plot_multiple_timeseries_with_peak(input, subplot_titles, main_title, peak_l
     # first plot
     ax1 = fig.add_subplot(no_of_plot, 1, 1)
     ax1.plot(input[0])
-    ax1.plot(peak_list[0], input[0][peak_list[0]], marker='o', ls='', ms=3, mfc='red')
+    ax1.plot(peak_center_list[0], input[0][peak_center_list[0]], marker='o', ls='', ms=3, mfc='red')
+
+    # roi region highlighting
+    for peak in peak_center_list[0]:
+        ax1.axvspan(xmin=peak - roi_width[0],
+                    xmax=peak + roi_width[1],
+                    color='red', alpha=0.5)
+
     ax1.set_title(subplot_titles[0], size=8)
     ax1.set_ylim(bottom=-1, top=1)
 
@@ -482,20 +490,17 @@ def plot_multiple_timeseries_with_peak(input, subplot_titles, main_title, peak_l
     for i in range(1, no_of_plot, 1):
         ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1)  # add in sharey=ax1 if wan to share y axis too
         ax.plot(input[i])
-        ax.plot(peak_list[i], input[i][peak_list[i]], marker='o', ls='', ms=3, mfc='red')
+        ax.plot(peak_center_list[i], input[i][peak_center_list[i]], marker='o', ls='', ms=3, mfc='red')
+
+        # roi region highlighting
+        for peak in peak_center_list[i]:
+            ax.axvspan(xmin=peak - roi_width[0],
+                       xmax=peak + roi_width[1],
+                       color='red', alpha=0.5)
+
         ax.set_title(subplot_titles[i], size=8)
         ax.set_ylim(bottom=-1, top=1)
     return fig
-
-
-def lollipop_plot(x, y, label):
-    '''
-    This is now for plotting 2 sets of data (x, y) and (x', y')
-    :param x: 2d array, where shape[0]=2, shape[1]
-    :param y:
-    :param label:
-    :return:
-    '''
 
 
 def plot_multiple_level_decomposition(ori_signal, dec_signal, dec_level, main_title, fs):
@@ -1080,3 +1085,96 @@ def scatter_plot_3d_vispy(dataset, label):
 
     # run
     app.run()
+
+
+def lollipop_plot(x, y, test_point=None, label=None):
+    '''
+    This is now for plotting 2 sets of data (x, y) and (x', y')
+    :param x: a list of 1d array, where shape[0]=2, shape[1]=data len
+    :param y: a list of 1d array, where shape[0]=2, shape[1]=data len
+    :param test_point: just an extra points, as a marker
+    :param label: re
+    :return:
+    '''
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    markerline, stemlines, baseline = ax.stem(x[0], y[0], '-', label=label[0])
+    markerline2, stemlines2, baseline2 = ax.stem(x[1], y[1], '-', label=label[1])
+
+    # set style
+    plt.setp(markerline, markerfacecolor='b')
+    plt.setp(stemlines, color='b', linewidth=1, linestyle='dotted')
+    plt.setp(baseline, visible=False)
+
+    plt.setp(markerline2, markerfacecolor='r', markeredgecolor='r')
+    plt.setp(stemlines2, color='r', linewidth=1, linestyle='dotted')
+    plt.setp(baseline2, visible=False)
+
+    if test_point is not None:
+        markerline3, stemlines3, baseline3 = ax.stem(test_point, [1] * len(test_point), '-', label='test')
+        plt.setp(markerline3, markerfacecolor='g', markeredgecolor='r')
+        plt.setp(stemlines3, color='g', linewidth=1, linestyle='dotted')
+        plt.setp(baseline3, visible=False)
+
+    ax.grid(linestyle='dotted')
+    ax.legend()
+
+    return fig
+
+
+def detect_close_value(x1, x2, threshold1, threshold2):
+    '''
+    Recommended usage:
+    It is usually to process the peaks list by peakutils.indexes() from 2 sensors.
+
+    For items in x1 and x2, if any items of x1 and x2 are closer than thre1, it will store the x2's value.
+    e.g. if x1 has 34, and x2 has 35, it will only keep index from x2, which is 35. After that, if the items in
+    resulting list are still too close by thre2, it will remove the smaller index.
+
+    example --
+    x1 = [1, 13, 18, 20, 34]
+    x2 = [0, 15, 17, 50]
+    thre1 = 2
+    thre2 = 3
+    first, it will produce [0, 15, 17]  --> closely similiar values
+    then, it will produce  [0, 15]      --> remove the index that are closely similar within itself
+
+    :param x1: a 1d array of list
+    :param x2: a 1d array of list
+    :param threshold1: for x1 and x2 similar point selection
+    :param threshold2: for too-close-point removal
+    :return: a list
+    '''
+
+    item_to_stay = []
+
+    # finding closely similiar points btw x1 and x2
+    for p1 in x1:
+        for p2 in x2:
+            abs_diff = np.abs(p2 - p1)
+            if abs_diff < threshold1:
+                item_to_stay.append(p2)
+                break
+
+    # for the resulting list of items from above, remove the items are too close (differ within threshold2).
+    item_to_del = []
+    # note down either one of the 2 items tat too close in a delete list
+    for i in range(len(item_to_stay) - 1):
+        if np.abs(item_to_stay[i + 1] - item_to_stay[i]) < threshold2:
+            item_to_del.append(item_to_stay[i])
+
+    # remove items according to the delete list
+    for d in item_to_del:
+        item_to_stay.remove(d)
+
+    return item_to_stay
+
+
+
+
+
+
+
+
+
