@@ -18,7 +18,6 @@ from keras.utils import to_categorical
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, LabelBinarizer
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 from sklearn.model_selection import StratifiedKFold
-import mayavi.mlab as mlab
 
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
