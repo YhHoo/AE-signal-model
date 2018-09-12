@@ -28,9 +28,19 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               scatter_plot, scatter_plot_3d_vispy
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-for i in range(5, 1, -1):
-    print(i)
 
+l = [1, 6, 9]
+m = [12, 4, 8]
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+markerline, stemlines, baseline = ax.stem(l, '-')
+# markerline2, stemlines2, baseline2 = ax.stem(m, '-')
+plt.setp(markerline, markerfacecolor='b')
+plt.setp(stemlines, color='b', linewidth=1, linestyle='dotted')
+plt.setp(baseline, visible=False)
+# plt.setp(baseline2, 'color', 'r', 'linewidth', 2)
+
+plt.show()
 # dir = direct_to_dir(where='result') + 'test.csv'
 # df = pd.read_csv(dir)
 #

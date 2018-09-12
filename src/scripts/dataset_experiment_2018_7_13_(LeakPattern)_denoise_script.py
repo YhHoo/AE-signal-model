@@ -22,7 +22,7 @@ fs = 1e6
 no_of_segment = 10  # 10 is showing a consistent pattern
 
 # DATA READING ---------------------------------------------------------------------------------------------------------
-on_pc = True
+on_pc = False
 
 if on_pc:
     data = AcousticEmissionDataSet_13_7_2018(drive='F')
@@ -50,6 +50,7 @@ print('MAX DEC LEVEL: ', pywt.dwt_max_level(data_len=len(input_signal_1), filter
 input_signal_denoised_1 = dwt_smoothing(x=input_signal_1, wavelet=dwt_wavelet, level=dwt_smooth_level)
 input_signal_denoised_2 = dwt_smoothing(x=input_signal_2, wavelet=dwt_wavelet, level=dwt_smooth_level)
 
+
 fig = plt.figure()
 fig.suptitle('{} + smooth using level: {}'.format(dwt_wavelet, dwt_smooth_level))
 ax1 = fig.add_subplot(2, 1, 1)
@@ -73,12 +74,12 @@ ax2.set_ylim(bottom=-0.4, top=0.4)
 
 
 # # decomposition
-# coeff = pywt.wavedec(input_signal, wavelet='db4', mode="per", level=dec_level)
+# coeff = pywt.wavedec(input_signal_1, wavelet='db4', mode="per", level=5)
 #
 # # visualize
-# fig = plot_multiple_level_decomposition(ori_signal=input_signal,
+# fig = plot_multiple_level_decomposition(ori_signal=input_signal_1,
 #                                         dec_signal=coeff,
-#                                         dec_level=dec_level,
+#                                         dec_level=5,
 #                                         main_title='Wavelet Decomposition',
 #                                         fs=fs)
-plt.show()
+# plt.show()

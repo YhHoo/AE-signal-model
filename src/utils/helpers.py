@@ -440,7 +440,7 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
     '''
     no_of_plot = len(input)
     fig = plt.figure(figsize=(5, 8))
-    fig.suptitle(main_title, fontweight="bold")
+    fig.suptitle(main_title, fontweight="bold", size=8)
     fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
     # first plot
     ax1 = fig.add_subplot(no_of_plot, 1, 1)
@@ -454,6 +454,48 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
         ax.set_title(subplot_titles[i], size=8)
         ax.set_ylim(bottom=-1, top=1)
     return fig
+
+
+def plot_multiple_timeseries_with_peak(input, subplot_titles, main_title, peak_list):
+    '''
+    Aspect axis[0] of input is no. of sensors/diff features, axis[1] is time steps. All time series has to be
+    SAME length !
+    :param input: a 2d-array / list
+    :param subplot_titles: title for every plot
+    :param main_title: the big title
+    :param peak_list: a list of 1d array, where len(peak_list) is no of channels, and 1d-array inside is index
+                      of the peak in particular channel
+    :return: rectangular fig obj
+    '''
+    no_of_plot = len(input)
+    fig = plt.figure(figsize=(5, 8))
+    fig.suptitle(main_title, fontweight="bold", size=8)
+    fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
+    # first plot
+    ax1 = fig.add_subplot(no_of_plot, 1, 1)
+    ax1.plot(input[0])
+    ax1.plot(peak_list[0], input[0][peak_list[0]], marker='o', ls='', ms=3, mfc='red')
+    ax1.set_title(subplot_titles[0], size=8)
+    ax1.set_ylim(bottom=-1, top=1)
+
+    # the rest of the plot
+    for i in range(1, no_of_plot, 1):
+        ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1)  # add in sharey=ax1 if wan to share y axis too
+        ax.plot(input[i])
+        ax.plot(peak_list[i], input[i][peak_list[i]], marker='o', ls='', ms=3, mfc='red')
+        ax.set_title(subplot_titles[i], size=8)
+        ax.set_ylim(bottom=-1, top=1)
+    return fig
+
+
+def lollipop_plot(x, y, label):
+    '''
+    This is now for plotting 2 sets of data (x, y) and (x', y')
+    :param x: 2d array, where shape[0]=2, shape[1]
+    :param y:
+    :param label:
+    :return:
+    '''
 
 
 def plot_multiple_level_decomposition(ori_signal, dec_signal, dec_level, main_title, fs):

@@ -291,3 +291,6 @@ def dwt_smoothing(x, wavelet="db4", level=1):
     x_smoothed = pywt.waverec(coeff, wavelet, mode="per")
 
     return x_smoothed
+
+
+
