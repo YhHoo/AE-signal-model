@@ -36,63 +36,65 @@ scale = np.linspace(2, 30, 100)
 fs = 1e6
 
 
-folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
+folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/No_Leak/'
 all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 
 # read oni one tdms
 n_channel_data_near_leak = read_single_tdms(all_file_path[0])
 n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
-
-# denoising
-temp = []
-# for all channel of sensor
-for signal in n_channel_data_near_leak:
-    denoised_signal = dwt_smoothing(x=signal, wavelet=dwt_wavelet, level=dwt_smooth_level)
-    temp.append(denoised_signal)
-n_channel_data_near_leak = np.array(temp)
-# segment of interest
-n_channel_data_near_leak = n_channel_data_near_leak[:, 3278910:3296410]
-
-# method 1
-pos1_leak_cwt, _ = pywt.cwt(n_channel_data_near_leak[1], scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
-pos2_leak_cwt, _ = pywt.cwt(n_channel_data_near_leak[7], scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
-
-xcor_1, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
-xcor_1 = xcor_1[0]
-print('XCOR DIM 1: ', xcor_1.shape)
-
-fig_1 = plot_cwt_with_time_series(time_series=[n_channel_data_near_leak[1], n_channel_data_near_leak[7]],
-                                  no_of_time_series=2,
-                                  cwt_mat=xcor_1,
-                                  cwt_scale=scale,
-                                  maxpoint_searching_bound=(3296410-3278910))
-
-# method 2
-x_cor_1d = correlate(n_channel_data_near_leak[1], n_channel_data_near_leak[7], 'full', method='fft')
-
 # visualize in time
-# title = np.arange(0, 8, 1)
-# fig_1 = plot_multiple_timeseries(input=n_channel_data_near_leak,
-#                                  subplot_titles=title,
-#                                  main_title='5 sec AE data of 1bar leak')
-xcor_len = x_cor_1d.shape[0]
-xcor_axis = np.arange(1, xcor_len + 1, 1) - xcor_len // 2 - 1
-# plt.axvline(x=)
-
-# plotting
-
-pos1_leak_cwt, _ = pywt.cwt(x_cor_1d, scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
-# pos2_leak_cwt, _ = pywt.cwt(n_channel_data_near_leak[2], scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
-
-fig_2 = plot_cwt_with_time_series(time_series=[x_cor_1d, x_cor_1d],
-                                  no_of_time_series=2,
-                                  cwt_mat=pos1_leak_cwt,
-                                  cwt_scale=scale,
-                                  maxpoint_searching_bound=(3296410 - 3278910))
-
+title = np.arange(0, 8, 1)
+fig_0 = plot_multiple_timeseries(input=n_channel_data_near_leak,
+                                 subplot_titles=title,
+                                 main_title='5 sec AE data of 1bar leak')
 
 plt.show()
+# # denoising
+# temp = []
+# # for all channel of sensor
+# for signal in n_channel_data_near_leak:
+#     denoised_signal = dwt_smoothing(x=signal, wavelet=dwt_wavelet, level=dwt_smooth_level)
+#     temp.append(denoised_signal)
+# n_channel_data_near_leak = np.array(temp)
+# # segment of interest
+# n_channel_data_near_leak = n_channel_data_near_leak[:, 3278910:3296410]
+#
+# # method 1
+# pos1_leak_cwt, _ = pywt.cwt(n_channel_data_near_leak[1], scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
+# pos2_leak_cwt, _ = pywt.cwt(n_channel_data_near_leak[7], scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
+#
+# xcor_1, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
+# xcor_1 = xcor_1[0]
+# print('XCOR DIM 1: ', xcor_1.shape)
+#
+# fig_1 = plot_cwt_with_time_series(time_series=[n_channel_data_near_leak[1], n_channel_data_near_leak[7]],
+#                                   no_of_time_series=2,
+#                                   cwt_mat=xcor_1,
+#                                   cwt_scale=scale,
+#                                   maxpoint_searching_bound=(3296410-3278910))
+#
+# # method 2
+# x_cor_1d = correlate(n_channel_data_near_leak[1], n_channel_data_near_leak[7], 'full', method='fft')
+#
+#
+# xcor_len = x_cor_1d.shape[0]
+# xcor_axis = np.arange(1, xcor_len + 1, 1) - xcor_len // 2 - 1
+# # plt.axvline(x=)
+#
+# # plotting
+#
+# pos1_leak_cwt, _ = pywt.cwt(x_cor_1d, scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
+# # pos2_leak_cwt, _ = pywt.cwt(n_channel_data_near_leak[2], scales=scale, wavelet=cwt_wavelet, sampling_period=1 / fs)
+#
+# fig_2 = plot_cwt_with_time_series(time_series=[x_cor_1d, x_cor_1d],
+#                                   no_of_time_series=2,
+#                                   cwt_mat=pos1_leak_cwt,
+#                                   cwt_scale=scale,
+#                                   maxpoint_searching_bound=(3296410 - 3278910))
+#
+#
+# plt.show()
 
 
 # plt.show()
