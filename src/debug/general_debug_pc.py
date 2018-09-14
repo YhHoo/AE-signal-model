@@ -45,17 +45,8 @@ from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_ma
 # print(leak_caused_peak_list)
 
 
-t = [1, 5, 19, 20, 56, 78]
-
-# eliminate the peak that are too closed tgt, to avoid duplicate segmentation.
-item_to_del = []
-# note down either one of the 2 items tat too close in a delete list
-for i in range(len(t)-1):
-    if np.abs(t[i+1] - t[i]) < 10:
-        item_to_del.append(t[i])
-# remove items according to the delete list
-for d in item_to_del:
-    t.remove(d)
+x = np.mean((5, 2))
+print(x)
 
 
 

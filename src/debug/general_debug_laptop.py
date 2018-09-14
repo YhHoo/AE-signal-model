@@ -21,34 +21,42 @@ import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
-from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input
+from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, detect_ae_event_by_v_sensor
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
                               break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical, \
-                              scatter_plot, scatter_plot_3d_vispy
+                              scatter_plot, scatter_plot_3d_vispy, lollipop_plot
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-l = [1, 6, 9]
-m = [12, 4, 8]
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-markerline, stemlines, baseline = ax.stem(l, '-')
-# markerline2, stemlines2, baseline2 = ax.stem(m, '-')
-plt.setp(markerline, markerfacecolor='b')
-plt.setp(stemlines, color='b', linewidth=1, linestyle='dotted')
-plt.setp(baseline, visible=False)
-# plt.setp(baseline2, 'color', 'r', 'linewidth', 2)
-
-plt.show()
-# dir = direct_to_dir(where='result') + 'test.csv'
-# df = pd.read_csv(dir)
+# x = [[1, 25, 67], [2, 24, 70], [3, 20, 58]]
+# y = [[1, 1.04, 1.2], [1, 2, 1], [0.7, 1, 1]]
+# label = ['one', 'two', 'three']
 #
-# column_names = df.columns.get_values()
-# print(column_names)
+# fig = lollipop_plot(x_list=x, y_list=y, label=label, test_point=[2, 50, 80])
+# plt.show()
 
+# x = np.arange(0, 10, 1)
+# x2 = np.arange(0, 10, 2)
+# y = [5, 10]
+# for i in y:
+#     print('Start First Loop')
+#     for j in x:
+#         print('Start Second Loop')
+#         print(j)
+#         if j > i:
+#             print('Oppssss')
+#             break
+#     for k in x2:
+#         print('Start Third Loop')
+#         print(k)
+#         if k > i:
+#             print('Oppssss')
+#             break
 
-
+l = [1]
+if not l:
+    print('empty list')
 # ax = Axes3D(fig)
 
 # ax.scatter(x, y, z, cmap=cm.rainbow, c=[0, 0.5, 0.9])

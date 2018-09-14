@@ -1087,34 +1087,37 @@ def scatter_plot_3d_vispy(dataset, label):
     app.run()
 
 
-def lollipop_plot(x, y, test_point=None, label=None):
+def lollipop_plot(x_list, y_list, test_point=None, label=None):
     '''
     This is now for plotting 2 sets of data (x, y) and (x', y')
-    :param x: a list of 1d array, where shape[0]=2, shape[1]=data len
-    :param y: a list of 1d array, where shape[0]=2, shape[1]=data len
+    :param x_list: a list of 1d array, where shape[0]=2, shape[1]=data len
+    :param y_list: a list of 1d array, where shape[0]=2, shape[1]=data len
     :param test_point: just an extra points, as a marker
     :param label: re
     :return:
     '''
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(8, 5))
     ax = fig.add_subplot(1, 1, 1)
-    markerline, stemlines, baseline = ax.stem(x[0], y[0], '-', label=label[0])
-    markerline2, stemlines2, baseline2 = ax.stem(x[1], y[1], '-', label=label[1])
+    # config color scheme for scatter plot
+    cmap = cm.get_cmap('rainbow')
 
-    # set style
-    plt.setp(markerline, markerfacecolor='b')
-    plt.setp(stemlines, color='b', linewidth=1, linestyle='dotted')
-    plt.setp(baseline, visible=False)
+    # convert the label to RGBA
+    c_code = np.linspace(0, 1, len(x_list))
+    color_label_rgba = np.array([cmap(i) for i in c_code])
 
-    plt.setp(markerline2, markerfacecolor='r', markeredgecolor='r')
-    plt.setp(stemlines2, color='r', linewidth=1, linestyle='dotted')
-    plt.setp(baseline2, visible=False)
+    for x, y, l, c in zip(x_list, y_list, label, color_label_rgba):
+        markerline, stemlines, baseline = ax.stem(x, y, '-', label=l)
+
+        # set style
+        plt.setp(markerline, markerfacecolor=c, markeredgecolor=c)
+        plt.setp(stemlines, color=c, linewidth=1, linestyle='dotted')
+        plt.setp(baseline, visible=False)
 
     if test_point is not None:
         markerline3, stemlines3, baseline3 = ax.stem(test_point, [1] * len(test_point), '-', label='test')
-        plt.setp(markerline3, markerfacecolor='g', markeredgecolor='r')
-        plt.setp(stemlines3, color='g', linewidth=1, linestyle='dotted')
+        plt.setp(markerline3, markerfacecolor='k', markeredgecolor='k')
+        plt.setp(stemlines3, color='k', linewidth=1, linestyle='dotted')
         plt.setp(baseline3, visible=False)
 
     ax.grid(linestyle='dotted')
@@ -1122,53 +1125,6 @@ def lollipop_plot(x, y, test_point=None, label=None):
 
     return fig
 
-
-def detect_close_value(x1, x2, threshold1, threshold2):
-    '''
-    Recommended usage:
-    It is usually to process the peaks list by peakutils.indexes() from 2 sensors.
-
-    For items in x1 and x2, if any items of x1 and x2 are closer than thre1, it will store the x2's value.
-    e.g. if x1 has 34, and x2 has 35, it will only keep index from x2, which is 35. After that, if the items in
-    resulting list are still too close by thre2, it will remove the smaller index.
-
-    example --
-    x1 = [1, 13, 18, 20, 34]
-    x2 = [0, 15, 17, 50]
-    thre1 = 2
-    thre2 = 3
-    first, it will produce [0, 15, 17]  --> closely similiar values
-    then, it will produce  [0, 15]      --> remove the index that are closely similar within itself
-
-    :param x1: a 1d array of list
-    :param x2: a 1d array of list
-    :param threshold1: for x1 and x2 similar point selection
-    :param threshold2: for too-close-point removal
-    :return: a list
-    '''
-
-    item_to_stay = []
-
-    # finding closely similiar points btw x1 and x2
-    for p1 in x1:
-        for p2 in x2:
-            abs_diff = np.abs(p2 - p1)
-            if abs_diff < threshold1:
-                item_to_stay.append(p2)
-                break
-
-    # for the resulting list of items from above, remove the items are too close (differ within threshold2).
-    item_to_del = []
-    # note down either one of the 2 items tat too close in a delete list
-    for i in range(len(item_to_stay) - 1):
-        if np.abs(item_to_stay[i + 1] - item_to_stay[i]) < threshold2:
-            item_to_del.append(item_to_stay[i])
-
-    # remove items according to the delete list
-    for d in item_to_del:
-        item_to_stay.remove(d)
-
-    return item_to_stay
 
 
 

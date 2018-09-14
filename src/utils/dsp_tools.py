@@ -293,4 +293,126 @@ def dwt_smoothing(x, wavelet="db4", level=1):
     return x_smoothed
 
 
+def detect_ae_event_by_sandwich_sensor(x1, x2, threshold1, threshold2):
+    '''
+    Recommended usage:
+    It is usually to process the peaks list by peakutils.indexes() from 2 sensors at SAME dist away fr AE source.
+
+    For items in x1 and x2, if any items of x1 and x2 are closer than thre1, it will store the x2's value.
+    e.g. if x1 has 34, and x2 has 35, it will only keep index from x2, which is 35. After that, if the items in
+    resulting list are still too close by thre2, it will remove the smaller index.
+
+    example --
+    x1 = [1, 13, 18, 20, 34]
+    x2 = [0, 15, 17, 50]
+    thre1 = 2
+    thre2 = 3
+    first, it will produce [0, 15, 17]  --> closely similiar values
+    then, it will produce  [0, 15]      --> remove the index that are closely similar within itself
+
+    :param x1: a 1d array of list
+    :param x2: a 1d array of list
+    :param threshold1: for x1 and x2 similar point selection
+    :param threshold2: for too-close-point removal
+    :return: a list
+    '''
+
+    item_to_stay = []
+
+    # finding closely similiar points btw x1 and x2
+    for p1 in x1:
+        for p2 in x2:
+            abs_diff = np.abs(p2 - p1)
+            if abs_diff < threshold1:
+                item_to_stay.append(p2)
+                break
+
+    # for the resulting list of items from above, remove the items are too close (differ within threshold2).
+    item_to_del = []
+    # note down either one of the 2 items tat too close in a delete list
+    for i in range(len(item_to_stay) - 1):
+        if np.abs(item_to_stay[i + 1] - item_to_stay[i]) < threshold2:
+            item_to_del.append(item_to_stay[i])
+
+    # remove items according to the delete list
+    for d in item_to_del:
+        item_to_stay.remove(d)
+
+    return item_to_stay
+
+
+def detect_ae_event_by_v_sensor(x1, x2, x3, x4, threshold_list=None, threshold_x=None):
+    '''
+    This function is specific for processing 4 lists of peak indexes from peakutils.indexes()
+
+    Algorithm:
+    It is expecting [x1, x2, x3, x4] as [-3m, -2m, 2m, 4m], and the ae event
+    is from 0m.
+    First, it finds similiar peaks from -2m and 2m --> abs([-2m]-[2m]) < threshold[0]
+    Then, it takes the midpoints of the similiar peak from -2m and 2m as mid.
+    It then finds points from x1 that are > mid and has distance less than threshold[1]. if yes, set flag_0 = True
+    Last, it finds points from x4 that are > mid and has distance less than threshold[2]. if yes, set flag_1 = True
+    For mid with both flag_0 and flag_1 on, it is stored and returned.
+
+    :param x1: a list of peaks indexs
+    :param x2: a list of peaks indexs
+    :param x3: a list of peaks indexs
+    :param x4: a list of peaks indexs
+    :param threshold_list: a list of 3 integers
+    :param threshold_x: a single value
+    :return: a list of indexes where AE event is detected
+    '''
+
+    ae_peak, ae_peak_confirmed = [], []
+    flag_0, flag_1 = False, False
+
+    # Stage 1 ----------------------------------------------------------------------------------------------------------
+    # finding [0m]-emitted peak btw x1 and x2
+    # we allow a very small dist difference btw the 2 peaks
+    for p2 in x2:
+        for p3 in x3:
+            abs_diff = np.abs(p3 - p2)
+            if abs_diff < threshold_list[0]:
+                # find the mid point
+                ae_peak.append(np.mean((p2, p3)))
+                break
+
+    # Stage 2 ----------------------------------------------------------------------------------------------------------
+    # for all mid detected
+    for mid in ae_peak:
+        # check mid with x1
+        for p1 in x1:
+            if p1 > mid:
+                if (p1-mid) < threshold_list[1]:
+                    flag_0 = True
+                    # exit for loop once a match is found
+                    break
+        # check mid with x4
+        for p4 in x4:
+            if p4 > mid:
+                if (p4-mid) < threshold_list[2]:
+                    flag_1 = True
+                    # exit for loop once a match is found
+                    break
+
+        # verify the mid with flag 1 and 2
+        if flag_0 and flag_1:
+            ae_peak_confirmed.append(int(mid))
+
+        # reset flag to 0
+        flag_0, flag_1 = False, False
+
+    # Stage 3 ----------------------------------------------------------------------------------------------------------
+    # remove the peak are too close (differ within threshold_x).
+    item_to_del = []
+    # note down either one of the 2 items tat too close in a delete list
+    for i in range(len(ae_peak_confirmed) - 1):
+        if np.abs(ae_peak_confirmed[i + 1] - ae_peak_confirmed[i]) < threshold_x:
+            item_to_del.append(ae_peak_confirmed[i])
+
+    # remove items according to the delete list
+    for d in item_to_del:
+        ae_peak_confirmed.remove(d)
+
+    return ae_peak_confirmed
 
