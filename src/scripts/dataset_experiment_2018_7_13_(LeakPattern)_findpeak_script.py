@@ -49,15 +49,15 @@ scale = np.linspace(2, 30, 100)
 no_of_segment = 1
 
 # roi
-roi_width = (int(5e3), int(15e3))
+roi_width = (int(1.5e3), int(15e3))
 
 # DATA READING AND PRE-PROCESSING --------------------------------------------------------------------------------------
 # tdms file reading
-folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
+folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/Leak/'
 all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 
 # file of interest
-foi = all_file_path[0]
+foi = all_file_path[1]
 n_channel_data_near_leak = read_single_tdms(foi)
 n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
@@ -107,13 +107,13 @@ fig_timeseries = plot_multiple_timeseries_with_roi(input=n_channel_data_near_lea
                                                    roi_width=roi_width)
 
 
-# fig_lollipop = lollipop_plot(x=peak_list,
-#                              y=[signal_1[1][peak_list[0]], signal_1[2][peak_list[1]]],
-#                              test_point=leak_caused_peak,
-#                              label=['Sensor[-2m]', 'Sensor[2m]'])
+fig_lollipop = lollipop_plot(x=peak_list,
+                             y=[n_channel_data_near_leak[1][peak_list[0]], n_channel_data_near_leak[2][peak_list[1]]],
+                             test_point=leak_caused_peak,
+                             label=['Sensor[-2m]', 'Sensor[2m]'])
 
 
-# plt.show()
+plt.show()
 
 # CWT + XCOR -----------------------------------------------------------------------------------------------------------
 # xcor pairing commands - [near] = 0m, 1m,..., 10m
@@ -126,11 +126,25 @@ for p in leak_caused_peak:
     dist_diff = 0
     # for all sensor combination
     for sensor_pair in sensor_pair_near:
-        pos1_leak_cwt, _ = pywt.cwt(signal_roi[sensor_pair[0]], scales=scale, wavelet=cwt_wavelet)
-        pos2_leak_cwt, _ = pywt.cwt(signal_roi[sensor_pair[1]], scales=scale, wavelet=cwt_wavelet)
+        # method 1
+        xcor_cwt = True
+        if xcor_cwt:
+            xcor_1d = correlate(in1=signal_roi[sensor_pair[0]],
+                                in2=signal_roi[sensor_pair[1]],
+                                mode='full',
+                                method='fft')
+            xcor, _ = pywt.cwt(xcor_1d, scales=scale, wavelet=cwt_wavelet)
 
-        xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
-        xcor = xcor[0]
+        # method 2
+        cwt_xcor = False
+        if cwt_xcor:
+            # CWT
+            pos1_leak_cwt, _ = pywt.cwt(signal_roi[sensor_pair[0]], scales=scale, wavelet=cwt_wavelet)
+            pos2_leak_cwt, _ = pywt.cwt(signal_roi[sensor_pair[1]], scales=scale, wavelet=cwt_wavelet)
+
+            # Xcor
+            xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
+            xcor = xcor[0]
 
         fig_title = 'Xcor of CWT of Sensor[{}] and Sensor[{}] -- Dist_Diff[{}m] -- Roi[{}]'.format(sensor_pair[0],
                                                                                                    sensor_pair[1],
@@ -150,7 +164,7 @@ for p in leak_caused_peak:
             plt.show()
 
         # saving the plot ----------------------------------------------------------------------------------------------
-        saving = True
+        saving = False
         if saving:
             filename = direct_to_dir(where='google_drive') + \
                        'xcor_cwt_DistDiff[{}m]_roi[{}]'.format(dist_diff, sample_no)
