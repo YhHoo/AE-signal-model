@@ -1087,7 +1087,7 @@ def scatter_plot_3d_vispy(dataset, label):
     app.run()
 
 
-def lollipop_plot(x_list, y_list, test_point=None, label=None):
+def lollipop_plot(x_list, y_list, test_point=None, label=None, title='No Title'):
     '''
     This is now for plotting 2 sets of data (x, y) and (x', y')
     :param x_list: a list of 1d array, where shape[0]=2, shape[1]=data len
@@ -1097,7 +1097,8 @@ def lollipop_plot(x_list, y_list, test_point=None, label=None):
     :return:
     '''
 
-    fig = plt.figure(figsize=(8, 5))
+    fig = plt.figure(figsize=(10, 5))
+    fig.suptitle(title, fontweight="bold", size=8)
     ax = fig.add_subplot(1, 1, 1)
     # config color scheme for scatter plot
     cmap = cm.get_cmap('rainbow')

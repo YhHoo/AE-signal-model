@@ -44,11 +44,12 @@ from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_ma
 #
 # print(leak_caused_peak_list)
 
-
-x = np.mean((5, 2))
-print(x)
-
-
+l = [1, 2, 3, 4]
+m = ['td1', 'td2', 'td2', 'td4']
+df = pd.DataFrame()
+df['peak'] = l
+df['file'] = m
+print(df)
 
 # dwt_wavelet = 'db2'
 # dwt_smooth_level = 4
