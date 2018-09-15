@@ -35,17 +35,23 @@ from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_ma
 # CONFIG ---------------------------------------------------------------------------------------------------------------
 fs = 1e6
 sensor_position = ['-3m', '-2m', '2m', '4m', '6m', '8m', '10m', '12m']
+
 # dwt denoising setting
 denoise = False
 dwt_wavelet = 'db2'
 dwt_smooth_level = 3
 
+# peak detect (by peakutils.indexes())
+thre_peak = 0.55  # (in % of the range)
+min_dist_btw_peak = 5000
+
+# ae event detect (by detect_ae_event_by_v_sensor)
+thre_event = [500, 1250, 2500]
+threshold_x = 10000
+
 # cwt
 cwt_wavelet = 'gaus1'
 scale = np.linspace(2, 30, 100)
-
-# segmentation
-no_of_segment = 1
 
 # roi
 roi_width = (int(1.5e3), int(11e3))
@@ -86,15 +92,15 @@ for foi in all_file_path:
     time_start = time.time()
     print('Peak localizing ...')
     for channel in n_channel_data_near_leak[:4]:
-        peak_list.append(peakutils.indexes(channel, thres=0.55, min_dist=5000))  # **
+        peak_list.append(peakutils.indexes(channel, thres=thre_peak, min_dist=min_dist_btw_peak))  # **
     print('Time Taken for peakutils.indexes(): {:.4f}s'.format(time.time() - time_start))
 
     leak_caused_peak = detect_ae_event_by_v_sensor(x1=peak_list[0],
                                                    x2=peak_list[1],
                                                    x3=peak_list[2],
                                                    x4=peak_list[3],
-                                                   threshold_list=[500, 1250, 2500],  # ** calc by dist*fs/800
-                                                   threshold_x=10000)  # **
+                                                   threshold_list=thre_event,  # ** calc by dist*fs/800
+                                                   threshold_x=threshold_x)  # **
     print('Leak Caused Peak: ', leak_caused_peak)
     # if the list is empty
     if not leak_caused_peak:
@@ -162,8 +168,8 @@ for foi in all_file_path:
                                                      title=fig_title,
                                                      maxpoint_searching_bound=(roi_width[1]-roi_width[0]-1))
             fig_cwt_filename = direct_to_dir(where='result') + 'xcor_cwt_[{}m]_{}_roi[{}]'.format(dist_diff,
-                                                                                                        filename,
-                                                                                                        roi_no)
+                                                                                                  filename,
+                                                                                                  roi_no)
             fig_cwt_xcor.savefig(fig_cwt_filename)
 
             plt.close('all')
