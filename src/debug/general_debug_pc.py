@@ -12,6 +12,7 @@ from numpy import correlate as correlate_numpy
 import pandas as pd
 import pywt
 import time
+import peakutils
 from os import listdir
 from scipy.signal import correlate
 from keras.utils import to_categorical
@@ -29,27 +30,22 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-# l = [123, 145, 178]
-# l2 = [126, 172, 190]
-#
-# leak_caused_peak_list = []
-#
-# # find index tat has abs dist of less that ...
-# for p1 in l:
-#     for p2 in l2:
-#         abs_diff = np.abs(p2-p1)
-#         if abs_diff < 10:
-#             leak_caused_peak_list.append(p2)
-#             break
-#
-# print(leak_caused_peak_list)
+folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
+all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 
-l = [1, 2, 3, 4]
-m = ['td1', 'td2', 'td2', 'td4']
-df = pd.DataFrame()
-df['peak'] = l
-df['file'] = m
-print(df)
+n_channel_data_near_leak = read_single_tdms(all_file_path[0])
+n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+print('Read Data Dim: ', n_channel_data_near_leak.shape)
+
+soi = n_channel_data_near_leak[1, 34350-1000:34350+5000]
+env = peakutils.envelope(y=soi, deg=100, tol=0.001)
+print(env.shape)
+print(soi.shape)
+plt.plot(soi, label='ori')
+plt.plot(env, label='env')
+
+plt.grid(linestyle='dotted')
+plt.show()
 
 # dwt_wavelet = 'db2'
 # dwt_smooth_level = 4

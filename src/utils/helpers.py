@@ -1087,12 +1087,12 @@ def scatter_plot_3d_vispy(dataset, label):
     app.run()
 
 
-def lollipop_plot(x_list, y_list, test_point=None, label=None, title='No Title'):
+def lollipop_plot(x_list, y_list, hit_point=None, label=None, title='No Title'):
     '''
     This is now for plotting 2 sets of data (x, y) and (x', y')
     :param x_list: a list of 1d array, where shape[0]=2, shape[1]=data len
     :param y_list: a list of 1d array, where shape[0]=2, shape[1]=data len
-    :param test_point: just an extra points, as a marker
+    :param hit_point: just an extra points, as a marker
     :param label: re
     :return:
     '''
@@ -1115,8 +1115,8 @@ def lollipop_plot(x_list, y_list, test_point=None, label=None, title='No Title')
         plt.setp(stemlines, color=c, linewidth=1, linestyle='dotted')
         plt.setp(baseline, visible=False)
 
-    if test_point is not None:
-        markerline3, stemlines3, baseline3 = ax.stem(test_point, [1] * len(test_point), '-', label='test')
+    if hit_point is not None:
+        markerline3, stemlines3, baseline3 = ax.stem(hit_point, [1] * len(hit_point), '-', label='hit')
         plt.setp(markerline3, markerfacecolor='k', markeredgecolor='k')
         plt.setp(stemlines3, color='k', linewidth=1, linestyle='dotted')
         plt.setp(baseline3, visible=False)

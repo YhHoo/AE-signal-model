@@ -46,7 +46,7 @@ thre_peak = 0.55  # (in % of the range)
 min_dist_btw_peak = 5000
 
 # ae event detect (by detect_ae_event_by_v_sensor)
-thre_event = [500, 1250, 2500]
+thre_event = [400, 1250, 2500]
 threshold_x = 10000
 
 # cwt
@@ -54,7 +54,7 @@ cwt_wavelet = 'gaus1'
 scale = np.linspace(2, 30, 100)
 
 # roi
-roi_width = (int(1.5e3), int(11e3))
+roi_width = (int(1e3), int(5e3))
 
 # DATA READING AND PRE-PROCESSING --------------------------------------------------------------------------------------
 # tdms file reading
@@ -120,7 +120,7 @@ for foi in all_file_path:
                                          n_channel_data_near_leak[1][peak_list[1]],
                                          n_channel_data_near_leak[2][peak_list[2]],
                                          n_channel_data_near_leak[3][peak_list[3]]],
-                                 test_point=leak_caused_peak,
+                                 hit_point=leak_caused_peak,
                                  label=['Sensor[-3m]', 'Sensor[-2m]', 'Sensor[2m]', 'Sensor[4m]'])
     fig_lollipop_filename = direct_to_dir(where='result') + '{}_lollipop'.format(filename)
     fig_lollipop.savefig(fig_lollipop_filename)
@@ -134,8 +134,8 @@ for foi in all_file_path:
         roi = n_channel_data_near_leak[:, lcp-roi_width[0]:lcp+roi_width[1]]
 
         # save roi time series plot
-        fig_timeseries = plot_multiple_timeseries(input=roi,
-                                                  subplot_titles=sensor_position,
+        fig_timeseries = plot_multiple_timeseries(input=roi[:5],
+                                                  subplot_titles=sensor_position[:5],
                                                   main_title=foi)
         fig_timeseries_filename = direct_to_dir(where='result') + '{}_roi[{}]'.format(filename, roi_no)
         fig_timeseries.savefig(fig_timeseries_filename)
@@ -143,39 +143,39 @@ for foi in all_file_path:
         print('Time Series fig saved --> ', fig_timeseries_filename)
 
         # CWT + XCOR ---------------------------------------------------------------------------------------------------
-        # xcor pairing commands - [near] = 0m, 1m,..., 10m
-        sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
-
-        dist_diff = 0
-        # for all sensor combination
-        for sensor_pair in sensor_pair_near:
-            # CWT
-            pos1_leak_cwt, _ = pywt.cwt(roi[sensor_pair[0]], scales=scale, wavelet=cwt_wavelet)
-            pos2_leak_cwt, _ = pywt.cwt(roi[sensor_pair[1]], scales=scale, wavelet=cwt_wavelet)
-
-            # Xcor
-            xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
-            xcor = xcor[0]
-            fig_title = 'Xcor_CWT_[{}]x[{}]_Dist_Diff[{}m]_[{}]_Roi[{}]'.format(sensor_pair[0],
-                                                                                sensor_pair[1],
-                                                                                dist_diff,
-                                                                                filename,
-                                                                                roi_no)
-            fig_cwt_xcor = plot_cwt_with_time_series(time_series=[roi[sensor_pair[0]], roi[sensor_pair[1]]],
-                                                     no_of_time_series=2,
-                                                     cwt_mat=xcor,
-                                                     cwt_scale=scale,
-                                                     title=fig_title,
-                                                     maxpoint_searching_bound=(roi_width[1]-roi_width[0]-1))
-            fig_cwt_filename = direct_to_dir(where='result') + 'xcor_cwt_[{}m]_{}_roi[{}]'.format(dist_diff,
-                                                                                                  filename,
-                                                                                                  roi_no)
-            fig_cwt_xcor.savefig(fig_cwt_filename)
-
-            plt.close('all')
-            print('CWR_XCOR fig saved --> ', fig_cwt_filename)
-
-            dist_diff += 1
+        # # xcor pairing commands - [near] = 0m, 1m,..., 10m
+        # sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
+        #
+        # dist_diff = 0
+        # # for all sensor combination
+        # for sensor_pair in sensor_pair_near:
+        #     # CWT
+        #     pos1_leak_cwt, _ = pywt.cwt(roi[sensor_pair[0]], scales=scale, wavelet=cwt_wavelet)
+        #     pos2_leak_cwt, _ = pywt.cwt(roi[sensor_pair[1]], scales=scale, wavelet=cwt_wavelet)
+        #
+        #     # Xcor
+        #     xcor, _ = one_dim_xcor_2d_input(input_mat=np.array([pos1_leak_cwt, pos2_leak_cwt]), pair_list=[(0, 1)])
+        #     xcor = xcor[0]
+        #     fig_title = 'Xcor_CWT_[{}]x[{}]_Dist_Diff[{}m]_[{}]_Roi[{}]'.format(sensor_pair[0],
+        #                                                                         sensor_pair[1],
+        #                                                                         dist_diff,
+        #                                                                         filename,
+        #                                                                         roi_no)
+        #     fig_cwt_xcor = plot_cwt_with_time_series(time_series=[roi[sensor_pair[0]], roi[sensor_pair[1]]],
+        #                                              no_of_time_series=2,
+        #                                              cwt_mat=xcor,
+        #                                              cwt_scale=scale,
+        #                                              title=fig_title,
+        #                                              maxpoint_searching_bound=(roi_width[1]-roi_width[0]-1))
+        #     fig_cwt_filename = direct_to_dir(where='result') + 'xcor_cwt_[{}m]_{}_roi[{}]'.format(dist_diff,
+        #                                                                                           filename,
+        #                                                                                           roi_no)
+        #     fig_cwt_xcor.savefig(fig_cwt_filename)
+        #
+        #     plt.close('all')
+        #     print('CWR_XCOR fig saved --> ', fig_cwt_filename)
+        #
+        #     dist_diff += 1
 
         roi_no += 1
 

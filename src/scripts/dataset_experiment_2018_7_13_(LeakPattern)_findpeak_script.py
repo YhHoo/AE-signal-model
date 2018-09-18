@@ -134,7 +134,7 @@ fig_lollipop = lollipop_plot(x_list=peak_list[:4],
                                      n_channel_data_near_leak[1][peak_list[1]],
                                      n_channel_data_near_leak[2][peak_list[2]],
                                      n_channel_data_near_leak[3][peak_list[3]]],
-                             test_point=leak_caused_peak,
+                             hit_point=leak_caused_peak,
                              label=['Sensor[-3m]', 'Sensor[-2m]', 'Sensor[2m]', 'Sensor[4m]'])
 
 
