@@ -19,7 +19,7 @@ from keras.utils import to_categorical
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, LabelBinarizer
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 from sklearn.model_selection import StratifiedKFold
-
+import csv
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, dwt_smoothing, one_dim_xcor_1d_input
@@ -29,23 +29,59 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               scatter_plot_3d_vispy, scatter_plot, plot_multiple_timeseries, plot_cwt_with_time_series
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
+file = direct_to_dir(where='result') + 'non_lcp_1bar_near_segmentation2_dataset.csv'
+time_start = time.time()
+df = pd.read_csv(file)
+print('time taken: ', time.time() - time_start)
+print(df.head())
+print(df.values.shape)
 
-folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
-all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 
-n_channel_data_near_leak = read_single_tdms(all_file_path[0])
-n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
-print('Read Data Dim: ', n_channel_data_near_leak.shape)
+# l = [[1, 2, 3],
+#      [2, 4, 6],
+#      [8, 9, 10]]
+# header = ['0', '1', 'label']
+#
+# with open('test.csv', 'w', newline='') as f:
+#     writer = csv.writer(f)
+#     writer.writerow(header)
+#
+# for row in l:
+#     with open('test.csv', 'a', newline='') as f:
+#         writer = csv.writer(f)
+#         writer.writerow(row)
+#
+# for row in l:
+#     print([str(i) for i in row])
+#     with open('test.csv', 'w', newline='') as f:
+#         writer = csv.writer(f)
+#         writer.writerows([str(i) for i in row])
 
-soi = n_channel_data_near_leak[1, 34350-1000:34350+5000]
-env = peakutils.envelope(y=soi, deg=100, tol=0.001)
-print(env.shape)
-print(soi.shape)
-plt.plot(soi, label='ori')
-plt.plot(env, label='env')
 
-plt.grid(linestyle='dotted')
-plt.show()
+
+
+
+# lcp_filename = direct_to_dir(where='result') + 'lcp_dataset_1.csv'
+# lcp_dataset_df = pd.read_csv(lcp_filename, index_col=0)
+# print(lcp_dataset_df.values.shape)
+# print(lcp_dataset_df.values)
+
+# folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
+# all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
+#
+# n_channel_data_near_leak = read_single_tdms(all_file_path[0])
+# n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+# print('Read Data Dim: ', n_channel_data_near_leak.shape)
+#
+# soi = n_channel_data_near_leak[1, 34350-1000:34350+5000]
+# env = peakutils.envelope(y=soi, deg=100, tol=0.001)
+# print(env.shape)
+# print(soi.shape)
+# plt.plot(soi, label='ori')
+# plt.plot(env, label='env')
+#
+# plt.grid(linestyle='dotted')
+# plt.show()
 
 # dwt_wavelet = 'db2'
 # dwt_smooth_level = 4
