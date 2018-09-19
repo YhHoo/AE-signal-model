@@ -700,29 +700,6 @@ class AcousticEmissionDataSet_13_7_2018:
         return dataset, label
 
 
-# _, _, sxx, fig = spectrogram_scipy(sampled_data=data_raw[0],
-#                                    fs=1e6,
-#                                    mode='magnitude',
-#                                    nperseg=100,
-#                                    nfft=500,
-#                                    noverlap=0,
-#                                    return_plot=True,
-#                                    verbose=False)
-# plt.show()
-
-# -------------[VISUALIZE ALL IN TIME]---------------
-# subplot_titles = ['sensor[{}m]'.format(d) for d in [-3, -2, 10, 14, 16, 18, 20, 22]]
-# sample_no = 0
-# savepath = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/'
-# for sample in data_raw:
-#     fig = multiplot_timeseries(sample[:, 90000:130000],
-#                                subplot_titles=subplot_titles,
-#                                main_title='PLB time series (sample_{})'.format(sample_no))
-#     filename = '{}PLB_time_ser_sample{}'.format(savepath, sample_no)
-#     fig.savefig(filename)
-#     plt.close('all')
-#     print('saved')
-#     sample_no += 1
 
 
 

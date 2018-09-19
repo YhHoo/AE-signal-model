@@ -1,35 +1,13 @@
 import numpy as np
 import peakutils
-from multiprocessing import Pool
-import gc
-from random import shuffle
-from scipy.signal import gausspulse
 import matplotlib.pyplot as plt
-from matplotlib import cm
-from mpl_toolkits.axes_grid1 import AxesGrid
-from scipy import signal
-from scipy.signal import correlate as correlate_scipy
-from numpy import correlate as correlate_numpy
 import pandas as pd
-import pywt
 import time
 from os import listdir
-from scipy.signal import correlate
-from keras.utils import to_categorical
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, LabelBinarizer
-from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
-from sklearn.model_selection import StratifiedKFold
 
 # self lib
-from src.controlled_dataset.ideal_dataset import white_noise
-from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, dwt_smoothing, one_dim_xcor_1d_input, \
-                                detect_ae_event_by_sandwich_sensor, detect_ae_event_by_v_sensor
-from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
-from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
-                              break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical, \
-                              scatter_plot_3d_vispy, scatter_plot, plot_multiple_timeseries, plot_cwt_with_time_series,\
-                              plot_multiple_timeseries_with_roi, lollipop_plot
-from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
+from src.utils.dsp_tools import dwt_smoothing, detect_ae_event_by_v_sensor
+from src.utils.helpers import read_single_tdms, direct_to_dir, plot_multiple_timeseries, lollipop_plot
 
 # ** = tunable param
 # CONFIG ---------------------------------------------------------------------------------------------------------------
