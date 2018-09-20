@@ -32,7 +32,7 @@ lcp_confident_df = lcp_confident_df.drop(['contain other source'], axis=1)
 header = np.arange(0, roi_width[0]+roi_width[1], 1).tolist() + ['label']
 
 # write first row to csv
-with open(lcp_recognition_dataset_save_filename, 'w') as f:
+with open(lcp_recognition_dataset_save_filename, 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(header)
 
@@ -64,7 +64,7 @@ for foi in all_tdms_dir:
         soi_2 = n_channel_data_near_leak[2, (lcp_index - roi_width[0]):(lcp_index + roi_width[1])].tolist() + [1]
 
         # save to csv
-        with open(lcp_recognition_dataset_save_filename, 'a') as f:
+        with open(lcp_recognition_dataset_save_filename, 'a', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(soi_1)
             writer.writerow(soi_2)
@@ -96,13 +96,12 @@ for foi in all_tdms_dir:
                   + [0]
 
             # save to one csv
-            with open(lcp_recognition_dataset_save_filename, 'a') as f:
+            with open(lcp_recognition_dataset_save_filename, 'a', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerow(soi)
 
         print('non_lcp appended --> ', lcp_recognition_dataset_save_filename)
 
-    # n_channel_data_near_leak = None
     gc.collect()
 
 

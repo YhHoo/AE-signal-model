@@ -2,10 +2,13 @@ import numpy as np
 import pandas as pd
 import pywt
 import gc
+import time
 from random import shuffle
 import matplotlib.pyplot as plt
 from os import listdir
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 # self library
 from src.utils.helpers import read_all_tdms_from_folder, read_single_tdms, plot_simple_heatmap, \
                               heatmap_visualizer, ProgressBarForLoop, direct_to_dir, shuffle_in_unison
@@ -698,6 +701,58 @@ class AcousticEmissionDataSet_13_7_2018:
         print('Label Dim: ', label.shape)
 
         return dataset, label
+
+    def lcp_recognition_binary_class_dataset(self, train_split, self_shuffle=True):
+
+        # csv file reading
+        filename = self.path_leak_1bar_2to12 + 'processed/lcp_recog_1bar_near_segmentation2_dataset.csv'
+        # filename = direct_to_dir(where='result') + 'lcp_recog_1bar_near_segmentation2_dataset.csv'
+        print('Reading data --> ', filename)
+        time_start = time.time()
+        data_df = pd.read_csv(filename)
+        print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+        print('Full Dim: ', data_df.values.shape)
+
+        # locate all lcp
+        lcp_data = data_df.loc[data_df['label'] == 1].values
+        print('LCP Dim: ', lcp_data.shape)
+
+        # normalize the waveform signals (contain +ve and -ve values) into 0-1 only
+        lcp_data_only = lcp_data[:, :-1]
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        lcp_data_normalized = scaler.fit_transform(lcp_data_only.ravel().reshape((-1, 1))) \
+            .reshape((lcp_data_only.shape[0], lcp_data_only.shape[1]))
+
+        # shuffle and split lcp
+        lcp_data_train_x, lcp_data_test_x, lcp_data_train_y, lcp_data_test_y = train_test_split(lcp_data_normalized,
+                                                                                                lcp_data[:, -1],
+                                                                                                train_size=train_split,
+                                                                                                shuffle=self_shuffle)
+
+        non_lcp_data = data_df.loc[data_df['label'] == 0].values
+        non_lcp_data_shuffled = non_lcp_data[np.random.permutation(len(non_lcp_data))]
+        non_lcp_data_truncated = non_lcp_data_shuffled[:18000]
+        print('Non LCP Dim:', non_lcp_data.shape)
+        non_lcp_data_train_x, non_lcp_data_test_x, non_lcp_data_train_y, non_lcp_data_test_y = \
+            train_test_split(non_lcp_data_truncated[:, :-1],
+                             non_lcp_data_truncated[:, -1],
+                             train_size=train_split,
+                             shuffle=self_shuffle)
+
+        # shuffle non_lcp_data and truncate
+        train_x = np.concatenate((non_lcp_data_train_x, lcp_data_train_x))
+        test_x = np.concatenate((non_lcp_data_test_x, lcp_data_test_x))
+        train_y = np.concatenate((non_lcp_data_train_y, lcp_data_train_y))
+        test_y = np.concatenate((non_lcp_data_test_y, lcp_data_test_y))
+
+        print('\n----------TRAIN AND TEST SET---------')
+        print('Train_x Dim: ', train_x.shape)
+        print('Test_x Dim: ', test_x.shape)
+        print('Train_y Dim:', train_y.shape)
+        print('Test_y Dim:', test_y.shape)
+
+        return train_x, train_y, test_x, test_y
+
 
 
 

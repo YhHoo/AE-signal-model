@@ -18,28 +18,28 @@ from scipy.signal import correlate
 from keras.utils import to_categorical
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, LabelBinarizer
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, train_test_split
 import csv
 # self lib
-from src.controlled_dataset.ideal_dataset import white_noise
-from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, dwt_smoothing, one_dim_xcor_1d_input
-from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
-from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
-                              break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical, \
-                              scatter_plot_3d_vispy, scatter_plot, plot_multiple_timeseries, plot_cwt_with_time_series
-from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
+# from src.controlled_dataset.ideal_dataset import white_noise
+# from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, dwt_smoothing, one_dim_xcor_1d_input
+# from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
+# from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
+#                               break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical, \
+#                               scatter_plot_3d_vispy, scatter_plot, plot_multiple_timeseries, plot_cwt_with_time_series
+# from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-file = direct_to_dir(where='result') + 'non_lcp_1bar_near_segmentation2_dataset.csv'
-time_start = time.time()
-df = pd.read_csv(file)
-print('time taken: ', time.time() - time_start)
-print(df.head())
-print(df.values.shape)
+# file = direct_to_dir(where='result') + 'lcp_recog_1bar_near_segmentation2_dataset.csv'
+# time_start = time.time()
+# df = pd.read_csv(file)
+# print('time taken: ', time.time() - time_start)
+# print(df.head(30))
+# print(df.values.shape)
+
+l = np.linspace(10, 20, 16).reshape((4, 4))
 
 
-# l = [[1, 2, 3],
-#      [2, 4, 6],
-#      [8, 9, 10]]
+
 # header = ['0', '1', 'label']
 #
 # with open('test.csv', 'w', newline='') as f:
