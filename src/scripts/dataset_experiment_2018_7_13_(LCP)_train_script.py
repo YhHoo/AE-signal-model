@@ -12,17 +12,24 @@ test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
 
 lcp_model = lcp_recognition_binary_model()
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
-logger = ModelLogger(model=lcp_model, model_name='LCP Recognition Model')
+
+# saving setting
+logger = ModelLogger(model=lcp_model, model_name='LCP_Recog_1')
+save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
+
+# start training
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y,
                         validation_data=(test_x_reshape, test_y),
-                        epochs=20,
+                        callbacks=[save_weight_checkpoint],
+                        epochs=100,
                         batch_size=100,
                         shuffle=True,
                         verbose=2)
 
 logger.learning_curve(history=history, show=True)
-# evaluate_model_for_all_class(model=lcp_model, test_x=train_x_reshape, test_y=test_y)
+logger.save_architecture(save_readable=True)
+
 
 # evaluate
 prediction = lcp_model.predict(test_x_reshape)

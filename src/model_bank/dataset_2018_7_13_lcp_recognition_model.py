@@ -8,13 +8,13 @@ def lcp_recognition_binary_model():
     conv_1 = Conv1D(5, kernel_size=5, activation='relu')(visible_in)
     maxpool_1 = MaxPooling1D(pool_size=2, strides=2)(conv_1)
 
-    # conv_2 = Conv1D(32, kernel_size=5, activation='relu')(maxpool_1)
-    # maxpool_2 = MaxPooling1D(pool_size=2, strides=2)(conv_2)
+    conv_2 = Conv1D(5, kernel_size=5, activation='relu')(maxpool_1)
+    maxpool_2 = MaxPooling1D(pool_size=2, strides=2)(conv_2)
     #
     # conv_3 = Conv1D(32, kernel_size=5, activation='relu')(maxpool_2)
     # maxpool_3 = MaxPooling1D(pool_size=2, strides=2)(conv_3)
 
-    flatten = Flatten()(maxpool_1)
+    flatten = Flatten()(maxpool_2)
 
     dense_1 = Dense(10, activation='relu')(flatten)
     visible_out = Dense(1, activation='sigmoid')(dense_1)
