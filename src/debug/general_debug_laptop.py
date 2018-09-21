@@ -19,13 +19,13 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
+from sklearn.metrics import accuracy_score
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, detect_ae_event_by_v_sensor
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
-
 
 # file reading
 dataset_filename = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/processed/' + \
@@ -43,20 +43,18 @@ print('Full Dim: ', data_df.values.shape)
 lcp_data = data_df.loc[data_df['label'] == 1].values[:, :-1]
 non_lcp_data = data_df.loc[data_df['label'] == 0].values[:, :-1]
 
-fig = plot_multiple_timeseries(input=[lcp_data[0], non_lcp_data[0]],
+fig = plot_multiple_timeseries(input=[lcp_data[10], non_lcp_data[10]],
                                subplot_titles=['LCP', 'Non LCP'],
                                main_title='LCP and Non LCP input')
 
-lcp_data_test = lcp_data[0].reshape((6000, 1))
-non_lcp_data_test = non_lcp_data[0].reshape((6000, 1))
-
-
+lcp_data_test = lcp_data[10].reshape((6000, 1))
+non_lcp_data_test = non_lcp_data[10].reshape((6000, 1))
 
 activation = get_activations(lcp_model, model_inputs=[lcp_data_test, non_lcp_data_test], print_shape_only=True)
 print(len(activation))
 
 # first cnn layer
-activation_test = np.swapaxes(activation[1], 1, 2)
+activation_test = np.swapaxes(activation[5], 1, 2)
 
 fig2 = plot_multiple_timeseries(input=activation_test[0],
                                 subplot_titles=['k1', 'k2', 'k3', 'k4', 'k5'],
