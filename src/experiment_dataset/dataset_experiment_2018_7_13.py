@@ -717,14 +717,14 @@ class AcousticEmissionDataSet_13_7_2018:
         lcp_data = data_df.loc[data_df['label'] == 1].values
         print('LCP Dim: ', lcp_data.shape)
 
-        # normalize the waveform signals (contain +ve and -ve values) into 0-1 only
+        # normalize the LCP waveform signals (contain +ve and -ve values) into 0-1 only
         lcp_data_only = lcp_data[:, :-1]
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        lcp_data_normalized = scaler.fit_transform(lcp_data_only.ravel().reshape((-1, 1))) \
-            .reshape((lcp_data_only.shape[0], lcp_data_only.shape[1]))
+        # scaler = MinMaxScaler(feature_range=(0, 1))
+        # lcp_data_normalized = scaler.fit_transform(lcp_data_only.ravel().reshape((-1, 1))) \
+        #     .reshape((lcp_data_only.shape[0], lcp_data_only.shape[1]))
 
         # shuffle and split lcp
-        lcp_data_train_x, lcp_data_test_x, lcp_data_train_y, lcp_data_test_y = train_test_split(lcp_data_normalized,
+        lcp_data_train_x, lcp_data_test_x, lcp_data_train_y, lcp_data_test_y = train_test_split(lcp_data_only,
                                                                                                 lcp_data[:, -1],
                                                                                                 train_size=train_split,
                                                                                                 shuffle=self_shuffle)
@@ -733,6 +733,7 @@ class AcousticEmissionDataSet_13_7_2018:
         non_lcp_data_shuffled = non_lcp_data[np.random.permutation(len(non_lcp_data))]
         non_lcp_data_truncated = non_lcp_data_shuffled[:18000]
         print('Non LCP Dim:', non_lcp_data.shape)
+
         non_lcp_data_train_x, non_lcp_data_test_x, non_lcp_data_train_y, non_lcp_data_test_y = \
             train_test_split(non_lcp_data_truncated[:, :-1],
                              non_lcp_data_truncated[:, -1],

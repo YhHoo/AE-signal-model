@@ -23,42 +23,53 @@ from mpl_toolkits.mplot3d import Axes3D
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, detect_ae_event_by_v_sensor
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
-from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
-                              break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical, \
-                              scatter_plot, scatter_plot_3d_vispy, lollipop_plot,plot_multiple_timeseries_with_dual_roi
+from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-# roi
-roi_width = (int(1e3), int(5e3))
+# file reading
+dataset_filename = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/processed/' + \
+                   'lcp_recog_1bar_near_segmentation2_dataset.csv'
+lcp_model = load_model(model_name='LCP_Recog_1')
+lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 
-foi = direct_to_dir(where='yh_laptop_test_data') + '1bar_leak/test_0001.tdms'
-n_channel_data_near_leak = read_single_tdms(foi)
-n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
-print('After Swapped Dim: ', n_channel_data_near_leak.shape)
 
-lcp_indexes = [34350, 1100562, 1120266, 1304289, 1429684, 1603806, 2032639, 2816661, 3279375, 4209574, 4219919, 4276832]
-lcp_indexes_diff = np.diff(lcp_indexes)
-non_lcp_indexes = []
-for start, diff in zip(lcp_indexes[:-1], lcp_indexes_diff):
-    allowable_segment = diff // (roi_width[1] + roi_width[0])
-    if allowable_segment > 1:
-        start_index = start + roi_width[0] + roi_width[1]
+print('Reading data --> ', dataset_filename)
+time_start = time.time()
+data_df = pd.read_csv(dataset_filename)
+print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+print('Full Dim: ', data_df.values.shape)
 
-        all_index = [start_index] + [(start_index + i*6000) for i in range(1, allowable_segment-1, 1)]
-        non_lcp_indexes.append(all_index)
+lcp_data = data_df.loc[data_df['label'] == 1].values[:, :-1]
+non_lcp_data = data_df.loc[data_df['label'] == 0].values[:, :-1]
 
-non_lcp_indexes = [i for sub_list in non_lcp_indexes for i in sub_list]
+fig = plot_multiple_timeseries(input=[lcp_data[0], non_lcp_data[0]],
+                               subplot_titles=['LCP', 'Non LCP'],
+                               main_title='LCP and Non LCP input')
 
-fig = plot_multiple_timeseries_with_dual_roi(input=n_channel_data_near_leak[1:3],
-                                             subplot_titles=['-2m', '2m'],
-                                             main_title='LCP Segmentation',
-                                             peak_center_list=lcp_indexes,
-                                             non_peak_center_list=non_lcp_indexes,
-                                             roi_width=roi_width)
+lcp_data_test = lcp_data[0].reshape((6000, 1))
+non_lcp_data_test = non_lcp_data[0].reshape((6000, 1))
+
+
+
+activation = get_activations(lcp_model, model_inputs=[lcp_data_test, non_lcp_data_test], print_shape_only=True)
+print(len(activation))
+
+# first cnn layer
+activation_test = np.swapaxes(activation[1], 1, 2)
+
+fig2 = plot_multiple_timeseries(input=activation_test[0],
+                                subplot_titles=['k1', 'k2', 'k3', 'k4', 'k5'],
+                                main_title='cnn1d_1 activation [LCP]')
+
+fig3 = plot_multiple_timeseries(input=activation_test[1],
+                                subplot_titles=['k1', 'k2', 'k3', 'k4', 'k5'],
+                                main_title='cnn1d_1 activation [NON LCP]')
+
 plt.show()
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 # x = [[1, 25, 67], [2, 24, 70], [3, 20, 58]]
 # y = [[1, 1.04, 1.2], [1, 2, 1], [0.7, 1, 1]]
 # label = ['one', 'two', 'three']

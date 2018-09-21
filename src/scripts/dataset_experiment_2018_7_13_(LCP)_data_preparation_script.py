@@ -91,7 +91,7 @@ for foi in all_tdms_dir:
 
         # writing segmentation to csv
         for non_lcp_indexes in non_lcp_indexes_per_file:
-            # segment 6000 points
+            # segment 6000 points + label
             soi = n_channel_data_near_leak[1, (non_lcp_indexes-roi_width[0]):(non_lcp_indexes+roi_width[1])].tolist() \
                   + [0]
 
