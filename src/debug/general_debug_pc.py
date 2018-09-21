@@ -29,7 +29,7 @@ from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdm
                               scatter_plot_3d_vispy, scatter_plot, plot_multiple_timeseries, plot_cwt_with_time_series
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-file = direct_to_dir(where='result') + 'non_lcp_1bar_near_segmentation2_dataset.csv'
+file = direct_to_dir(where='google_drive') + 'lcp_recog_1bar_near_segmentation2_dataset.csv'
 time_start = time.time()
 df = pd.read_csv(file)
 print('time taken: ', time.time() - time_start)
