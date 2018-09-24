@@ -731,7 +731,7 @@ class AcousticEmissionDataSet_13_7_2018:
 
         non_lcp_data = data_df.loc[data_df['label'] == 0].values
         non_lcp_data_shuffled = non_lcp_data[np.random.permutation(len(non_lcp_data))]
-        non_lcp_data_truncated = non_lcp_data_shuffled[:18000]
+        non_lcp_data_truncated = non_lcp_data_shuffled[:1000]
         print('Non LCP Dim:', non_lcp_data.shape)
 
         non_lcp_data_train_x, non_lcp_data_test_x, non_lcp_data_train_y, non_lcp_data_test_y = \

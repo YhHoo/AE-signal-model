@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recognition_binary_model, \
     lcp_recognition_binary_model_2
-from src.utils.helpers import evaluate_model_for_all_class, ModelLogger
+from src.utils.helpers import *
 
 ae_data = AcousticEmissionDataSet_13_7_2018(drive='F')
 train_x, train_y, test_x, test_y = ae_data.lcp_recognition_binary_class_dataset(train_split=0.6)
@@ -35,7 +36,10 @@ logger.save_architecture(save_readable=True)
 prediction = lcp_model.predict(test_x_reshape)
 plt.plot(test_y, color='r', label='Actual')
 plt.plot(prediction, color='b', label='Prediction', linestyle='None', marker='x')
-plt.title('Classifier Evaluation in Visual')
+plt.title('Classifier Output in Visual')
 plt.legend()
 plt.show()
+
+# fi-score
+
 
