@@ -93,17 +93,17 @@ for foi in all_file_path:
 
     # VISUALIZING ------------------------------------------------------------------------------------------------------
     # save lollipop plot
-    fig_lollipop = lollipop_plot(x_list=peak_list[:4],
-                                 y_list=[n_channel_data_near_leak[0][peak_list[0]],
-                                         n_channel_data_near_leak[1][peak_list[1]],
-                                         n_channel_data_near_leak[2][peak_list[2]],
-                                         n_channel_data_near_leak[3][peak_list[3]]],
-                                 hit_point=leak_caused_peak,
-                                 label=['Sensor[-3m]', 'Sensor[-2m]', 'Sensor[2m]', 'Sensor[4m]'])
-    fig_lollipop_filename = direct_to_dir(where='result') + '{}_lollipop'.format(filename)
-    fig_lollipop.savefig(fig_lollipop_filename)
-    plt.close('all')
-    print('Lollipop fig saved --> ', fig_lollipop_filename)
+    # fig_lollipop = lollipop_plot(x_list=peak_list[:4],
+    #                              y_list=[n_channel_data_near_leak[0][peak_list[0]],
+    #                                      n_channel_data_near_leak[1][peak_list[1]],
+    #                                      n_channel_data_near_leak[2][peak_list[2]],
+    #                                      n_channel_data_near_leak[3][peak_list[3]]],
+    #                              hit_point=leak_caused_peak,
+    #                              label=['Sensor[-3m]', 'Sensor[-2m]', 'Sensor[2m]', 'Sensor[4m]'])
+    # fig_lollipop_filename = direct_to_dir(where='result') + '{}_lollipop'.format(filename)
+    # fig_lollipop.savefig(fig_lollipop_filename)
+    # plt.close('all')
+    # print('Lollipop fig saved --> ', fig_lollipop_filename)
 
     roi_no = 0
     # for all roi by lcp
@@ -168,7 +168,7 @@ lcp_df = pd.DataFrame()
 lcp_df['lcp'] = lcp_col
 lcp_df['filename'] = filename_col
 
-df_filename = direct_to_dir(where='result') + 'lcp_1bar_near.csv'
+df_filename = direct_to_dir(where='result') + 'lcp_index_1bar_near_segmentation3.csv'
 lcp_df.to_csv(df_filename)
 
 print('data saved --> ', df_filename)

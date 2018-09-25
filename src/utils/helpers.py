@@ -13,6 +13,7 @@ import numpy as np
 from nptdms import TdmsFile
 from os import listdir
 from matplotlib import cm
+from matplotlib.widgets import Button
 import sys
 from vispy import app, visuals, scene
 # self lib
@@ -379,6 +380,8 @@ def heatmap_visualizer(x_axis, y_axis, zxx, label=('x', 'y', 'z'), output='2d',
 
 def read_all_tdms_from_folder(folder_path=None):
     '''
+    DEPRECATED -> BECAUSE READING ALL TDMS IN ONE SHOT IS MEMORY CONSUMING [!!!]
+
     :param folder_path: The folder which contains several sets data of same setup (Test rig)
     :return: 3d matrix where shape[0]=no. of sets | shape[1]=no. of AE Signal points | shape[2]=no. of sensors
     Aim: To combine all sets of data for same experiment setup into one 3d array.
@@ -575,22 +578,92 @@ def plot_multiple_timeseries_with_pick(input, subplot_titles, main_title):
     :param main_title: the big title
     :return: rectangular fig obj
     '''
+    # discard button
+    flag = {}
+
+    class Index(object):
+        ind = 0
+
+        def discard_0(self, event):
+            flag['ch0'] = 1
+
+        def discard_1(self, event):
+            flag['ch1'] = 1
+
+        def discard_2(self, event):
+            flag['ch2'] = 1
+
+        def discard_3(self, event):
+            flag['ch3'] = 1
+
+        def discard_4(self, event):
+            flag['ch4'] = 1
+
+        def discard_5(self, event):
+            flag['ch5'] = 1
+
+    # reset flag to zero
+    flag['ch0'], flag['ch1'], flag['ch2'], flag['ch3'], flag['ch4'], flag['ch5'] = 0, 0, 0, 0, 0, 0
+
+    # plotting
     no_of_plot = len(input)
-    fig = plt.figure(figsize=(5, 8))
+    fig = plt.figure(figsize=(6, 8))
     fig.suptitle(main_title, fontweight="bold", size=8)
     fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
+
     # first plot
     ax1 = fig.add_subplot(no_of_plot, 1, 1)
     ax1.plot(input[0])
     ax1.set_title(subplot_titles[0], size=8)
     ax1.set_ylim(bottom=-0.3, top=0.3)
+
     # the rest of the plot
     for i in range(1, no_of_plot, 1):
         ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1)  # add in sharey=ax1 if wan to share y axis too
         ax.plot(input[i])
         ax.set_title(subplot_titles[i], size=8)
         ax.set_ylim(bottom=-0.3, top=0.3)
-    return fig
+
+    # button from top down
+    callback = Index()
+    button_x = 0.9
+    button_width = 0.05
+    button_height = 0.03
+
+    btn0_ax = fig.add_axes([button_x, 0.83, button_width, button_height])
+    btn0 = Button(btn0_ax, 'X')
+    btn0.on_clicked(callback.discard_0)
+
+    btn1_ax = fig.add_axes([button_x, 0.66, button_width, button_height])
+    btn1 = Button(btn1_ax, 'X')
+    btn1.on_clicked(callback.discard_1)
+
+    btn2_ax = fig.add_axes([button_x, 0.49, button_width, button_height])
+    btn2 = Button(btn2_ax, 'X')
+    btn2.on_clicked(callback.discard_2)
+
+    btn3_ax = fig.add_axes([button_x, 0.33, button_width, button_height])
+    btn3 = Button(btn3_ax, 'X')
+    btn3.on_clicked(callback.discard_3)
+
+    btn4_ax = fig.add_axes([button_x, 0.17, button_width, button_height])
+    btn4 = Button(btn4_ax, 'X')
+    btn4.on_clicked(callback.discard_4)
+
+    btn5_ax = fig.add_axes([button_x, 0.01, button_width, button_height])
+    btn5 = Button(btn5_ax, 'X')
+    btn5.on_clicked(callback.discard_5)
+
+    print('Ch_0 = ', flag['ch0'])
+    print('Ch_1 = ', flag['ch1'])
+    print('Ch_2 = ', flag['ch2'])
+    print('Ch_3 = ', flag['ch3'])
+    print('Ch_4 = ', flag['ch4'])
+    print('Ch_5 = ', flag['ch5'])
+
+    plt.show()
+
+    return flag
 
 
 def plot_multiple_level_decomposition(ori_signal, dec_signal, dec_level, main_title, fs):

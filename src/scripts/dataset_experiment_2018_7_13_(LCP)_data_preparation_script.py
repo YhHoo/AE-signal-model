@@ -22,7 +22,9 @@ offset_ch0 = 600
 # 4m
 offset_ch3 = 1100
 # 6m
-offset_ch4 = 2500
+offset_ch4 = 2700
+# 8m
+offset_ch5 = 4000
 
 # READING LCP INDEXES --------------------------------------------------------------------------------------------------
 # all file name
@@ -83,15 +85,26 @@ for foi in all_tdms_dir:
         soi_3 = n_channel_data_near_leak[3, (lcp_index - roi_width[0] + offset_ch3):
                                             (lcp_index + roi_width[1]) + offset_ch3].tolist() + [1]
 
-        # segment sensor 4m
+        # segment sensor 6m
         soi_4 = n_channel_data_near_leak[4, (lcp_index - roi_width[0] + offset_ch4):
                                             (lcp_index + roi_width[1]) + offset_ch4].tolist() + [1]
 
-        fig = plot_multiple_timeseries(input=[soi_0, soi_1, soi_2, soi_3, soi_4],
-                                       subplot_titles=['-3m', '-2m', '2m', '4m', '6m'],
-                                       main_title='Segmentation 6k')
+        # segment sensor 8m
+        soi_5 = n_channel_data_near_leak[5, (lcp_index - roi_width[0] + offset_ch5):
+                                            (lcp_index + roi_width[1]) + offset_ch5].tolist() + [1]
 
-        plt.show()
+        fig, flag = plot_multiple_timeseries_with_pick(input=[soi_0, soi_1, soi_2, soi_3, soi_4, soi_5],
+                                                       subplot_titles=['-3m', '-2m', '2m', '4m', '6m', '8m'],
+                                                       main_title='Segmentation 6k')
+
+        # plt.show()
+
+        print('Ch_0 = ', flag['ch0'])
+        print('Ch_1 = ', flag['ch1'])
+        print('Ch_2 = ', flag['ch2'])
+        print('Ch_3 = ', flag['ch3'])
+        print('Ch_4 = ', flag['ch4'])
+        print('Ch_5 = ', flag['ch5'])
 
         # save to csv
     #     with open(lcp_recognition_dataset_save_filename, 'a', newline='') as f:
