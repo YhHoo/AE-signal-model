@@ -12,7 +12,7 @@ from src.utils.helpers import *
 
 # CONFIG ---------------------------------------------------------------------------------------------------------------
 # roi
-roi_width = (int(1e3), int(5e3))
+roi_width = (int(1e3), int(16e3))
 lcp_recognition_dataset_save_filename = direct_to_dir(where='result') + 'lcp_recog_1bar_near_segmentation2_dataset.csv'
 # non_lcp_save_filename = direct_to_dir(where='result') + 'non_lcp_1bar_near_segmentation2_dataset.csv'
 
@@ -25,6 +25,10 @@ offset_ch3 = 1100
 offset_ch4 = 2700
 # 8m
 offset_ch5 = 4000
+# 10m
+offset_ch6 = 5300
+# 12m
+offset_ch7 = 6500
 
 # READING LCP INDEXES --------------------------------------------------------------------------------------------------
 # all file name
@@ -93,11 +97,24 @@ for foi in all_tdms_dir:
         soi_5 = n_channel_data_near_leak[5, (lcp_index - roi_width[0] + offset_ch5):
                                             (lcp_index + roi_width[1]) + offset_ch5].tolist() + [1]
 
-        fig, flag = plot_multiple_timeseries_with_pick(input=[soi_0, soi_1, soi_2, soi_3, soi_4, soi_5],
-                                                       subplot_titles=['-3m', '-2m', '2m', '4m', '6m', '8m'],
-                                                       main_title='Segmentation 6k')
+        # segment sensor 10m
+        soi_6 = n_channel_data_near_leak[6, (lcp_index - roi_width[0] + offset_ch6):
+                                            (lcp_index + roi_width[1]) + offset_ch6].tolist() + [1]
 
-        # plt.show()
+        # segment sensor 12m
+        soi_7 = n_channel_data_near_leak[7, (lcp_index - roi_width[0] + offset_ch7):
+                                            (lcp_index + roi_width[1]) + offset_ch7].tolist() + [1]
+
+        roi = n_channel_data_near_leak[:, lcp_index - roi_width[0]:lcp_index + roi_width[1]]
+
+        # fig = plot_multiple_timeseries(input=[soi_0, soi_1, soi_2, soi_3, soi_4, soi_5, soi_6, soi_7],
+        #                                subplot_titles=['-3m [0]', '-2m [1]', '2m [2]', '4m [3]',
+        #                                                '6m [4]', '8m [5]', '10m [6]', '12m [7]'],
+        #                                main_title='Manual Filtering of Non-LCP (Click [X] to discard)')
+        flag = picklist_multiple_timeseries(input=roi,
+                                            subplot_titles=['-3m [0]', '-2m [1]', '2m [2]', '4m [3]',
+                                                            '6m [4]', '8m [5]', '10m [6]', '12m [7]'],
+                                            main_title='Manual Filtering of Non-LCP (Click [X] to discard)')
 
         print('Ch_0 = ', flag['ch0'])
         print('Ch_1 = ', flag['ch1'])
@@ -105,6 +122,9 @@ for foi in all_tdms_dir:
         print('Ch_3 = ', flag['ch3'])
         print('Ch_4 = ', flag['ch4'])
         print('Ch_5 = ', flag['ch5'])
+        print('Ch_6 = ', flag['ch6'])
+        print('Ch_7 = ', flag['ch7'])
+        print('Ch_all = ', flag['all'])
 
         # save to csv
     #     with open(lcp_recognition_dataset_save_filename, 'a', newline='') as f:

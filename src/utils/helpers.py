@@ -569,9 +569,9 @@ def plot_multiple_timeseries_with_dual_roi(input, subplot_titles, main_title,
     return fig
 
 
-def plot_multiple_timeseries_with_pick(input, subplot_titles, main_title):
+def picklist_multiple_timeseries(input, subplot_titles, main_title):
     '''
-    Aspect axis[0] of input is no. of sensors/diff features, axis[1] is time steps. All time series has to be
+    Aspect axis[0] of input is 8(sensors), axis[1] is time steps. All time series has to be
     SAME length !
     :param input: a 2d-array / list
     :param subplot_titles: title for every plot
@@ -586,43 +586,62 @@ def plot_multiple_timeseries_with_pick(input, subplot_titles, main_title):
 
         def discard_0(self, event):
             flag['ch0'] = 1
+            print('ch0 discarded')
 
         def discard_1(self, event):
             flag['ch1'] = 1
+            print('ch1 discarded')
 
         def discard_2(self, event):
             flag['ch2'] = 1
+            print('ch2 discarded')
 
         def discard_3(self, event):
             flag['ch3'] = 1
+            print('ch3 discarded')
 
         def discard_4(self, event):
             flag['ch4'] = 1
+            print('ch4 discarded')
 
         def discard_5(self, event):
             flag['ch5'] = 1
+            print('ch5 discarded')
+
+        def discard_6(self, event):
+            flag['ch6'] = 1
+            print('ch6 discarded')
+
+        def discard_7(self, event):
+            flag['ch7'] = 1
+            print('ch7 discarded')
+
+        def discard_all(self, event):
+            flag['all'] = 1
+            print('All ch discarded')
 
     # reset flag to zero
-    flag['ch0'], flag['ch1'], flag['ch2'], flag['ch3'], flag['ch4'], flag['ch5'] = 0, 0, 0, 0, 0, 0
+    flag['ch0'], flag['ch1'], flag['ch2'], flag['ch3'], flag['ch4'], \
+    flag['ch5'], flag['ch6'], flag['ch7'], flag['all'] = 0, 0, 0, 0, 0, 0, 0, 0, 0
 
     # plotting
     no_of_plot = len(input)
     fig = plt.figure(figsize=(6, 8))
     fig.suptitle(main_title, fontweight="bold", size=8)
-    fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
+    fig.subplots_adjust(hspace=0.7, top=0.94, bottom=0.03)
 
     # first plot
     ax1 = fig.add_subplot(no_of_plot, 1, 1)
     ax1.plot(input[0])
     ax1.set_title(subplot_titles[0], size=8)
-    ax1.set_ylim(bottom=-0.3, top=0.3)
+    ax1.set_ylim(bottom=-0.2, top=0.2)
 
     # the rest of the plot
     for i in range(1, no_of_plot, 1):
-        ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1)  # add in sharey=ax1 if wan to share y axis too
+        ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1, sharey=ax1)  # add in sharey=ax1 if wan to share y axis too
         ax.plot(input[i])
         ax.set_title(subplot_titles[i], size=8)
-        ax.set_ylim(bottom=-0.3, top=0.3)
+        ax.set_ylim(bottom=-0.2, top=0.2)
 
     # button from top down
     callback = Index()
@@ -630,36 +649,41 @@ def plot_multiple_timeseries_with_pick(input, subplot_titles, main_title):
     button_width = 0.05
     button_height = 0.03
 
-    btn0_ax = fig.add_axes([button_x, 0.83, button_width, button_height])
-    btn0 = Button(btn0_ax, 'X')
+    btn0_ax = fig.add_axes([button_x, 0.89, button_width, button_height])
+    btn0 = Button(btn0_ax, 'X', hovercolor='r')
     btn0.on_clicked(callback.discard_0)
 
-    btn1_ax = fig.add_axes([button_x, 0.66, button_width, button_height])
-    btn1 = Button(btn1_ax, 'X')
+    btn1_ax = fig.add_axes([button_x, 0.77, button_width, button_height])
+    btn1 = Button(btn1_ax, 'X', hovercolor='r')
     btn1.on_clicked(callback.discard_1)
 
-    btn2_ax = fig.add_axes([button_x, 0.49, button_width, button_height])
-    btn2 = Button(btn2_ax, 'X')
+    btn2_ax = fig.add_axes([button_x, 0.65, button_width, button_height])
+    btn2 = Button(btn2_ax, 'X', hovercolor='r')
     btn2.on_clicked(callback.discard_2)
 
-    btn3_ax = fig.add_axes([button_x, 0.33, button_width, button_height])
-    btn3 = Button(btn3_ax, 'X')
+    btn3_ax = fig.add_axes([button_x, 0.53, button_width, button_height])
+    btn3 = Button(btn3_ax, 'X', hovercolor='r')
     btn3.on_clicked(callback.discard_3)
 
-    btn4_ax = fig.add_axes([button_x, 0.17, button_width, button_height])
-    btn4 = Button(btn4_ax, 'X')
+    btn4_ax = fig.add_axes([button_x, 0.41, button_width, button_height])
+    btn4 = Button(btn4_ax, 'X', hovercolor='r')
     btn4.on_clicked(callback.discard_4)
 
-    btn5_ax = fig.add_axes([button_x, 0.01, button_width, button_height])
-    btn5 = Button(btn5_ax, 'X')
+    btn5_ax = fig.add_axes([button_x, 0.29, button_width, button_height])
+    btn5 = Button(btn5_ax, 'X', hovercolor='r')
     btn5.on_clicked(callback.discard_5)
 
-    print('Ch_0 = ', flag['ch0'])
-    print('Ch_1 = ', flag['ch1'])
-    print('Ch_2 = ', flag['ch2'])
-    print('Ch_3 = ', flag['ch3'])
-    print('Ch_4 = ', flag['ch4'])
-    print('Ch_5 = ', flag['ch5'])
+    btn6_ax = fig.add_axes([button_x, 0.17, button_width, button_height])
+    btn6 = Button(btn6_ax, 'X', hovercolor='r')
+    btn6.on_clicked(callback.discard_6)
+
+    btn7_ax = fig.add_axes([button_x, 0.05, button_width, button_height])
+    btn7 = Button(btn7_ax, 'X', hovercolor='r')
+    btn7.on_clicked(callback.discard_7)
+
+    btn8_ax = fig.add_axes([button_x, 0.96, button_width, button_height])
+    btn8 = Button(btn8_ax, 'XX', hovercolor='r')
+    btn8.on_clicked(callback.discard_all)
 
     plt.show()
 
@@ -1253,8 +1277,8 @@ def scatter_plot_3d_vispy(dataset, label):
 def lollipop_plot(x_list, y_list, hit_point=None, label=None, title='No Title'):
     '''
     This is now for plotting 2 sets of data (x, y) and (x', y')
-    :param x_list: a list of 1d array, where shape[0]=2, shape[1]=data len
-    :param y_list: a list of 1d array, where shape[0]=2, shape[1]=data len
+    :param x_list: a list of 1d array, where shape[0]=no of channel, shape[1]=data len
+    :param y_list: a list of 1d array, where shape[0]=no of channel, shape[1]=data len
     :param hit_point: just an extra points, as a marker
     :param label: re
     :return:

@@ -1,3 +1,8 @@
+'''
+THIS SCRIPT FINDS ALL POSSIBLE LCP USING THE PEAKS DETECTION AND detect_ae_event_by_v_sensor(). THEN FOLLOWED BY
+MANUAL FILTERING BY USERS,TO REMOVE FALSELY DETECTED LCP. USER CAN DISCARD ONLY FAULTY CHANNELS
+'''
+
 import numpy as np
 import peakutils
 import matplotlib.pyplot as plt
@@ -7,7 +12,7 @@ from os import listdir
 
 # self lib
 from src.utils.dsp_tools import dwt_smoothing, detect_ae_event_by_v_sensor
-from src.utils.helpers import read_single_tdms, direct_to_dir, plot_multiple_timeseries, lollipop_plot
+from src.utils.helpers import *
 
 # ** = tunable param
 # CONFIG ---------------------------------------------------------------------------------------------------------------
@@ -32,7 +37,7 @@ cwt_wavelet = 'gaus1'
 scale = np.linspace(2, 30, 100)
 
 # roi
-roi_width = (int(1e3), int(5e3))
+roi_width = (int(1e3), int(16e3))
 
 # DATA READING AND PRE-PROCESSING --------------------------------------------------------------------------------------
 # tdms file reading
@@ -41,7 +46,7 @@ all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('
 for f in all_file_path:
     print(f)
 
-lcp_list, lcp_filename_list = [], []
+lcp_list, lcp_ch_list, lcp_filename_list = [], [], []
 
 # for all tdms file
 for foi in all_file_path:
@@ -65,7 +70,7 @@ for foi in all_file_path:
         n_channel_data_near_leak = np.array(temp)
 
     # PEAK DETECTION AND ROI -------------------------------------------------------------------------------------------
-    # peak finding for sensor [-3m] to [4m] only
+    # peak finding for sensor -3m, -2m, 2m, 4m
     peak_list = []
     time_start = time.time()
     print('Peak localizing ...')
@@ -73,23 +78,60 @@ for foi in all_file_path:
         peak_list.append(peakutils.indexes(channel, thres=thre_peak, min_dist=min_dist_btw_peak))  # **
     print('Time Taken for peakutils.indexes(): {:.4f}s'.format(time.time() - time_start))
 
-    leak_caused_peak = detect_ae_event_by_v_sensor(x1=peak_list[0],
-                                                   x2=peak_list[1],
-                                                   x3=peak_list[2],
-                                                   x4=peak_list[3],
-                                                   threshold_list=thre_event,  # ** calc by dist*fs/800
-                                                   threshold_x=threshold_x)  # **
-    print('Leak Caused Peak: ', leak_caused_peak)
-    # if the list is empty
-    if not leak_caused_peak:
+    lcp_per_file = detect_ae_event_by_v_sensor(x1=peak_list[0],
+                                               x2=peak_list[1],
+                                               x3=peak_list[2],
+                                               x4=peak_list[3],
+                                               threshold_list=thre_event,  # ** calc by dist*fs/800
+                                               threshold_x=threshold_x)  # **
+    print('Leak Caused Peak: ', lcp_per_file)
+
+    # if the list is empty, skip to next tdms file
+    if not lcp_per_file:
         print('No Leak Caused Peak Detected !')
-        leak_caused_peak = None
+        lcp_per_file = None
         # skip to the nex tdms file
         continue
-    else:
-        # to be stored into csv
-        lcp_list.append(leak_caused_peak)
-        lcp_filename_list.append(filename)
+
+    # MANUAL FILTERING OF NON-LCP DATA ---------------------------------------------------------------------------------
+    lcp_index_temp, lcp_ch_temp = [], []
+    for lcp in lcp_per_file:
+        print('LCP {}/{}'.format((lcp_per_file.index(lcp) + 1), len(lcp_per_file)))
+        roi = n_channel_data_near_leak[:, lcp - roi_width[0]:lcp + roi_width[1]]
+        flag = picklist_multiple_timeseries(input=roi,
+                                            subplot_titles=['-3m [0]', '-2m [1]', '2m [2]', '4m [3]',
+                                                            '6m [4]', '8m [5]', '10m [6]', '12m [7]'],
+                                            main_title='Manual Filtering of Non-LCP (Click [X] to discard)')
+
+        print('Ch_0 = ', flag['ch0'])
+        print('Ch_1 = ', flag['ch1'])
+        print('Ch_2 = ', flag['ch2'])
+        print('Ch_3 = ', flag['ch3'])
+        print('Ch_4 = ', flag['ch4'])
+        print('Ch_5 = ', flag['ch5'])
+        print('Ch_6 = ', flag['ch6'])
+        print('Ch_7 = ', flag['ch7'])
+        print('Ch_all = ', flag['all'])
+
+        # if user wan to discard all channels -> false LCP
+        if flag['all'] is 1:
+            print('LCP discarded')
+            continue
+        else:
+            lcp_index_temp.append(lcp)
+
+        # iterate thru all flags
+        channel_to_take = []
+        for i in range(8):
+            if flag['ch{}'.format(i)] is not 1:
+                channel_to_take.append(i)
+
+        lcp_ch_temp.append(channel_to_take)
+
+    # to be stored into csv
+    lcp_list.append(lcp_index_temp)
+    lcp_ch_list.append(lcp_ch_temp)
+    lcp_filename_list.append(filename)
 
     # VISUALIZING ------------------------------------------------------------------------------------------------------
     # save lollipop plot
@@ -107,7 +149,7 @@ for foi in all_file_path:
 
     roi_no = 0
     # for all roi by lcp
-    for lcp in leak_caused_peak:
+    for lcp in lcp_per_file:
 
         roi = n_channel_data_near_leak[:, lcp-roi_width[0]:lcp+roi_width[1]]
 
@@ -159,7 +201,9 @@ for foi in all_file_path:
 
 # STORE TO CSV ---------------------------------------------------------------------------------------------------------
 lcp_col, filename_col = [], []
+# lcp_list is a list of list
 for lcp, f in zip(lcp_list, lcp_filename_list):
+    # labelling all lcp with f
     for p in lcp:
         lcp_col.append(p)
         filename_col.append(f)
