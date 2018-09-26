@@ -29,16 +29,23 @@ import csv
 #                               scatter_plot_3d_vispy, scatter_plot, plot_multiple_timeseries, plot_cwt_with_time_series
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-# file = direct_to_dir(where='result') + 'lcp_recog_1bar_near_segmentation2_dataset.csv'
-# time_start = time.time()
-# df = pd.read_csv(file)
-# print('time taken: ', time.time() - time_start)
-# print(df.head(30))
-# print(df.values.shape)
+l = [1, 2]
+if 5 in l:
+    print('yes')
+else:
+    print('no')
 
-l = np.linspace(10, 20, 16).reshape((4, 4))
-
-
+# lcp_df = pd.DataFrame()
+# lcp_df['lcp'] = [1, 2, 3]
+# lcp_df['filename'] = [4, 5, 6]
+# print(lcp_df)
+#
+# l = [[1, 0, 1],
+#      [0, 1, 1],
+#      [1, 1, 1]]
+# df = pd.DataFrame(data=l, columns=['ch0', 'ch1', 'ch2'])
+# agg = pd.concat([lcp_df, df], axis=1)
+# print(agg)
 
 # header = ['0', '1', 'label']
 #

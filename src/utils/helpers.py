@@ -585,35 +585,35 @@ def picklist_multiple_timeseries(input, subplot_titles, main_title):
         ind = 0
 
         def discard_0(self, event):
-            flag['ch0'] = 1
+            flag['ch0'] = 0
             print('ch0 discarded')
 
         def discard_1(self, event):
-            flag['ch1'] = 1
+            flag['ch1'] = 0
             print('ch1 discarded')
 
         def discard_2(self, event):
-            flag['ch2'] = 1
+            flag['ch2'] = 0
             print('ch2 discarded')
 
         def discard_3(self, event):
-            flag['ch3'] = 1
+            flag['ch3'] = 0
             print('ch3 discarded')
 
         def discard_4(self, event):
-            flag['ch4'] = 1
+            flag['ch4'] = 0
             print('ch4 discarded')
 
         def discard_5(self, event):
-            flag['ch5'] = 1
+            flag['ch5'] = 0
             print('ch5 discarded')
 
         def discard_6(self, event):
-            flag['ch6'] = 1
+            flag['ch6'] = 0
             print('ch6 discarded')
 
         def discard_7(self, event):
-            flag['ch7'] = 1
+            flag['ch7'] = 0
             print('ch7 discarded')
 
         def discard_all(self, event):
@@ -622,7 +622,7 @@ def picklist_multiple_timeseries(input, subplot_titles, main_title):
 
     # reset flag to zero
     flag['ch0'], flag['ch1'], flag['ch2'], flag['ch3'], flag['ch4'], \
-    flag['ch5'], flag['ch6'], flag['ch7'], flag['all'] = 0, 0, 0, 0, 0, 0, 0, 0, 0
+    flag['ch5'], flag['ch6'], flag['ch7'], flag['all'] = 1, 1, 1, 1, 1, 1, 1, 1, 0
 
     # plotting
     no_of_plot = len(input)
