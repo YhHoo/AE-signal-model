@@ -39,9 +39,12 @@ scale = np.linspace(2, 30, 100)
 # roi
 roi_width = (int(1e3), int(16e3))
 
+# saving filename
+filename_to_save = 'lcp_index_1bar_near_segmentation3_p0.csv'
+
 # DATA READING AND PRE-PROCESSING --------------------------------------------------------------------------------------
 # tdms file reading
-folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/Leak/'
+folder_path = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
 all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 for f in all_file_path:
     print(f)
@@ -49,7 +52,7 @@ for f in all_file_path:
 lcp_list, lcp_ch_list, lcp_filename_list = [], [], []
 
 # for all tdms file
-for foi in all_file_path[:2]:
+for foi in all_file_path[:30]:
     # take the last filename
     filename = foi.split(sep='/')[-1]
     filename = filename.split(sep='.')[0]
@@ -57,7 +60,7 @@ for foi in all_file_path[:2]:
     # start reading fr drive
     n_channel_data_near_leak = read_single_tdms(foi)
     n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
-    print('Read Data Dim: ', n_channel_data_near_leak.shape)
+    print('Swap Dim: ', n_channel_data_near_leak.shape)
 
     # SIGNAL PROCESSING ------------------------------------------------------------------------------------------------
     # denoising
@@ -96,7 +99,7 @@ for foi in all_file_path[:2]:
     # MANUAL FILTERING OF NON-LCP DATA ---------------------------------------------------------------------------------
     lcp_index_temp, lcp_ch_temp = [], []
     for lcp in lcp_per_file:
-        print('LCP {}/{}'.format((lcp_per_file.index(lcp) + 1), len(lcp_per_file)))
+        print('LCP {}/{} ---------'.format((lcp_per_file.index(lcp) + 1), len(lcp_per_file)))
         roi = n_channel_data_near_leak[:, lcp - roi_width[0]:lcp + roi_width[1]]
         flag = picklist_multiple_timeseries(input=roi,
                                             subplot_titles=['-3m [0]', '-2m [1]', '2m [2]', '4m [3]',
@@ -207,6 +210,8 @@ for foi in all_file_path[:2]:
         # roi_no += 1
 
 # STORE TO CSV ---------------------------------------------------------------------------------------------------------
+# converting lcp_list, lcp_filename_list, lcp_ch_list into 1d list of same length, to be placed into df
+
 lcp_col, filename_col, channel_array = [], [], []
 # lcp_list is a list of list
 for lcp_per_file, f, ch_per_file in zip(lcp_list, lcp_filename_list, lcp_ch_list):
@@ -224,7 +229,7 @@ ch_df = pd.DataFrame(data=channel_array, columns=['ch{}'.format(i) for i in rang
 
 final_df = pd.concat([lcp_df, ch_df], axis=1)
 
-df_filename = direct_to_dir(where='result') + 'lcp_index_1bar_near_segmentation3.csv'
+df_filename = direct_to_dir(where='result') + filename_to_save
 final_df.to_csv(df_filename)
 
 print('data saved --> ', df_filename)

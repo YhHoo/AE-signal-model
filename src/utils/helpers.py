@@ -637,7 +637,7 @@ def picklist_multiple_timeseries(input, subplot_titles, main_title):
     ax1 = fig.add_subplot(no_of_plot, 1, 1)
     ax1.plot(input[0])
     ax1.set_title(subplot_titles[0], size=8)
-    ax1.set_ylim(bottom=-0.2, top=0.2)
+    ax1.set_ylim(bottom=-0.15, top=0.15)
     # highlight
     ax1.axvspan(xmin=segment_head[0],
                 xmax=(segment_head[0] + 6000),
@@ -648,7 +648,7 @@ def picklist_multiple_timeseries(input, subplot_titles, main_title):
         ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1, sharey=ax1)  # add in sharey=ax1 if wan to share y axis too
         ax.plot(input[i])
         ax.set_title(subplot_titles[i], size=8)
-        ax.set_ylim(bottom=-0.2, top=0.2)
+        ax.set_ylim(bottom=-0.15, top=0.15)
         # highlight
         ax.axvspan(xmin=segment_head[i],
                    xmax=(segment_head[i] + 6000),
