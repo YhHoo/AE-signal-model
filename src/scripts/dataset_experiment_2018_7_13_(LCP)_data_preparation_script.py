@@ -32,11 +32,11 @@ offset_ch7 = 6500
 
 # READING LCP INDEXES --------------------------------------------------------------------------------------------------
 # all file name
-tdms_dir = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
+tdms_dir = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
 all_tdms_dir = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
 
 # read the LCP indexes into df
-lcp_dir = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/processed/' + \
+lcp_dir = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/processed/' + \
           'lcp_index_1bar_near_segmentation2.csv'
 lcp_df = pd.read_csv(lcp_dir, index_col=0)
 

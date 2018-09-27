@@ -49,7 +49,7 @@ for f in all_file_path:
 lcp_list, lcp_ch_list, lcp_filename_list = [], [], []
 
 # for all tdms file
-for foi in all_file_path:
+for foi in all_file_path[:2]:
     # take the last filename
     filename = foi.split(sep='/')[-1]
     filename = filename.split(sep='.')[0]
@@ -120,18 +120,25 @@ for foi in all_file_path:
         else:
             lcp_index_temp.append(lcp)
 
-        # iterate thru all flags
-        channel_to_take = []
+        # store all ch in flag into a list o f8
+        channel_multiple_hot = []
         for i in range(8):
-            if flag['ch{}'.format(i)] is not 1:
-                channel_to_take.append(i)
+            channel_multiple_hot.append(flag['ch{}'.format(i)])
 
-        lcp_ch_temp.append(channel_to_take)
+        lcp_ch_temp.append(channel_multiple_hot)
 
-    # to be stored into csv
-    lcp_list.append(lcp_index_temp)
-    lcp_ch_list.append(lcp_ch_temp)
-    lcp_filename_list.append(filename)
+    # if all lcp are discarded by users, proceed to nex tdms
+    if not lcp_index_temp:
+        print('all LCP discarded !')
+        continue
+    else:
+        # store only LCP that survives
+        # list [filename]
+        lcp_filename_list.append(filename)
+        # list of list [filename, LCP]
+        lcp_list.append(lcp_index_temp)
+        # list of list of list [filename, LCP, ch no.]
+        lcp_ch_list.append(lcp_ch_temp)
 
     # VISUALIZING ------------------------------------------------------------------------------------------------------
     # save lollipop plot
@@ -147,20 +154,20 @@ for foi in all_file_path:
     # plt.close('all')
     # print('Lollipop fig saved --> ', fig_lollipop_filename)
 
-    roi_no = 0
-    # for all roi by lcp
-    for lcp in lcp_per_file:
-
-        roi = n_channel_data_near_leak[:, lcp-roi_width[0]:lcp+roi_width[1]]
-
-        # save roi time series plot
-        fig_timeseries = plot_multiple_timeseries(input=roi[:5],
-                                                  subplot_titles=sensor_position[:5],
-                                                  main_title=foi)
-        fig_timeseries_filename = direct_to_dir(where='result') + '{}_roi[{}]'.format(filename, roi_no)
-        fig_timeseries.savefig(fig_timeseries_filename)
-        plt.close('all')
-        print('Time Series fig saved --> ', fig_timeseries_filename)
+    # roi_no = 0
+    # # for all roi by lcp
+    # for lcp in lcp_per_file:
+    #
+    #     roi = n_channel_data_near_leak[:, lcp-roi_width[0]:lcp+roi_width[1]]
+    #
+    #     # save roi time series plot
+    #     fig_timeseries = plot_multiple_timeseries(input=roi[:5],
+    #                                               subplot_titles=sensor_position[:5],
+    #                                               main_title=foi)
+    #     fig_timeseries_filename = direct_to_dir(where='result') + '{}_roi[{}]'.format(filename, roi_no)
+    #     fig_timeseries.savefig(fig_timeseries_filename)
+    #     plt.close('all')
+    #     print('Time Series fig saved --> ', fig_timeseries_filename)
 
         # CWT + XCOR ---------------------------------------------------------------------------------------------------
         # # xcor pairing commands - [near] = 0m, 1m,..., 10m
@@ -197,22 +204,27 @@ for foi in all_file_path:
         #
         #     dist_diff += 1
 
-        roi_no += 1
+        # roi_no += 1
 
 # STORE TO CSV ---------------------------------------------------------------------------------------------------------
-lcp_col, filename_col = [], []
+lcp_col, filename_col, channel_array = [], [], []
 # lcp_list is a list of list
-for lcp, f in zip(lcp_list, lcp_filename_list):
+for lcp_per_file, f, ch_per_file in zip(lcp_list, lcp_filename_list, lcp_ch_list):
     # labelling all lcp with f
-    for p in lcp:
+    for p, ch in zip(lcp_per_file, ch_per_file):
         lcp_col.append(p)
         filename_col.append(f)
+        channel_array.append(ch)
 
 lcp_df = pd.DataFrame()
 lcp_df['lcp'] = lcp_col
 lcp_df['filename'] = filename_col
 
+ch_df = pd.DataFrame(data=channel_array, columns=['ch{}'.format(i) for i in range(8)])
+
+final_df = pd.concat([lcp_df, ch_df], axis=1)
+
 df_filename = direct_to_dir(where='result') + 'lcp_index_1bar_near_segmentation3.csv'
-lcp_df.to_csv(df_filename)
+final_df.to_csv(df_filename)
 
 print('data saved --> ', df_filename)
