@@ -571,15 +571,18 @@ def plot_multiple_timeseries_with_dual_roi(input, subplot_titles, main_title,
 
 def picklist_multiple_timeseries(input, subplot_titles, main_title):
     '''
+    This fn is designed for manual filtering of the LCP, selected by detect_ae_event_by_v_sensor().
     Aspect axis[0] of input is 8(sensors), axis[1] is time steps. All time series has to be
     SAME length !
     :param input: a 2d-array / list
     :param subplot_titles: title for every plot
     :param main_title: the big title
-    :return: rectangular fig obj
+    :return: dict
     '''
     # discard button
     flag = {}
+    # start of segmentation for (-3m, -2m, 2m, 4m, 6m, 8m, 10m)
+    segment_head = [600, 0, 0, 1100, 2700, 4000, 5300, 6500]
 
     class Index(object):
         ind = 0
@@ -635,6 +638,10 @@ def picklist_multiple_timeseries(input, subplot_titles, main_title):
     ax1.plot(input[0])
     ax1.set_title(subplot_titles[0], size=8)
     ax1.set_ylim(bottom=-0.2, top=0.2)
+    # highlight
+    ax1.axvspan(xmin=segment_head[0],
+                xmax=(segment_head[0] + 6000),
+                color='red', alpha=0.2)
 
     # the rest of the plot
     for i in range(1, no_of_plot, 1):
@@ -642,6 +649,10 @@ def picklist_multiple_timeseries(input, subplot_titles, main_title):
         ax.plot(input[i])
         ax.set_title(subplot_titles[i], size=8)
         ax.set_ylim(bottom=-0.2, top=0.2)
+        # highlight
+        ax.axvspan(xmin=segment_head[i],
+                   xmax=(segment_head[i] + 6000),
+                   color='red', alpha=0.2)
 
     # button from top down
     callback = Index()
