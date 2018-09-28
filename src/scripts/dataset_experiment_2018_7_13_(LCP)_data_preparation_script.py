@@ -12,7 +12,7 @@ from src.utils.helpers import *
 
 # CONFIG ---------------------------------------------------------------------------------------------------------------
 # roi
-roi_width = (int(1e3), int(16e3))
+roi_width = (int(1e3), int(5e3))
 lcp_recognition_dataset_save_filename = direct_to_dir(where='result') + 'lcp_recog_1bar_near_segmentation2_dataset.csv'
 # non_lcp_save_filename = direct_to_dir(where='result') + 'non_lcp_1bar_near_segmentation2_dataset.csv'
 

@@ -3,7 +3,7 @@ from src.utils.helpers import *
 
 filename = 'lcp_index_1bar_near_segmentation3'
 filename_to_save = direct_to_dir(where='result')+filename+'.csv'
-filename_list = [direct_to_dir(where='result') + filename + '_p{}.csv'.format(i) for i in range(4)]
+filename_list = [direct_to_dir(where='result') + filename + '_p{}.csv'.format(i) for i in range(2)]
 print(filename_list)
 
 # jus to get the col name
