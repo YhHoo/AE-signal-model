@@ -1,6 +1,6 @@
 '''
 THIS SCRIPT USES PEAKS INDEXES CREATED BY (LCP)_findpeak_for_all_script.py , AND SEGMENT THE AE DATA USING 6K POINTS
-WINDOWS, LABELLED WITH 0 AND 1, STORED TO csv
+WINDOWS, LABELLED WITH CHANNEL NO, STORED TO LCP.CSV AND NON-LCP.CSV
 '''
 import numpy as np
 import pandas as pd
@@ -13,7 +13,7 @@ from src.utils.helpers import *
 # CONFIG ---------------------------------------------------------------------------------------------------------------
 # roi
 roi_width = (int(1e3), int(5e3))
-lcp_recognition_dataset_save_filename = direct_to_dir(where='result') + 'lcp_recog_1bar_near_segmentation2_dataset.csv'
+lcp_recognition_dataset_save_filename = direct_to_dir(where='result') + 'dataset_lcp_1bar_near_seg3.csv'
 # non_lcp_save_filename = direct_to_dir(where='result') + 'non_lcp_1bar_near_segmentation2_dataset.csv'
 
 # points offset when segment other channel, with respect to channel 2m and -2m
@@ -30,24 +30,24 @@ offset_ch6 = 5300
 # 12m
 offset_ch7 = 6500
 
+offset_all = [offset_ch0, 0, 0, offset_ch3, offset_ch4, offset_ch5, offset_ch6, offset_ch7]
+
 # READING LCP INDEXES --------------------------------------------------------------------------------------------------
 # all file name
-tdms_dir = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
-all_tdms_dir = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
+tdms_1bar_dir = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
+all_tdms_1bar_file = [(tdms_1bar_dir + f) for f in listdir(tdms_1bar_dir) if f.endswith('.tdms')]
+tdms_2bar_dir = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/Leak/'
+all_tdms_2bar_file = [(tdms_2bar_dir + f) for f in listdir(tdms_2bar_dir) if f.endswith('.tdms')]
 
 # read the LCP indexes into df
-lcp_dir = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/processed/' + \
-          'lcp_index_1bar_near_segmentation2.csv'
-lcp_df = pd.read_csv(lcp_dir, index_col=0)
+lcp_1bar_filename = direct_to_dir(where='result') + 'lcp_index_1bar_near_segmentation3.csv'
+lcp_2bar_filename = direct_to_dir(where='result') + 'lcp_index_2bar_near_segmentation3.csv'
 
-# get only confident LCP rows
-lcp_confident_df = lcp_df.loc[lcp_df['confident LCP'] == 1]
-lcp_confident_df = lcp_confident_df.drop(['contain other source'], axis=1)
-
+df_1bar_lcp = pd.read_csv(lcp_1bar_filename, index_col=0)
 
 # SEGMENTATION ON ALL TDMS FILES AND SAVE CSV --------------------------------------------------------------------------
 # set up a csv headers
-header = np.arange(0, roi_width[0]+roi_width[1], 1).tolist() + ['label']
+header = np.arange(0, roi_width[0]+roi_width[1], 1).tolist() + ['channel']
 
 # write header to csv
 with open(lcp_recognition_dataset_save_filename, 'w', newline='') as f:
@@ -55,19 +55,24 @@ with open(lcp_recognition_dataset_save_filename, 'w', newline='') as f:
     writer.writerow(header)
 
 # lcp_signal, non_lcp_signal = [], []
-for foi in all_tdms_dir:
+for foi in all_tdms_1bar_file:
     # get the filename e.g. test_003
     tdms_name = foi.split(sep='/')[-1]
     tdms_name = tdms_name.split(sep='.')[0]
 
     # locate all rows with that tdms name
-    temp_df = lcp_confident_df.loc[lcp_confident_df['filename'] == tdms_name]
-    lcp_index_per_file = temp_df.values[:, 0]
+    temp_df = df_1bar_lcp.loc[df_1bar_lcp['filename'] == tdms_name]
 
-    # for empty array, skip to nex foi
-    if len(lcp_index_per_file) is 0:
+    # skip tp nex foi if df is empty
+    if temp_df.empty:
         print('no LCP')
         continue
+
+    # read all lcp indexes into a 1d array
+    lcp_index_per_file = temp_df.values[:, 0]
+
+    # read all channels info into 2d array
+    lcp_channel_arr = temp_df[['ch0', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7']].values
 
     print('LCP indexes: ', lcp_index_per_file)
 
@@ -75,7 +80,10 @@ for foi in all_tdms_dir:
     n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
     # SEGMENTING LCP ---------------------------------------------------------------------------------------------------
-    for lcp_index in lcp_index_per_file:
+    for lcp_index, channel in zip(lcp_index_per_file, lcp_channel_arr):
+
+        for
+
         # segment sensor -3m
         soi_0 = n_channel_data_near_leak[0, (lcp_index - roi_width[0] + offset_ch0):
                                             (lcp_index + roi_width[1]) + offset_ch0].tolist() + [1]
