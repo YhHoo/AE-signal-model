@@ -29,17 +29,18 @@ from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-filename = direct_to_dir(where='result') + 'lcp_index_1bar_near_segmentation3.csv'
-df = pd.read_csv(filename)
-df_select = df.loc[df['filename'] == 'test2_0001']
-print(df_select)
+tdms_dir = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/1 bar/Leak/'
+all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
 
-if df_select.empty:
-    print('EMPTY')
 
-# channel = df_select[['ch0', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7']].values
-# print(channel.shape)
+n_channel_data_near_leak = read_single_tdms(all_tdms_file[3])
+n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
+fig = plot_multiple_timeseries(input=n_channel_data_near_leak[:, :3000000],
+                               subplot_titles=['-3m', '-2m', '12m', '14m', '16m', '18m', '20m', '22m'],
+                               main_title='Far sensors')
+
+plt.show()
 
 # ----------------------------------------------------------------------------------------------------------------------
 # x = [[1, 25, 67], [2, 24, 70], [3, 20, 58]]
