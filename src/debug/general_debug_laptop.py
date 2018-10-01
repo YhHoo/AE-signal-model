@@ -23,20 +23,27 @@ from mpl_toolkits.mplot3d import Axes3D
 from sklearn.metrics import accuracy_score
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
-from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, detect_ae_event_by_v_sensor
+from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, detect_ae_event_by_v_sensor, dwt_smoothing
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-tdms_dir = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/1 bar/Leak/'
-all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
+tdms_dir = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/2 bar/Leak/test_0005.tdms'
+# all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
 
 
-n_channel_data_near_leak = read_single_tdms(all_tdms_file[3])
+n_channel_data_near_leak = read_single_tdms(tdms_dir)
 n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
-fig = plot_multiple_timeseries(input=n_channel_data_near_leak[:, :3000000],
+temp = []
+for ch in n_channel_data_near_leak:
+    denoise = dwt_smoothing(ch, wavelet='haar', level=2)
+    temp.append(denoise)
+
+temp = np.array(temp)
+
+fig = plot_multiple_timeseries(input=temp[:, :3000000],
                                subplot_titles=['-3m', '-2m', '12m', '14m', '16m', '18m', '20m', '22m'],
                                main_title='Far sensors')
 
