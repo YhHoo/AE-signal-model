@@ -420,14 +420,14 @@ def read_single_tdms(filename=None):
     :param filename: file name and path of the specific tdms file
     :return:
     '''
-    print('Reading --> ', filename)
+    print('\nReading --> ', filename)
     tdms_file = TdmsFile(filename)
     tdms_df = tdms_file.as_dataframe()
     # store the df values to list
     n_channel_matrix = tdms_df.values
     # convert the list matrix
     n_channel_matrix = np.array(n_channel_matrix)
-    print('Acquired Data Dim: ', n_channel_matrix.shape, '\n')
+    print('Acquired Data Dim: ', n_channel_matrix.shape)
 
     return n_channel_matrix
 
@@ -962,6 +962,10 @@ def plot_heatmap_series_in_four_column(column_1_heatmap, column_2_heatmap, colum
 def compute_recall_precision_multiclass(y_true, y_pred, all_class_label, verbose=True):
     '''
     Reference website: http://text-analytics101.rxnlp.com/2014/10/computing-precision-and-recall-for.html
+
+    NOTE: the confusion matrix will place the label 0 first followed by 1, 2 in ascending order. So make sure
+    the all_class_label has to be in ascending labeling also
+
     :param y_true: list or 1d array of actual labels
     :param y_pred: list or 1d array of model prediction (after argmax())
     :param all_class_label: list or 1d array of integers for labelling the class, e.g. 0, 1, 2, 3, ...

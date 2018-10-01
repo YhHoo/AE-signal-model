@@ -1,6 +1,7 @@
 '''
-THIS SCRIPT FINDS ALL POSSIBLE LCP USING THE PEAKS DETECTION AND detect_ae_event_by_v_sensor(). THEN FOLLOWED BY
-MANUAL FILTERING BY USERS,TO REMOVE FALSELY DETECTED LCP. USER CAN DISCARD ONLY FAULTY CHANNELS
+THIS SCRIPT FINDS ALL POSSIBLE LCP INDEXES USING THE PEAKS DETECTION AND detect_ae_event_by_v_sensor(). THEN FOLLOWED BY
+MANUAL FILTERING BY USERS,TO REMOVE FALSELY DETECTED LCP. USER CAN DISCARD ONLY FAULTY CHANNELS. PROCEED TO
+(LCP)_Data_preparation_script.py TO EXTRAC THE REAL AE DATA.
 '''
 
 import numpy as np
@@ -44,7 +45,7 @@ filename_to_save = 'lcp_index_1bar_near_segmentation3_p0.csv'
 
 # DATA READING AND PRE-PROCESSING --------------------------------------------------------------------------------------
 # tdms file reading
-folder_path = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
+folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
 all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 for f in all_file_path:
     print(f)
@@ -52,7 +53,7 @@ for f in all_file_path:
 lcp_list, lcp_ch_list, lcp_filename_list = [], [], []
 
 # for all tdms file
-for foi in all_file_path[:30]:
+for foi in all_file_path[30:]:
     # take the last filename
     filename = foi.split(sep='/')[-1]
     filename = filename.split(sep='.')[0]

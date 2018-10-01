@@ -50,6 +50,9 @@ class AcousticEmissionDataSet_13_7_2018:
         # PLB (no water flow)
         self.path_plb_10to22 = self.drive + 'Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/PLB/0m/'
 
+        # LCP DATASET
+        self.lcp_dataset = self.drive + 'Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/LCP DATASET/'
+
         # sensor pairing
         # xcor pairing commands - [near] = 0m, 1m,..., 10m
         self.sensor_pair_near = [(1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)]
@@ -702,7 +705,7 @@ class AcousticEmissionDataSet_13_7_2018:
 
         return dataset, label
 
-    def lcp_recognition_binary_class_dataset(self, train_split, self_shuffle=True):
+    def lcp_recognition_binary_class_dataset_seg2(self, train_split, self_shuffle=True):
 
         # csv file reading
         filename = self.path_leak_1bar_2to12 + 'processed/lcp_recog_1bar_near_segmentation2_dataset.csv'
@@ -740,7 +743,7 @@ class AcousticEmissionDataSet_13_7_2018:
                              train_size=train_split,
                              shuffle=self_shuffle)
 
-        # shuffle non_lcp_data and truncate
+        # concate 2 lcp and non-lcp classes
         train_x = np.concatenate((non_lcp_data_train_x, lcp_data_train_x))
         test_x = np.concatenate((non_lcp_data_test_x, lcp_data_test_x))
         train_y = np.concatenate((non_lcp_data_train_y, lcp_data_train_y))
@@ -754,7 +757,65 @@ class AcousticEmissionDataSet_13_7_2018:
 
         return train_x, train_y, test_x, test_y
 
+    def lcp_recognition_binary_class_dataset_seg3(self, train_split):
+        '''
+        THIS FUNCTION WILL READ THE DATASET SAVED IN CSV FROM HARDDISK, AND ARRANGE THEM INTO TRAIN AND TEST FORMAT
+        :param train_split: Split on lcp and lcp class
+        :return:
+        '''
+        # csv file reading
+        lcp_1bar_filename = self.lcp_dataset + 'dataset_lcp_1bar_near_seg3.csv'
+        non_lcp_1bar_filename = self.lcp_dataset + 'dataset_non_lcp_1bar_near_seg3.csv'
 
+        # reading lcp data fr csv
+        time_start = time.time()
+        print('Reading --> ', lcp_1bar_filename)
+        df_lcp_1bar = pd.read_csv(lcp_1bar_filename)
+
+        print('Reading --> ', non_lcp_1bar_filename)
+        df_non_lcp_1bar = pd.read_csv(non_lcp_1bar_filename)
+
+        print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+        print('LCP Dataset Dim: ', df_lcp_1bar.values.shape)
+        print('non LCP Dataset Dim: ', df_non_lcp_1bar.values.shape)
+
+        # data slicing
+        lcp_data = df_lcp_1bar.values[:, :-1]
+        lcp_data_with_label = np.concatenate((lcp_data, np.zeros((lcp_data.shape[0], 1))), axis=1)
+
+        non_lcp_data = df_non_lcp_1bar.values[:, :-1]
+        non_lcp_data_with_label = np.concatenate((non_lcp_data, np.ones((non_lcp_data.shape[0], 1))), axis=1)
+
+        # shuffle non lcp data and truncate (to balance class size)
+        non_lcp_data_shuffled = non_lcp_data_with_label[np.random.permutation(len(non_lcp_data_with_label))]
+        non_lcp_data_truncated = non_lcp_data_shuffled[:1500]
+
+        # train test split
+        lcp_data_train_x, lcp_data_test_x, lcp_data_train_y, lcp_data_test_y = \
+            train_test_split(lcp_data_with_label[:, :-1],
+                             lcp_data_with_label[:, -1],
+                             train_size=train_split,
+                             shuffle=True)
+
+        non_lcp_data_train_x, non_lcp_data_test_x, non_lcp_data_train_y, non_lcp_data_test_y = \
+            train_test_split(non_lcp_data_truncated[:, :-1],
+                             non_lcp_data_truncated[:, -1],
+                             train_size=train_split,
+                             shuffle=True)
+
+        # concate 2 lcp and non-lcp classes
+        train_x = np.concatenate((non_lcp_data_train_x, lcp_data_train_x))
+        test_x = np.concatenate((non_lcp_data_test_x, lcp_data_test_x))
+        train_y = np.concatenate((non_lcp_data_train_y, lcp_data_train_y))
+        test_y = np.concatenate((non_lcp_data_test_y, lcp_data_test_y))
+
+        print('\n----------TRAIN AND TEST SET---------')
+        print('Train_x Dim: ', train_x.shape)
+        print('Test_x Dim: ', test_x.shape)
+        print('Train_y Dim:', train_y.shape)
+        print('Test_y Dim:', test_y.shape)
+
+        return train_x, train_y, test_x, test_y
 
 
 

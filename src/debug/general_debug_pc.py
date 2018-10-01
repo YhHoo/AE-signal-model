@@ -20,20 +20,43 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, La
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 from sklearn.model_selection import StratifiedKFold, train_test_split
 import csv
+from sklearn.metrics import confusion_matrix
 # self lib
 # from src.controlled_dataset.ideal_dataset import white_noise
 # from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, dwt_smoothing, one_dim_xcor_1d_input
 # from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
-# from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
-#                               break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical, \
-#                               scatter_plot_3d_vispy, scatter_plot, plot_multiple_timeseries, plot_cwt_with_time_series
+from src.utils.helpers import *
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-l = [1, 2]
-if 5 in l:
-    print('yes')
-else:
-    print('no')
+
+l = [1, 1, 1, 0, 0, 0]
+m = [0, 1, 1, 1, 0, 1]
+
+x = confusion_matrix(y_true=l, y_pred=m)
+
+print(x)
+
+# filename = 'F:\Experiment_13_7_2018\Experiment 1\-3,-2,2,4,6,8,10,12\LCP DATASET\dataset_lcp_2bar_near_seg3.csv'
+#
+# time_start = time.time()
+# df = pd.read_csv(filename)
+# print('Time Lapsed: {:.4f}s'.format(time.time() - time_start))
+# print(df.head())
+#
+# random_pick = [0, 10, 15, 17, 19, 30]
+#
+# for r in random_pick:
+#     temp = []
+#     for i in range(8):
+#         x = df[df['channel'] == i].values[r]
+#         temp.append(x)
+#
+#     fig = plot_multiple_timeseries(input=temp,
+#                                    subplot_titles=['-3m [0]', '-2m [1]', '2m [2]', '4m [3]',
+#                                                    '6m [4]', '8m [5]', '10m [6]', '12m [7]'],
+#                                    main_title='Random pick of the lcp data')
+#
+#     plt.savefig('lcp_sample[{}]'.format(r))
 
 # lcp_df = pd.DataFrame()
 # lcp_df['lcp'] = [1, 2, 3]
