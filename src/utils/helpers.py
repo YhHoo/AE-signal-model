@@ -441,21 +441,22 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
     :param main_title: the big title
     :return: rectangular fig obj
     '''
+    ylim = 2.5
     no_of_plot = len(input)
-    fig = plt.figure(figsize=(5, 8))
+    fig = plt.figure(figsize=(5+5, 8))
     fig.suptitle(main_title, fontweight="bold", size=8)
     fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
     # first plot
     ax1 = fig.add_subplot(no_of_plot, 1, 1)
     ax1.plot(input[0])
     ax1.set_title(subplot_titles[0], size=8)
-    ax1.set_ylim(bottom=-5, top=5)
+    ax1.set_ylim(bottom=-ylim, top=ylim)
     # the rest of the plot
     for i in range(1, no_of_plot, 1):
         ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1, sharey=ax1)  # add in sharey=ax1 if wan to share y axis too
         ax.plot(input[i])
         ax.set_title(subplot_titles[i], size=8)
-        ax.set_ylim(bottom=-5, top=5)
+        ax.set_ylim(bottom=-ylim, top=ylim)
     return fig
 
 

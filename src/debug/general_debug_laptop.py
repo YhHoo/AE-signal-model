@@ -29,23 +29,38 @@ from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-tdms_dir = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/2 bar/Leak/test_0005.tdms'
-# all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
+tdms_dir = 'F:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/leak 1 bar/'
+all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
+
+for f in all_tdms_file[21:]:
+    # get the filename e.g. test_003
+    tdms_name = f.split(sep='/')[-1]
+    tdms_name = tdms_name.split(sep='.')[0]
+
+    n_channel_data_near_leak = read_single_tdms(f)
+    n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+
+    title = '2bar_{}'.format(tdms_name)
+    save_title = direct_to_dir(where='result') + title + '.png'
+    fig = plot_multiple_timeseries(input=n_channel_data_near_leak[:, :2500000],
+                                   subplot_titles=['-4.5m', '-2m', '2m', '5m', '8m', '17m', '20m', '23m'],
+                                   main_title=title)
+
+    fig.savefig(save_title)
+
+    plt.close('all')
+
+    gc.collect()
 
 
-n_channel_data_near_leak = read_single_tdms(tdms_dir)
-n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+# temp = []
+# for ch in n_channel_data_near_leak:
+#     denoise = dwt_smoothing(ch, wavelet='haar', level=2)
+#     temp.append(denoise)
+#
+# temp = np.array(temp)
 
-temp = []
-for ch in n_channel_data_near_leak:
-    denoise = dwt_smoothing(ch, wavelet='haar', level=2)
-    temp.append(denoise)
 
-temp = np.array(temp)
-
-fig = plot_multiple_timeseries(input=temp[:, :3000000],
-                               subplot_titles=['-3m', '-2m', '12m', '14m', '16m', '18m', '20m', '22m'],
-                               main_title='Far sensors')
 
 plt.show()
 
