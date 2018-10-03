@@ -443,7 +443,7 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
     '''
     ylim = 2.5
     no_of_plot = len(input)
-    fig = plt.figure(figsize=(5+5, 8))
+    fig = plt.figure(figsize=(5, 8-2))
     fig.suptitle(main_title, fontweight="bold", size=8)
     fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
     # first plot

@@ -9,7 +9,7 @@ from src.utils.dsp_tools import *
 
 # CONFIG ---------------------------------------------------------------------------------------------------------------
 fs = 1e6
-sensor_position = ['-3m', '-2m', '2m', '4m', '6m', '8m', '10m', '12m']
+sensor_position = ['-4.5m', '-2m', '2m', '5m', '8m', '10m', '17m']
 
 # dwt denoising setting
 denoise = False

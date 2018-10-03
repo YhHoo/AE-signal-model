@@ -128,4 +128,18 @@ def lcp_recognition_binary_model_3():
     return model
 
 
+# TESTING AT LAPTOP
+def model_1():
+    visible_in = Input(shape=(6000, 1))
+
+    conv_1 = Conv1D(filters=32, kernel_size=5, strides=1, activation='relu', name='Conv_a_1')(visible_in)
+    gap = GlobalAveragePooling1D()(conv_1)
+    visible_out = Dense(1, activation='sigmoid')(gap)
+
+    model = Model(inputs=visible_in, outputs=visible_out)
+
+    print(model.summary())
+
 # lcp_recognition_binary_model_3()
+
+model_1()
