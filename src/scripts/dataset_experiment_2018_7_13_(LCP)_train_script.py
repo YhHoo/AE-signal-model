@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 from keras.callbacks import TensorBoard
+from keras.optimizers import RMSprop
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
 from src.model_bank.dataset_2018_7_13_lcp_recognition_model import *
 from src.utils.helpers import *
@@ -11,7 +12,8 @@ train_x, train_y, test_x, test_y = ae_data.lcp_recognition_binary_class_dataset_
 train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
 test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
 
-lcp_model = lcp_recognition_binary_model_2()
+lcp_model = lcp_recognition_binary_model_3()
+optimizer = RMSprop(lr=0.003)
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
 # saving setting
@@ -19,7 +21,7 @@ logger = ModelLogger(model=lcp_model, model_name='LCP_Recog_1')
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # tensorboard
-tb_save_dir = direct_to_dir(where='result') + 'Graph/run_4, model3'
+tb_save_dir = direct_to_dir(where='result') + 'Graph/run_5, model3'
 tb_callback = TensorBoard(log_dir=tb_save_dir,
                           histogram_freq=10,
                           write_graph=False,
@@ -31,7 +33,7 @@ history = lcp_model.fit(x=train_x_reshape,
                         y=train_y,
                         validation_data=(test_x_reshape, test_y),
                         callbacks=[tb_callback, save_weight_checkpoint],
-                        epochs=10000,
+                        epochs=5000,
                         batch_size=350,
                         shuffle=True,
                         verbose=2)

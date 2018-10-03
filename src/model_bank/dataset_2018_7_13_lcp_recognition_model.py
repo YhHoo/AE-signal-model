@@ -33,7 +33,7 @@ def lcp_recognition_binary_model():
 
 def lcp_recognition_binary_model_2():
     '''
-    refer Online
+    refer Online, VGG concept
 
     model = Sequential()
     model.add(Conv1D(64, 3, activation='relu', input_shape=(6000, 1)))
@@ -87,39 +87,42 @@ def lcp_recognition_binary_model_2():
 
 
 def lcp_recognition_binary_model_3():
+    '''
+    Dual layer
+    '''
     visible_in = Input(shape=(6000, 1))
 
     # Layer 1, part a
-    conv_a_1 = Conv1D(64, kernel_size=5, activation='relu')(visible_in)
-    drop_a_1 = Dropout(0.3)(conv_a_1)
-    conv_a_2 = Conv1D(64, kernel_size=5, activation='relu')(drop_a_1)
-    maxpool_a_1 = MaxPooling1D(pool_size=3, strides=2)(conv_a_2)
+    conv_a_1 = Conv1D(64, kernel_size=5, activation='relu', name='conv_a_1')(visible_in)
+    drop_a_1 = Dropout(0.3, name='drop_a_1')(conv_a_1)
+    conv_a_2 = Conv1D(64, kernel_size=5, activation='relu', name='conv_a_2')(drop_a_1)
+    maxpool_a_1 = MaxPooling1D(pool_size=3, strides=2, name='maxp_a_1')(conv_a_2)
 
-    conv_a_3 = Conv1D(128, kernel_size=5, activation='relu')(maxpool_a_1)
-    drop_a_2 = Dropout(0.3)(conv_a_3)
-    conv_a_4 = Conv1D(128, kernel_size=5, activation='relu')(drop_a_2)
-    maxpool_a_2 = MaxPooling1D(pool_size=3, strides=2)(conv_a_4)
+    conv_a_3 = Conv1D(128, kernel_size=5, activation='relu', name='conv_a_3', use_bias=False)(maxpool_a_1)
+    drop_a_2 = Dropout(0.3, name='drop_a_2')(conv_a_3)
+    conv_a_4 = Conv1D(128, kernel_size=5, activation='relu', name='conv_a_4', use_bias=False)(drop_a_2)
+    maxpool_a_2 = MaxPooling1D(pool_size=3, strides=2, name='maxp_a_2')(conv_a_4)
 
-    gap_a_1 = GlobalAveragePooling1D()(maxpool_a_2)
+    gap_a_1 = GlobalAveragePooling1D(name='gap_a_1')(maxpool_a_2)
 
     # Layer 1, part b
-    conv_b_1 = Conv1D(64, kernel_size=5, activation='relu')(visible_in)
-    drop_b_1 = Dropout(0.3)(conv_b_1)
-    conv_b_2 = Conv1D(64, kernel_size=5, activation='relu')(drop_b_1)
-    maxpool_b_1 = MaxPooling1D(pool_size=3, strides=2)(conv_b_2)
+    conv_b_1 = Conv1D(64, kernel_size=5, activation='relu', name='conv_b_1')(visible_in)
+    drop_b_1 = Dropout(0.3, name='drop_b_1')(conv_b_1)
+    conv_b_2 = Conv1D(64, kernel_size=5, activation='relu', name='conv_b_2')(drop_b_1)
+    maxpool_b_1 = MaxPooling1D(pool_size=3, strides=2, name='maxp_b_1')(conv_b_2)
 
-    conv_b_3 = Conv1D(128, kernel_size=5, activation='relu')(maxpool_b_1)
-    drop_b_2 = Dropout(0.3)(conv_b_3)
-    conv_b_4 = Conv1D(128, kernel_size=5, activation='relu')(drop_b_2)
-    maxpool_b_2 = MaxPooling1D(pool_size=3, strides=2)(conv_b_4)
+    conv_b_3 = Conv1D(128, kernel_size=5, activation='relu', name='conv_b_3')(maxpool_b_1)
+    drop_b_2 = Dropout(0.3, name='drop_b_2')(conv_b_3)
+    conv_b_4 = Conv1D(128, kernel_size=5, activation='relu', name='conv_b_4')(drop_b_2)
+    maxpool_b_2 = MaxPooling1D(pool_size=3, strides=2, name='maxp_b_2')(conv_b_4)
 
-    gap_b_1 = GlobalAveragePooling1D()(maxpool_b_2)
+    gap_b_1 = GlobalAveragePooling1D(name='gap_b_1')(maxpool_b_2)
 
     # Layer 2
     merge_1 = concatenate([gap_a_1, gap_b_1])
-    dense_1 = Dense(50, activation='relu')(merge_1)
-    drop_2 = Dropout(0.2)(dense_1)
-    visible_out = Dense(1, activation='sigmoid')(drop_2)
+    dense_1 = Dense(50, activation='relu', name='dense_1')(merge_1)
+    drop_1 = Dropout(0.2, name='drop_1')(dense_1)
+    visible_out = Dense(1, activation='sigmoid', name='dense_2')(drop_1)
 
     model = Model(inputs=visible_in, outputs=visible_out)
 
@@ -140,6 +143,6 @@ def model_1():
 
     print(model.summary())
 
+
 # lcp_recognition_binary_model_3()
 
-model_1()
