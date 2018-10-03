@@ -29,10 +29,10 @@ from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-tdms_dir = 'F:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/leak 1 bar/'
+tdms_dir = 'E:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/leak 1 bar/'
 all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
 
-for f in all_tdms_file[21:]:
+for f in all_tdms_file[25:]:
     # get the filename e.g. test_003
     tdms_name = f.split(sep='/')[-1]
     tdms_name = tdms_name.split(sep='.')[0]
@@ -46,9 +46,11 @@ for f in all_tdms_file[21:]:
                                    subplot_titles=['-4.5m', '-2m', '2m', '5m', '8m', '17m', '20m', '23m'],
                                    main_title=title)
 
-    fig.savefig(save_title)
+    plt.show()
 
-    plt.close('all')
+    # fig.savefig(save_title)
+    #
+    # plt.close('all')
 
     gc.collect()
 
