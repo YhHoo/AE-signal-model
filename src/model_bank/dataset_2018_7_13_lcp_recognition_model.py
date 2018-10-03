@@ -117,7 +117,7 @@ def lcp_recognition_binary_model_3():
 
     # Layer 2
     merge_1 = concatenate([gap_a_1, gap_b_1])
-    dense_1 = Dense(50, activation='relu', kernel_regularizer=regularizers.l1())(merge_1)
+    dense_1 = Dense(50, activation='relu')(merge_1)
     drop_2 = Dropout(0.2)(dense_1)
     visible_out = Dense(1, activation='sigmoid')(drop_2)
 

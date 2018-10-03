@@ -19,7 +19,7 @@ logger = ModelLogger(model=lcp_model, model_name='LCP_Recog_1')
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # tensorboard
-tb_save_dir = direct_to_dir(where='result') + 'Graph/run_2, model3'
+tb_save_dir = direct_to_dir(where='result') + 'Graph/run_4, model3'
 tb_callback = TensorBoard(log_dir=tb_save_dir,
                           histogram_freq=10,
                           write_graph=False,
@@ -31,7 +31,7 @@ history = lcp_model.fit(x=train_x_reshape,
                         y=train_y,
                         validation_data=(test_x_reshape, test_y),
                         callbacks=[tb_callback, save_weight_checkpoint],
-                        epochs=2000,
+                        epochs=10000,
                         batch_size=350,
                         shuffle=True,
                         verbose=2)
