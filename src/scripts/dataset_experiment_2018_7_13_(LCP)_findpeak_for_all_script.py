@@ -45,7 +45,7 @@ filename_to_save = 'lcp_index_1bar_near_segmentation3_p0.csv'
 
 # DATA READING AND PRE-PROCESSING --------------------------------------------------------------------------------------
 # tdms file reading
-folder_path = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
+folder_path = 'E:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
 all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 for f in all_file_path:
     print(f)
@@ -53,7 +53,7 @@ for f in all_file_path:
 lcp_list, lcp_ch_list, lcp_filename_list = [], [], []
 
 # for all tdms file
-for foi in all_file_path[30:]:
+for foi in all_file_path:
     # take the last filename
     filename = foi.split(sep='/')[-1]
     filename = filename.split(sep='.')[0]
@@ -74,7 +74,7 @@ for foi in all_file_path[30:]:
         n_channel_data_near_leak = np.array(temp)
 
     # PEAK DETECTION AND ROI -------------------------------------------------------------------------------------------
-    # peak finding for sensor -3m, -2m, 2m, 4m
+    # peak finding for sensor -4.5m, -2m, 2m, 5m
     peak_list = []
     time_start = time.time()
     print('Peak localizing ...')

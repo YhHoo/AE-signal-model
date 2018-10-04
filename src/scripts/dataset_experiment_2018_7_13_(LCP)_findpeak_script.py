@@ -52,15 +52,21 @@ no_of_segment = 1
 # roi
 roi_width = (int(1.5e3), int(11e3))
 
+# channel naming
+label = ['-4.5m', '-2m', '2m', '5m', '8m', '10m', '17m']
+
 # DATA READING AND PRE-PROCESSING --------------------------------------------------------------------------------------
 # tdms file reading
-folder_path = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/'
+folder_path = 'E:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
 all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 
 # file of interest
-foi = all_file_path[0]
+foi = all_file_path[1]
 n_channel_data_near_leak = read_single_tdms(foi)
 n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+
+# discard channel 7
+n_channel_data_near_leak = n_channel_data_near_leak[:-1]
 
 print('Read Data Dim: ', n_channel_data_near_leak.shape)
 
@@ -87,55 +93,47 @@ if denoise:
 peak_list = []
 time_start = time.time()
 for channel in n_channel_data_near_leak:
-    print('Detecting')
+    print('Peak Detecting')
     peak_list.append(peakutils.indexes(channel, thres=0.55, min_dist=5000))
 print('Time Taken for peakutils.indexes(): {:.4f}s'.format(time.time()-time_start))
-
-# detect leak caused peaks
-# leak_caused_peak = detect_ae_event_by_sandwich_sensor(x1=peak_list[0],
-#                                                       x2=peak_list[1],
-#                                                       threshold1=1000,
-#                                                       threshold2=100000)
 
 leak_caused_peak = detect_ae_event_by_v_sensor(x1=peak_list[0],
                                                x2=peak_list[1],
                                                x3=peak_list[2],
                                                x4=peak_list[3],
-                                               threshold_list=[500, 1250, 2500],  # calc by dist*fs/800
+                                               threshold_list=[800, 2000, 3000],  # calc by dist*fs/800
                                                threshold_x=10000)
 print(leak_caused_peak)
+
 # if the list is empty
 if not leak_caused_peak:
     print('No Leak Caused Peak Detected !')
     leak_caused_peak = None
 
-
 # just to duplicate the list for plot_multiple_timeseries_with_roi() usage
-temp = []
-for _ in range(8):
-    temp.append(leak_caused_peak)
+# temp = []
+# for _ in range(8):
+#     temp.append(leak_caused_peak)
 
 # VISUALIZING ----------------------------------------------------------------------------------------------------------
-
-subplot_titles = np.arange(0, 8, 1)
 
 # fig_timeseries = plot_multiple_timeseries(input=n_channel_data_near_leak,
 #                                           subplot_titles=subplot_titles,
 #                                           main_title=foi)
 
 fig_timeseries = plot_multiple_timeseries_with_roi(input=n_channel_data_near_leak,
-                                                   subplot_titles=subplot_titles,
+                                                   subplot_titles=label,
                                                    main_title=foi,
-                                                   peak_center_list=temp,
+                                                   peak_center_list=peak_list,
                                                    roi_width=roi_width)
 
-fig_lollipop = lollipop_plot(x_list=peak_list[:4],
-                             y_list=[n_channel_data_near_leak[0][peak_list[0]],
-                                     n_channel_data_near_leak[1][peak_list[1]],
-                                     n_channel_data_near_leak[2][peak_list[2]],
-                                     n_channel_data_near_leak[3][peak_list[3]]],
-                             hit_point=leak_caused_peak,
-                             label=['Sensor[-3m]', 'Sensor[-2m]', 'Sensor[2m]', 'Sensor[4m]'])
+# fig_lollipop = lollipop_plot(x_list=peak_list[:4],
+#                              y_list=[n_channel_data_near_leak[0][peak_list[0]],
+#                                      n_channel_data_near_leak[1][peak_list[1]],
+#                                      n_channel_data_near_leak[2][peak_list[2]],
+#                                      n_channel_data_near_leak[3][peak_list[3]]],
+#                              hit_point=leak_caused_peak,
+#                              label=['Sensor[-4.5m]', 'Sensor[-2m]', 'Sensor[2m]', 'Sensor[5m]'])
 
 
 plt.show()
