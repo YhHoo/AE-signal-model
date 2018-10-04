@@ -29,10 +29,11 @@ from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-tdms_dir = 'E:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/leak 1 bar/'
+tdms_dir = 'E:/Experiment_3_10_2018/-4.5, -2, 5, 8, 10, 17 , 19.5 (leak 2bar)/'
+
 all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
 
-for f in all_tdms_file[25:]:
+for f in all_tdms_file:
     # get the filename e.g. test_003
     tdms_name = f.split(sep='/')[-1]
     tdms_name = tdms_name.split(sep='.')[0]
@@ -42,29 +43,16 @@ for f in all_tdms_file[25:]:
 
     title = '2bar_{}'.format(tdms_name)
     save_title = direct_to_dir(where='result') + title + '.png'
-    fig = plot_multiple_timeseries(input=n_channel_data_near_leak[:, :2500000],
-                                   subplot_titles=['-4.5m', '-2m', '2m', '5m', '8m', '17m', '20m', '23m'],
+    fig = plot_multiple_timeseries(input=n_channel_data_near_leak[:-1, :1000000],
+                                   subplot_titles=['-4.5m', '-2m', '2m', '5m', '8m', '10m', '17m'],
                                    main_title=title)
 
-    plt.show()
-
-    # fig.savefig(save_title)
-    #
-    # plt.close('all')
+    fig.savefig(save_title)
+    print('Fig Saved')
+    plt.close('all')
 
     gc.collect()
 
-
-# temp = []
-# for ch in n_channel_data_near_leak:
-#     denoise = dwt_smoothing(ch, wavelet='haar', level=2)
-#     temp.append(denoise)
-#
-# temp = np.array(temp)
-
-
-
-plt.show()
 
 # ----------------------------------------------------------------------------------------------------------------------
 # x = [[1, 25, 67], [2, 24, 70], [3, 20, 58]]

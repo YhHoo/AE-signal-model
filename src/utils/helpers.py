@@ -441,9 +441,9 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
     :param main_title: the big title
     :return: rectangular fig obj
     '''
-    ylim = 2.5
+    ylim = 1
     no_of_plot = len(input)
-    fig = plt.figure(figsize=(5, 8-2))
+    fig = plt.figure(figsize=(5, 8))
     fig.suptitle(main_title, fontweight="bold", size=8)
     fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
     # first plot
