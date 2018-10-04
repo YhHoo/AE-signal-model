@@ -98,9 +98,9 @@ def lcp_recognition_binary_model_3():
     conv_a_2 = Conv1D(64, kernel_size=5, activation='relu', name='conv_a_2')(drop_a_1)
     maxpool_a_1 = MaxPooling1D(pool_size=3, strides=2, name='maxp_a_1')(conv_a_2)
 
-    conv_a_3 = Conv1D(128, kernel_size=5, activation='relu', name='conv_a_3', use_bias=False)(maxpool_a_1)
+    conv_a_3 = Conv1D(128, kernel_size=5, activation='relu', name='conv_a_3', use_bias=True)(maxpool_a_1)
     drop_a_2 = Dropout(0.3, name='drop_a_2')(conv_a_3)
-    conv_a_4 = Conv1D(128, kernel_size=5, activation='relu', name='conv_a_4', use_bias=False)(drop_a_2)
+    conv_a_4 = Conv1D(128, kernel_size=5, activation='relu', name='conv_a_4', use_bias=True)(drop_a_2)
     maxpool_a_2 = MaxPooling1D(pool_size=3, strides=2, name='maxp_a_2')(conv_a_4)
 
     gap_a_1 = GlobalAveragePooling1D(name='gap_a_1')(maxpool_a_2)
