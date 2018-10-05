@@ -461,15 +461,16 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
     return fig
 
 
-def plot_multiple_timeseries_with_roi(input, subplot_titles, main_title, peak_center_list, roi_width=None):
+def plot_multiple_timeseries_with_roi(input, subplot_titles, main_title, all_ch_peak, lcp_list=None, roi_width=None):
     '''
     Aspect axis[0] of input is no. of sensors/diff features, axis[1] is time steps. All time series has to be
-    SAME length !
+    SAME length ! and there shud b more than 1 plot !!
     :param input: a 2d-array / list
     :param subplot_titles: title for every plot
     :param main_title: the big title
-    :param peak_center_list: a list, where len(peak_list) is no of channels, and 1d-array inside is index
+    :param all_ch_peak: 2d array where len(peak_list) is no of channels, and 1d-array inside is index
                       of the peak in particular channel
+    :param lcp_list: list of LCP index that will be plot as highlighted region in all channels
     :param roi_width: tuple of 2, e.g. (a, b) --> the roi will b [c-a, c+b]
     :return: rectangular fig obj
     '''
@@ -482,13 +483,14 @@ def plot_multiple_timeseries_with_roi(input, subplot_titles, main_title, peak_ce
     ax1.plot(input[0])
 
     # plot marker
-    ax1.plot(peak_center_list[0], input[0][peak_center_list[0]], marker='o', ls='', ms=3, mfc='red')
+    ax1.plot(all_ch_peak[0], input[0][all_ch_peak[0]], marker='o', ls='', ms=3, mfc='red')
 
-    # # roi region highlighting
-    # for peak in peak_center_list:
-    #     ax1.axvspan(xmin=peak - roi_width[0],
-    #                 xmax=peak + roi_width[1],
-    #                 color='red', alpha=0.5)
+    # roi region highlighting
+    if lcp_list is not None:
+        for peak in lcp_list:
+            ax1.axvspan(xmin=peak - roi_width[0],
+                        xmax=peak + roi_width[1],
+                        color='red', alpha=0.5)
 
     ax1.set_title(subplot_titles[0], size=8)
     ax1.set_ylim(bottom=-1, top=1)
@@ -499,13 +501,14 @@ def plot_multiple_timeseries_with_roi(input, subplot_titles, main_title, peak_ce
         ax.plot(input[i])
 
         # plot marker
-        ax.plot(peak_center_list[i], input[i][peak_center_list[i]], marker='o', ls='', ms=3, mfc='red')
+        ax.plot(all_ch_peak[i], input[i][all_ch_peak[i]], marker='o', ls='', ms=3, mfc='red')
 
-        # # roi region highlighting
-        # for peak in peak_center_list:
-        #     ax.axvspan(xmin=peak - roi_width[0],
-        #                xmax=peak + roi_width[1],
-        #                color='red', alpha=0.5)
+        # roi region highlighting
+        if lcp_list is not None:
+            for peak in lcp_list:
+                ax.axvspan(xmin=peak - roi_width[0],
+                           xmax=peak + roi_width[1],
+                           color='red', alpha=0.5)
 
         ax.set_title(subplot_titles[i], size=8)
         ax.set_ylim(bottom=-1, top=1)

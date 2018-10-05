@@ -153,7 +153,7 @@ for foi in all_file_path[30:]:
     fig_timeseries = plot_multiple_timeseries_with_roi(input=n_channel_data_near_leak,
                                                        subplot_titles=['-4.5', '-2', '2', '4', '8', ],
                                                        main_title='TESTING',
-                                                       peak_center_list=temp,
+                                                       all_ch_peak=temp,
                                                        roi_width=roi_width)
 
 

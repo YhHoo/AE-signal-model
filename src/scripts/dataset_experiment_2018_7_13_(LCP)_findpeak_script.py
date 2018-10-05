@@ -4,25 +4,10 @@ detection by Weitang.
 '''
 import numpy as np
 import peakutils
-from multiprocessing import Pool
-import gc
-from random import shuffle
-from scipy.signal import gausspulse
 import matplotlib.pyplot as plt
-from matplotlib import cm
-from mpl_toolkits.axes_grid1 import AxesGrid
-from scipy import signal
-from scipy.signal import correlate as correlate_scipy
-from numpy import correlate as correlate_numpy
-import pandas as pd
-import pywt
 import time
 from os import listdir
-from scipy.signal import correlate
-from keras.utils import to_categorical
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, LabelBinarizer
-from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
-from sklearn.model_selection import StratifiedKFold
+from scipy import signal
 
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
@@ -61,7 +46,7 @@ folder_path = 'E:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
 all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 
 # file of interest
-foi = all_file_path[1]
+foi = all_file_path[10]
 n_channel_data_near_leak = read_single_tdms(foi)
 n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
@@ -82,26 +67,45 @@ if denoise:
         temp.append(denoised_signal)
     n_channel_data_near_leak = np.array(temp)
 
-# segment of interest
-# soi = 0
-# n_channel_data_near_leak = np.split(n_channel_data_near_leak, indices_or_sections=no_of_segment, axis=1)
-# signal_1 = n_channel_data_near_leak[soi]
-
 
 # PEAK DETECTION AND ROI -----------------------------------------------------------------------------------------------
-# peak finding for sensor [-2m] and [2m] only
+
+# USING peakutils
 peak_list = []
 time_start = time.time()
-for channel in n_channel_data_near_leak:
-    print('Peak Detecting')
-    peak_list.append(peakutils.indexes(channel, thres=0.55, min_dist=5000))
+# channel 0
+print('Peak Detecting')
+peak_list.append(peakutils.indexes(n_channel_data_near_leak[0], thres=0.5, min_dist=1500))
+# channel 1
+print('Peak Detecting')
+peak_list.append(peakutils.indexes(n_channel_data_near_leak[1], thres=0.6, min_dist=5000))
+# channel 2
+print('Peak Detecting')
+peak_list.append(peakutils.indexes(n_channel_data_near_leak[2], thres=0.6, min_dist=5000))
+# channel 3
+print('Peak Detecting')
+peak_list.append(peakutils.indexes(n_channel_data_near_leak[3], thres=0.5, min_dist=1500))
+
+# for channel in n_channel_data_near_leak:
+#     print('Peak Detecting')
+#     peak_list.append(peakutils.indexes(channel, thres=0.5, min_dist=5000))
 print('Time Taken for peakutils.indexes(): {:.4f}s'.format(time.time()-time_start))
+
+# USING Scipy
+# peak_list = []
+# time_start = time.time()
+# for channel in n_channel_data_near_leak:
+#     print('Peak Detecting')
+#     peak, _ = signal.find_peaks(x=channel, distance=5000, prominence=(0.1, None))
+#     peak_list.append(peak)
+# print('Time Taken for peakutils.indexes(): {:.4f}s'.format(time.time()-time_start))
+
 
 leak_caused_peak = detect_ae_event_by_v_sensor(x1=peak_list[0],
                                                x2=peak_list[1],
                                                x3=peak_list[2],
                                                x4=peak_list[3],
-                                               threshold_list=[800, 2000, 3000],  # calc by dist*fs/800
+                                               threshold_list=[500, 3300, 3500],  # calc by dist*fs/800
                                                threshold_x=10000)
 print(leak_caused_peak)
 
@@ -121,10 +125,11 @@ if not leak_caused_peak:
 #                                           subplot_titles=subplot_titles,
 #                                           main_title=foi)
 
-fig_timeseries = plot_multiple_timeseries_with_roi(input=n_channel_data_near_leak,
-                                                   subplot_titles=label,
+fig_timeseries = plot_multiple_timeseries_with_roi(input=n_channel_data_near_leak[:4],
+                                                   subplot_titles=label[:4],
                                                    main_title=foi,
-                                                   peak_center_list=peak_list,
+                                                   all_ch_peak=peak_list[:4],
+                                                   lcp_list=leak_caused_peak,
                                                    roi_width=roi_width)
 
 # fig_lollipop = lollipop_plot(x_list=peak_list[:4],

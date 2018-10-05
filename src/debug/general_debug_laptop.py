@@ -4,6 +4,7 @@ import types
 import numpy as np
 import pywt
 import gc
+from scipy.signal import find_peaks
 from multiprocessing import Pool
 from random import shuffle
 from scipy.signal import gausspulse
@@ -29,29 +30,40 @@ from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-tdms_dir = 'E:/Experiment_3_10_2018/-4.5, -2, 5, 8, 10, 17 , 19.5 (leak 2bar)/'
+tdms_dir = 'E:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
 
 all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
 
-for f in all_tdms_file:
-    # get the filename e.g. test_003
-    tdms_name = f.split(sep='/')[-1]
-    tdms_name = tdms_name.split(sep='.')[0]
 
-    n_channel_data_near_leak = read_single_tdms(f)
-    n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+n_channel_data_near_leak = read_single_tdms(all_tdms_file[0])
+n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
-    title = '2bar_{}'.format(tdms_name)
-    save_title = direct_to_dir(where='result') + title + '.png'
-    fig = plot_multiple_timeseries(input=n_channel_data_near_leak[:-1, :1000000],
-                                   subplot_titles=['-4.5m', '-2m', '2m', '5m', '8m', '10m', '17m'],
-                                   main_title=title)
+coi = n_channel_data_near_leak[1, :]
 
-    fig.savefig(save_title)
-    print('Fig Saved')
-    plt.close('all')
+# coi_smooth = dwt_smoothing(x=coi, level=4)
 
-    gc.collect()
+peak_list, properties = find_peaks(x=coi, prominence=(0.7, None), wlen=10000)
+
+print(len(peak_list))
+
+print(peak_list)
+
+
+fig = plt.figure(figsize=(7, 3))
+ax1 = fig.add_subplot(1, 1, 1)
+# signal
+ax1.plot(coi)
+
+# peak marker
+ax1.plot(peak_list, coi[peak_list], marker='o', ls='', ms=3, mfc='red')
+
+plt.show()
+
+
+
+
+
+
 
 
 # ----------------------------------------------------------------------------------------------------------------------
