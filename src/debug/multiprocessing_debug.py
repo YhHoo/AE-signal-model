@@ -1,6 +1,7 @@
 from keras.layers import *
 from keras.models import Model
 from keras.utils import plot_model
+import pydot
 
 
 def lcp_recognition_binary_model_3():

@@ -42,7 +42,7 @@ logger.learning_curve(history=history, show=True)
 logger.save_architecture(save_readable=True)
 
 
-# evaluate
+# evaluate -------------------------------------------------------------------------------------------------------------
 prediction = lcp_model.predict(test_x_reshape)
 
 prediction_quantized = []

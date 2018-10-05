@@ -1,6 +1,9 @@
 from keras.layers import *
 from keras.models import Sequential, Model
+from keras.utils import plot_model
 from keras import regularizers
+# self lib
+from src.utils.helpers import direct_to_dir
 
 
 def lcp_recognition_binary_model():
@@ -92,31 +95,29 @@ def lcp_recognition_binary_model_3():
     '''
     visible_in = Input(shape=(6000, 1))
 
-    # Layer 1, part a
-    conv_a_1 = Conv1D(64, kernel_size=5, activation='relu', name='conv_a_1')(visible_in)
-    drop_a_1 = Dropout(0.3, name='drop_a_1')(conv_a_1)
-    conv_a_2 = Conv1D(64, kernel_size=5, activation='relu', name='conv_a_2')(drop_a_1)
+    # Part a
+    conv_a_1 = Conv1D(32, kernel_size=5, activation='relu', name='conv_a_1')(visible_in)
+    conv_a_2 = Conv1D(32, kernel_size=5, activation='relu', name='conv_a_2')(conv_a_1)
     maxpool_a_1 = MaxPooling1D(pool_size=3, strides=2, name='maxp_a_1')(conv_a_2)
+    drop_a_1 = Dropout(0.3, name='drop_a_1')(maxpool_a_1)
 
-    conv_a_3 = Conv1D(128, kernel_size=5, activation='relu', name='conv_a_3', use_bias=True)(maxpool_a_1)
-    drop_a_2 = Dropout(0.3, name='drop_a_2')(conv_a_3)
-    conv_a_4 = Conv1D(128, kernel_size=5, activation='relu', name='conv_a_4', use_bias=True)(drop_a_2)
+    conv_a_3 = Conv1D(64, kernel_size=5, activation='relu', name='conv_a_3')(drop_a_1)
+    conv_a_4 = Conv1D(128, kernel_size=5, activation='relu', name='conv_a_4', use_bias=False)(conv_a_3)
     maxpool_a_2 = MaxPooling1D(pool_size=3, strides=2, name='maxp_a_2')(conv_a_4)
 
     gap_a_1 = GlobalAveragePooling1D(name='gap_a_1')(maxpool_a_2)
 
-    # Layer 1, part b
-    conv_b_1 = Conv1D(64, kernel_size=5, activation='relu', name='conv_b_1')(visible_in)
-    drop_b_1 = Dropout(0.3, name='drop_b_1')(conv_b_1)
-    conv_b_2 = Conv1D(64, kernel_size=5, activation='relu', name='conv_b_2')(drop_b_1)
+    # Part b
+    conv_b_1 = Conv1D(32, kernel_size=5, activation='relu', name='conv_b_1')(visible_in)
+    conv_b_2 = Conv1D(32, kernel_size=5, activation='relu', name='conv_b_2')(conv_b_1)
     maxpool_b_1 = MaxPooling1D(pool_size=3, strides=2, name='maxp_b_1')(conv_b_2)
+    drop_b_1 = Dropout(0.3, name='drop_b_1')(maxpool_b_1)
+    conv_b_3 = Conv1D(128, kernel_size=5, activation='relu', name='conv_b_3')(drop_b_1)
+    # drop_b_2 = Dropout(0.3, name='drop_b_2')(conv_b_3)
+    # conv_b_4 = Conv1D(128, kernel_size=5, activation='relu', name='conv_b_4')(drop_b_2)
+    # maxpool_b_2 = MaxPooling1D(pool_size=3, strides=2, name='maxp_b_2')(conv_b_4)
 
-    conv_b_3 = Conv1D(128, kernel_size=5, activation='relu', name='conv_b_3')(maxpool_b_1)
-    drop_b_2 = Dropout(0.3, name='drop_b_2')(conv_b_3)
-    conv_b_4 = Conv1D(128, kernel_size=5, activation='relu', name='conv_b_4')(drop_b_2)
-    maxpool_b_2 = MaxPooling1D(pool_size=3, strides=2, name='maxp_b_2')(conv_b_4)
-
-    gap_b_1 = GlobalAveragePooling1D(name='gap_b_1')(maxpool_b_2)
+    gap_b_1 = GlobalAveragePooling1D(name='gap_b_1')(conv_b_3)
 
     # Layer 2
     merge_1 = concatenate([gap_a_1, gap_b_1])
@@ -127,6 +128,9 @@ def lcp_recognition_binary_model_3():
     model = Model(inputs=visible_in, outputs=visible_out)
 
     print(model.summary())
+
+    save_model_plot = direct_to_dir(where='result') + 'lcp_recognition_binary_model_3.png'
+    plot_model(model, to_file=save_model_plot)
 
     return model
 
