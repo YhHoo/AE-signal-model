@@ -29,16 +29,19 @@ from src.utils.helpers import *
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-tdms_dir = 'F:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/leak 2 bar/test2_0017.tdms'
+# tdms_dir = 'F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/11436_test_0149.tdms'
+#
+# n_channel_data_near_leak = read_single_tdms(tdms_dir)
+# n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
-n_channel_data_near_leak = read_single_tdms(tdms_dir)
-n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+l = [1, 2, 3]
+print(l + [5])
 
-fig = plot_multiple_timeseries(input=n_channel_data_near_leak[:, :2500000],
-                               subplot_titles=['-4.5m', '-2m', '2m', '5m', '8m', '17m', '20m', '23m'],
-                               main_title='test')
-
-plt.show()
+# fig = plot_multiple_timeseries(input=n_channel_data_near_leak[:, :2500000],
+#                                subplot_titles=['-4.5m', '-2m', '2m', '5m', '8m', '17m', '20m', '23m'],
+#                                main_title='test')
+#
+# plt.show()
 # filename = 'F:\Experiment_13_7_2018\Experiment 1\-3,-2,2,4,6,8,10,12\LCP DATASET\dataset_lcp_2bar_near_seg3.csv'
 #
 # time_start = time.time()

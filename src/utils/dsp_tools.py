@@ -341,7 +341,7 @@ def detect_ae_event_by_sandwich_sensor(x1, x2, threshold1, threshold2):
     return item_to_stay
 
 
-def detect_ae_event_by_v_sensor(x1, x2, x3, x4, threshold_list=None, threshold_x=None):
+def detect_ae_event_by_v_sensor(x1, x2, x3, x4, n_ch_signal, threshold_list=None, threshold_x=None):
     '''
     This function is specific for processing 4 lists of peak indexes from peakutils.indexes()
 
@@ -364,6 +364,7 @@ def detect_ae_event_by_v_sensor(x1, x2, x3, x4, threshold_list=None, threshold_x
     '''
 
     ae_peak, ae_peak_confirmed = [], []
+    ae_peak_lo, ae_peak_hi = [], []
     flag_0, flag_1 = False, False
 
     # Stage 1 ----------------------------------------------------------------------------------------------------------
@@ -375,22 +376,26 @@ def detect_ae_event_by_v_sensor(x1, x2, x3, x4, threshold_list=None, threshold_x
             if abs_diff < threshold_list[0]:
                 # find the mid point
                 ae_peak.append(np.mean((p2, p3)))
+                ae_peak_lo.append(p2)
+                ae_peak_hi.append(p3)
                 break
 
     # Stage 2 ----------------------------------------------------------------------------------------------------------
     # for all mid detected
-    for mid in ae_peak:
+    for mid, mid_lo, mid_hi in zip(ae_peak, ae_peak_lo, ae_peak_hi):
         # check mid with x1
         for p1 in x1:
             if p1 > mid:
-                if (p1-mid) < threshold_list[1]:
+                # satisfying distance and amplitude criteria
+                if ((p1-mid) < threshold_list[1]) and (n_ch_signal[1, mid_lo] > n_ch_signal[0, p1]):
                     flag_0 = True
                     # exit for loop once a match is found
                     break
         # check mid with x4
         for p4 in x4:
             if p4 > mid:
-                if (p4-mid) < threshold_list[2]:
+                # satisfying distance and amplitude criteria
+                if (p4-mid) < threshold_list[2] and (n_ch_signal[2, mid_hi] > n_ch_signal[0, p4]):
                     flag_1 = True
                     # exit for loop once a match is found
                     break

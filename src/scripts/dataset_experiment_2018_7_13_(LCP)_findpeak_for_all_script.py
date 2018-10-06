@@ -40,6 +40,9 @@ scale = np.linspace(2, 30, 100)
 # roi
 roi_width = (int(1e3), int(16e3))
 
+# segmentation
+no_of_segment = 2
+
 # saving filename
 filename_to_save = 'lcp_index_1bar_near_segmentation3_p0.csv'
 
@@ -62,6 +65,7 @@ for foi in all_file_path:
     n_channel_data_near_leak = read_single_tdms(foi)
     n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
     print('Swap Dim: ', n_channel_data_near_leak.shape)
+    n_channel_split = np.split(n_channel_data_near_leak, axis=1, indices_or_sections=no_of_segment)
 
     # SIGNAL PROCESSING ------------------------------------------------------------------------------------------------
     # denoising
@@ -75,12 +79,25 @@ for foi in all_file_path:
 
     # PEAK DETECTION AND ROI -------------------------------------------------------------------------------------------
     # peak finding for sensor -4.5m, -2m, 2m, 5m
-    peak_list = []
     time_start = time.time()
     print('Peak localizing ...')
-    for channel in n_channel_data_near_leak[:4]:
-        peak_list.append(peakutils.indexes(channel, thres=thre_peak, min_dist=min_dist_btw_peak))  # **
-    print('Time Taken for peakutils.indexes(): {:.4f}s'.format(time.time() - time_start))
+    # for channel in n_channel_data_near_leak[:4]:
+    #     peak_list.append(peakutils.indexes(channel, thres=thre_peak, min_dist=min_dist_btw_peak))  # **
+    # print('Time Taken for peakutils.indexes(): {:.4f}s'.format(time.time() - time_start))
+    # detect peak by segments, to avoid affects by super peaks
+    peak_ch0, peak_ch1, peak_ch2, peak_ch3 = [], [], [], []
+    for seg, count in zip(n_channel_split, [0, 1]):
+        peak_ch0.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[0], thres=0.5, min_dist=1500)])
+        peak_ch1.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[1], thres=0.55, min_dist=5000)])
+        peak_ch2.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[2], thres=0.55, min_dist=5000)])
+        peak_ch3.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[3], thres=0.5, min_dist=1500)])
+
+    # convert list of list into single list
+    peak_ch0 = [i for sublist in peak_ch0 for i in sublist]
+    peak_ch1 = [i for sublist in peak_ch1 for i in sublist]
+    peak_ch2 = [i for sublist in peak_ch2 for i in sublist]
+    peak_ch3 = [i for sublist in peak_ch3 for i in sublist]
+    peak_list = [peak_ch0, peak_ch1, peak_ch2, peak_ch3]
 
     lcp_per_file = detect_ae_event_by_v_sensor(x1=peak_list[0],
                                                x2=peak_list[1],
