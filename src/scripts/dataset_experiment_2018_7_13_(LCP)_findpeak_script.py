@@ -44,7 +44,7 @@ folder_path = 'E:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
 all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 
 
-n_channel_data_near_leak = read_single_tdms(all_file_path[200])
+n_channel_data_near_leak = read_single_tdms(all_file_path[165])
 n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
 # discard channel 7 and 6
@@ -76,8 +76,8 @@ time_start = time.time()
 peak_ch0, peak_ch1, peak_ch2, peak_ch3 = [], [], [], []
 for seg, count in zip(n_channel_split, [0, 1]):
     peak_ch0.append([(x + (count*2500000)) for x in peakutils.indexes(seg[0], thres=0.5, min_dist=1500)])
-    peak_ch1.append([(x + (count*2500000)) for x in peakutils.indexes(seg[1], thres=0.58, min_dist=5000)])
-    peak_ch2.append([(x + (count*2500000)) for x in peakutils.indexes(seg[2], thres=0.58, min_dist=5000)])
+    peak_ch1.append([(x + (count*2500000)) for x in peakutils.indexes(seg[1], thres=0.6, min_dist=5000)])
+    peak_ch2.append([(x + (count*2500000)) for x in peakutils.indexes(seg[2], thres=0.6, min_dist=5000)])
     peak_ch3.append([(x + (count*2500000)) for x in peakutils.indexes(seg[3], thres=0.5, min_dist=1500)])
 
 # convert list of list into single list

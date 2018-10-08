@@ -44,7 +44,7 @@ roi_width = (int(1e3), int(16e3))
 no_of_segment = 2
 
 # saving filename
-filename_to_save = 'lcp_index_1bar_near_segmentation3_p0.csv'
+filename_to_save = 'lcp_index_1bar_near_segmentation4_p1.csv'
 
 # DATA READING AND PRE-PROCESSING --------------------------------------------------------------------------------------
 # tdms file reading
@@ -56,7 +56,7 @@ for f in all_file_path:
 lcp_list, lcp_ch_list, lcp_filename_list = [], [], []
 
 # for all tdms file
-for foi in all_file_path:
+for foi in all_file_path[2:10]:
     # take the last filename
     filename = foi.split(sep='/')[-1]
     filename = filename.split(sep='.')[0]
@@ -91,8 +91,8 @@ for foi in all_file_path:
     peak_ch0, peak_ch1, peak_ch2, peak_ch3 = [], [], [], []
     for seg, count in zip(n_channel_split, [0, 1]):
         peak_ch0.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[0], thres=0.5, min_dist=1500)])
-        peak_ch1.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[1], thres=0.55, min_dist=5000)])
-        peak_ch2.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[2], thres=0.55, min_dist=5000)])
+        peak_ch1.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[1], thres=0.6, min_dist=5000)])
+        peak_ch2.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[2], thres=0.6, min_dist=5000)])
         peak_ch3.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[3], thres=0.5, min_dist=1500)])
 
     # convert list of list into single list
@@ -123,10 +123,10 @@ for foi in all_file_path:
     for lcp in lcp_per_file:
         print('LCP {}/{} ---------'.format((lcp_per_file.index(lcp) + 1), len(lcp_per_file)))
         roi = n_channel_data_near_leak[:, (lcp - roi_width[0]):(lcp + roi_width[1])]
-        flag = picklist_multiple_timeseries(input=roi,
-                                            subplot_titles=['-3m [0]', '-2m [1]', '2m [2]', '4m [3]',
-                                                            '6m [4]', '8m [5]', '10m [6]'],
-                                            main_title='Manual Filtering of Non-LCP (Click [X] to discard)')
+        flag = picklist_multiple_timeseries_3(input=roi,
+                                              subplot_titles=['-4.5m [0]', '-2m [1]', '2m [2]', '5m [3]',
+                                                              '8m [4]', '10m [5]'],
+                                              main_title='Manual Filtering of Non-LCP (Click [X] to discard)')
 
         print('Ch_0 = ', flag['ch0'])
         print('Ch_1 = ', flag['ch1'])
