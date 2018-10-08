@@ -461,7 +461,8 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
     return fig
 
 
-def plot_multiple_timeseries_with_roi(input, subplot_titles, main_title, all_ch_peak, lcp_list=None, roi_width=None):
+def plot_multiple_timeseries_with_roi(input, subplot_titles, main_title,
+                                      all_ch_peak=None, lcp_list=None, roi_width=None):
     '''
     Aspect axis[0] of input is no. of sensors/diff features, axis[1] is time steps. All time series has to be
     SAME length ! and there shud b more than 1 plot !!
@@ -483,7 +484,8 @@ def plot_multiple_timeseries_with_roi(input, subplot_titles, main_title, all_ch_
     ax1.plot(input[0])
 
     # plot marker
-    ax1.plot(all_ch_peak[0], input[0][all_ch_peak[0]], marker='o', ls='', ms=3, mfc='red')
+    if all_ch_peak is not None:
+        ax1.plot(all_ch_peak[0], input[0][all_ch_peak[0]], marker='o', ls='', ms=3, mfc='red')
 
     # roi region highlighting
     if lcp_list is not None:
@@ -501,7 +503,8 @@ def plot_multiple_timeseries_with_roi(input, subplot_titles, main_title, all_ch_
         ax.plot(input[i])
 
         # plot marker
-        ax.plot(all_ch_peak[i], input[i][all_ch_peak[i]], marker='o', ls='', ms=3, mfc='red')
+        if all_ch_peak is not None:
+            ax.plot(all_ch_peak[i], input[i][all_ch_peak[i]], marker='o', ls='', ms=3, mfc='red')
 
         # roi region highlighting
         if lcp_list is not None:
@@ -804,29 +807,150 @@ def picklist_multiple_timeseries_2(input, subplot_titles, main_title):
     btn0 = Button(btn0_ax, 'X', hovercolor='r')
     btn0.on_clicked(callback.discard_0)
 
-    btn1_ax = fig.add_axes([button_x, 0.77, button_width, button_height])
+    btn1_ax = fig.add_axes([button_x, 0.75, button_width, button_height])
     btn1 = Button(btn1_ax, 'X', hovercolor='r')
     btn1.on_clicked(callback.discard_1)
 
-    btn2_ax = fig.add_axes([button_x, 0.65, button_width, button_height])
+    btn2_ax = fig.add_axes([button_x, 0.60, button_width, button_height])
     btn2 = Button(btn2_ax, 'X', hovercolor='r')
     btn2.on_clicked(callback.discard_2)
 
-    btn3_ax = fig.add_axes([button_x, 0.53, button_width, button_height])
+    btn3_ax = fig.add_axes([button_x, 0.47, button_width, button_height])
     btn3 = Button(btn3_ax, 'X', hovercolor='r')
     btn3.on_clicked(callback.discard_3)
 
-    btn4_ax = fig.add_axes([button_x, 0.41, button_width, button_height])
+    btn4_ax = fig.add_axes([button_x, 0.34, button_width, button_height])
     btn4 = Button(btn4_ax, 'X', hovercolor='r')
     btn4.on_clicked(callback.discard_4)
 
-    btn5_ax = fig.add_axes([button_x, 0.29, button_width, button_height])
+    btn5_ax = fig.add_axes([button_x, 0.19, button_width, button_height])
     btn5 = Button(btn5_ax, 'X', hovercolor='r')
     btn5.on_clicked(callback.discard_5)
 
-    btn6_ax = fig.add_axes([button_x, 0.17, button_width, button_height])
+    btn6_ax = fig.add_axes([button_x, 0.06, button_width, button_height])
     btn6 = Button(btn6_ax, 'X', hovercolor='r')
     btn6.on_clicked(callback.discard_6)
+
+    btn8_ax = fig.add_axes([button_x, 0.96, button_width, button_height])
+    btn8 = Button(btn8_ax, 'XX', hovercolor='r')
+    btn8.on_clicked(callback.discard_all)
+
+    plt.show()
+
+    return flag
+
+
+def picklist_multiple_timeseries_3(input, subplot_titles, main_title):
+    '''
+    WARNING: FOR 6 CHANNELS
+    This fn is designed for manual filtering of the LCP, selected by detect_ae_event_by_v_sensor().
+    Aspect axis[0] of input is 8(sensors), axis[1] is time steps. All time series has to be
+    SAME length !
+    :param input: a 2d-array / list
+    :param subplot_titles: title for every plot
+    :param main_title: the big title
+    :return: dict
+    '''
+    # discard button
+    flag = {}
+    # start of segmentation for (-5.4m, -2m, 2m, 5m, 8m, 10m)
+    segment_head = [1700, 0, 0, 1600, 3400, 6000]
+
+    class Index(object):
+        ind = 0
+
+        def discard_0(self, event):
+            flag['ch0'] = 0
+            print('ch0 discarded')
+
+        def discard_1(self, event):
+            flag['ch1'] = 0
+            print('ch1 discarded')
+
+        def discard_2(self, event):
+            flag['ch2'] = 0
+            print('ch2 discarded')
+
+        def discard_3(self, event):
+            flag['ch3'] = 0
+            print('ch3 discarded')
+
+        def discard_4(self, event):
+            flag['ch4'] = 0
+            print('ch4 discarded')
+
+        def discard_5(self, event):
+            flag['ch5'] = 0
+            print('ch5 discarded')
+
+        def discard_6(self, event):
+            flag['ch6'] = 0
+            print('ch6 discarded')
+
+        def discard_all(self, event):
+            flag['all'] = 1
+            print('All ch discarded')
+
+    # reset flag to zero
+    flag['ch0'], flag['ch1'], flag['ch2'], flag['ch3'], flag['ch4'], \
+    flag['ch5'], flag['ch6'], flag['all'] = 1, 1, 1, 1, 1, 1, 1, 0
+
+    # plotting
+    no_of_plot = len(input)
+    fig = plt.figure(figsize=(6, 8))
+    fig.suptitle(main_title, fontweight="bold", size=8)
+    fig.subplots_adjust(hspace=0.7, top=0.94, bottom=0.03)
+
+    # first plot
+    ax1 = fig.add_subplot(no_of_plot, 1, 1)
+    ax1.plot(input[0])
+    ax1.set_title(subplot_titles[0], size=8)
+    ax1.set_ylim(bottom=-0.15, top=0.15)
+    # highlight
+    ax1.axvspan(xmin=segment_head[0],
+                xmax=(segment_head[0] + 6000),
+                color='red', alpha=0.2)
+
+    # the rest of the plot
+    for i in range(1, no_of_plot, 1):
+        ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1, sharey=ax1)  # add in sharey=ax1 if wan to share y axis too
+        ax.plot(input[i])
+        ax.set_title(subplot_titles[i], size=8)
+        ax.set_ylim(bottom=-0.15, top=0.15)
+        # highlight
+        ax.axvspan(xmin=segment_head[i],
+                   xmax=(segment_head[i] + 6000),
+                   color='red', alpha=0.2)
+
+    # button from top down
+    callback = Index()
+    button_x = 0.9
+    button_width = 0.05
+    button_height = 0.03
+
+    btn0_ax = fig.add_axes([button_x, 0.88, button_width, button_height])
+    btn0 = Button(btn0_ax, 'X', hovercolor='r')
+    btn0.on_clicked(callback.discard_0)
+
+    btn1_ax = fig.add_axes([button_x, 0.71, button_width, button_height])
+    btn1 = Button(btn1_ax, 'X', hovercolor='r')
+    btn1.on_clicked(callback.discard_1)
+
+    btn2_ax = fig.add_axes([button_x, 0.55, button_width, button_height])
+    btn2 = Button(btn2_ax, 'X', hovercolor='r')
+    btn2.on_clicked(callback.discard_2)
+
+    btn3_ax = fig.add_axes([button_x, 0.40, button_width, button_height])
+    btn3 = Button(btn3_ax, 'X', hovercolor='r')
+    btn3.on_clicked(callback.discard_3)
+
+    btn4_ax = fig.add_axes([button_x, 0.23, button_width, button_height])
+    btn4 = Button(btn4_ax, 'X', hovercolor='r')
+    btn4.on_clicked(callback.discard_4)
+
+    btn5_ax = fig.add_axes([button_x, 0.07, button_width, button_height])
+    btn5 = Button(btn5_ax, 'X', hovercolor='r')
+    btn5.on_clicked(callback.discard_5)
 
     btn8_ax = fig.add_axes([button_x, 0.96, button_width, button_height])
     btn8 = Button(btn8_ax, 'XX', hovercolor='r')

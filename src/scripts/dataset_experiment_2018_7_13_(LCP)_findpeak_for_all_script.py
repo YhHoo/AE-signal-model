@@ -18,24 +18,24 @@ from src.utils.helpers import *
 # ** = tunable param
 # CONFIG ---------------------------------------------------------------------------------------------------------------
 fs = 1e6
-sensor_position = ['-3m', '-2m', '2m', '4m', '6m', '8m', '10m', '12m']
+sensor_position = ['-4.5m', '-2m', '2m', '5m', '8m', '10m']
 
 # dwt denoising setting
-denoise = False
-dwt_wavelet = 'db2'
-dwt_smooth_level = 3
+# denoise = False
+# dwt_wavelet = 'db2'
+# dwt_smooth_level = 3
 
 # peak detect (by peakutils.indexes())
-thre_peak = 0.55  # (in % of the range)
-min_dist_btw_peak = 5000
+# thre_peak = 0.55  # (in % of the range)
+# min_dist_btw_peak = 5000
 
 # ae event detect (by detect_ae_event_by_v_sensor)
-thre_event = [400, 1250, 2500]
+thre_event = [550, 3300, 3500]
 threshold_x = 10000
 
 # cwt
-cwt_wavelet = 'gaus1'
-scale = np.linspace(2, 30, 100)
+# cwt_wavelet = 'gaus1'
+# scale = np.linspace(2, 30, 100)
 
 # roi
 roi_width = (int(1e3), int(16e3))
@@ -64,27 +64,30 @@ for foi in all_file_path:
     # start reading fr drive
     n_channel_data_near_leak = read_single_tdms(foi)
     n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+
+    # discard channel 7 and 6
+    n_channel_data_near_leak = n_channel_data_near_leak[:-2]
+
     print('Swap Dim: ', n_channel_data_near_leak.shape)
+
+    # split into 2 to avoid peakdetect affect by super peak
     n_channel_split = np.split(n_channel_data_near_leak, axis=1, indices_or_sections=no_of_segment)
 
     # SIGNAL PROCESSING ------------------------------------------------------------------------------------------------
     # denoising
-    if denoise:
-        print('DWT Denoising with wavelet: {}, level: {}'.format(dwt_wavelet, dwt_smooth_level))
-        temp = []
-        for channel in n_channel_data_near_leak:
-            denoised_signal = dwt_smoothing(x=channel, wavelet=dwt_wavelet, level=dwt_smooth_level)
-            temp.append(denoised_signal)
-        n_channel_data_near_leak = np.array(temp)
+    # if denoise:
+    #     print('DWT Denoising with wavelet: {}, level: {}'.format(dwt_wavelet, dwt_smooth_level))
+    #     temp = []
+    #     for channel in n_channel_data_near_leak:
+    #         denoised_signal = dwt_smoothing(x=channel, wavelet=dwt_wavelet, level=dwt_smooth_level)
+    #         temp.append(denoised_signal)
+    #     n_channel_data_near_leak = np.array(temp)
 
     # PEAK DETECTION AND ROI -------------------------------------------------------------------------------------------
     # peak finding for sensor -4.5m, -2m, 2m, 5m
     time_start = time.time()
     print('Peak localizing ...')
-    # for channel in n_channel_data_near_leak[:4]:
-    #     peak_list.append(peakutils.indexes(channel, thres=thre_peak, min_dist=min_dist_btw_peak))  # **
-    # print('Time Taken for peakutils.indexes(): {:.4f}s'.format(time.time() - time_start))
-    # detect peak by segments, to avoid affects by super peaks
+
     peak_ch0, peak_ch1, peak_ch2, peak_ch3 = [], [], [], []
     for seg, count in zip(n_channel_split, [0, 1]):
         peak_ch0.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[0], thres=0.5, min_dist=1500)])
@@ -97,15 +100,14 @@ for foi in all_file_path:
     peak_ch1 = [i for sublist in peak_ch1 for i in sublist]
     peak_ch2 = [i for sublist in peak_ch2 for i in sublist]
     peak_ch3 = [i for sublist in peak_ch3 for i in sublist]
-    peak_list = [peak_ch0, peak_ch1, peak_ch2, peak_ch3]
 
-    lcp_per_file = detect_ae_event_by_v_sensor(x1=peak_list[0],
-                                               x2=peak_list[1],
-                                               x3=peak_list[2],
-                                               x4=peak_list[3],
+    lcp_per_file = detect_ae_event_by_v_sensor(x1=peak_ch0,
+                                               x2=peak_ch1,
+                                               x3=peak_ch2,
+                                               x4=peak_ch3,
+                                               n_ch_signal=n_channel_data_near_leak[:4],
                                                threshold_list=thre_event,  # ** calc by dist*fs/800
                                                threshold_x=threshold_x)  # **
-    print('Leak Caused Peak: ', lcp_per_file)
 
     # if the list is empty, skip to next tdms file
     if not lcp_per_file:
@@ -114,6 +116,8 @@ for foi in all_file_path:
         # skip to the nex tdms file
         continue
 
+    print('Leak Caused Peak: ', lcp_per_file)
+
     # MANUAL FILTERING OF NON-LCP DATA ---------------------------------------------------------------------------------
     lcp_index_temp, lcp_ch_temp = [], []
     for lcp in lcp_per_file:
@@ -121,7 +125,7 @@ for foi in all_file_path:
         roi = n_channel_data_near_leak[:, (lcp - roi_width[0]):(lcp + roi_width[1])]
         flag = picklist_multiple_timeseries(input=roi,
                                             subplot_titles=['-3m [0]', '-2m [1]', '2m [2]', '4m [3]',
-                                                            '6m [4]', '8m [5]', '10m [6]', '12m [7]'],
+                                                            '6m [4]', '8m [5]', '10m [6]'],
                                             main_title='Manual Filtering of Non-LCP (Click [X] to discard)')
 
         print('Ch_0 = ', flag['ch0'])
@@ -130,8 +134,6 @@ for foi in all_file_path:
         print('Ch_3 = ', flag['ch3'])
         print('Ch_4 = ', flag['ch4'])
         print('Ch_5 = ', flag['ch5'])
-        print('Ch_6 = ', flag['ch6'])
-        print('Ch_7 = ', flag['ch7'])
         print('Ch_all = ', flag['all'])
 
         # if user wan to discard all channels -> false LCP
@@ -143,7 +145,7 @@ for foi in all_file_path:
 
         # store all ch in flag into a list o f8
         channel_multiple_hot = []
-        for i in range(8):
+        for i in range(6):
             channel_multiple_hot.append(flag['ch{}'.format(i)])
 
         lcp_ch_temp.append(channel_multiple_hot)
@@ -243,7 +245,7 @@ lcp_df = pd.DataFrame()
 lcp_df['lcp'] = lcp_col
 lcp_df['filename'] = filename_col
 
-ch_df = pd.DataFrame(data=channel_array, columns=['ch{}'.format(i) for i in range(8)])
+ch_df = pd.DataFrame(data=channel_array, columns=['ch{}'.format(i) for i in range(6)])
 
 final_df = pd.concat([lcp_df, ch_df], axis=1)
 

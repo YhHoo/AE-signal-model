@@ -44,11 +44,11 @@ folder_path = 'E:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
 all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 
 
-n_channel_data_near_leak = read_single_tdms(all_file_path[10])
+n_channel_data_near_leak = read_single_tdms(all_file_path[200])
 n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
-# discard channel 7
-n_channel_data_near_leak = n_channel_data_near_leak[:-1]
+# discard channel 7 and 6
+n_channel_data_near_leak = n_channel_data_near_leak[:-2]
 
 print('Read Data Dim: ', n_channel_data_near_leak.shape)
 
@@ -144,12 +144,13 @@ if not leak_caused_peak:
 #                                           subplot_titles=subplot_titles,
 #                                           main_title=foi)
 
-# fig_timeseries = plot_multiple_timeseries_with_roi(input=n_channel_data_near_leak[:4],
-#                                                    subplot_titles=label[:4],
-#                                                    main_title=foi,
-#                                                    all_ch_peak=peak_list[:4],
+# fig_timeseries = plot_multiple_timeseries_with_roi(input=n_channel_data_near_leak,
+#                                                    subplot_titles=label,
+#                                                    main_title='test',
 #                                                    lcp_list=leak_caused_peak,
 #                                                    roi_width=roi_width)
+#
+# plt.show()
 
 # fig_lollipop = lollipop_plot(x_list=peak_list[:4],
 #                              y_list=[n_channel_data_near_leak[0][peak_list[0]],
@@ -160,10 +161,10 @@ if not leak_caused_peak:
 #                              label=['Sensor[-4.5m]', 'Sensor[-2m]', 'Sensor[2m]', 'Sensor[5m]'])
 for lcp in leak_caused_peak:
     roi = n_channel_data_near_leak[:, (lcp - roi_width[0]):(lcp + roi_width[1])]
-    flag = picklist_multiple_timeseries(input=roi,
-                                        subplot_titles=['-4.5m [0]', '-2m [1]', '2m [2]', '5m [3]',
-                                                        '8m [4]', '10m [5]', '17m [6]'],
-                                        main_title='Manual Filtering of Non-LCP (Click [X] to discard)')
+    flag = picklist_multiple_timeseries_3(input=roi,
+                                          subplot_titles=['-4.5m [0]', '-2m [1]', '2m [2]', '5m [3]',
+                                                          '8m [4]', '10m [5]'],
+                                          main_title='Manual Filtering of Non-LCP (Click [X] to discard)')
 
     print('Ch_0 = ', flag['ch0'])
     print('Ch_1 = ', flag['ch1'])
@@ -171,9 +172,7 @@ for lcp in leak_caused_peak:
     print('Ch_3 = ', flag['ch3'])
     print('Ch_4 = ', flag['ch4'])
     print('Ch_5 = ', flag['ch5'])
-    print('Ch_6 = ', flag['ch6'])
     print('Ch_all = ', flag['all'])
-
 
 
 

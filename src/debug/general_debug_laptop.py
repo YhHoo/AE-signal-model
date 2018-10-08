@@ -30,36 +30,40 @@ from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-tdms_dir = 'E:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
+# tdms_dir = 'E:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
+#
+# all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
+#
+#
+# n_channel_data_near_leak = read_single_tdms(all_tdms_file[0])
+# n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+#
+# coi = n_channel_data_near_leak[1, :]
+#
+# # coi_smooth = dwt_smoothing(x=coi, level=4)
+#
+# peak_list, properties = find_peaks(x=coi, prominence=(0.7, None), wlen=10000)
+#
+# print(len(peak_list))
+#
+# print(peak_list)
+#
+#
+# fig = plt.figure(figsize=(7, 3))
+# ax1 = fig.add_subplot(1, 1, 1)
+# # signal
+# ax1.plot(coi)
+#
+# # peak marker
+# ax1.plot(peak_list, coi[peak_list], marker='o', ls='', ms=3, mfc='red')
+#
+# plt.show()
 
-all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
 
-
-n_channel_data_near_leak = read_single_tdms(all_tdms_file[0])
-n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
-
-coi = n_channel_data_near_leak[1, :]
-
-# coi_smooth = dwt_smoothing(x=coi, level=4)
-
-peak_list, properties = find_peaks(x=coi, prominence=(0.7, None), wlen=10000)
-
-print(len(peak_list))
-
-print(peak_list)
-
-
-fig = plt.figure(figsize=(7, 3))
-ax1 = fig.add_subplot(1, 1, 1)
-# signal
-ax1.plot(coi)
-
-# peak marker
-ax1.plot(peak_list, coi[peak_list], marker='o', ls='', ms=3, mfc='red')
-
-plt.show()
-
-
+signal = np.linspace(0, 100, 60).reshape((6, 10))
+_ = picklist_multiple_timeseries_3(input=signal,
+                                   subplot_titles=['1', '2', '3', '1', '2', '3'],
+                                   main_title='test')
 
 
 
