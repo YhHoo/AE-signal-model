@@ -36,7 +36,7 @@ scale = np.linspace(2, 30, 100)
 no_of_segment = 2
 
 # roi
-roi_width = (int(1.5e3), int(11e3))
+roi_width = (int(1.5e3), int(5e3))
 
 # channel naming
 label = ['-4.5m', '-2m', '2m', '5m', '8m', '10m', '17m']
@@ -142,7 +142,7 @@ for foi in all_file_path:
         print('No Leak Caused Peak Detected !')
         leak_caused_peak = None
 
-    gc.collect()
+    # gc.collect()
 
 # just to duplicate the list for plot_multiple_timeseries_with_roi() usage
 # temp = []
@@ -155,12 +155,12 @@ for foi in all_file_path:
 #                                           subplot_titles=subplot_titles,
 #                                           main_title=foi)
 
-# fig_timeseries = plot_multiple_timeseries_with_roi(input=n_channel_data_near_leak[:4],
-#                                                    subplot_titles=label[:4],
-#                                                    main_title=foi,
-#                                                    all_ch_peak=peak_list[:4],
-#                                                    lcp_list=leak_caused_peak,
-#                                                    roi_width=roi_width)
+    fig_timeseries = plot_multiple_timeseries_with_roi(input=n_channel_data_near_leak[:4],
+                                                       subplot_titles=label[:4],
+                                                       main_title=foi,
+                                                       all_ch_peak=peak_list[:4],
+                                                       lcp_list=leak_caused_peak,
+                                                       roi_width=roi_width)
 
 # fig_lollipop = lollipop_plot(x_list=peak_list[:4],
 #                              y_list=[n_channel_data_near_leak[0][peak_list[0]],
@@ -171,7 +171,8 @@ for foi in all_file_path:
 #                              label=['Sensor[-4.5m]', 'Sensor[-2m]', 'Sensor[2m]', 'Sensor[5m]'])
 
 
-# plt.show()
+    plt.show()
+
 
 # CWT + XCOR -----------------------------------------------------------------------------------------------------------
 # xcor pairing commands - [near] = 0m, 1m,..., 10m
