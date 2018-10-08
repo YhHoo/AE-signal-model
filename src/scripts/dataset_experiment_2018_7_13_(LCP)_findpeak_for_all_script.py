@@ -118,7 +118,7 @@ for foi in all_file_path:
     lcp_index_temp, lcp_ch_temp = [], []
     for lcp in lcp_per_file:
         print('LCP {}/{} ---------'.format((lcp_per_file.index(lcp) + 1), len(lcp_per_file)))
-        roi = n_channel_data_near_leak[:, lcp - roi_width[0]:lcp + roi_width[1]]
+        roi = n_channel_data_near_leak[:, (lcp - roi_width[0]):(lcp + roi_width[1])]
         flag = picklist_multiple_timeseries(input=roi,
                                             subplot_titles=['-3m [0]', '-2m [1]', '2m [2]', '4m [3]',
                                                             '6m [4]', '8m [5]', '10m [6]', '12m [7]'],

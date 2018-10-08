@@ -15,10 +15,7 @@ from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, dwt_smoothing, one_dim_xcor_1d_input, \
                                 detect_ae_event_by_sandwich_sensor, detect_ae_event_by_v_sensor
 from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmissionDataSet_13_7_2018
-from src.utils.helpers import plot_heatmap_series_in_one_column, read_single_tdms, direct_to_dir, ProgressBarForLoop, \
-                              break_balanced_class_into_train_test, ModelLogger, reshape_3d_to_4d_tocategorical, \
-                              scatter_plot_3d_vispy, scatter_plot, plot_multiple_timeseries, plot_cwt_with_time_series, \
-                              plot_multiple_timeseries_with_roi, lollipop_plot
+from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
@@ -36,85 +33,80 @@ scale = np.linspace(2, 30, 100)
 no_of_segment = 2
 
 # roi
-roi_width = (int(1.5e3), int(5e3))
+roi_width = (int(1e3), int(16e3))
 
 # channel naming
 label = ['-4.5m', '-2m', '2m', '5m', '8m', '10m', '17m']
 
 # DATA READING AND PRE-PROCESSING --------------------------------------------------------------------------------------
 # tdms file reading
-folder_path = 'F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
+folder_path = 'E:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
 all_file_path = [(folder_path + f) for f in listdir(folder_path) if f.endswith('.tdms')]
 
 
-total_est_lcp = 0
+n_channel_data_near_leak = read_single_tdms(all_file_path[10])
+n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
 
-# file of interest
-for foi in all_file_path:
+# discard channel 7
+n_channel_data_near_leak = n_channel_data_near_leak[:-1]
 
-    n_channel_data_near_leak = read_single_tdms(foi)
-    n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+print('Read Data Dim: ', n_channel_data_near_leak.shape)
 
-    # discard channel 7
-    n_channel_data_near_leak = n_channel_data_near_leak[:-1]
+# split 5M into half
+n_channel_split = np.split(n_channel_data_near_leak, axis=1, indices_or_sections=no_of_segment)
 
-    print('Read Data Dim: ', n_channel_data_near_leak.shape)
-
-    # split 5M into half
-    n_channel_split = np.split(n_channel_data_near_leak, axis=1, indices_or_sections=no_of_segment)
-
-    # SIGNAL PROCESSING ----------------------------------------------------------------------------------------------------
-    # denoising
-    denoise = False
-    if denoise:
-        print('DWT Denoising with wavelet: {}, level: {}'.format(dwt_wavelet, dwt_smooth_level))
-        temp = []
-        # for all channel of sensor
-        for channel in n_channel_data_near_leak:
-            denoised_signal = dwt_smoothing(x=channel, wavelet=dwt_wavelet, level=dwt_smooth_level)
-            temp.append(denoised_signal)
-        n_channel_data_near_leak = np.array(temp)
+# SIGNAL PROCESSING ----------------------------------------------------------------------------------------------------
+# denoising
+denoise = False
+if denoise:
+    print('DWT Denoising with wavelet: {}, level: {}'.format(dwt_wavelet, dwt_smooth_level))
+    temp = []
+    # for all channel of sensor
+    for channel in n_channel_data_near_leak:
+        denoised_signal = dwt_smoothing(x=channel, wavelet=dwt_wavelet, level=dwt_smooth_level)
+        temp.append(denoised_signal)
+    n_channel_data_near_leak = np.array(temp)
 
 
-    # PEAK DETECTION AND ROI -----------------------------------------------------------------------------------------------
+# PEAK DETECTION AND ROI -----------------------------------------------------------------------------------------------
 
-    time_start = time.time()
+time_start = time.time()
 
-    # detect peak by segments, to avoid affects by super peaks
-    peak_ch0, peak_ch1, peak_ch2, peak_ch3 = [], [], [], []
-    for seg, count in zip(n_channel_split, [0, 1]):
-        peak_ch0.append([(x + (count*2500000)) for x in peakutils.indexes(seg[0], thres=0.5, min_dist=1500)])
-        peak_ch1.append([(x + (count*2500000)) for x in peakutils.indexes(seg[1], thres=0.58, min_dist=5000)])
-        peak_ch2.append([(x + (count*2500000)) for x in peakutils.indexes(seg[2], thres=0.58, min_dist=5000)])
-        peak_ch3.append([(x + (count*2500000)) for x in peakutils.indexes(seg[3], thres=0.5, min_dist=1500)])
+# detect peak by segments, to avoid affects by super peaks
+peak_ch0, peak_ch1, peak_ch2, peak_ch3 = [], [], [], []
+for seg, count in zip(n_channel_split, [0, 1]):
+    peak_ch0.append([(x + (count*2500000)) for x in peakutils.indexes(seg[0], thres=0.5, min_dist=1500)])
+    peak_ch1.append([(x + (count*2500000)) for x in peakutils.indexes(seg[1], thres=0.58, min_dist=5000)])
+    peak_ch2.append([(x + (count*2500000)) for x in peakutils.indexes(seg[2], thres=0.58, min_dist=5000)])
+    peak_ch3.append([(x + (count*2500000)) for x in peakutils.indexes(seg[3], thres=0.5, min_dist=1500)])
 
-    # convert list of list into single list
-    peak_ch0 = [i for sublist in peak_ch0 for i in sublist]
-    peak_ch1 = [i for sublist in peak_ch1 for i in sublist]
-    peak_ch2 = [i for sublist in peak_ch2 for i in sublist]
-    peak_ch3 = [i for sublist in peak_ch3 for i in sublist]
-    peak_list = [peak_ch0, peak_ch1, peak_ch2, peak_ch3]
+# convert list of list into single list
+peak_ch0 = [i for sublist in peak_ch0 for i in sublist]
+peak_ch1 = [i for sublist in peak_ch1 for i in sublist]
+peak_ch2 = [i for sublist in peak_ch2 for i in sublist]
+peak_ch3 = [i for sublist in peak_ch3 for i in sublist]
+peak_list = [peak_ch0, peak_ch1, peak_ch2, peak_ch3]
 
-    # USING peakutils
-    # peak_list = []
-    # time_start = time.time()
-    # # channel 0
-    # print('Peak Detecting')
-    # peak_list.append(peakutils.indexes(n_channel_data_near_leak[0], thres=0.5, min_dist=1500))
-    # # channel 1
-    # print('Peak Detecting')
-    # peak_list.append(peakutils.indexes(n_channel_data_near_leak[1], thres=0.6, min_dist=5000))
-    # # channel 2
-    # print('Peak Detecting')
-    # peak_list.append(peakutils.indexes(n_channel_data_near_leak[2], thres=0.6, min_dist=5000))
-    # # channel 3
-    # print('Peak Detecting')
-    # peak_list.append(peakutils.indexes(n_channel_data_near_leak[3], thres=0.5, min_dist=1500))
+# USING peakutils
+# peak_list = []
+# time_start = time.time()
+# # channel 0
+# print('Peak Detecting')
+# peak_list.append(peakutils.indexes(n_channel_data_near_leak[0], thres=0.5, min_dist=1500))
+# # channel 1
+# print('Peak Detecting')
+# peak_list.append(peakutils.indexes(n_channel_data_near_leak[1], thres=0.6, min_dist=5000))
+# # channel 2
+# print('Peak Detecting')
+# peak_list.append(peakutils.indexes(n_channel_data_near_leak[2], thres=0.6, min_dist=5000))
+# # channel 3
+# print('Peak Detecting')
+# peak_list.append(peakutils.indexes(n_channel_data_near_leak[3], thres=0.5, min_dist=1500))
 
-    # for channel in n_channel_data_near_leak:
-    #     print('Peak Detecting')
-    #     peak_list.append(peakutils.indexes(channel, thres=0.5, min_dist=5000))
-    print('Time Taken for peakutils.indexes(): {:.4f}s'.format(time.time()-time_start))
+# for channel in n_channel_data_near_leak:
+#     print('Peak Detecting')
+#     peak_list.append(peakutils.indexes(channel, thres=0.5, min_dist=5000))
+print('Time Taken for peakutils.indexes(): {:.4f}s'.format(time.time()-time_start))
 
 # USING Scipy
 # peak_list = []
@@ -125,24 +117,21 @@ for foi in all_file_path:
 #     peak_list.append(peak)
 # print('Time Taken for peakutils.indexes(): {:.4f}s'.format(time.time()-time_start))
 
-    leak_caused_peak = detect_ae_event_by_v_sensor(x1=peak_list[0],
-                                                   x2=peak_list[1],
-                                                   x3=peak_list[2],
-                                                   x4=peak_list[3],
-                                                   n_ch_signal=n_channel_data_near_leak[:4],
-                                                   threshold_list=[550, 3300, 3500],  # calc by dist*fs/800
-                                                   threshold_x=10000)
-    print(leak_caused_peak)
+leak_caused_peak = detect_ae_event_by_v_sensor(x1=peak_list[0],
+                                               x2=peak_list[1],
+                                               x3=peak_list[2],
+                                               x4=peak_list[3],
+                                               n_ch_signal=n_channel_data_near_leak[:4],
+                                               threshold_list=[550, 3300, 3500],  # calc by dist*fs/800
+                                               threshold_x=10000)
+print(leak_caused_peak)
 
-    total_est_lcp += len(leak_caused_peak)
-    print('LCP COUNT: ', total_est_lcp)
+# if the list is empty
+if not leak_caused_peak:
+    print('No Leak Caused Peak Detected !')
+    leak_caused_peak = None
 
-    # if the list is empty
-    if not leak_caused_peak:
-        print('No Leak Caused Peak Detected !')
-        leak_caused_peak = None
-
-    # gc.collect()
+# gc.collect()
 
 # just to duplicate the list for plot_multiple_timeseries_with_roi() usage
 # temp = []
@@ -155,12 +144,12 @@ for foi in all_file_path:
 #                                           subplot_titles=subplot_titles,
 #                                           main_title=foi)
 
-    fig_timeseries = plot_multiple_timeseries_with_roi(input=n_channel_data_near_leak[:4],
-                                                       subplot_titles=label[:4],
-                                                       main_title=foi,
-                                                       all_ch_peak=peak_list[:4],
-                                                       lcp_list=leak_caused_peak,
-                                                       roi_width=roi_width)
+# fig_timeseries = plot_multiple_timeseries_with_roi(input=n_channel_data_near_leak[:4],
+#                                                    subplot_titles=label[:4],
+#                                                    main_title=foi,
+#                                                    all_ch_peak=peak_list[:4],
+#                                                    lcp_list=leak_caused_peak,
+#                                                    roi_width=roi_width)
 
 # fig_lollipop = lollipop_plot(x_list=peak_list[:4],
 #                              y_list=[n_channel_data_near_leak[0][peak_list[0]],
@@ -169,9 +158,23 @@ for foi in all_file_path:
 #                                      n_channel_data_near_leak[3][peak_list[3]]],
 #                              hit_point=leak_caused_peak,
 #                              label=['Sensor[-4.5m]', 'Sensor[-2m]', 'Sensor[2m]', 'Sensor[5m]'])
+for lcp in leak_caused_peak:
+    roi = n_channel_data_near_leak[:, (lcp - roi_width[0]):(lcp + roi_width[1])]
+    flag = picklist_multiple_timeseries(input=roi,
+                                        subplot_titles=['-4.5m [0]', '-2m [1]', '2m [2]', '5m [3]',
+                                                        '8m [4]', '10m [5]', '17m [6]'],
+                                        main_title='Manual Filtering of Non-LCP (Click [X] to discard)')
+
+    print('Ch_0 = ', flag['ch0'])
+    print('Ch_1 = ', flag['ch1'])
+    print('Ch_2 = ', flag['ch2'])
+    print('Ch_3 = ', flag['ch3'])
+    print('Ch_4 = ', flag['ch4'])
+    print('Ch_5 = ', flag['ch5'])
+    print('Ch_6 = ', flag['ch6'])
+    print('Ch_all = ', flag['all'])
 
 
-    plt.show()
 
 
 # CWT + XCOR -----------------------------------------------------------------------------------------------------------
