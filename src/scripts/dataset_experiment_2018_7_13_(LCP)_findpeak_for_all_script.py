@@ -56,7 +56,7 @@ for f in all_file_path:
 lcp_list, lcp_ch_list, lcp_filename_list = [], [], []
 
 # for all tdms file
-for foi in all_file_path[2:10]:
+for foi in all_file_path[10:30]:
     # take the last filename
     filename = foi.split(sep='/')[-1]
     filename = filename.split(sep='.')[0]
@@ -91,8 +91,8 @@ for foi in all_file_path[2:10]:
     peak_ch0, peak_ch1, peak_ch2, peak_ch3 = [], [], [], []
     for seg, count in zip(n_channel_split, [0, 1]):
         peak_ch0.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[0], thres=0.5, min_dist=1500)])
-        peak_ch1.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[1], thres=0.6, min_dist=5000)])
-        peak_ch2.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[2], thres=0.6, min_dist=5000)])
+        peak_ch1.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[1], thres=0.62, min_dist=5000)])
+        peak_ch2.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[2], thres=0.62, min_dist=5000)])
         peak_ch3.append([(x + (count * 2500000)) for x in peakutils.indexes(seg[3], thres=0.5, min_dist=1500)])
 
     # convert list of list into single list
