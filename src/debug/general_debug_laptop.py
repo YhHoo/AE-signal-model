@@ -60,16 +60,6 @@ from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_ma
 # plt.show()
 
 
-signal = np.linspace(0, 100, 60).reshape((6, 10))
-_ = picklist_multiple_timeseries_3(input=signal,
-                                   subplot_titles=['1', '2', '3', '1', '2', '3'],
-                                   main_title='test')
-
-
-
-
-
-
 # ----------------------------------------------------------------------------------------------------------------------
 # x = [[1, 25, 67], [2, 24, 70], [3, 20, 58]]
 # y = [[1, 1.04, 1.2], [1, 2, 1], [0.7, 1, 1]]

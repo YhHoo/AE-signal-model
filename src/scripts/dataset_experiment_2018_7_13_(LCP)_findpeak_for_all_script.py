@@ -44,7 +44,7 @@ roi_width = (int(1e3), int(16e3))
 no_of_segment = 2
 
 # saving filename
-filename_to_save = 'lcp_index_1bar_near_segmentation4_p1.csv'
+filename_to_save = 'lcp_index_1bar_near_segmentation4_p4.csv'
 
 # DATA READING AND PRE-PROCESSING --------------------------------------------------------------------------------------
 # tdms file reading
@@ -56,7 +56,7 @@ for f in all_file_path:
 lcp_list, lcp_ch_list, lcp_filename_list = [], [], []
 
 # for all tdms file
-for foi in all_file_path[10:30]:
+for foi in all_file_path[50:75]:
     # take the last filename
     filename = foi.split(sep='/')[-1]
     filename = filename.split(sep='.')[0]
