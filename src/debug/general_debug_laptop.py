@@ -4,7 +4,6 @@ import types
 import numpy as np
 import pywt
 import gc
-from scipy.signal import find_peaks
 from multiprocessing import Pool
 from random import shuffle
 from scipy.signal import gausspulse
