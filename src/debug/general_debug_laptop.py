@@ -30,8 +30,43 @@ from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-# tdms_dir = 'E:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
-#
+tdms_filename = 'C:/Users/YH/Desktop/hooyuheng.masterWork/LCP DATASET OCT 3 1BAR/sample_data/11436_test_0001.tdms'
+lcp_index_filename = 'C:/Users/YH/Desktop/hooyuheng.masterWork/LCP DATASET OCT 3 1BAR/' \
+                     'lcp_index_1bar_near_segmentation4_p0.csv'
+roi_width = (int(1e3), int(5e3))
+offset_all = [1700, 0, 0, 1600, 3400, 6000]
+
+n_channel_data_near_leak = read_single_tdms(tdms_filename)
+n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+n_channel_data_near_leak = n_channel_data_near_leak[:-2]
+
+print(n_channel_data_near_leak.shape)
+
+# take the last filename
+filename = tdms_filename.split(sep='/')[-1]
+filename = filename.split(sep='.')[0]
+
+# look up the LCP indexes from LCP_indexes.csv
+print('LCP lookup --> ', lcp_index_filename)
+df = pd.read_csv(lcp_index_filename, index_col=0)
+df_selected = df[df['filename'] == filename]
+print(df_selected)
+lcp_index = df_selected.values[-1, 0]
+
+ch_no = 1
+soi = n_channel_data_near_leak[ch_no, (lcp_index - roi_width[0] + offset_all[ch_no]):
+                                      (lcp_index + roi_width[1] + offset_all[ch_no])]
+plot_title = 'ch1_-1'
+fig_time = plt.figure()
+ax_time = fig_time.add_subplot(1, 1, 1)
+ax_time.plot(soi)
+ax_time.set_title(plot_title)
+
+fig = spectrogram_scipy(sampled_data=soi, fs=1e6, nperseg=1000, noverlap=900, nfft=2000, return_plot=True,
+                        vis_max_freq_range=100e3, verbose=True, plot_title=plot_title)
+plt.show()
+
+
 # all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
 #
 #
@@ -58,16 +93,6 @@ from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_ma
 # ax1.plot(peak_list, coi[peak_list], marker='o', ls='', ms=3, mfc='red')
 #
 # plt.show()
-
-
-signal = np.linspace(0, 100, 60).reshape((6, 10))
-_ = picklist_multiple_timeseries_3(input=signal,
-                                   subplot_titles=['1', '2', '3', '1', '2', '3'],
-                                   main_title='test')
-
-
-
-
 
 
 # ----------------------------------------------------------------------------------------------------------------------

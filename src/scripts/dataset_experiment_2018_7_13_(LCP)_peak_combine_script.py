@@ -1,10 +1,14 @@
 # self lib
 from src.utils.helpers import *
 
-filename = 'lcp_index_1bar_near_segmentation3'
-filename_to_save = direct_to_dir(where='result')+filename+'.csv'
-filename_list = [direct_to_dir(where='result') + filename + '_p{}.csv'.format(i) for i in range(2)]
-print(filename_list)
+filename = 'lcp_index_1bar_near_segmentation4'
+lcp_index_dir = 'C:/Users/YH/Desktop/hooyuheng.masterWork/LCP DATASET OCT 3 1BAR/'
+filename_to_save = direct_to_dir(where='result') + filename + '.csv'
+filename_list = [lcp_index_dir + filename + '_p{}.csv'.format(i) for i in range(5)]
+
+for f in filename_list:
+    print(f)
+
 
 # jus to get the col name
 df = pd.read_csv(filename_list[0], index_col=0)
