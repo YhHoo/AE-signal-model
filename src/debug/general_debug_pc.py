@@ -29,13 +29,11 @@ from src.utils.helpers import *
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-# tdms_dir = 'F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/11436_test_0149.tdms'
-#
-# n_channel_data_near_leak = read_single_tdms(tdms_dir)
-# n_channel_data_near_leak = np.swapaxes(n_channel_data_near_leak, 0, 1)
+l = np.array([[1, 5], [7, 9]])
+a = np.delete(l, axis=0, obj=1)
+print(a)
 
-l = [1, 2, 3]
-print(l + [5])
+
 
 # fig = plot_multiple_timeseries(input=n_channel_data_near_leak[:, :2500000],
 #                                subplot_titles=['-4.5m', '-2m', '2m', '5m', '8m', '17m', '20m', '23m'],
