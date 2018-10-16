@@ -7,4 +7,4 @@ class AcousticEmissionDataSet_3_10_2018:
     '''
     def __init__(self, drive):
         self.drive = drive + ':/'
-        self.lcp_dataset_filename = self.drive + 
+        self.lcp_dataset_filename = self.drive +
