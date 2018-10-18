@@ -16,7 +16,7 @@ lcp_model = lcp_recognition_binary_model_2()
 optimizer = RMSprop(lr=0.003)
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
-# saving setting
+# saving best weight setting
 logger = ModelLogger(model=lcp_model, model_name='LCP_Recog_1')
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
@@ -38,18 +38,23 @@ history = lcp_model.fit(x=train_x_reshape,
                         shuffle=True,
                         verbose=2)
 
-logger.learning_curve(history=history, show=True)
 logger.save_architecture(save_readable=True)
+logger.learning_curve(history=history, show=True)
 
 
 # evaluate -------------------------------------------------------------------------------------------------------------
 
 # find best val acc
 best_val_acc_index = np.argmax(history.history['val_acc'])
-print('Best Validation Accuracy: {:.4f} at Epoch {}'.format(history.history['val_acc'][best_val_acc_index],
-                                                            best_val_acc_index))
+best_val_loss_index = np.argmax(history.history['val_loss'])
 
-prediction = lcp_model.predict(test_x_reshape)
+
+# loading best model saved
+lcp_best_model = load_model(model_name='LCP_Recog_1')
+
+
+# test with val data
+prediction = lcp_best_model.predict(test_x_reshape)
 
 prediction_quantized = []
 for p in prediction:
@@ -58,14 +63,17 @@ for p in prediction:
     else:
         prediction_quantized.append(0)
 
-logger.save_recall_precision_f1(y_pred=prediction_quantized, y_true=test_y, all_class_label=[0, 1])
-
-
 plt.plot(test_y, color='r', label='Actual')
 plt.plot(prediction, color='b', label='Prediction', linestyle='None', marker='x')
-plt.title('Classifier Output in Visual')
+plt.title('Classifier Performance on Validation Data')
 plt.legend()
 plt.show()
 
+print('\n---------- EVALUATION RESULT -----------')
+print('Best Validation Accuracy: {:.4f} at Epoch {}'.format(history.history['val_acc'][best_val_acc_index],
+                                                            best_val_acc_index))
+print('Lowest Validation Loss: {:.4f} at Epoch {}'.format(history.history['val_loss'][best_val_loss_index],
+                                                          best_val_loss_index))
+logger.save_recall_precision_f1(y_pred=prediction_quantized, y_true=test_y, all_class_label=[0, 1])
 
 
