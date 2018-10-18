@@ -33,10 +33,10 @@ class AcousticEmissionDataSet_3_10_2018:
 
         # data slicing
         lcp_data = df_lcp.values[:, :-1]
-        lcp_data_with_label = np.concatenate((lcp_data, np.zeros((len(lcp_data), 1))), axis=1)
+        lcp_data_with_label = np.concatenate((lcp_data, np.ones((len(lcp_data), 1))), axis=1)
 
         non_lcp_data = df_non_lcp.values[:, :-1]
-        non_lcp_data_with_label = np.concatenate((non_lcp_data, np.ones((len(non_lcp_data), 1))), axis=1)
+        non_lcp_data_with_label = np.concatenate((non_lcp_data, np.zeros((len(non_lcp_data), 1))), axis=1)
 
         # shuffle the data before test train splitting
         if shuffle_b4_split:

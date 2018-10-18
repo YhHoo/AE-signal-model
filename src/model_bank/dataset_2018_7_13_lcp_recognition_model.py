@@ -22,10 +22,10 @@ def lcp_recognition_binary_model():
     flatten = Flatten()(maxpool_3)
 
     dropout_2 = Dropout(0.5)(flatten)
-    dense_1 = Dense(5, activation='relu')(dropout_2)
-    dense_2 = Dense(20, activation='relu')(dense_1)
-    dense_3 = Dense(80, activation='relu')(dense_2)
-    visible_out = Dense(1, activation='sigmoid')(dense_3)
+    dense_1 = Dense(10, activation='relu')(dropout_2)
+    # dense_2 = Dense(20, activation='relu')(dense_1)
+    # dense_3 = Dense(80, activation='relu')(dense_2)
+    visible_out = Dense(1, activation='sigmoid')(dense_1)
 
     model = Model(inputs=visible_in, outputs=visible_out)
 
@@ -60,22 +60,23 @@ def lcp_recognition_binary_model_2():
     model.add(MaxPooling1D(3, strides=2))
     model.add(Dropout(0.3))
 
-    model.add(Conv1D(32, 3, activation='relu'))
-    model.add(Conv1D(32, 3, activation='relu'))
-    model.add(MaxPooling1D(3, strides=2))
-    model.add(Dropout(0.3))
+    # model.add(Conv1D(32, 3, activation='relu'))
+    # model.add(Conv1D(32, 3, activation='relu'))
+    # model.add(MaxPooling1D(3, strides=2))
+    # model.add(Dropout(0.3))
 
-    model.add(Conv1D(64, 3, activation='relu'))
-    model.add(Conv1D(64, 3, activation='relu'))
-    model.add(MaxPooling1D(3, strides=2))
-    model.add(Dropout(0.3))
+    # model.add(Conv1D(64, 3, activation='relu'))
+    # model.add(Conv1D(64, 3, activation='relu'))
+    # model.add(MaxPooling1D(3, strides=2))
+    # model.add(Dropout(0.3))
+    #
+    # model.add(Conv1D(128, 3, activation='relu'))
+    # model.add(Conv1D(128, 3, activation='relu'))
+    # model.add(MaxPooling1D(3, strides=2))
+    # model.add(Dropout(0.3))
 
-    model.add(Conv1D(128, 3, activation='relu'))
-    model.add(Conv1D(128, 3, activation='relu'))
-    model.add(Dropout(0.3))
-
-    model.add(Conv1D(256, 3, activation='relu'))
-    model.add(Conv1D(256, 3, activation='relu'))
+    # model.add(Conv1D(256, 3, activation='relu'))
+    # model.add(Conv1D(256, 3, activation='relu'))
 
     model.add(GlobalAveragePooling1D())
     model.add(Dropout(0.5))
