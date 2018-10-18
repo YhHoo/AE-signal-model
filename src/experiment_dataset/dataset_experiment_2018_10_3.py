@@ -12,6 +12,7 @@ class AcousticEmissionDataSet_3_10_2018:
     '''
     def __init__(self, drive):
         self.drive = drive + ':/'
+
         self.lcp_dataset_filename = self.drive + 'Experiment_3_10_2018/LCP x NonLCP DATASET/' \
                                                  'dataset_lcp_1bar_seg4_norm.csv'
         self.non_lcp_dataset_filename = self.drive + 'Experiment_3_10_2018/LCP x NonLCP DATASET/' \
@@ -73,3 +74,4 @@ class AcousticEmissionDataSet_3_10_2018:
 
 # data = AcousticEmissionDataSet_3_10_2018(drive='F')
 # _, _, _, _ = data.lcp_dataset_binary_class(train_split=0.7)
+
