@@ -55,8 +55,8 @@ def lcp_recognition_binary_model_2():
     '''
     model = Sequential()
 
-    model.add(Conv1D(16, 3, activation='relu', input_shape=(6000, 1)))
-    model.add(Conv1D(16, 3, activation='relu'))
+    model.add(Conv1D(64, 3, activation='relu', input_shape=(6000, 1)))
+    # model.add(Conv1D(16, 3, activation='relu'))
     model.add(MaxPooling1D(3, strides=2))
     model.add(Dropout(0.3))
 
@@ -79,8 +79,8 @@ def lcp_recognition_binary_model_2():
     # model.add(Conv1D(256, 3, activation='relu'))
 
     model.add(GlobalAveragePooling1D())
-    model.add(Dropout(0.5))
-
+    # model.add(Dropout(0.5))
+    model.add(Dense(50, activation='relu'))
     model.add(Dense(10, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
@@ -148,5 +148,5 @@ def model_1():
     print(model.summary())
 
 
-# lcp_recognition_binary_model_2()
+lcp_recognition_binary_model_2()
 
