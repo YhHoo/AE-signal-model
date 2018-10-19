@@ -46,7 +46,7 @@ logger.learning_curve(history=history, show=True)
 
 # find best val acc
 best_val_acc_index = np.argmax(history.history['val_acc'])
-best_val_loss_index = np.argmax(history.history['val_loss'])
+best_val_loss_index = np.argmin(history.history['val_loss'])
 
 
 # loading best model saved
