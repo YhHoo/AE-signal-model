@@ -1260,7 +1260,9 @@ def compute_recall_precision_multiclass(y_true, y_pred, all_class_label, verbose
     f1_score = (2*recall_avg*precision_avg) / (recall_avg + precision_avg)
     if verbose:
         print('class recall: ', recall_each_class)
+        print('Average recall: ', recall_avg)
         print('class precision: ', precision_each_class)
+        print('Average precision: ', precision_avg)
         print('Overall F1-score: ', f1_score)
 
     return conf_mat, recall_each_class, precision_each_class, f1_score
