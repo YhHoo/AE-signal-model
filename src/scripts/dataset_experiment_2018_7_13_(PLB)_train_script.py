@@ -11,7 +11,7 @@ from src.utils.helpers import break_balanced_class_into_train_test, reshape_3d_t
 from src.model_bank.nn_model_bank import cnn2d_plb_v1
 
 
-data = AcousticEmissionDataSet_13_7_2018(drive='F')
+data = AcousticEmissionDataSet_13_7_2018(drive='E')
 dataset, label = data.plb()
 
 # split to train test data

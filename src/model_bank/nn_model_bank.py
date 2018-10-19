@@ -116,16 +116,16 @@ def cnn2d_plb_v1(input_shape, num_classes):
     '''
     model = Sequential()
 
-    model.add(Conv2D(filters=4, kernel_size=(2, 10), strides=(1, 1),
+    model.add(Conv2D(filters=8, kernel_size=(2, 10), strides=(1, 1),
                      activation='relu', input_shape=(input_shape[0], input_shape[1], 1)))
-
-    model.add(Conv2D(filters=6, kernel_size=(2, 10), strides=(1, 1),
-                     activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 5), strides=(2, 2)))
 
     model.add(Conv2D(filters=8, kernel_size=(2, 10), strides=(1, 1),
                      activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 5), strides=(2, 2)))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+    model.add(Conv2D(filters=8, kernel_size=(2, 10), strides=(1, 1),
+                     activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
     model.add(Flatten())
     model.add(Dropout(0.2))
@@ -164,17 +164,4 @@ def fc_leak_1bar_max_vec(input_shape, num_classes):
     return model
 
 
-
-
-# inputs = Input(shape=(784,))
-#
-# # a layer instance is callable on a tensor, and returns a tensor
-# x = Dense(64, activation='relu')(inputs)
-# x = Dense(64, activation='relu')(x)
-# predictions = Dense(10, activation='softmax')(x)
-#
-# # This creates a model that includes
-# # the Input layer and three Dense layers
-# model = Model(inputs=inputs, outputs=predictions)
-#
-# print(model.summary())
+cnn2d_plb_v1(input_shape=(10, 300), num_classes=41)

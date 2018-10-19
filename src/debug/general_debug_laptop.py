@@ -21,6 +21,7 @@ from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.metrics import accuracy_score
+from sklearn import svm, datasets
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, detect_ae_event_by_v_sensor, dwt_smoothing
@@ -28,22 +29,15 @@ from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmission
 from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
+iris_data = datasets.load_iris()
+# take label and input
+labels = iris_data.target
+inputs = iris_data.data
 
-scaler = MinMaxScaler(feature_range=(-1, 1))
-
-l = np.arange(-3, 10, 1)
-print(l)
-print(l.shape)
-
-l_n = scaler.fit_transform(l.reshape(-1, 1))
-
-print(l_n)
-print(l_n.shape)
-
-l_n = l_n.ravel()
-print(l_n)
-print(l_n.shape)
-
+print(labels.shape)
+print(labels)
+print(inputs.shape)
+print(inputs)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
