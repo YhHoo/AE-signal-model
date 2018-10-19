@@ -148,5 +148,5 @@ def model_1():
     print(model.summary())
 
 
-lcp_recognition_binary_model_2()
+# lcp_recognition_binary_model_2()
 
