@@ -11,7 +11,7 @@ from src.utils.helpers import break_balanced_class_into_train_test, reshape_3d_t
 from src.model_bank.nn_model_bank import cnn2d_plb_v1
 
 
-data = AcousticEmissionDataSet_13_7_2018(drive='E')
+data = AcousticEmissionDataSet_13_7_2018(drive='F')
 dataset, label = data.plb()
 
 # split to train test data
@@ -29,7 +29,7 @@ train_x, train_y, test_x, test_y = reshape_3d_to_4d_tocategorical(train_x, train
                                                                   verbose=True)
 
 # iterate several times to find best model with F1-score
-for i in range(1):
+for i in range(3):
     print('ITERATION ', i)
     model = cnn2d_plb_v1(input_shape=(train_x.shape[1], train_x.shape[2]), num_classes=num_classes)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
