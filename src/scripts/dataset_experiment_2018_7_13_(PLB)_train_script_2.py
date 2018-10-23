@@ -1,5 +1,5 @@
 '''
-THIS METHOD IS TO USE SVM TO TRY SOLVING THE PLB LOCALIZATION PROBLLEM
+THIS METHOD IS TO USE SVM TO TRY SOLVING THE PLB LOCALIZATION PROBLEM
 '''
 import time
 from sklearn import svm
@@ -61,7 +61,7 @@ for i in range(3):
     # SVM EVALUATE -----------------------------------------------------------------------------------------------------
     print('\n---------- EVALUATION RESULT -----------')
     print('Time taken for training: {:.4f}s'.format(time_taken_train))
-    print('Best Validation Accuracy: {:.4f}s'.format(best_val_acc))
+    print('Best Validation Accuracy: {:.4f}'.format(best_val_acc))
     print('Execution time for {} samples : {:.4f}s'.format(len(x), time_taken))
 
     mat, r, p, f1 = compute_recall_precision_multiclass(y_true=y, y_pred=prediction, all_class_label=class_label)
