@@ -9,7 +9,7 @@ from src.experiment_dataset.dataset_experiment_2018_7_13 import AcousticEmission
 from src.utils.helpers import *
 
 
-data = AcousticEmissionDataSet_13_7_2018(drive='F')
+data = AcousticEmissionDataSet_13_7_2018(drive='E')
 dataset, label = data.plb()
 
 dataset_flatten = []
