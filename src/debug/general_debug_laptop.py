@@ -22,6 +22,7 @@ import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.metrics import accuracy_score
 from sklearn import svm, datasets
+from scipy.interpolate import interp1d
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, detect_ae_event_by_v_sensor, dwt_smoothing
@@ -29,16 +30,23 @@ from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmission
 from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-iris_data = datasets.load_iris()
-# take label and input
-labels = iris_data.target
-inputs = iris_data.data
 
-print(labels.shape)
-print(labels)
-print(inputs.shape)
-print(inputs)
+wave_speed_filename = direct_to_dir(where='desktop') + 'v_disp.csv'
 
+df = pd.read_csv(wave_speed_filename)
+
+print(df.head())
+
+x = df['frequency'].values
+y = df['wavespeed'].values
+
+f = interp1d(x=x, y=y, kind='cubic')
+
+x_new = np.linspace(20000, 50000, 1100)
+plt.plot(x_new, f(x_new), '--', x, y, '-')
+plt.legend(['cubic', 'ori'], loc='best')
+
+plt.show()
 
 # ----------------------------------------------------------------------------------------------------------------------
 # tdms_filename = 'C:/Users/YH/Desktop/hooyuheng.masterWork/LCP DATASET OCT 3 1BAR/sample_data/11436_test_0001.tdms'

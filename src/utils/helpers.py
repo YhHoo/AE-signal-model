@@ -432,7 +432,7 @@ def read_single_tdms(filename=None):
     return n_channel_matrix
 
 
-def plot_multiple_timeseries(input, subplot_titles, main_title):
+def plot_multiple_timeseries(input, subplot_titles, main_title, ylim=1):
     '''
     Aspect axis[0] of input is no. of sensors/diff features, axis[1] is time steps. All time series has to be
     SAME length !
@@ -441,7 +441,6 @@ def plot_multiple_timeseries(input, subplot_titles, main_title):
     :param main_title: the big title
     :return: rectangular fig obj
     '''
-    ylim = 1
     no_of_plot = len(input)
     fig = plt.figure(figsize=(5, 8))
     fig.suptitle(main_title, fontweight="bold", size=8)
@@ -1324,6 +1323,8 @@ def direct_to_dir(where=None):
         return 'C:/Users/YH/Desktop/Experiment_2018_7_13/'
     elif where is 'google_drive':
         return 'C:/Users/YH/Desktop/hooyuheng.masterWork/MASTER_PAPERWORK/temp_data_store/'
+    elif where is 'desktop':
+        return 'C:/Users/YH/Desktop/'
 
 
 def plot_cwt_with_time_series(time_series, no_of_time_series, cwt_mat, cwt_scale,
