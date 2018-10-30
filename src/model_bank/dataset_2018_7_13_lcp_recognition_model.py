@@ -85,7 +85,7 @@ def lcp_recognition_binary_model_2():
     model.add(Dense(10, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
-    # print(model.summary())
+    print(model.summary())
 
     return model
 

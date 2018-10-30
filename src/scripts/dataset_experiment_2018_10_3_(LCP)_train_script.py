@@ -98,7 +98,7 @@ for iter_no in range(3):
     fig_lr_save_filename = direct_to_dir(where='result') + '{}.png'.format(evaluate_name)
     fig_evaluate.savefig(fig_lr_save_filename)
 
-    print('\n---------- EVALUATION RESULT -----------')
+    print('\n---------- EVALUATION RESULT RUN_{} -----------'.format(iter_no))
     print('**Param in tuning --> [optimizer: rmsprop]')
     print('Model Trainable params: {}'.format(trainable_count))
     print('Best Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
