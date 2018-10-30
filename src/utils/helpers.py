@@ -110,16 +110,18 @@ class ModelLogger:
         :param title: fig title
         :return: :return: None, but it will save fig of learning curve
         '''
-        fig = plt.figure(figsize=(6, 4))
+        fig = plt.figure(figsize=(10, 7))
+        fig.subplots_adjust(left=0.08, bottom=0.07, right=0.96, top=0.89)
+        fig.suptitle(title)
+
         plt.plot(history.history['loss'], label='train_loss')
         plt.plot(history.history['val_loss'], label='val_loss')
         plt.plot(history.history['acc'], label='train_acc')
         plt.plot(history.history['val_acc'], label='val_acc')
         plt.legend()
         plt.grid()
-        plt.title(title)
         if save:
-            fig.savefig(self.path + '_LrCurve.png')
+            fig.savefig(self.path + '_LrCurve_{}.png'.format(title))
         if show:
             plt.show()
         # free up memory

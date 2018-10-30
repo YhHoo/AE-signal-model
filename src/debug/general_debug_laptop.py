@@ -23,30 +23,44 @@ from mpl_toolkits.mplot3d import Axes3D
 from sklearn.metrics import accuracy_score
 from sklearn import svm, datasets
 from scipy.interpolate import interp1d
+import keras.backend as K
+from keras.utils import plot_model
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, detect_ae_event_by_v_sensor, dwt_smoothing
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 from src.utils.helpers import *
-from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
+from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recognition_binary_model_2
 
 
-wave_speed_filename = direct_to_dir(where='desktop') + 'v_disp.csv'
-
-df = pd.read_csv(wave_speed_filename)
-
-print(df.head())
-
-x = df['frequency'].values
-y = df['wavespeed'].values
-
-f = interp1d(x=x, y=y, kind='cubic')
-
-x_new = np.linspace(20000, 50000, 1100)
-plt.plot(x_new, f(x_new), '--', x, y, '-')
-plt.legend(['cubic', 'ori'], loc='best')
-
+ax.plot(np.linspace(0, 100, 1000))
 plt.show()
+
+
+# model = lcp_recognition_binary_model_2()
+#
+# filename = direct_to_dir(where='result') + 'model.png'
+# plot_model(model, to_file=filename, show_shapes=True)
+
+# PLB DSP TECHNIQUES TESTING -------------------------------------------------------------------------------------------
+# wave_speed_filename = direct_to_dir(where='desktop') + 'F11_vdisp.csv'
+#
+# df = pd.read_csv(wave_speed_filename)
+#
+# print(df.head())
+#
+# print(df.values.shape)
+#
+# x = df['frequency'].values
+# y = df['wavespeed'].values
+#
+# f = interp1d(x=x, y=y, kind='cubic')
+
+# x_new = np.linspace(20000, 50000, 1100)
+# plt.plot(x_new, f(x_new), '--', x, y, '-')
+# plt.legend(['cubic', 'ori'], loc='best')
+
+# plt.show()
 
 # ----------------------------------------------------------------------------------------------------------------------
 # tdms_filename = 'C:/Users/YH/Desktop/hooyuheng.masterWork/LCP DATASET OCT 3 1BAR/sample_data/11436_test_0001.tdms'
