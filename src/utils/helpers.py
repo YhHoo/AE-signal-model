@@ -14,6 +14,7 @@ from nptdms import TdmsFile
 from os import listdir
 from matplotlib import cm
 from matplotlib.widgets import Button
+from itertools import islice
 import sys
 from vispy import app, visuals, scene
 # self lib
@@ -1593,7 +1594,30 @@ def lollipop_plot(x_list, y_list, hit_point=None, label=None, title='No Title'):
 
     return fig
 
+def slide_window(seq, n=2):
+    '''
+    Returns a sliding window (of width n) over data from the iterable
+       s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ...
 
+    warning: this function return a generator, iterate through the generator to acquire all list returned.
+    read more bout generator -> https://stackoverflow.com/questions/231767/what-does-the-yield-keyword-do
+
+    e.g.
+    x = window(seq=l, n=3)
+    for i in x:
+        print(i)
+
+    :param seq: list of item
+    :param n: len of window
+    :return: generator obj
+    '''
+    it = iter(seq)
+    result = tuple(islice(it, n))
+    if len(result) == n:
+        yield result
+    for elem in it:
+        result = result[1:] + (elem,)
+        yield result
 
 
 

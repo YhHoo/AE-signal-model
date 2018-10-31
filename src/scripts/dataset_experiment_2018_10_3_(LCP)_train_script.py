@@ -2,11 +2,17 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 import time
 import gc
+import tensorflow as tf
 from keras.callbacks import TensorBoard
 from keras.optimizers import RMSprop
 from src.experiment_dataset.dataset_experiment_2018_10_3 import AcousticEmissionDataSet_3_10_2018
 from src.model_bank.dataset_2018_7_13_lcp_recognition_model import *
 from src.utils.helpers import *
+
+# instruct GPU to allocate only sufficient memory for this script
+config = tf.ConfigProto()
+config.gpu_option.allow_growth = True
+sess = tf.Session(config=config)
 
 # repeat the training process for 3 times (take the best score)
 # every iter, the train and test set will contain different combination of data because of the shuffle bfore split
@@ -87,7 +93,7 @@ for iter_no in range(3):
             prediction_quantized.append(0)
 
     # plot validation data
-    evaluate_name = 'Evaluate_RUN_{}'.format(iter_no)
+    evaluate_name = 'Evaluate_ITER_{}'.format(iter_no)
     fig_evaluate = plt.figure(figsize=(10, 7))
     fig_evaluate.subplots_adjust(left=0.08, bottom=0.07, right=0.96, top=0.89)
     fig_evaluate.suptitle(evaluate_name)
