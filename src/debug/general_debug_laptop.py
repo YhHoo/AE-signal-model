@@ -33,8 +33,14 @@ from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recognition_binary_model_2
 
 
-ax.plot(np.linspace(0, 100, 1000))
-plt.show()
+
+
+l = np.arange(0, 10, 1)
+print(l)
+
+x = window(seq=l, n=3)
+for i in x:
+    print(i)
 
 
 # model = lcp_recognition_binary_model_2()
