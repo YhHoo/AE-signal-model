@@ -20,10 +20,10 @@ for iter_no in range(3):
     ae_data = AcousticEmissionDataSet_3_10_2018(drive='F')
     train_x, train_y, test_x, test_y = ae_data.lcp_dataset_binary_class(train_split=0.7)
 
-    train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
-    test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
+    # train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
+    # test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
 
-    lcp_model = lcp_recognition_binary_model_2()
+    lcp_model = lcp_recognition_binary_model_4()
     lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
     # saving best weight setting
@@ -41,9 +41,9 @@ for iter_no in range(3):
     # start training
     total_epoch = 1500
     time_train_start = time.time()
-    history = lcp_model.fit(x=train_x_reshape,
+    history = lcp_model.fit(x=train_x,
                             y=train_y,
-                            validation_data=(test_x_reshape, test_y),
+                            validation_data=(test_x, test_y),
                             callbacks=[save_weight_checkpoint],
                             epochs=total_epoch,
                             batch_size=350,
@@ -82,7 +82,7 @@ for iter_no in range(3):
 
     # test with val data
     time_predict_start = time.time()
-    prediction = lcp_best_model.predict(test_x_reshape)
+    prediction = lcp_best_model.predict(test_x)
     time_predict = time.time() - time_predict_start
 
     prediction_quantized = []
@@ -105,7 +105,7 @@ for iter_no in range(3):
     fig_evaluate.savefig(fig_lr_save_filename)
 
     print('\n---------- EVALUATION RESULT RUN_{} -----------'.format(iter_no))
-    print('**Param in tuning --> []')
+    print('**Param in tuning --> [model: FC]')
     print('Model Trainable params: {}'.format(trainable_count))
     print('Best Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
                                                                    best_val_acc_index,
@@ -113,7 +113,7 @@ for iter_no in range(3):
     print('Lowest Validation Loss: {:.4f} at Epoch {}/{}'.format(history.history['val_loss'][best_val_loss_index],
                                                                  best_val_loss_index,
                                                                  total_epoch))
-    print('Time taken to execute 1 sample: {}s'.format(time_predict / len(test_x_reshape)))
+    print('Time taken to execute 1 sample: {}s'.format(time_predict / len(test_x)))
     print('Time taken to complete {} epoch: {:.4f}s'.format(total_epoch, time_train))
     logger.save_recall_precision_f1(y_pred=prediction_quantized, y_true=test_y, all_class_label=[0, 1])
 

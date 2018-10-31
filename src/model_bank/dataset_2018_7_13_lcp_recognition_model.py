@@ -136,7 +136,19 @@ def lcp_recognition_binary_model_3():
     return model
 
 
+def lcp_recognition_binary_model_4():
+    model = Sequential()
+    model.add(Dense(108, activation='relu', input_dim=6000))
+    model.add(Dropout(0.5))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(2, activation='softmax'))
 
+    print(model.summary())
 
-
+    return model
 
