@@ -25,22 +25,50 @@ from sklearn import svm, datasets
 from scipy.interpolate import interp1d
 import keras.backend as K
 from keras.utils import plot_model
+from itertools import islice
+
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, detect_ae_event_by_v_sensor, dwt_smoothing
 from src.experiment_dataset.dataset_experiment_2018_5_30 import AcousticEmissionDataSet_30_5_2018
 from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recognition_binary_model_2
+from collections import deque
+from itertools import islice
 
 
 
 
-l = np.arange(0, 10, 1)
-print(l)
 
-x = window(seq=l, n=3)
-for i in x:
-    print(i)
+# it = iter(l)
+# m = tuple(islice(it, 2, None))
+#
+# for i in it:
+#     print(m[1:])
+#     print(i)
+#     result = m[1:] + (i, )
+#
+#     print(result)
+
+# l = [1, 2, 3]
+#
+# x = []
+# for _ in range(3):
+#     x.append(l)
+#
+# print(x)
+
+
+
+# result = tuple(islice(it, 2))
+#
+# print(result[1:])
+
+
+# x = slide_window(seq=l, n=3)
+# for i in x:
+#     print('here')
+#     print(i)
 
 
 # model = lcp_recognition_binary_model_2()
