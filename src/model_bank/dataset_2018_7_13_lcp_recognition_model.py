@@ -56,19 +56,19 @@ def lcp_recognition_binary_model_2():
     model = Sequential()
 
     model.add(Conv1D(16, 3, activation='relu', input_shape=(6000, 1)))
-    # model.add(Conv1D(16, 3, activation='relu'))
+    model.add(Conv1D(16, 3, activation='relu'))
     model.add(MaxPooling1D(3, strides=2))
     model.add(Dropout(0.3))
 
     model.add(Conv1D(32, 3, activation='relu'))
-    # model.add(Conv1D(32, 3, activation='relu'))
+    model.add(Conv1D(32, 3, activation='relu'))
     model.add(MaxPooling1D(3, strides=2))
     model.add(Dropout(0.3))
 
-    model.add(Conv1D(64, 3, activation='relu'))
     # model.add(Conv1D(64, 3, activation='relu'))
-    model.add(MaxPooling1D(3, strides=2))
-    model.add(Dropout(0.3))
+    # model.add(Conv1D(64, 3, activation='relu'))
+    # model.add(MaxPooling1D(3, strides=2))
+    # model.add(Dropout(0.3))
 
     # model.add(Conv1D(128, 3, activation='relu'))
     # model.add(Conv1D(128, 3, activation='relu'))
@@ -136,18 +136,19 @@ def lcp_recognition_binary_model_3():
     return model
 
 
-# TESTING AT LAPTOP
-def model_1():
-    visible_in = Input(shape=(6000, 1))
-
-    conv_1 = Conv1D(filters=32, kernel_size=5, strides=1, activation='relu', name='Conv_a_1')(visible_in)
-    gap = GlobalAveragePooling1D()(conv_1)
-    visible_out = Dense(1, activation='sigmoid')(gap)
-
-    model = Model(inputs=visible_in, outputs=visible_out)
+def lcp_recognition_binary_model_4():
+    model = Sequential()
+    model.add(Dense(108, activation='relu', input_dim=6000))
+    model.add(Dropout(0.5))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(2, activation='softmax'))
 
     print(model.summary())
 
-
-# lcp_recognition_binary_model_2()
+    return model
 
