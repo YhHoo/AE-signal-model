@@ -30,4 +30,8 @@ print(n_channel_data.shape)
 
 data_in_window = slide_window(seq=n_channel_data[0, :], n=6000)
 
+window_peak_index = 1000
 for i in data_in_window:
+    print(window_peak_index)
+
+    window_peak_index += 1
