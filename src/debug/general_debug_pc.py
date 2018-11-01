@@ -29,18 +29,18 @@ from src.utils.helpers import *
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-dataset_dir = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/'
-dataset_lcp_filename = dataset_dir + 'dataset_lcp_1bar_seg4.csv'
-dataset_non_lcp_filename = dataset_dir + 'dataset_non_lcp_1bar_seg1_norm.csv'
-dataset_normalized_save_filename = direct_to_dir(where='result') + 'norm.csv'
-
-print('Reading --> ', dataset_non_lcp_filename)
-df_data = pd.read_csv(dataset_non_lcp_filename)
-column_label = df_data.columns.values
-
-print(df_data)
-print(df_data.values)
-print(df_data.values.shape)
+# dataset_dir = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/'
+# dataset_lcp_filename = dataset_dir + 'dataset_lcp_1bar_seg4.csv'
+# dataset_non_lcp_filename = dataset_dir + 'dataset_non_lcp_1bar_seg1_norm.csv'
+# dataset_normalized_save_filename = direct_to_dir(where='result') + 'norm.csv'
+#
+# print('Reading --> ', dataset_non_lcp_filename)
+# df_data = pd.read_csv(dataset_non_lcp_filename)
+# column_label = df_data.columns.values
+#
+# print(df_data)
+# print(df_data.values)
+# print(df_data.values.shape)
 
 # # drop rows that contains Nan
 # df_data.dropna(inplace=True)

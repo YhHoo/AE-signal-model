@@ -1594,6 +1594,7 @@ def lollipop_plot(x_list, y_list, hit_point=None, label=None, title='No Title'):
 
     return fig
 
+
 def slide_window(seq, n=2):
     '''
     Returns a sliding window (of width n) over data from the iterable
