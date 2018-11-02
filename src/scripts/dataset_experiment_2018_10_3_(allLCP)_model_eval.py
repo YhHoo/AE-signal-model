@@ -19,12 +19,12 @@ lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 
 print(lcp_model.summary())
 
-n_channel_data = read_single_tdms(tdms_leak_filename)
+n_channel_data = read_single_tdms(tdms_noleak_filename)
 n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1]
 
 print(n_channel_data.shape)
 
-head_index = 504385 # 2637500
+head_index = 2222659  # 2637500
 data_to_detect = n_channel_data[:, head_index-1000:head_index+5000]
 
 scaler = MinMaxScaler(feature_range=(-1, 1))
