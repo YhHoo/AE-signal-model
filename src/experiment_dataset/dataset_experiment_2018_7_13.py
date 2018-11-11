@@ -159,6 +159,7 @@ class AcousticEmissionDataSet_13_7_2018:
         # for all plb samples
         for sample in n_channel_data_near:
             all_channel_stft = []
+
             # for all sensors
             for each_sensor_data in sample:
                 # band pass filter
@@ -166,6 +167,13 @@ class AcousticEmissionDataSet_13_7_2018:
                                                            fs=1e6,
                                                            f_hicut=1e5,
                                                            f_locut=20e3)
+
+                # denoise
+                # dwt denoising setting
+                dwt_wavelet = 'db2'
+                dwt_smooth_level = 3
+                filtered_signal = dwt_smoothing(x=filtered_signal, wavelet=dwt_wavelet, level=dwt_smooth_level)
+
                 # stft
                 _, _, sxx, _ = spectrogram_scipy(sampled_data=filtered_signal,
                                                  fs=1e6,
