@@ -30,14 +30,9 @@ from src.utils.helpers import *
 
 l = np.array([[1, 0, 4],
              [0, 6, 1],
-             [1, 1, 2]])
-
-print(l.shape)
-print(l)
-
-x = np.argmax(l, axis=1)
-print(x)
-print(x.shape)
+             [1, 1, 2],
+             [1, 2, 1]])
+df = pd.DataFrame(data=l, columns=['a', 'b', 'label'])
 
 # dataset_dir = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/'
 # dataset_lcp_filename = dataset_dir + 'dataset_lcp_1bar_seg4.csv'
