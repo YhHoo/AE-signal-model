@@ -37,8 +37,18 @@ from collections import deque
 from itertools import islice
 
 
+l = [1, 2, 9, 3]
+m = ['a', 'b', 'c', 'd']
 
+both = zip(l, m)
+both = sorted(both)
 
+ls = [x[0] for x in both]
+ms = [x[1] for x in both]
+print(ls)
+print(ms)
+
+print(both)
 
 # it = iter(l)
 # m = tuple(islice(it, 2, None))

@@ -136,7 +136,9 @@ class ModelLogger:
         :return: None, but it will save 2 csv of confusion matrix and recall_precision table
         '''
         # Consider this as a wrapper for the recall_precision_multiclass(), for easy saving purpose
-        mat, r, p, f1 = compute_recall_precision_multiclass(y_true=y_true, y_pred=y_pred, all_class_label=all_class_label)
+        mat, r, p, f1 = compute_recall_precision_multiclass(y_true=y_true,
+                                                            y_pred=y_pred,
+                                                            all_class_label=all_class_label)
 
         mat_filename = self.path + '_confusion_mat.csv'
         recall_precision_df_filename = self.path + '_recall_prec_f1.csv'
@@ -1598,7 +1600,7 @@ def lollipop_plot(x_list, y_list, hit_point=None, label=None, title='No Title'):
 def slide_window(seq, n=2):
     '''
     SOURCE: https://stackoverflow.com/questions/6822725/rolling-or-sliding-window-iterator
-    
+
     Returns a sliding window (of width n) over data from the iterable
        s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ...
 

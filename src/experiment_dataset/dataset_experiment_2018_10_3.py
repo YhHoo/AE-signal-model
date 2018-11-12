@@ -88,7 +88,6 @@ class AcousticEmissionDataSet_3_10_2018:
         print('File Read Time: {:.4f}s'.format(time.time() - time_start))
         print('LCP Dataset Dim: ', df_lcp.values.shape)
 
-        temp_data, temp_label = [], []
         train_x, train_y, test_x, test_y = [], [], [], []
         for ch_no in all_ch_no:
             mat_of_selected_ch = df_lcp[df_lcp['channel'] == ch_no].values[:, :-1]
@@ -96,9 +95,7 @@ class AcousticEmissionDataSet_3_10_2018:
             if shuffle_b4_split:
                 mat_of_selected_ch = mat_of_selected_ch[np.random.permutation(len(mat_of_selected_ch))]
 
-            temp_data.append(mat_of_selected_ch)
             label = [ch_no] * len(mat_of_selected_ch)
-            temp_label.append(label)
 
             tr_x, te_x, tr_y, te_y = train_test_split(mat_of_selected_ch,
                                                       label,
@@ -109,9 +106,6 @@ class AcousticEmissionDataSet_3_10_2018:
             test_x.append(te_x)
             train_y.append(tr_y)
             test_y.append(te_y)
-
-        x = np.array(train_x)
-        y = np.array(train_y)
 
         train_x = np.concatenate(train_x, axis=0)
         test_x = np.concatenate(test_x, axis=0)
