@@ -4,9 +4,10 @@ from src.utils.dsp_tools import *
 
 
 # file reading
-dataset_dir = 'C:/Users/YH/Desktop/LCP DATASET/'
-lcp_dataset_filename = dataset_dir + 'dataset_lcp_1bar_seg4_norm.csv'
-non_lcp_dataset_filename = dataset_dir + 'dataset_non_lcp_1bar_seg1_norm.csv'
+dataset_dir_in_laptop = 'C:/Users/YH/Desktop/LCP DATASET/'
+dataset_dir_in_pc = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/'
+lcp_dataset_filename = dataset_dir_in_pc + 'dataset_lcp_1bar_seg4_norm.csv'
+non_lcp_dataset_filename = dataset_dir_in_pc + 'dataset_non_lcp_1bar_seg1_norm.csv'
 
 lcp_model = load_model(model_name='LCP_Recog_1')
 lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
@@ -32,14 +33,18 @@ non_lcp_data = non_lcp_data[np.random.permutation(len(non_lcp_data))]
 
 # take first 10 samples of LCP and nonLCP
 for sample_no in range(0, 10, 1):
-    layer_no_to_visualize = 0
+    layer_no_to_visualize = 8
     activation = get_activations(lcp_model,
                                  model_inputs=[lcp_data[sample_no].reshape((6000, 1)),
                                                non_lcp_data[sample_no].reshape((6000, 1))],
                                  print_shape_only=True)
+    # activation = activation[layer_no_to_visualize]
     activation = np.swapaxes(activation[layer_no_to_visualize], 1, 2)
-
+    # print('filter[{} ] = LCP |  NonLCP')
     for filter_no in range(0, activation.shape[1], 1):
+        # print('filter[{} ] = {:.4f}  |  {:.4f}'.
+        # format(filter_no, activation[0, filter_no],  activation[1, filter_no]))
+
         # FFT of input
         lcp_fft_y, _, lcp_fft_x = fft_scipy(sampled_data=lcp_data[sample_no], visualize=False, fs=1e6)
         nonlcp_fft_y, _, nonlcp_fft_x = fft_scipy(sampled_data=non_lcp_data[sample_no], visualize=False, fs=1e6)
@@ -89,30 +94,11 @@ for sample_no in range(0, 10, 1):
         ax_fft_nonlcp_act.plot(nonlcp_act_fft_x[2:], nonlcp_act_fft_y[2:])
         ax_fft_nonlcp_act.set_xlabel('Hz')
 
-        plt.show()
+        fig_save_filename = direct_to_dir(where='result') + 'LCP_Recog_1_lyr[{}]_fl[{}]_sample[{}]'.\
+            format(layer_no_to_visualize, filter_no, sample_no)
+        fig_all.savefig(fig_save_filename)
+        print('saving --> ', fig_save_filename)
+        plt.close('all')
 
-
-# fig = plot_multiple_timeseries(input=[lcp_data[10], non_lcp_data[10]],
-#                                subplot_titles=['LCP', 'Non LCP'],
-#                                main_title='LCP and Non LCP input')
-
-# lcp_data_test = lcp_data[10].reshape((6000, 1))
-# non_lcp_data_test = non_lcp_data[10].reshape((6000, 1))
-#
-# activation = get_activations(lcp_model, model_inputs=[lcp_data_test, non_lcp_data_test], print_shape_only=True)
-#
-
-# # first cnn layer
-# activation_test = np.swapaxes(activation[0], 1, 2)
-#
-# fig2 = plot_multiple_timeseries(input=activation_test[0, :5],
-#                                 subplot_titles=['k1', 'k2', 'k3', 'k4', 'k5'],
-#                                 main_title='cnn1d_1 activation [LCP]')
-#
-# fig3 = plot_multiple_timeseries(input=activation_test[1, :5],
-#                                 subplot_titles=['k1', 'k2', 'k3', 'k4', 'k5'],
-#                                 main_title='cnn1d_1 activation [NON LCP]')
-#
-# plt.show()
 
 

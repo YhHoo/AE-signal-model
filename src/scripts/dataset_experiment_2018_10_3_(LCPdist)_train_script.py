@@ -17,7 +17,7 @@ sess = tf.Session(config=config)
 
 # repeat the training process for 3 times (take the best score)
 # every iter, the train and test set will contain different combination of data because of the shuffle bfore split
-for iter_no in range(3):
+for iter_no in range(1, 3, 1):
     ae_data = AcousticEmissionDataSet_3_10_2018(drive='F')
     train_x, train_y, test_x, test_y = ae_data.lcp_by_distance_dataset_multi_class(train_split=0.7)
 
@@ -96,7 +96,7 @@ for iter_no in range(3):
     fig_evaluate.savefig(fig_lr_save_filename)
 
     print('\n---------- EVALUATION RESULT RUN_{} -----------'.format(iter_no))
-    print('**Param in tuning --> [shallower CNN]')
+    print('**Param in tuning --> []')
     print('Model Trainable params: {}'.format(trainable_count))
     print('Best Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
                                                                    best_val_acc_index,
@@ -106,6 +106,6 @@ for iter_no in range(3):
                                                                  total_epoch))
     print('Time taken to execute 1 sample: {}s'.format(time_predict / len(test_x_reshape)))
     print('Time taken to complete {} epoch: {:.4f}s'.format(total_epoch, time_train))
-    logger.save_recall_precision_f1(y_pred=prediction, y_true=actual_argmax, all_class_label=[0, 1])
+    logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1, 2, 3, 4, 5])
 
     gc.collect()
