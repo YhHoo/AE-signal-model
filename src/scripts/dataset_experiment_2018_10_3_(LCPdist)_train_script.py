@@ -17,7 +17,7 @@ sess = tf.Session(config=config)
 
 # repeat the training process for 3 times (take the best score)
 # every iter, the train and test set will contain different combination of data because of the shuffle bfore split
-for iter_no in range(1, 3, 1):
+for iter_no in range(3):
     ae_data = AcousticEmissionDataSet_3_10_2018(drive='F')
     train_x, train_y, test_x, test_y = ae_data.lcp_by_distance_dataset_multi_class(train_split=0.7)
 
@@ -51,7 +51,7 @@ for iter_no in range(1, 3, 1):
 
     # plotting the learning curve
     # name for fig suptitle and filename
-    lr_name = 'LrCurve_RUN_{}'.format(iter_no)
+    lr_name = 'LrCurve_ITER_{}'.format(iter_no)
     fig_lr = plt.figure(figsize=(10, 7))
     fig_lr.subplots_adjust(left=0.08, bottom=0.07, right=0.96, top=0.89)
     fig_lr.suptitle(lr_name)
