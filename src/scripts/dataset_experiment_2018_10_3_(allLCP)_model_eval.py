@@ -32,6 +32,7 @@ window_stride = 10
 window_size = (1000, 5000)
 sample_size_for_prediction = 10000
 total_len = n_channel_data.shape[1]
+
 # ensure enough length of data input
 assert total_len > (window_size[0] + window_size[1]), 'Data length is too short, mz be at least {}'.\
     format(window_size[0] + window_size[1])
@@ -41,10 +42,10 @@ print('Window Index: ', window_index)
 
 temp, model_pred = [], []
 ch_no = 0
-# pb = ProgressBarForLoop(title='Iterating all Samples', end=len(window_index))
+pb = ProgressBarForLoop(title='Iterating all Samples', end=len(window_index))
 progress = 0
 for index in window_index:
-    # pb.update(now=progress)
+    pb.update(now=progress)
     data = n_channel_data[ch_no, (index - window_size[0]):(index + window_size[1])]
     data_norm = scaler.fit_transform(data.reshape(-1, 1)).ravel()
     temp.append(data_norm)
@@ -78,9 +79,8 @@ for index in window_index:
     gc.collect()
 
 
-# pb.destroy()
+pb.destroy()
 model_pred = np.concatenate(model_pred, axis=0)
-
 print('Model Prediction Dim: ', model_pred.shape)
 
 
