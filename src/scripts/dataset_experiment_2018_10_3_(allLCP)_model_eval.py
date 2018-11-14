@@ -44,7 +44,7 @@ print('Window Index: ', window_index)
 prediction_all_ch = []
 for ch_no in range(6):
     temp, model_pred = [], []
-    pb = ProgressBarForLoop(title='Iterating all Samples', end=len(window_index))
+    pb = ProgressBarForLoop(title='Iterating all Samples in ch[{}]'.format(ch_no), end=len(window_index))
     progress = 0
     for index in window_index:
         pb.update(now=progress)
@@ -60,20 +60,18 @@ for ch_no in range(6):
                 continue
             else:
                 progress += 1
-                print('temp full !')
-        else:
-            print('Last index reached !')
+                # print('temp full !')
 
         # do tis when temp is full
         # reshape
         temp = np.array(temp)
         temp = temp.reshape((temp.shape[0], temp.shape[1], 1))
-        print(temp.shape)
+        # print(temp.shape)
         time_predict_start = time.time()
         prediction = np.argmax(lcp_model.predict(temp), axis=1)
         time_predict = time.time() - time_predict_start
         # print('Time taken for Predicting {} samples: {:.4f}s'.format(sample_size_for_prediction, time_predict))
-        print(prediction.shape)
+        # print(prediction.shape)
         model_pred.append(prediction)
         # reset temp
         temp = []
@@ -121,6 +119,8 @@ for plot_no, plot_label, raw_signal, prediction_per_ch in zip(np.arange(2, 7, 1)
     for pred_index, pred in zip(window_index, prediction_per_ch):
         ax1.axvline(pred_index, color=color_dict[pred])
 
+
+plt.legend(handles=[r_leg, g_leg, b_leg, c_leg, m_leg, y_leg])
 plt.show()
 
 
