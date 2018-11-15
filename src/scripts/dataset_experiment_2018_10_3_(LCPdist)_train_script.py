@@ -24,8 +24,8 @@ for iter_no in range(3):
     train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
     test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
 
-    train_y_cat = to_categorical(train_y, num_classes=6)
-    test_y_cat = to_categorical(test_y, num_classes=6)
+    train_y_cat = to_categorical(train_y, num_classes=5)
+    test_y_cat = to_categorical(test_y, num_classes=5)
 
     lcp_model = lcp_by_dist_recognition_multi_model_1()
     lcp_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['acc'])
@@ -106,6 +106,6 @@ for iter_no in range(3):
                                                                  total_epoch))
     print('Time taken to execute 1 sample: {}s'.format(time_predict / len(test_x_reshape)))
     print('Time taken to complete {} epoch: {:.4f}s'.format(total_epoch, time_train))
-    logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1, 2, 3, 4, 5])
+    logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1, 2, 3, 4])
 
     gc.collect()

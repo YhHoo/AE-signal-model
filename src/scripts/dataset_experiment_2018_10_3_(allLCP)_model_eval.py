@@ -23,7 +23,7 @@ lcp_model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
 
 n_channel_data = read_single_tdms(tdms_leak_filename)
-n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-2]
+n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-2, :1000000]  # truncate to 1M point, due to long processing time
 
 print('TDMS data dim: ', n_channel_data.shape)
 

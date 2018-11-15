@@ -30,26 +30,26 @@ from src.utils.helpers import *
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-# ae_data = AcousticEmissionDataSet_3_10_2018(drive='F')
-# train_x, train_y, test_x, test_y = ae_data.lcp_by_distance_dataset_multi_class(train_split=0.7)
-#
-# train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
-# test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
-# train_y_cat = to_categorical(train_y, num_classes=6)
-# test_y_cat = to_categorical(test_y, num_classes=6)
-#
-# # loading best model saved
-# lcp_best_model = load_model(model_name='LCP_Dist_Recog_1')
-#
-# # test with val data
-# time_predict_start = time.time()
-# prediction = lcp_best_model.predict(test_x_reshape)
-# time_predict = time.time() - time_predict_start
-#
-# prediction_argmax = np.argmax(prediction, axis=1)
-# actual_argmax = np.argmax(test_y_cat, axis=1)
-#
-# compute_recall_precision_multiclass(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1, 2, 3, 4, 5])
+ae_data = AcousticEmissionDataSet_3_10_2018(drive='F')
+train_x, train_y, test_x, test_y = ae_data.lcp_by_distance_dataset_multi_class(train_split=0.7)
+
+train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
+test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
+train_y_cat = to_categorical(train_y, num_classes=5)
+test_y_cat = to_categorical(test_y, num_classes=5)
+
+# loading best model saved
+lcp_best_model = load_model(model_name='LCP_Dist_Recog_1')
+
+# test with val data
+time_predict_start = time.time()
+prediction = lcp_best_model.predict(test_x_reshape)
+time_predict = time.time() - time_predict_start
+
+prediction_argmax = np.argmax(prediction, axis=1)
+actual_argmax = np.argmax(test_y_cat, axis=1)
+
+compute_recall_precision_multiclass(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1, 2, 3, 4])
 
 # r_leg = mpatches.Patch(color='r', label='The red data')
 # g_leg = mpatches.Patch(color='g', label='The green data')
@@ -69,9 +69,9 @@ from src.utils.helpers import *
 # plt.legend(handles=[r_leg, g_leg, b_leg, c_leg, m_leg, y_leg, k_leg])
 # plt.show()
 
-color_dict = {0: 'r', 1: 'g', 2:'b', 3:'c', 4:'m', 5:'y'}
-
-print(color_dict[5])
+# color_dict = {0: 'r', 1: 'g', 2:'b', 3:'c', 4:'m', 5:'y'}
+#
+# print(color_dict[5])
 # ogger.save_recall_precision_f1(y_pred=prediction, y_true=actual_argmax, all_class_label=[0, 1, 2, 3, 4, 5])
 # dataset_dir = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/'
 # dataset_lcp_filename = dataset_dir + 'dataset_lcp_1bar_seg4.csv'

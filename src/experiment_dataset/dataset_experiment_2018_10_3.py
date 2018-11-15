@@ -82,7 +82,7 @@ class AcousticEmissionDataSet_3_10_2018:
         from.
         the dataset is normalized LCP, labeled according to distance travelled away from source.
         So, class -2m and 2m will be classied as same, because both LCP travels same dist to reach the sensor
-        dist = 4.5, 2, 5, 8, 10m
+        dist = 2, 4.5, 5, 8, 10m, labeled as 0, 1, 2, 3, 4
         '''
 
         # reading lcp data fr csv
@@ -94,8 +94,9 @@ class AcousticEmissionDataSet_3_10_2018:
         print('LCP Dataset Dim: ', df_lcp.values.shape)
 
         train_x, train_y, test_x, test_y = [], [], [], []
-        # for -4.5m ----------------------------------------------------------------------------------------------------
-        mat_of_selected_ch = df_lcp[df_lcp['channel'] == 0].values[:, :-1]
+
+        # for -2 & 2m --------------------------------------------------------------------------------------------------
+        mat_of_selected_ch = df_lcp.loc[df_lcp['channel'].isin([1, 2])].values[:, :-1]
         if shuffle_b4_split:
             mat_of_selected_ch = mat_of_selected_ch[np.random.permutation(len(mat_of_selected_ch))]
 
@@ -111,8 +112,8 @@ class AcousticEmissionDataSet_3_10_2018:
         train_y.append(tr_y)
         test_y.append(te_y)
 
-        # for -2 & 2m --------------------------------------------------------------------------------------------------
-        mat_of_selected_ch = df_lcp.loc[df_lcp['channel'].isin(1, 2)].values[:, :-1]
+        # for -4.5m ----------------------------------------------------------------------------------------------------
+        mat_of_selected_ch = df_lcp[df_lcp['channel'] == 0].values[:, :-1]
         if shuffle_b4_split:
             mat_of_selected_ch = mat_of_selected_ch[np.random.permutation(len(mat_of_selected_ch))]
 
@@ -161,6 +162,8 @@ class AcousticEmissionDataSet_3_10_2018:
         return train_x, train_y, test_x, test_y
 
 
-data = AcousticEmissionDataSet_3_10_2018(drive='F')
-data.lcp_by_distance_dataset_multi_class()
-
+# data = AcousticEmissionDataSet_3_10_2018(drive='F')
+# train_x, train_y, test_x, test_y = data.lcp_by_distance_dataset_multi_class()
+#
+# for i in test_y:
+#     print(i)

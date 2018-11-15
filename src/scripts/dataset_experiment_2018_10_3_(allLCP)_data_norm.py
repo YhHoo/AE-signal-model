@@ -7,12 +7,12 @@ from src.utils.helpers import *
 
 dataset_dir = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/'
 dataset_lcp_filename = dataset_dir + 'dataset_lcp_1bar_seg4.csv'
-dataset_non_lcp_filename = dataset_dir + 'dataset_non_lcp_1bar_seg1_norm.csv'
+dataset_non_lcp_filename = dataset_dir + 'dataset_non_lcp_1bar_seg1.csv'
 dataset_normalized_save_filename = direct_to_dir(where='result') + 'norm2.csv'
 
 # change the filename to the one we wish to norm
-print('Reading --> ', dataset_lcp_filename)
-df_data = pd.read_csv(dataset_lcp_filename)
+print('Reading --> ', dataset_non_lcp_filename)
+df_data = pd.read_csv(dataset_non_lcp_filename)
 column_label = df_data.columns.values
 
 # print(df_data)
