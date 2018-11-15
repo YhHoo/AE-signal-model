@@ -1626,39 +1626,39 @@ def slide_window(seq, n=2):
         yield result
 
 
-def sliding_window_2(iterable, size=2, step=1, fillvalue=None):
-    '''
-    SOURCE: https://stackoverflow.com/questions/6822725/rolling-or-sliding-window-iterator
-
-    :param iterable: list of items
-    :param size: window size
-    :param step: window stride
-    :param fillvalue: boundary condition
-    :return: generator
-    e.g.
-    l = np.arange(0, 10, 1)
-    x = sliding_window_2(iterable=l, size=3, step=3, fillvalue=0)
-
-    for i in x:
-        print('here')
-        print(list(i))
-        # the i is collection obj, convert to list
-    '''
-
-    if size < 0 or step < 1:
-        raise ValueError
-    it = iter(iterable)
-    q = deque(islice(it, size), maxlen=size)
-    if not q:
-        return  # empty iterable or size == 0
-    q.extend(fillvalue for _ in range(size - len(q)))  # pad to size
-    while True:
-        yield iter(q)  # iter() to avoid accidental outside modifications
-        try:
-            q.append(next(it))
-        except StopIteration:  # Python 3.5 pep 479 support
-            return
-        q.extend(next(it, fillvalue) for _ in range(step - 1))
+# def sliding_window_2(iterable, size=2, step=1, fillvalue=None):
+#     '''
+#     SOURCE: https://stackoverflow.com/questions/6822725/rolling-or-sliding-window-iterator
+#
+#     :param iterable: list of items
+#     :param size: window size
+#     :param step: window stride
+#     :param fillvalue: boundary condition
+#     :return: generator
+#     e.g.
+#     l = np.arange(0, 10, 1)
+#     x = sliding_window_2(iterable=l, size=3, step=3, fillvalue=0)
+#
+#     for i in x:
+#         print('here')
+#         print(list(i))
+#         # the i is collection obj, convert to list
+#     '''
+#
+#     if size < 0 or step < 1:
+#         raise ValueError
+#     it = iter(iterable)
+#     q = deque(islice(it, size), maxlen=size)
+#     if not q:
+#         return  # empty iterable or size == 0
+#     q.extend(fillvalue for _ in range(size - len(q)))  # pad to size
+#     while True:
+#         yield iter(q)  # iter() to avoid accidental outside modifications
+#         try:
+#             q.append(next(it))
+#         except StopIteration:  # Python 3.5 pep 479 support
+#             return
+#         q.extend(next(it, fillvalue) for _ in range(step - 1))
 
 
 

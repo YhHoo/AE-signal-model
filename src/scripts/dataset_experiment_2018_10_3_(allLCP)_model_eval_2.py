@@ -87,33 +87,55 @@ for ch_no in range(6):
 
     prediction_all_ch.append(model_pred)
 
+prediction_all_ch = np.array(prediction_all_ch).T
+df_pred = pd.DataFrame(data=prediction_all_ch, columns=['ch0', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5'])
+df_pred_save_filename = direct_to_dir(where='result') + 'pred_result_(leak)12709_test_0010.csv'
+df_pred.to_csv(df_pred_save_filename)
+print('Saved --> ', df_pred_save_filename)
 
 # multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries() ----------------------------------
-# config
-multiple_timeseries = prediction_all_ch
-main_title = 'Model prediction by 6k Sliding Window, Stride: {}'.format(window_stride)
-subplot_titles = ['-4.5m', '-2m', '2m', '5m', '8m', '10m']
+# # config
+# multiple_timeseries = prediction_all_ch
+# main_title = 'Model prediction by 6k Sliding Window, Stride: {}'.format(window_stride)
+# subplot_titles = ['-4.5m', '-2m', '2m', '5m', '8m', '10m']
+#
+# # do the work
+# time_plot_start = time.time()
+# no_of_plot = len(multiple_timeseries)
+# fig = plt.figure(figsize=(5, 8))
+# fig.suptitle(main_title, fontweight="bold", size=8)
+# fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
+# # first plot
+# ax1 = fig.add_subplot(no_of_plot, 1, 1)
+# ax1.plot(multiple_timeseries[0])
+# ax1.set_title(subplot_titles[0], size=8)
+# ax1.set_ylim(bottom=0, top=5)
+#
+# # the rest of the plot
+# for i in range(1, no_of_plot, 1):
+#     ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1)
+#     ax.plot(multiple_timeseries[i])
+#     ax.set_title(subplot_titles[i], size=8)
+#     ax.set_ylim(bottom=0, top=5)
+#
+# plt.show()
+#
+# time_plot = time.time() - time_plot_start
+# print('Time taken to plot: {:.4f}'.format(time_plot))
+#
+# # layering misclassified samples on raw ae -----------------------------------------------------------------------------
+# # channel [-4.5m]
+# actual_class_per_ch = [1, 0, 0, 2, 3, 4]
+#
+# faulty_index_al_ch = []
+# # for all ch
+# for pred_per_ch, actual in zip(prediction_all_ch, actual_class_per_ch):
+#     temp2 = []
+#     for index, pred in zip(window_index, pred_per_ch):
+#         if pred != actual:
+#             temp2.append(index)
+#     faulty_index_al_ch.append(temp2)
+#
+# print('Faulty Index all ch dim: ', np.array(faulty_index_al_ch).shape)
 
-# do the work
-time_plot_start = time.time()
-no_of_plot = len(multiple_timeseries)
-fig = plt.figure(figsize=(5, 8))
-fig.suptitle(main_title, fontweight="bold", size=8)
-fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
-# first plot
-ax1 = fig.add_subplot(no_of_plot, 1, 1)
-ax1.plot(multiple_timeseries[0])
-ax1.set_title(subplot_titles[0], size=8)
-ax1.set_ylim(bottom=0, top=5)
 
-# the rest of the plot
-for i in range(1, no_of_plot, 1):
-    ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1)
-    ax.plot(multiple_timeseries[i])
-    ax.set_title(subplot_titles[i], size=8)
-    ax.set_ylim(bottom=0, top=5)
-
-plt.show()
-
-time_plot = time.time() - time_plot_start
-print('Time taken to plot: {:.4f}'.format(time_plot))

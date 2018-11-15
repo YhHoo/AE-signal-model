@@ -37,18 +37,10 @@ from collections import deque
 from itertools import islice
 
 
-l = [1, 2, 9, 3]
-m = ['a', 'b', 'c', 'd']
+l = np.array([[1, 3, 4], [4, 5, 6]]).T
 
-both = zip(l, m)
-both = sorted(both)
-
-ls = [x[0] for x in both]
-ms = [x[1] for x in both]
-print(ls)
-print(ms)
-
-print(both)
+df = pd.DataFrame(data=l, columns=['a', 'b'])
+print(df)
 
 # it = iter(l)
 # m = tuple(islice(it, 2, None))
