@@ -93,14 +93,37 @@ class AcousticEmissionDataSet_3_10_2018:
         print('File Read Time: {:.4f}s'.format(time.time() - time_start))
         print('LCP Dataset Dim: ', df_lcp.values.shape)
 
+        print('Reading --> ', self.non_lcp_dataset_filename)
+        df_non_lcp = pd.read_csv(self.non_lcp_dataset_filename)
+
+        print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+        print('non LCP Dataset Dim: ', df_non_lcp.values.shape)
+
         train_x, train_y, test_x, test_y = [], [], [], []
+
+        # for non LCP -------------------------------------------------------------------------------------------------
+        non_lcp_data = df_non_lcp.values[:, :-1]
+        if shuffle_b4_split:
+            non_lcp_data = non_lcp_data[np.random.permutation(len(non_lcp_data))]
+
+        label = [0] * len(non_lcp_data)
+
+        tr_x, te_x, tr_y, te_y = train_test_split(non_lcp_data,
+                                                  label,
+                                                  train_size=train_split,
+                                                  shuffle=True)
+
+        train_x.append(tr_x)
+        test_x.append(te_x)
+        train_y.append(tr_y)
+        test_y.append(te_y)
 
         # for -2 & 2m --------------------------------------------------------------------------------------------------
         mat_of_selected_ch = df_lcp.loc[df_lcp['channel'].isin([1, 2])].values[:, :-1]
         if shuffle_b4_split:
             mat_of_selected_ch = mat_of_selected_ch[np.random.permutation(len(mat_of_selected_ch))]
 
-        label = [0] * len(mat_of_selected_ch)
+        label = [1] * len(mat_of_selected_ch)
 
         tr_x, te_x, tr_y, te_y = train_test_split(mat_of_selected_ch,
                                                   label,
@@ -117,7 +140,7 @@ class AcousticEmissionDataSet_3_10_2018:
         if shuffle_b4_split:
             mat_of_selected_ch = mat_of_selected_ch[np.random.permutation(len(mat_of_selected_ch))]
 
-        label = [1] * len(mat_of_selected_ch)
+        label = [2] * len(mat_of_selected_ch)
 
         tr_x, te_x, tr_y, te_y = train_test_split(mat_of_selected_ch,
                                                   label,
@@ -136,7 +159,7 @@ class AcousticEmissionDataSet_3_10_2018:
             if shuffle_b4_split:
                 mat_of_selected_ch = mat_of_selected_ch[np.random.permutation(len(mat_of_selected_ch))]
 
-            label = [ch_no - 1] * len(mat_of_selected_ch)
+            label = [ch_no] * len(mat_of_selected_ch)
 
             tr_x, te_x, tr_y, te_y = train_test_split(mat_of_selected_ch,
                                                       label,
@@ -165,5 +188,6 @@ class AcousticEmissionDataSet_3_10_2018:
 # data = AcousticEmissionDataSet_3_10_2018(drive='F')
 # train_x, train_y, test_x, test_y = data.lcp_by_distance_dataset_multi_class()
 #
-# for i in test_y:
-#     print(i)
+#
+# print(test_y[:100])
+# print(test_y[-1000:])

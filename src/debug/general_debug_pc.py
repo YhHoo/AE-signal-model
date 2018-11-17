@@ -26,30 +26,59 @@ from sklearn.metrics import confusion_matrix
 # from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, dwt_smoothing, one_dim_xcor_1d_input
 from src.experiment_dataset.dataset_experiment_2018_10_3 import AcousticEmissionDataSet_3_10_2018
 import matplotlib.patches as mpatches
-from src.utils.helpers import *
+# from src.utils.helpers import *
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-ae_data = AcousticEmissionDataSet_3_10_2018(drive='F')
-train_x, train_y, test_x, test_y = ae_data.lcp_by_distance_dataset_multi_class(train_split=0.7)
+label_to_dist = {0: 'nonLCP',
+                 1: '2m',
+                 2: '4.5m',
+                 3: '5m',
+                 4: '8m',
+                 5: '10m'}
 
-train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
-test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
-train_y_cat = to_categorical(train_y, num_classes=5)
-test_y_cat = to_categorical(test_y, num_classes=5)
+print(label_to_dist[1])
 
-# loading best model saved
-lcp_best_model = load_model(model_name='LCP_Dist_Recog_1')
+# [WARNING] PLOTTING TAKES FOREVER TO PLOT -----------------------------------------------------------------------------
+# color_seq = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
+# color_label = ['-4.5m', '-2m', '2m', '5m', '8m', '10m']
+# color_dict = {0: 'r', 1: 'g', 2: 'b', 3: 'c', 4: 'm', 5: 'y'}
+# r_leg = mpatches.Patch(color='r', label=color_label[0])
+# g_leg = mpatches.Patch(color='g', label=color_label[1])
+# b_leg = mpatches.Patch(color='b', label=color_label[2])
+# c_leg = mpatches.Patch(color='c', label=color_label[3])
+# m_leg = mpatches.Patch(color='m', label=color_label[4])
+# y_leg = mpatches.Patch(color='y', label=color_label[5])
+#
+# figure_result = plt.figure(figsize=(5, 8))
+# figure_result.suptitle('Model prediction by 6k Sliding Window, Stride: {}'.format(window_stride),
+#                        fontweight="bold",
+#                        size=8)
+# figure_result.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
+# ax1 = figure_result.add_subplot(6, 1, 1)
+# ax1.set_title(color_label[0])
+# ax1.plot(n_channel_data[0])
+#
+# # label the result
+# for pred_index, pred in zip(window_index, prediction_all_ch[0]):
+#     ax1.axvline(pred_index, color=color_dict[pred])
+#
+# for plot_no, plot_label, raw_signal, prediction_per_ch in zip(np.arange(2, 7, 1),
+#                                                               color_label[1:],
+#                                                               n_channel_data[1:],
+#                                                               prediction_all_ch[1:]):
+#     ax2 = figure_result.add_subplot(6, 1, plot_no, sharex=ax1)
+#     ax2.set_title(plot_label)
+#     ax2.plot(raw_signal)
+#
+#     # label the result
+#     for pred_index, pred in zip(window_index, prediction_per_ch):
+#         ax1.axvline(pred_index, color=color_dict[pred])
+#
+#
+# plt.legend(handles=[r_leg, g_leg, b_leg, c_leg, m_leg, y_leg])
+# plt.show()
 
-# test with val data
-time_predict_start = time.time()
-prediction = lcp_best_model.predict(test_x_reshape)
-time_predict = time.time() - time_predict_start
-
-prediction_argmax = np.argmax(prediction, axis=1)
-actual_argmax = np.argmax(test_y_cat, axis=1)
-
-compute_recall_precision_multiclass(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1, 2, 3, 4])
 
 # r_leg = mpatches.Patch(color='r', label='The red data')
 # g_leg = mpatches.Patch(color='g', label='The green data')

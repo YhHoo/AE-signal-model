@@ -24,14 +24,14 @@ for iter_no in range(3):
     train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
     test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
 
-    train_y_cat = to_categorical(train_y, num_classes=5)
-    test_y_cat = to_categorical(test_y, num_classes=5)
+    train_y_cat = to_categorical(train_y, num_classes=6)
+    test_y_cat = to_categorical(test_y, num_classes=6)
 
     lcp_model = lcp_by_dist_recognition_multi_model_1()
     lcp_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['acc'])
 
     # saving best weight setting
-    logger = ModelLogger(model=lcp_model, model_name='LCP_Dist_Recog_1')
+    logger = ModelLogger(model=lcp_model, model_name='LCP_Dist_Recog_2_ITER{}'.format(iter_no))
     save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
     # start training
@@ -73,7 +73,7 @@ for iter_no in range(3):
     best_val_loss_index = np.argmin(history.history['val_loss'])
 
     # loading best model saved
-    lcp_best_model = load_model(model_name='LCP_Dist_Recog_1')
+    lcp_best_model = load_model(model_name='LCP_Dist_Recog_2_ITER{}'.format(iter_no))
 
     # test with val data
     time_predict_start = time.time()
@@ -106,6 +106,13 @@ for iter_no in range(3):
                                                                  total_epoch))
     print('Time taken to execute 1 sample: {}s'.format(time_predict / len(test_x_reshape)))
     print('Time taken to complete {} epoch: {:.4f}s'.format(total_epoch, time_train))
-    logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1, 2, 3, 4])
+    logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1, 2, 3, 4, 5])
 
+    print('\nDist and Labels')
+    print('[nonLCP] -> class_0')
+    print('[-2, 2m] -> class_1')
+    print('[-4.5m]  -> class_2')
+    print('[5m]     -> class_3')
+    print('[8m]     -> class_4')
+    print('[10m]    -> class_5')
     gc.collect()

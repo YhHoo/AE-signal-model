@@ -186,7 +186,7 @@ def lcp_by_dist_recognition_multi_model_1():
 
     # model.add(Dense(50, activation='relu'))
     model.add(Dense(10, activation='relu'))
-    model.add(Dense(5, activation='softmax'))
+    model.add(Dense(6, activation='softmax'))
 
     print(model.summary())
 
