@@ -190,7 +190,6 @@ for i in range(1, no_of_plot, 1):
         ax.plot(faulty_index_al_ch[i], np.zeros(len(faulty_index_al_ch[i])), c='r', marker='x', linestyle='None')
 
         # annotate the misclassified class
-        print('annotating')
         for fc, x in zip(false_class_al_ch[i], faulty_index_al_ch[i]):
             ax.annotate(label_to_dist[fc], (x, 0.2))
 
