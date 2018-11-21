@@ -8,11 +8,13 @@ from src.utils.helpers import *
 dataset_dir = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/'
 dataset_lcp_filename = dataset_dir + 'dataset_lcp_1bar_seg4.csv'
 dataset_non_lcp_filename = dataset_dir + 'dataset_non_lcp_1bar_seg1.csv'
-dataset_normalized_save_filename = direct_to_dir(where='result') + 'norm2.csv'
+dataset_leak_rand_filename = dataset_dir + 'dataset_leak_random_1bar.csv'
+dataset_noleak_rand_filename = dataset_dir + 'dataset_noleak_random_2bar.csv'
+dataset_normalized_save_filename = direct_to_dir(where='result') + 'dataset_noleak_random_2bar_norm.csv'
 
 # change the filename to the one we wish to norm
-print('Reading --> ', dataset_non_lcp_filename)
-df_data = pd.read_csv(dataset_non_lcp_filename)
+print('Reading --> ', dataset_noleak_rand_filename)
+df_data = pd.read_csv(dataset_noleak_rand_filename)
 column_label = df_data.columns.values
 
 # print(df_data)
@@ -29,7 +31,7 @@ data_arr = df_data.values[:, :-1]
 label_arr = df_data.values[:, -1].reshape(-1, 1)
 
 temp = []
-scaler = MinMaxScaler(feature_range=(0, 1))
+scaler = MinMaxScaler(feature_range=(-1, 1))  # ***
 
 for row in data_arr:
     temp.append(scaler.fit_transform(row.reshape(-1, 1)).ravel())

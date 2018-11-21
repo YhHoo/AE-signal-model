@@ -19,7 +19,7 @@ sess = tf.Session(config=config)
 # every iter, the train and test set will contain different combination of data because of the shuffle bfore split
 for iter_no in range(3):
     ae_data = AcousticEmissionDataSet_3_10_2018(drive='F')
-    train_x, train_y, test_x, test_y = ae_data.lcp_by_distance_dataset_multi_class(train_split=0.7)
+    train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_by_dist_dataset_multiclass(train_split=0.7)
 
     train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
     test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))

@@ -37,7 +37,31 @@ label_to_dist = {0: 'nonLCP',
                  4: '8m',
                  5: '10m'}
 
-print(label_to_dist[1])
+lcp_dataset_filename = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/' \
+                       'dataset_lcp_1bar_seg4_norm.csv'
+non_lcp_dataset_filename = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/' \
+                           'dataset_non_lcp_1bar_seg1_norm.csv'
+
+random_leak_dataset_filename = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/' \
+                               'dataset_leak_random_1bar_norm.csv'
+random_noleak_dataset_filename = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/' \
+                               'dataset_noleak_random_2bar_norm.csv'
+
+# reading lcp data fr csv
+time_start = time.time()
+print('Reading --> ', lcp_dataset_filename)
+df_leak_rand = pd.read_csv(lcp_dataset_filename)
+
+print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+print('Random Leak Dataset Dim: ', df_leak_rand.values.shape)
+
+print(df_leak_rand.head(100))
+
+# print('Reading --> ', random_noleak_dataset_filename)
+# df_noleak_rand = pd.read_csv(random_noleak_dataset_filename)
+#
+# print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+# print('Random no leak Dataset Dim: ', df_noleak_rand.values.shape)
 
 # [WARNING] PLOTTING TAKES FOREVER TO PLOT -----------------------------------------------------------------------------
 # color_seq = ['r', 'g', 'b', 'c', 'm', 'y', 'k']

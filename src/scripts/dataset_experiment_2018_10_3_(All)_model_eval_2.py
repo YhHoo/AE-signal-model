@@ -40,7 +40,7 @@ print('Window Index: ', window_index)
 
 # LOADING AND EXECUTE MODEL --------------------------------------------------------------------------------------------
 
-lcp_model = load_model(model_name='LCP_Dist_Recog_2')
+lcp_model = load_model(model_name='LCP_Dist_Recog_2x')
 lcp_model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
 
