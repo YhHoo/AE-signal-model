@@ -1,7 +1,7 @@
 '''
 THIS SCRIPT IS TO FEED THE LCP RECOGNITION MODEL WITH RAW AE DATA, AND SEE WHETHER IT WILL RECORGNIZE IT WELL. MODEL
 WILL SLIDE THROUGH ONE 5M POINT AE RAW DATA, USING A WINDOW, WITH A STRIDE.
-DATASET: LEAK DATA FROM F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/
+DATASET: NO LEAK DATA FR F:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/test1.tdms
 '''
 
 import gc
@@ -22,15 +22,16 @@ window_size = (1000, 5000)
 sample_size_for_prediction = 10000
 
 # SAVING CONFIG
-df_pred_save_filename = direct_to_dir(where='result') + 'pred_result_(leak)25301_test_0052.csv'
+df_pred_save_filename = direct_to_dir(where='result') + 'pred_result_(noleak)test1.csv'
 
 # file reading
-tdms_leak_filename = 'F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/25301_test_0052.tdms'
+tdms_noleak_filename = 'F:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/test1.tdms'
 
-n_channel_data = read_single_tdms(tdms_leak_filename)
+n_channel_data = read_single_tdms(tdms_noleak_filename)
 
-# use this for leak data because we eliminate ch @17m and ch7 to drop ch @ 20m and empty ch7
-n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-2]
+# use this for no leak data -4.5,-2,2,5,8,17,20,23/no_leak/ data
+n_channel_data = np.swapaxes(n_channel_data, 0, 1)
+n_channel_data = np.delete(n_channel_data, 6, axis=0)
 
 
 print('TDMS data dim: ', n_channel_data.shape)
@@ -109,9 +110,8 @@ prediction_all_ch = df_pred.values.T.tolist()
 # multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries()
 # config
 multiple_timeseries = prediction_all_ch
-main_title = 'Model prediction (2) by 6k Sliding Window, Stride: {}'.format(window_stride)
-subplot_titles = ['-4.5m', '-2m', '2m', '5m', '8m', '10m']
-
+main_title = 'Model prediction (3) by 6k Sliding Window, Stride: {}'.format(window_stride)
+subplot_titles = ['-4.5m', '-2m', '2m', '5m', '8m', '17m', '23m']
 
 # do the work
 time_plot_start = time.time()
@@ -144,7 +144,7 @@ print('Time taken to plot: {:.4f}'.format(time_plot))
 
 # layering misclassified position on raw ae ----------------------------------------------------------------------------
 # this is the correct label for each channels in AE data
-actual_class_per_ch = [2, 1, 1, 3, 4, 5]
+actual_class_per_ch = [0, 0, 0, 0, 0, 0, 0]
 label_to_dist = {0: 'nonLCP',
                  1: '2m',
                  2: '4.5m',
@@ -169,8 +169,7 @@ for pred_per_ch, actual in zip(prediction_all_ch, actual_class_per_ch):
 #     print(len(j))
 
 main_title = 'Model prediction by 6k Sliding Window, Stride: {}'.format(window_stride)
-subplot_titles = ['-4.5m', '-2m', '2m', '5m', '8m', '10m']
-
+subplot_titles = ['-4.5m', '-2m', '2m', '5m', '8m', '17m', '23m']
 raw_ae = n_channel_data
 # do the work
 time_plot_start = time.time()
