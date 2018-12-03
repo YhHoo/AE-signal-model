@@ -53,72 +53,79 @@ print('Window Index: ', window_index)
 
 # LOADING AND EXECUTE MODEL --------------------------------------------------------------------------------------------
 
-lcp_model = load_model(model_name='LCP_Dist_Recog_2x')
-lcp_model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
-print(lcp_model.summary())
-
-# creating index of sliding windows [index-1000, index+5000]
-scaler = MinMaxScaler(feature_range=(-1, 1))
-
-prediction_all_ch = []
-# for all channels
-for ch_no in range(total_ch):
-    temp, model_pred = [], []
-    pb = ProgressBarForLoop(title='Iterating all Samples in ch[{}]'.format(ch_no), end=len(window_index))
-    progress = 0
-    for index in window_index:
-        pb.update(now=progress)
-        data = n_channel_data[ch_no, (index - window_size[0]):(index + window_size[1])]
-        data_norm = scaler.fit_transform(data.reshape(-1, 1)).ravel()
-        temp.append(data_norm)
-
-        # detect for last entry
-        if progress < (len(window_index) - 1):
-
-            if len(temp) < sample_size_for_prediction:
-                progress += 1
-                continue
-            else:
-                progress += 1
-                # print('temp full !')
-
-        # do tis when temp is full
-        # reshape
-        temp = np.array(temp)
-        temp = temp.reshape((temp.shape[0], temp.shape[1], 1))
-        # print(temp.shape)
-        time_predict_start = time.time()
-        prediction = np.argmax(lcp_model.predict(temp), axis=1)
-
-        # # estimation of dist using all class posterior probability
-        # estimation = []
-        # for p in lcp_model.predict(temp):
-        #     estimation.append(p[0]*0 + p[1]*2 + p[2]*4.5 + p[3]*5 + p[4]*8 + p[5]*10)
-
-        time_predict = time.time() - time_predict_start
-        model_pred.append(prediction)
-        # reset temp
-        temp = []
-        # free up memory
-        gc.collect()
-
-    pb.destroy()
-    model_pred = np.concatenate(model_pred, axis=0)
-    print('Model Prediction Dim: ', model_pred.shape)
-
-    prediction_all_ch.append(model_pred)
-
-prediction_all_ch = np.array(prediction_all_ch).T
-df_pred = pd.DataFrame(data=prediction_all_ch,
-                       columns=['ch0[3m]', 'ch1[2m]', 'ch2[2m]', 'ch3[4m]', 'ch4[6m]', 'ch5[8m]', 'ch6[10m]'])
-df_pred.to_csv(df_pred_save_filename)
-print('Saved --> ', df_pred_save_filename)
+# lcp_model = load_model(model_name='LCP_Dist_Recog_2x')
+# lcp_model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
+# print(lcp_model.summary())
+#
+# # creating index of sliding windows [index-1000, index+5000]
+# scaler = MinMaxScaler(feature_range=(-1, 1))
+#
+# prediction_all_ch = []
+# # for all channels
+# for ch_no in range(total_ch):
+#     temp, model_pred = [], []
+#     pb = ProgressBarForLoop(title='Iterating all Samples in ch[{}]'.format(ch_no), end=len(window_index))
+#     progress = 0
+#     for index in window_index:
+#         pb.update(now=progress)
+#         data = n_channel_data[ch_no, (index - window_size[0]):(index + window_size[1])]
+#         data_norm = scaler.fit_transform(data.reshape(-1, 1)).ravel()
+#         temp.append(data_norm)
+#
+#         # detect for last entry
+#         if progress < (len(window_index) - 1):
+#
+#             if len(temp) < sample_size_for_prediction:
+#                 progress += 1
+#                 continue
+#             else:
+#                 progress += 1
+#                 # print('temp full !')
+#
+#         # do tis when temp is full
+#         # reshape
+#         temp = np.array(temp)
+#         temp = temp.reshape((temp.shape[0], temp.shape[1], 1))
+#         # print(temp.shape)
+#         time_predict_start = time.time()
+#         prediction = np.argmax(lcp_model.predict(temp), axis=1)
+#
+#         # # estimation of dist using all class posterior probability
+#         # estimation = []
+#         # for p in lcp_model.predict(temp):
+#         #     estimation.append(p[0]*0 + p[1]*2 + p[2]*4.5 + p[3]*5 + p[4]*8 + p[5]*10)
+#
+#         time_predict = time.time() - time_predict_start
+#         model_pred.append(prediction)
+#         # reset temp
+#         temp = []
+#         # free up memory
+#         gc.collect()
+#
+#     pb.destroy()
+#     model_pred = np.concatenate(model_pred, axis=0)
+#     print('Model Prediction Dim: ', model_pred.shape)
+#
+#     prediction_all_ch.append(model_pred)
+#
+# prediction_all_ch = np.array(prediction_all_ch).T
+# df_pred = pd.DataFrame(data=prediction_all_ch,
+#                        columns=['ch0[3m]', 'ch1[2m]', 'ch2[2m]', 'ch3[4m]', 'ch4[6m]', 'ch5[8m]', 'ch6[10m]'])
+# df_pred.to_csv(df_pred_save_filename)
+# print('Saved --> ', df_pred_save_filename)
 
 # RESULT VISUALIZATION -------------------------------------------------------------------------------------------------
 print('Reading --> ', df_pred_save_filename)
 df_pred = pd.read_csv(df_pred_save_filename, index_col=0)
 
 prediction_all_ch = df_pred.values.T.tolist()
+
+# create dict for classes
+
+
+# plot confusion matrix
+for channel in prediction_all_ch:
+
 
 # multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries()
 # config
