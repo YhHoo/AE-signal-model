@@ -37,27 +37,102 @@ from collections import deque
 from itertools import islice
 
 
-unseen_data_filename = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0017.tdms'
-train_data_filename = 'E:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/test1_0017.tdms'
-train_data_filename_2 = 'E:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/test1_0040.tdms'
-unseen_data = read_single_tdms(unseen_data_filename)
-unseen_data = np.swapaxes(unseen_data, 0, 1)
-train_data = read_single_tdms(train_data_filename)
-train_data = np.swapaxes(train_data, 0, 1)
+pred = [0, 0, 0, 1, 1, 1, 2, 1, 1]
+actual = [0, 0, 0, 1, 1, 1, 2, 2, 2]
 
-# normalize
-scaler = MinMaxScaler(feature_range=(-1, 1))
-signal_1 = scaler.fit_transform(unseen_data[1].reshape(-1, 1)).ravel()
-signal_2 = scaler.fit_transform(train_data[1].reshape(-1, 1)).ravel()
+# conf_mat = confusion_matrix(y_true=actual, y_pred=pred)
+conf_mat = np.array([[3, 0, 0],
+                     [0, 3, 0],
+                     [0, 2, 1],
+                     [0, 1, 1]])
 
-f_mag_unseen, _, f_axis = fft_scipy(sampled_data=signal_1, fs=int(1e6), visualize=False)
-f_mag_train, _, _ = fft_scipy(sampled_data=signal_2, fs=int(1e6), visualize=False)
 
-plt.plot(f_axis, f_mag_unseen, color='b', alpha=0.5, label='signal 1')
-plt.plot(f_axis, f_mag_train, color='r', alpha=0.5, label='signal 2')
-plt.grid('on')
-plt.legend()
+# plot confusion matrix
+def plot_confusion_matrix(cm, col_label, row_label,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    col_label and row_label starts from top left of the matrix
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    fig = plt.figure()
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks_col = np.arange(len(col_label))
+    tick_marks_row = np.arange(len(row_label))
+    plt.xticks(tick_marks_col, col_label, rotation=45)
+    plt.yticks(tick_marks_row, row_label)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    plt.tight_layout()
+
+    return fig
+
+
+fig = plot_confusion_matrix(cm=conf_mat, col_label=['a', 'b', 'c'], row_label=['w', 'x', 'y', 'z'])
+
 plt.show()
+
+# array = [[33,2,0,0,0,0,0,0,0,1,3],
+#         [3,31,0,0,0,0,0,0,0,0,0],
+#         [0,4,41,0,0,0,0,0,0,0,1],
+#         [0,1,0,30,0,6,0,0,0,0,1],
+#         [0,0,0,0,38,10,0,0,0,0,0],
+#         [0,0,0,3,1,39,0,0,0,0,4],
+#         [0,2,2,0,4,1,31,0,0,0,2],
+#         [0,1,0,0,0,0,0,36,0,2,0],
+#         [0,0,0,0,0,0,1,5,37,5,1],
+#         [3,0,0,0,0,0,0,0,0,39,0],
+#         [0,0,0,0,0,0,0,0,0,0,38]]
+# df_cm = pd.DataFrame(array, index = [i for i in "ABCDEFGHIJK"],
+#                      columns = [i for i in "ABCDEFGHIJK"])
+#
+# conf_mat, recall_each_class, precision_each_class, f1_score = compute_recall_precision_multiclass(y_true=,
+#                                                                                                   y_pred=,
+#                                                                                                   all_class_label=,
+#                                                                                                   verbose=True)
+
+
+# unseen_data_filename = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0017.tdms'
+# train_data_filename = 'E:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/test1_0017.tdms'
+# train_data_filename_2 = 'E:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/test1_0040.tdms'
+# unseen_data = read_single_tdms(unseen_data_filename)
+# unseen_data = np.swapaxes(unseen_data, 0, 1)
+# train_data = read_single_tdms(train_data_filename)
+# train_data = np.swapaxes(train_data, 0, 1)
+#
+# # normalize
+# scaler = MinMaxScaler(feature_range=(-1, 1))
+# signal_1 = scaler.fit_transform(unseen_data[1].reshape(-1, 1)).ravel()
+# signal_2 = scaler.fit_transform(train_data[1].reshape(-1, 1)).ravel()
+#
+# f_mag_unseen, _, f_axis = fft_scipy(sampled_data=signal_1, fs=int(1e6), visualize=False)
+# f_mag_train, _, _ = fft_scipy(sampled_data=signal_2, fs=int(1e6), visualize=False)
+#
+# plt.plot(f_axis, f_mag_unseen, color='b', alpha=0.5, label='signal 1')
+# plt.plot(f_axis, f_mag_train, color='r', alpha=0.5, label='signal 2')
+# plt.grid('on')
+# plt.legend()
+# plt.show()
 
 
 # result = tuple(islice(it, 2))
