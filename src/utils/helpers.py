@@ -14,8 +14,8 @@ from nptdms import TdmsFile
 from os import listdir
 from matplotlib import cm
 from matplotlib.widgets import Button
+import itertools
 from itertools import islice
-import sys
 from vispy import app, visuals, scene
 # self lib
 from src.utils.dsp_tools import fft_scipy
@@ -1270,6 +1270,46 @@ def compute_recall_precision_multiclass(y_true, y_pred, all_class_label, verbose
         print('Overall F1-score: ', f1_score)
 
     return conf_mat, recall_each_class, precision_each_class, f1_score
+
+
+# plot confusion matrix
+def plot_confusion_matrix(cm, col_label, row_label,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    col_label and row_label starts from top left of the matrix
+    Normalization can be applied by setting `normalize=True`.
+    """
+    fig = plt.figure()
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks_col = np.arange(len(col_label))
+    tick_marks_row = np.arange(len(row_label))
+    plt.xticks(tick_marks_col, col_label, rotation=45)
+    plt.yticks(tick_marks_row, row_label)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    plt.tight_layout()
+
+    return fig
 
 
 def get_activations(model, model_inputs, print_shape_only=False, layer_name=None):

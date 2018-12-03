@@ -37,14 +37,27 @@ from collections import deque
 from itertools import islice
 
 
-pred = [0, 0, 0, 1, 1, 1, 2, 1, 1]
-actual = [0, 0, 0, 1, 1, 1, 2, 2, 2]
+test_filename = 'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/' \
+                'LCP Dataset recognition result/LCP Dist recog multi/pred_result_(leak)12709_test_0010_RUN3.csv'
 
-# conf_mat = confusion_matrix(y_true=actual, y_pred=pred)
-conf_mat = np.array([[3, 0, 0],
-                     [0, 3, 0],
-                     [0, 2, 1],
-                     [0, 1, 1]])
+print('Reading --> ', test_filename)
+df_pred = pd.read_csv(test_filename, index_col=0)
+print(df_pred.head())
+
+conf_mat = []
+# for all channel
+for ch in range(6):
+    selected_channel = df_pred['ch{}'.format(ch)]
+
+    label_count_per_ch = []
+    # count for all labels
+    for label in range(6):
+        prediction = selected_channel.values.tolist()
+        label_count_per_ch.append(prediction.count(label))
+
+    conf_mat.append(label_count_per_ch)
+
+conf_mat = np.array(conf_mat).T
 
 
 # plot confusion matrix
@@ -54,7 +67,6 @@ def plot_confusion_matrix(cm, col_label, row_label,
                           cmap=plt.cm.Blues):
     """
     col_label and row_label starts from top left of the matrix
-    This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
     """
     fig = plt.figure()
@@ -88,28 +100,22 @@ def plot_confusion_matrix(cm, col_label, row_label,
     return fig
 
 
-fig = plot_confusion_matrix(cm=conf_mat, col_label=['a', 'b', 'c'], row_label=['w', 'x', 'y', 'z'])
+fig = plot_confusion_matrix(cm=conf_mat,
+                            col_label=['sensor@[-4.5m]',
+                                       'sensor@[-2m]',
+                                       'sensor@[2m]',
+                                       'sensor@[5m]',
+                                       'sensor@[8m]',
+                                       'sensor@[10m]'],
+                            row_label=['No Leak',
+                                       'Leak@[2m]',
+                                       'Leak@[4.5m]',
+                                       'Leak@[5m]',
+                                       'Leak@[8m]',
+                                       'Leak@[10m]'])
 
 plt.show()
 
-# array = [[33,2,0,0,0,0,0,0,0,1,3],
-#         [3,31,0,0,0,0,0,0,0,0,0],
-#         [0,4,41,0,0,0,0,0,0,0,1],
-#         [0,1,0,30,0,6,0,0,0,0,1],
-#         [0,0,0,0,38,10,0,0,0,0,0],
-#         [0,0,0,3,1,39,0,0,0,0,4],
-#         [0,2,2,0,4,1,31,0,0,0,2],
-#         [0,1,0,0,0,0,0,36,0,2,0],
-#         [0,0,0,0,0,0,1,5,37,5,1],
-#         [3,0,0,0,0,0,0,0,0,39,0],
-#         [0,0,0,0,0,0,0,0,0,0,38]]
-# df_cm = pd.DataFrame(array, index = [i for i in "ABCDEFGHIJK"],
-#                      columns = [i for i in "ABCDEFGHIJK"])
-#
-# conf_mat, recall_each_class, precision_each_class, f1_score = compute_recall_precision_multiclass(y_true=,
-#                                                                                                   y_pred=,
-#                                                                                                   all_class_label=,
-#                                                                                                   verbose=True)
 
 
 # unseen_data_filename = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0017.tdms'

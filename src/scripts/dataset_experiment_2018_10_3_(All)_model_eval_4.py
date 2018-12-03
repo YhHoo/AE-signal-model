@@ -112,12 +112,45 @@ prediction_all_ch = np.array(prediction_all_ch).T
 df_pred = pd.DataFrame(data=prediction_all_ch,
                        columns=['ch0[3m]', 'ch1[2m]', 'ch2[2m]', 'ch3[4m]', 'ch4[6m]', 'ch5[8m]', 'ch6[10m]'])
 df_pred.to_csv(df_pred_save_filename)
-print('Saved --> ', df_pred_save_filename)
+# print('Saved --> ', df_pred_save_filename)
 
 # RESULT VISUALIZATION -------------------------------------------------------------------------------------------------
 print('Reading --> ', df_pred_save_filename)
 df_pred = pd.read_csv(df_pred_save_filename, index_col=0)
+prediction_all_ch = df_pred.values.T.tolist()
 
+# confusion matrix plotting --------------------------------------------------------------------------------------------
+conf_mat = []
+
+# for all channel
+for ch in prediction_all_ch:
+    label_count_per_ch = []
+    # count for all labels
+    for label in range(6):
+        label_count_per_ch.append(ch.count(label))
+
+    conf_mat.append(label_count_per_ch)
+
+conf_mat = np.array(conf_mat).T
+
+fig = plot_confusion_matrix(cm=conf_mat,
+                            col_label=['sensor@[-4.5m]',
+                                       'sensor@[-2m]',
+                                       'sensor@[2m]',
+                                       'sensor@[5m]',
+                                       'sensor@[8m]',
+                                       'sensor@[10m]'],
+                            row_label=['No Leak',
+                                       'Leak@[2m]',
+                                       'Leak@[4.5m]',
+                                       'Leak@[5m]',
+                                       'Leak@[8m]',
+                                       'Leak@[10m]'])
+
+plt.show()
+
+
+# classification plot along raw AE -------------------------------------------------------------------------------------
 prediction_all_ch = df_pred.values.T.tolist()
 
 # multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries()
