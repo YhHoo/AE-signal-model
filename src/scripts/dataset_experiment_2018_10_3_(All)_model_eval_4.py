@@ -22,14 +22,15 @@ window_size = (1000, 5000)
 sample_size_for_prediction = 10000
 
 # SAVING CONFIG
-df_pred_save_filename = direct_to_dir(where='result') + 'pred_result_(noleak)1bar_near_test_0010.csv'
+df_pred_save_filename = direct_to_dir(where='result') + 'pred_result_(noleak)2bar_near_test_0020.csv'
 
 # file reading
 # near -3,-2,2,4,6,8,10,12
-noleak_1bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/No_Leak/test_0010.tdms'
+noleak_1bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/No_Leak/test_0020.tdms'
 leak_1bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/test_0010.tdms'
-noleak_2bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0010.tdms'
+noleak_2bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0020.tdms'
 leak_2bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/Leak/test_0010.tdms'
+
 # far -3,-2,10,14,16,18,20,22
 noleak_1bar_far = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/1 bar/No_Leak/'
 leak_1bar_far = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/1 bar/Leak/'
