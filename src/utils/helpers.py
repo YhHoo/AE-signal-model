@@ -1305,8 +1305,8 @@ def plot_confusion_matrix(cm, col_label, row_label,
                  horizontalalignment="center",
                  color="white" if cm[i, j] > thresh else "black")
 
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
+    plt.ylabel('Model Prediction')
+    plt.xlabel('Actual Location')
     plt.tight_layout()
 
     return fig

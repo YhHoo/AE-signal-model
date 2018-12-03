@@ -27,7 +27,7 @@ lcp_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=
 
 
 # saving best weight setting
-logger = ModelLogger(model=lcp_model, model_name='LCP_Dist_Recog_2x_ITER{}'.format(0))
+logger = ModelLogger(model=lcp_model, model_name='LCP_Dist_Recog_3_ITER{}'.format(0))  # *** chg name
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 
@@ -70,7 +70,7 @@ best_val_acc_index = np.argmax(history.history['val_acc'])
 best_val_loss_index = np.argmin(history.history['val_loss'])
 
 # loading best model saved
-lcp_best_model = load_model(model_name='LCP_Dist_Recog_2x_ITER{}'.format(0))
+lcp_best_model = load_model(model_name='LCP_Dist_Recog_3_ITER{}'.format(0))  # *** chg name
 
 # test with val data
 time_predict_start = time.time()

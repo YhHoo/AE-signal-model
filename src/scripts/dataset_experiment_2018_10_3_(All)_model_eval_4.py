@@ -121,26 +121,44 @@ prediction_all_ch = df_pred.values.T.tolist()
 
 # confusion matrix plotting --------------------------------------------------------------------------------------------
 conf_mat = []
-
+acc_per_ch = []
+actual_label = [(0, 3, 4), 0, 0, 0, 0, 0, 0]
 # for all channel
-for ch in prediction_all_ch:
+for ch, actual in zip(prediction_all_ch, actual_label):
+    acc = 0
     label_count_per_ch = []
     # count for all labels
     for label in range(6):
-        label_count_per_ch.append(ch.count(label))
-
+        count = ch.count(label)
+        label_count_per_ch.append(count)
+        # for actual class
+        if isinstance(actual, tuple):
+            if label in actual:
+                acc += count
+        else:
+            if label is actual:
+                acc += count
+    # calc each channel classification acc
+    acc_per_ch.append(acc / len(ch))
+    # record the class count
     conf_mat.append(label_count_per_ch)
 
 conf_mat = np.array(conf_mat).T
+col_label = ['sensor@[-3m]',
+             'sensor@[-2m]',
+             'sensor@[2m]',
+             'sensor@[4m]',
+             'sensor@[6m]',
+             'sensor@[8m]',
+             'sensor@[10m]']
+
+# merge col label with class accuracy
+col_label_w_acc = []
+for i, j in zip(col_label, acc_per_ch):
+    col_label_w_acc.append(i + '\nacc: {:.4f}'.format(j))
 
 fig = plot_confusion_matrix(cm=conf_mat,
-                            col_label=['sensor@[-3m]',
-                                       'sensor@[-2m]',
-                                       'sensor@[2m]',
-                                       'sensor@[4m]',
-                                       'sensor@[6m]',
-                                       'sensor@[8m]',
-                                       'sensor@[10m]'],
+                            col_label=col_label_w_acc,
                             row_label=['No Leak',
                                        'Leak@[2m]',
                                        'Leak@[4.5m]',
