@@ -52,7 +52,6 @@ print('Window Index Len: ', len(window_index))
 print('Window Index: ', window_index)
 
 # LOADING AND EXECUTE MODEL --------------------------------------------------------------------------------------------
-
 # lcp_model = load_model(model_name='LCP_Dist_Recog_2x')
 # lcp_model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 # print(lcp_model.summary())
@@ -112,21 +111,47 @@ print('Window Index: ', window_index)
 # df_pred = pd.DataFrame(data=prediction_all_ch,
 #                        columns=['ch0[3m]', 'ch1[2m]', 'ch2[2m]', 'ch3[4m]', 'ch4[6m]', 'ch5[8m]', 'ch6[10m]'])
 # df_pred.to_csv(df_pred_save_filename)
+#
 # print('Saved --> ', df_pred_save_filename)
 
 # RESULT VISUALIZATION -------------------------------------------------------------------------------------------------
 print('Reading --> ', df_pred_save_filename)
 df_pred = pd.read_csv(df_pred_save_filename, index_col=0)
-
 prediction_all_ch = df_pred.values.T.tolist()
 
-# create dict for classes
+# confusion matrix plotting --------------------------------------------------------------------------------------------
+conf_mat = []
+
+# for all channel
+for ch in prediction_all_ch:
+    label_count_per_ch = []
+    # count for all labels
+    for label in range(6):
+        label_count_per_ch.append(ch.count(label))
+
+    conf_mat.append(label_count_per_ch)
+
+conf_mat = np.array(conf_mat).T
+
+fig = plot_confusion_matrix(cm=conf_mat,
+                            col_label=['sensor@[-3m]',
+                                       'sensor@[-2m]',
+                                       'sensor@[2m]',
+                                       'sensor@[4m]',
+                                       'sensor@[6m]',
+                                       'sensor@[8m]',
+                                       'sensor@[10m]'],
+                            row_label=['No Leak',
+                                       'Leak@[2m]',
+                                       'Leak@[4.5m]',
+                                       'Leak@[5m]',
+                                       'Leak@[8m]',
+                                       'Leak@[10m]'])
+
+plt.show()
 
 
-# plot confusion matrix
-for channel in prediction_all_ch:
-
-
+# classification plot along raw AE -------------------------------------------------------------------------------------
 # multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries()
 # config
 multiple_timeseries = prediction_all_ch
