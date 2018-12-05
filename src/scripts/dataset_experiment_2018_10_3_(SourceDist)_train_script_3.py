@@ -27,12 +27,12 @@ lcp_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=
 
 
 # saving best weight setting
-logger = ModelLogger(model=lcp_model, model_name='LCP_Dist_Recog_3x_ITER{}'.format(0))  # *** chg name
+logger = ModelLogger(model=lcp_model, model_name='LCP_Dist_Recog_3x3'.format(0))  # *** chg name
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 
 # start training
-total_epoch = 1500
+total_epoch = 500
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,
@@ -61,7 +61,7 @@ ax_lr.legend()
 fig_lr_save_filename = direct_to_dir(where='result') + '{}.png'.format(lr_name)
 fig_lr.savefig(fig_lr_save_filename)
 
-# evaluate -------------------------------------------------------------------------------------------------------------
+# evaluate ---------------------------------------------------------------------------------------------------------
 # no of trainable parameter
 trainable_count = int(np.sum([K.count_params(p) for p in set(lcp_model.trainable_weights)]))
 
@@ -70,7 +70,7 @@ best_val_acc_index = np.argmax(history.history['val_acc'])
 best_val_loss_index = np.argmin(history.history['val_loss'])
 
 # loading best model saved
-lcp_best_model = load_model(model_name='LCP_Dist_Recog_3x_ITER{}'.format(0))  # *** chg name
+lcp_best_model = load_model(model_name='LCP_Dist_Recog_3x3'.format(0))  # *** chg name
 
 # test with val data
 time_predict_start = time.time()
@@ -93,7 +93,7 @@ fig_lr_save_filename = direct_to_dir(where='result') + '{}.png'.format(evaluate_
 fig_evaluate.savefig(fig_lr_save_filename)
 
 print('\n---------- EVALUATION RESULT RUN_{} -----------'.format(0))
-print('**Param in tuning --> [batch size = 250]')
+print('**Param in tuning --> [epoch = 500]')
 print('Model Trainable params: {}'.format(trainable_count))
 print('Best Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
                                                                best_val_acc_index,

@@ -22,7 +22,7 @@ window_size = (1000, 5000)
 sample_size_for_prediction = 10000
 
 # SAVING CONFIG
-df_pred_save_filename = direct_to_dir(where='result') + 'pred_result_(leak)25301_test_0052.csv'
+df_pred_save_filename = direct_to_dir(where='result') + 'pred_result_(leak)25301_test_0052_run6.csv'
 
 # file reading
 tdms_leak_filename = 'F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/25301_test_0052.tdms'
@@ -44,7 +44,7 @@ print('Window Index: ', window_index)
 
 # LOADING AND EXECUTE MODEL --------------------------------------------------------------------------------------------
 
-lcp_model = load_model(model_name='LCP_Dist_Recog_2x')
+lcp_model = load_model(model_name='LCP_Dist_Recog_3x')
 lcp_model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
 
@@ -106,6 +106,56 @@ df_pred = pd.read_csv(df_pred_save_filename, index_col=0)
 
 prediction_all_ch = df_pred.values.T.tolist()
 
+# confusion matrix plotting --------------------------------------------------------------------------------------------
+conf_mat = []
+acc_per_ch = []
+actual_label = [2, 1, 1, 3, 4, 5]
+# for all channel
+for ch, actual in zip(prediction_all_ch, actual_label):
+    acc = 0
+    label_count_per_ch = []
+    # count for all labels
+    for label in range(6):
+        count = ch.count(label)
+        label_count_per_ch.append(count)
+        # for actual class
+        if isinstance(actual, tuple):
+            if label in actual:
+                acc += count
+        else:
+            if label is actual:
+                acc += count
+    # calc each channel classification acc
+    acc_per_ch.append(acc / len(ch))
+    # record the class count
+    conf_mat.append(label_count_per_ch)
+
+conf_mat = np.array(conf_mat).T
+col_label = ['sensor@[-4.5m]',
+             'sensor@[-2m]',
+             'sensor@[2m]',
+             'sensor@[5m]',
+             'sensor@[8m]',
+             'sensor@[10m]']
+
+# merge col label with class accuracy
+col_label_w_acc = []
+for i, j in zip(col_label, acc_per_ch):
+    col_label_w_acc.append(i + '\nacc: {:.4f}'.format(j))
+
+fig = plot_confusion_matrix(cm=conf_mat,
+                            col_label=col_label_w_acc,
+                            row_label=['No Leak',
+                                       'Leak@[2m]',
+                                       'Leak@[4.5m]',
+                                       'Leak@[5m]',
+                                       'Leak@[8m]',
+                                       'Leak@[10m]'],
+                            title='confusion mat (2)')
+
+plt.show()
+
+# classification plot along raw AE -------------------------------------------------------------------------------------
 # multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries()
 # config
 multiple_timeseries = prediction_all_ch

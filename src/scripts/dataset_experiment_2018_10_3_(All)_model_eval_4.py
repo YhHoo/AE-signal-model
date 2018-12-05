@@ -122,7 +122,7 @@ prediction_all_ch = df_pred.values.T.tolist()
 # confusion matrix plotting --------------------------------------------------------------------------------------------
 conf_mat = []
 acc_per_ch = []
-actual_label = [(0, 3, 4), 0, 0, 0, 0, 0, 0]
+actual_label = [0, 0, 0, 0, 0, 0, 0]
 # for all channel
 for ch, actual in zip(prediction_all_ch, actual_label):
     acc = 0
