@@ -21,14 +21,11 @@ window_stride = 10
 window_size = (1000, 5000)
 sample_size_for_prediction = 10000
 
-# SAVING CONFIG
-df_pred_save_filename = direct_to_dir(where='result') + 'pred_result_(noleak)2bar_near_test_0020.csv'
-
 # file reading
 # near -3,-2,2,4,6,8,10,12
 noleak_1bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/No_Leak/test_0020.tdms'
 leak_1bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/test_0010.tdms'
-noleak_2bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0020.tdms'
+noleak_2bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0040.tdms'
 leak_2bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/Leak/test_0010.tdms'
 
 # far -3,-2,10,14,16,18,20,22
@@ -37,8 +34,22 @@ leak_1bar_far = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/1 
 noleak_2bar_far = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/2 bar/No_Leak/'
 leak_2bar_far = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/1 bar/Leak/'
 
+
+# saving naming
+model_name = 'LCP_Dist_Recog_3x3'  # *
+file_to_test = noleak_2bar_near  # *
+
+x = file_to_test.split(sep='/')[-4:]
+# discard the .tdms
+x = x[:3] + [x[-1].split(sep='.')[0]]
+
+filename_to_save = 'pred_result_[{}]_{}'.format(model_name, x)
+
+# SAVING CONFIG
+df_pred_save_filename = direct_to_dir(where='result') + filename_to_save + '.csv'
+
 # test for near
-n_channel_data = read_single_tdms(noleak_2bar_near)
+n_channel_data = read_single_tdms(file_to_test)
 n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1]  # drop ch@12m
 print('TDMS data dim: ', n_channel_data.shape)
 total_len = n_channel_data.shape[1]
@@ -52,67 +63,67 @@ print('Window Index Len: ', len(window_index))
 print('Window Index: ', window_index)
 
 # LOADING AND EXECUTE MODEL --------------------------------------------------------------------------------------------
-# lcp_model = load_model(model_name='LCP_Dist_Recog_2x')
-# lcp_model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
-# print(lcp_model.summary())
-#
-# # creating index of sliding windows [index-1000, index+5000]
-# scaler = MinMaxScaler(feature_range=(-1, 1))
-#
-# prediction_all_ch = []
-# # for all channels
-# for ch_no in range(total_ch):
-#     temp, model_pred = [], []
-#     pb = ProgressBarForLoop(title='Iterating all Samples in ch[{}]'.format(ch_no), end=len(window_index))
-#     progress = 0
-#     for index in window_index:
-#         pb.update(now=progress)
-#         data = n_channel_data[ch_no, (index - window_size[0]):(index + window_size[1])]
-#         data_norm = scaler.fit_transform(data.reshape(-1, 1)).ravel()
-#         temp.append(data_norm)
-#
-#         # detect for last entry
-#         if progress < (len(window_index) - 1):
-#
-#             if len(temp) < sample_size_for_prediction:
-#                 progress += 1
-#                 continue
-#             else:
-#                 progress += 1
-#                 # print('temp full !')
-#
-#         # do tis when temp is full
-#         # reshape
-#         temp = np.array(temp)
-#         temp = temp.reshape((temp.shape[0], temp.shape[1], 1))
-#         # print(temp.shape)
-#         time_predict_start = time.time()
-#         prediction = np.argmax(lcp_model.predict(temp), axis=1)
-#
-#         # # estimation of dist using all class posterior probability
-#         # estimation = []
-#         # for p in lcp_model.predict(temp):
-#         #     estimation.append(p[0]*0 + p[1]*2 + p[2]*4.5 + p[3]*5 + p[4]*8 + p[5]*10)
-#
-#         time_predict = time.time() - time_predict_start
-#         model_pred.append(prediction)
-#         # reset temp
-#         temp = []
-#         # free up memory
-#         gc.collect()
-#
-#     pb.destroy()
-#     model_pred = np.concatenate(model_pred, axis=0)
-#     print('Model Prediction Dim: ', model_pred.shape)
-#
-#     prediction_all_ch.append(model_pred)
-#
-# prediction_all_ch = np.array(prediction_all_ch).T
-# df_pred = pd.DataFrame(data=prediction_all_ch,
-#                        columns=['ch0[3m]', 'ch1[2m]', 'ch2[2m]', 'ch3[4m]', 'ch4[6m]', 'ch5[8m]', 'ch6[10m]'])
-# df_pred.to_csv(df_pred_save_filename)
-#
-# print('Saved --> ', df_pred_save_filename)
+lcp_model = load_model(model_name=model_name)
+lcp_model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
+print(lcp_model.summary())
+
+# creating index of sliding windows [index-1000, index+5000]
+scaler = MinMaxScaler(feature_range=(-1, 1))
+
+prediction_all_ch = []
+# for all channels
+for ch_no in range(total_ch):
+    temp, model_pred = [], []
+    pb = ProgressBarForLoop(title='Iterating all Samples in ch[{}]'.format(ch_no), end=len(window_index))
+    progress = 0
+    for index in window_index:
+        pb.update(now=progress)
+        data = n_channel_data[ch_no, (index - window_size[0]):(index + window_size[1])]
+        data_norm = scaler.fit_transform(data.reshape(-1, 1)).ravel()
+        temp.append(data_norm)
+
+        # detect for last entry
+        if progress < (len(window_index) - 1):
+
+            if len(temp) < sample_size_for_prediction:
+                progress += 1
+                continue
+            else:
+                progress += 1
+                # print('temp full !')
+
+        # do tis when temp is full
+        # reshape
+        temp = np.array(temp)
+        temp = temp.reshape((temp.shape[0], temp.shape[1], 1))
+        # print(temp.shape)
+        time_predict_start = time.time()
+        prediction = np.argmax(lcp_model.predict(temp), axis=1)
+
+        # # estimation of dist using all class posterior probability
+        # estimation = []
+        # for p in lcp_model.predict(temp):
+        #     estimation.append(p[0]*0 + p[1]*2 + p[2]*4.5 + p[3]*5 + p[4]*8 + p[5]*10)
+
+        time_predict = time.time() - time_predict_start
+        model_pred.append(prediction)
+        # reset temp
+        temp = []
+        # free up memory
+        gc.collect()
+
+    pb.destroy()
+    model_pred = np.concatenate(model_pred, axis=0)
+    print('Model Prediction Dim: ', model_pred.shape)
+
+    prediction_all_ch.append(model_pred)
+
+prediction_all_ch = np.array(prediction_all_ch).T
+df_pred = pd.DataFrame(data=prediction_all_ch,
+                       columns=['ch0[3m]', 'ch1[2m]', 'ch2[2m]', 'ch3[4m]', 'ch4[6m]', 'ch5[8m]', 'ch6[10m]'])
+df_pred.to_csv(df_pred_save_filename)
+
+print('Saved --> ', df_pred_save_filename)
 
 # RESULT VISUALIZATION -------------------------------------------------------------------------------------------------
 print('Reading --> ', df_pred_save_filename)
@@ -164,7 +175,8 @@ fig = plot_confusion_matrix(cm=conf_mat,
                                        'Leak@[4.5m]',
                                        'Leak@[5m]',
                                        'Leak@[8m]',
-                                       'Leak@[10m]'])
+                                       'Leak@[10m]'],
+                            title='confusion mat (4.3)')
 
 plt.show()
 
