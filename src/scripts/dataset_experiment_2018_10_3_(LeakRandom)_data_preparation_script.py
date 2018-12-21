@@ -6,12 +6,13 @@ from src.utils.helpers import *
 # CONFIG
 window_len = 6000
 shuffle_tdms_seq = True
-random_dataset_save_filename = direct_to_dir(where='result') + 'dataset_noleak_random_2bar.csv'
+random_dataset_save_filename = direct_to_dir(where='result') + 'dataset_leak_random_1bar_2.csv'
 
 # all file name
-# tdms_dir = 'F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
-tdms_dir = 'F:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/'  # discard faulty ch 20m
+tdms_dir = 'F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
+# tdms_dir = 'F:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/'  # discard faulty ch 20m
 all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
+print(len(all_tdms_file))
 
 # shuffle
 if shuffle_tdms_seq:

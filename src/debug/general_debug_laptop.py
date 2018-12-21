@@ -36,87 +36,17 @@ from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recogniti
 from collections import deque
 from itertools import islice
 
-
-test_filename = 'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/' \
-                'LCP Dataset recognition result/LCP Dist recog multi/pred_result_(leak)12709_test_0010_RUN3.csv'
-
-print('Reading --> ', test_filename)
-df_pred = pd.read_csv(test_filename, index_col=0)
-print(df_pred.head())
-
-conf_mat = []
-# for all channel
-for ch in range(6):
-    selected_channel = df_pred['ch{}'.format(ch)]
-
-    label_count_per_ch = []
-    # count for all labels
-    for label in range(6):
-        prediction = selected_channel.values.tolist()
-        label_count_per_ch.append(prediction.count(label))
-
-    conf_mat.append(label_count_per_ch)
-
-conf_mat = np.array(conf_mat).T
+noleak_2bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0040.tdms'
 
 
-# plot confusion matrix
-def plot_confusion_matrix(cm, col_label, row_label,
-                          normalize=False,
-                          title='Confusion matrix',
-                          cmap=plt.cm.Blues):
-    """
-    col_label and row_label starts from top left of the matrix
-    Normalization can be applied by setting `normalize=True`.
-    """
-    fig = plt.figure()
-    if normalize:
-        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
-    else:
-        print('Confusion matrix, without normalization')
+model_name = 'LCP_Dist_Recog_3'
+file_to_test = noleak_2bar_near
+x = file_to_test.split(sep='/')[-4:]
+# discard the .tdms
+x = x[:3] + [x[-1].split(sep='.')[0]]
 
-    print(cm)
-
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title)
-    plt.colorbar()
-    tick_marks_col = np.arange(len(col_label))
-    tick_marks_row = np.arange(len(row_label))
-    plt.xticks(tick_marks_col, col_label, rotation=45)
-    plt.yticks(tick_marks_row, row_label)
-
-    fmt = '.2f' if normalize else 'd'
-    thresh = cm.max() / 2.
-    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        plt.text(j, i, format(cm[i, j], fmt),
-                 horizontalalignment="center",
-                 color="white" if cm[i, j] > thresh else "black")
-
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
-    plt.tight_layout()
-
-    return fig
-
-
-fig = plot_confusion_matrix(cm=conf_mat,
-                            col_label=['sensor@[-4.5m]',
-                                       'sensor@[-2m]',
-                                       'sensor@[2m]',
-                                       'sensor@[5m]',
-                                       'sensor@[8m]',
-                                       'sensor@[10m]'],
-                            row_label=['No Leak',
-                                       'Leak@[2m]',
-                                       'Leak@[4.5m]',
-                                       'Leak@[5m]',
-                                       'Leak@[8m]',
-                                       'Leak@[10m]'])
-
-plt.show()
-
-
+filename = 'pred_result_[{}]_{}'.format(model_name, x)
+print(filename)
 
 # unseen_data_filename = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0017.tdms'
 # train_data_filename = 'E:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/test1_0017.tdms'
