@@ -27,9 +27,9 @@ with open(random_dataset_save_filename, 'w', newline='') as f:
     writer.writerow(header)
 
 for tdms_file in all_tdms_file:
+    print('Extracting --> ', tdms_file)
     n_channel_data = read_single_tdms(tdms_file)
     n_channel_data = np.swapaxes(n_channel_data, 0, 1)
-    print('Extracting --> ', tdms_file)
 
     # put this line for -4.5,-2,2,5,8,17,20,23/no_leak/ data, this drop ch @ 20m
     n_channel_data = np.delete(n_channel_data, 6, axis=0)
