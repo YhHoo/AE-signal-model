@@ -26,16 +26,14 @@ from sklearn.metrics import confusion_matrix
 # from src.utils.dsp_tools import spectrogram_scipy, one_dim_xcor_2d_input, dwt_smoothing, one_dim_xcor_1d_input
 from src.experiment_dataset.dataset_experiment_2018_10_3 import AcousticEmissionDataSet_3_10_2018
 import matplotlib.patches as mpatches
-# from src.utils.helpers import *
+from src.utils.helpers import *
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-l = ['a', 'b', 'c']
-m = ['12', '8', '15']
-n = []
-for i, j in zip(l, m):
-    n.append(i + '\n' + j)
-
-print(n)
+# change the filename to the one we wish to norm
+dataset_noleak_rand_filename = direct_to_dir(where='result') + 'dataset_leak_random_1bar_2.csv'
+print('Reading --> ', dataset_noleak_rand_filename)
+df_data = pd.read_csv(dataset_noleak_rand_filename)
+print(df_data.values.shape)
 
 # label_to_dist = {0: 'nonLCP',
 #                  1: '2m',

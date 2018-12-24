@@ -18,7 +18,7 @@ class AcousticEmissionDataSet_3_10_2018:
         self.non_lcp_dataset_filename = self.drive + 'Experiment_3_10_2018/LCP x NonLCP DATASET/' \
                                                      'dataset_non_lcp_1bar_seg1_norm.csv'
         self.random_leak_dataset_filename = self.drive + 'Experiment_3_10_2018/LCP x NonLCP DATASET/' \
-                                                         'dataset_leak_random_1bar_norm.csv'
+                                                         'dataset_leak_random_1bar_3_norm.csv'
         self.random_noleak_dataset_filename = self.drive + 'Experiment_3_10_2018/LCP x NonLCP DATASET/' \
                                                            'dataset_noleak_random_2bar_norm.csv'
 

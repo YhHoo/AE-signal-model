@@ -7,38 +7,57 @@ from src.utils.helpers import *
 
 
 dataset_dir = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/'
-dataset_lcp_filename = dataset_dir + 'dataset_lcp_1bar_seg4.csv'
-dataset_non_lcp_filename = dataset_dir + 'dataset_non_lcp_1bar_seg_1.csv'
+dataset_to_visualize = dataset_dir + 'dataset_leak_random_1bar_3.csv'
 
-print('Reading --> ', dataset_non_lcp_filename)
-lcp_df = pd.read_csv(dataset_non_lcp_filename)
-print(lcp_df.head())
-print(lcp_df.values.shape)
+input_data_labels = ['sensor@[-4.5m]',  # the channels' dist of the input data
+                     'sensor@[-2m]',
+                     'sensor@[2m]',
+                     'sensor@[5m]',
+                     'sensor@[8m]',
+                     'sensor@[10m]']
+
+print('Reading --> ', dataset_to_visualize)
+data_df = pd.read_csv(dataset_to_visualize)
+print(data_df.head())
+print(data_df.values.shape)
 
 scaler = MinMaxScaler(feature_range=(-1, 1))
 
 for ch in range(0, 6, 1):
-    lcp_selected_ch_df = lcp_df[lcp_df['channel'] == ch]
-    temp_arr = lcp_selected_ch_df.values[:, :-1]
+    selected_ch_df = data_df[data_df['channel'] == ch]
+    print('ch_{} sample size: {}'.format(ch, len(selected_ch_df.values)))
+    temp_arr = selected_ch_df.values[:, :-1]
     # random selection
     rand_index = np.random.permutation(len(temp_arr))
-    rand_lcp_to_plot = temp_arr[rand_index[:16]]
+    rand_sample_to_plot = temp_arr[rand_index[:16]]
 
-    fig_lcp = plt.figure(figsize=(14, 8))
-    fig_lcp.subplots_adjust(left=0.09, right=0.93, bottom=0.07, top=0.91, hspace=0.37)
-    fig_lcp.suptitle('Non LCP CH{}_normalized RANDOM'.format(ch), fontweight='bold')
+    # finding FFT of 5 samples
+    fig_fft = plt.figure(figsize=(14, 8))
+    fig_fft.suptitle('FFT_{}_[{}]'.format(dataset_to_visualize, input_data_labels[ch]), fontweight='bold')
+    ax_fft = fig_fft.add_subplot(1, 1, 1)
+    ax_fft.grid('on')
+    for sample in rand_sample_to_plot[:10]:
+        f_mag_unseen, _, f_axis = fft_scipy(sampled_data=sample, fs=int(1e6), visualize=False)
+        ax_fft.plot(f_axis[10:], f_mag_unseen[10:], alpha=0.5)
+
+    # real plot
+    fig_raw = plt.figure(figsize=(14, 8))
+    fig_raw.subplots_adjust(left=0.09, right=0.93, bottom=0.07, top=0.91, hspace=0.37)
+    fig_raw.suptitle('RAW_{}_[{}]'.format(dataset_to_visualize, input_data_labels[ch]), fontweight='bold')
     ylim = 1
-    for i, lcp in zip(np.arange(1, 17, 1), rand_lcp_to_plot):
-        ax_lcp = fig_lcp.add_subplot(4, 4, i)
+    for i, lcp in zip(np.arange(1, 17, 1), rand_sample_to_plot):
+        ax_lcp = fig_raw.add_subplot(4, 4, i)
 
         # normalize every lcp
         lcp_normalized = scaler.fit_transform(lcp.reshape(-1, 1))
         ax_lcp.plot(lcp_normalized)
-        ax_lcp.set_title('Non_LCP_{}'.format(i))
+        ax_lcp.set_title('Sample_{}'.format(i))
         ax_lcp.set_ylim(bottom=-ylim, top=ylim)
 
-    fig_save_filename = direct_to_dir(where='result') + 'Non_LCP_random_CH{}_normalized.png'.format(ch)
-    plt.savefig(fig_save_filename)
+    fig_save_filename = direct_to_dir(where='result') + 'Data_fft_CH{}.png'.format(ch)
+    fig_save_filename_2 = direct_to_dir(where='result') + 'Data_vis_CH{}.png'.format(ch)
+    fig_fft.savefig(fig_save_filename)
+    fig_raw.savefig(fig_save_filename_2)
 
     plt.close('all')
     # plt.show()

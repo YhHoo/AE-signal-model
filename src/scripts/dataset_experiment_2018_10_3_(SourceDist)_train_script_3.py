@@ -12,7 +12,7 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 sess = tf.Session(config=config)
 
-
+# ------------------------------------------------------------------------------------------------------------ DATA PREP
 ae_data = AcousticEmissionDataSet_3_10_2018(drive='F')
 train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_by_dist_dataset_multiclass(train_split=0.7)
 
@@ -22,17 +22,19 @@ test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
 train_y_cat = to_categorical(train_y, num_classes=6)
 test_y_cat = to_categorical(test_y, num_classes=6)
 
+# ------------------------------------------------------------------------------------------------------- MODEL TRAINING
 lcp_model = lcp_by_dist_recognition_multi_model_1()
 lcp_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['acc'])
 
 
 # saving best weight setting
-logger = ModelLogger(model=lcp_model, model_name='LCP_Dist_Recog_3x3'.format(0))  # *** chg name
+model_name_to_save = 'LCP_Dist_Recog_3x6'
+logger = ModelLogger(model=lcp_model, model_name=model_name_to_save)  # *** chg name
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 
 # start training
-total_epoch = 500
+total_epoch = 3000
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,
@@ -46,9 +48,9 @@ time_train = time.time() - time_train_start
 
 logger.save_architecture(save_readable=True)
 
-# plotting the learning curve
+# ------------------------------------------------------------------------------------------------------- LEARNING CURVE
 # name for fig suptitle and filename
-lr_name = 'LrCurve_ITER_{}'.format(0)
+lr_name = '{}_LrCurve'.format(model_name_to_save)
 fig_lr = plt.figure(figsize=(10, 7))
 fig_lr.subplots_adjust(left=0.08, bottom=0.07, right=0.96, top=0.89)
 fig_lr.suptitle(lr_name)
@@ -61,7 +63,7 @@ ax_lr.legend()
 fig_lr_save_filename = direct_to_dir(where='result') + '{}.png'.format(lr_name)
 fig_lr.savefig(fig_lr_save_filename)
 
-# evaluate ---------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------- EVALUATE REPORTING
 # no of trainable parameter
 trainable_count = int(np.sum([K.count_params(p) for p in set(lcp_model.trainable_weights)]))
 
@@ -70,7 +72,7 @@ best_val_acc_index = np.argmax(history.history['val_acc'])
 best_val_loss_index = np.argmin(history.history['val_loss'])
 
 # loading best model saved
-lcp_best_model = load_model(model_name='LCP_Dist_Recog_3x3'.format(0))  # *** chg name
+lcp_best_model = load_model(model_name=model_name_to_save)
 
 # test with val data
 time_predict_start = time.time()
@@ -81,7 +83,7 @@ prediction_argmax = np.argmax(prediction, axis=1)
 actual_argmax = np.argmax(test_y_cat, axis=1)
 
 # plot validation data
-evaluate_name = 'Evaluate_ITER_{}'.format(0)
+evaluate_name = '{}_Evaluate'.format(model_name_to_save)
 fig_evaluate = plt.figure(figsize=(10, 7))
 fig_evaluate.subplots_adjust(left=0.08, bottom=0.07, right=0.96, top=0.89)
 fig_evaluate.suptitle(evaluate_name)
@@ -92,8 +94,8 @@ ax_evaluate.legend()
 fig_lr_save_filename = direct_to_dir(where='result') + '{}.png'.format(evaluate_name)
 fig_evaluate.savefig(fig_lr_save_filename)
 
-print('\n---------- EVALUATION RESULT RUN_{} -----------'.format(0))
-print('**Param in tuning --> [epoch = 500]')
+print('\n---------- EVALUATION RESULT SCRIPT 3 -----------')
+print('**Param in tuning --> []')
 print('Model Trainable params: {}'.format(trainable_count))
 print('Best Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
                                                                best_val_acc_index,
