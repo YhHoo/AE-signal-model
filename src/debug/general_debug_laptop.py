@@ -36,17 +36,18 @@ from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recogniti
 from collections import deque
 from itertools import islice
 
-noleak_2bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0040.tdms'
+tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-4,-2,2,4,6,8,10/2 bar/Leak/Train & Val data/'
+all_tdms = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
 
+n_channel_data = read_single_tdms(filename=all_tdms[15])
+n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]
 
-model_name = 'LCP_Dist_Recog_3'
-file_to_test = noleak_2bar_near
-x = file_to_test.split(sep='/')[-4:]
-# discard the .tdms
-x = x[:3] + [x[-1].split(sep='.')[0]]
+fig = plot_multiple_timeseries(input=n_channel_data,
+                               subplot_titles=['4', '-2', '2', '4', '6', '8', '10'],
+                               main_title='Test',
+                               ylim=3)
 
-filename = 'pred_result_[{}]_{}'.format(model_name, x)
-print(filename)
+plt.show()
 
 # unseen_data_filename = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0017.tdms'
 # train_data_filename = 'E:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/test1_0017.tdms'

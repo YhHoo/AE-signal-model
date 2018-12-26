@@ -9,7 +9,8 @@ shuffle_tdms_seq = True
 random_dataset_save_filename = direct_to_dir(where='result') + 'dataset_leak_random_2bar.csv'
 
 # all file name
-tdms_dir = 'F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
+tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-4,-2,2,4,6,8,10/2 bar/Leak/Train & Val data/'
+# tdms_dir = 'F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
 # tdms_dir = 'F:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/'  # discard faulty ch 20m
 all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
 print(len(all_tdms_file))
