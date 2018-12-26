@@ -22,7 +22,7 @@ window_size = (1000, 5000)
 sample_size_for_prediction = 10000
 
 # FILENAME CONFIG
-model_name_to_eval = 'LCP_Dist_Recog_3x5'
+model_name_to_eval = 'LCP_Dist_Recog_3x6'
 df_pred_save_filename = direct_to_dir(where='result') + 'Pred_{}_(noleak)_test1.csv'.format(model_name_to_eval)
 
 # ------------------------------------------------------------------------------------------------------------ DATA PREP
@@ -123,9 +123,9 @@ input_data_labels = ['sensor@[-4.5m]',  # the channels' dist of the input data
                      'sensor@[2m]',
                      'sensor@[5m]',
                      'sensor@[8m]',
-                     'sensor@[17m]',
-                     'sensor@[23m]']
+                     'sensor@[17m]']
 # ***************************************
+
 # for all channel
 for ch, actual in zip(prediction_all_ch, actual_label):
     acc = 0
@@ -153,15 +153,15 @@ col_label_w_acc = []
 for i, j in zip(input_data_labels, acc_per_ch):
     col_label_w_acc.append(i + '\nacc: {:.4f}'.format(j))
 
-fig = plot_confusion_matrix(cm=conf_mat,
-                            col_label=col_label_w_acc,
-                            row_label=['No Leak',
-                                       'Leak@[2m]',
-                                       'Leak@[4.5m]',
-                                       'Leak@[5m]',
-                                       'Leak@[8m]',
-                                       'Leak@[10m]'],
-                            title='confusion mat (3-NO LEAK)')
+fig_cm = plot_confusion_matrix(cm=conf_mat,
+                               col_label=col_label_w_acc,
+                               row_label=['No Leak',
+                                          'Leak@[2m]',
+                                          'Leak@[4.5m]',
+                                          'Leak@[5m]',
+                                          'Leak@[8m]',
+                                          'Leak@[10m]'],
+                               title='confusion mat (3-NO LEAK)')
 
 plt.show()
 

@@ -21,6 +21,9 @@ window_stride = 10
 window_size = (1000, 5000)
 sample_size_for_prediction = 10000
 
+# saving naming
+model_name = 'LCP_Dist_Recog_3x6'  # *
+
 # file reading
 # near -3,-2,2,4,6,8,10,12
 noleak_1bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/No_Leak/test_0020.tdms'
@@ -34,9 +37,8 @@ leak_1bar_far = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/1 
 noleak_2bar_far = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/2 bar/No_Leak/'
 leak_2bar_far = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/1 bar/Leak/'
 
-
+# ------------------------------------------------------------------------------------------------------------ DATA PREP
 # saving naming
-model_name = 'LCP_Dist_Recog_3x3'  # *
 file_to_test = noleak_2bar_near  # *
 
 x = file_to_test.split(sep='/')[-4:]
@@ -62,7 +64,7 @@ window_index = np.arange(window_size[0], (total_len - window_size[1]), window_st
 print('Window Index Len: ', len(window_index))
 print('Window Index: ', window_index)
 
-# LOADING AND EXECUTE MODEL --------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------- LOAD AND EXECUTE MODEL
 lcp_model = load_model(model_name=model_name)
 lcp_model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
@@ -122,18 +124,36 @@ prediction_all_ch = np.array(prediction_all_ch).T
 df_pred = pd.DataFrame(data=prediction_all_ch,
                        columns=['ch0[3m]', 'ch1[2m]', 'ch2[2m]', 'ch3[4m]', 'ch4[6m]', 'ch5[8m]', 'ch6[10m]'])
 df_pred.to_csv(df_pred_save_filename)
-
 print('Saved --> ', df_pred_save_filename)
-
-# RESULT VISUALIZATION -------------------------------------------------------------------------------------------------
 print('Reading --> ', df_pred_save_filename)
 df_pred = pd.read_csv(df_pred_save_filename, index_col=0)
 prediction_all_ch = df_pred.values.T.tolist()
 
-# confusion matrix plotting --------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------ CONFUSION MARIX
 conf_mat = []
 acc_per_ch = []
-actual_label = [0, 0, 0, 0, 0, 0, 0]
+# UPDATE PARAM HERE ***************************
+# leak case
+# actual_label = [(1, 2), 1, 1, (1, 2), (3, 4), 4, 5]  # label we expect model to produce (multiple label is acceptable)
+# noleak case
+actual_label = [0, 0, 0, 0, 0, 0, 0]  # label we expect model to produce (multiple label is acceptable)
+model_possible_label = [0, 1, 2, 3, 4, 5]
+# the physical meaning of the model label
+model_label_to_dist = {0: 'NoLeak',
+                       1: '2m',
+                       2: '4.5m',
+                       3: '5m',
+                       4: '8m',
+                       5: '10m'}
+input_data_labels = ['sensor@[-3m]',  # the channels' dist of the input data
+                     'sensor@[-2m]',
+                     'sensor@[2m]',
+                     'sensor@[4m]',
+                     'sensor@[6m]',
+                     'sensor@[8m]',
+                     'sensor@[10m]']
+# ***************************************
+
 # for all channel
 for ch, actual in zip(prediction_all_ch, actual_label):
     acc = 0
@@ -168,20 +188,19 @@ col_label_w_acc = []
 for i, j in zip(col_label, acc_per_ch):
     col_label_w_acc.append(i + '\nacc: {:.4f}'.format(j))
 
-fig = plot_confusion_matrix(cm=conf_mat,
-                            col_label=col_label_w_acc,
-                            row_label=['No Leak',
-                                       'Leak@[2m]',
-                                       'Leak@[4.5m]',
-                                       'Leak@[5m]',
-                                       'Leak@[8m]',
-                                       'Leak@[10m]'],
-                            title='confusion mat (4.3)')
+fig_cm = plot_confusion_matrix(cm=conf_mat,
+                               col_label=col_label_w_acc,
+                               row_label=['No Leak',
+                                          'Leak@[2m]',
+                                          'Leak@[4.5m]',
+                                          'Leak@[5m]',
+                                          'Leak@[8m]',
+                                          'Leak@[10m]'],
+                               title='confusion mat (4-UNSEEN-)')  # **
 
 plt.show()
 
-
-# classification plot along raw AE -------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------- PLOT CLASSIFICATION RESULT IN SEQUENCE
 # multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries()
 # config
 multiple_timeseries = prediction_all_ch
@@ -217,7 +236,7 @@ plt.show()
 time_plot = time.time() - time_plot_start
 print('Time taken to plot: {:.4f}'.format(time_plot))
 
-# layering misclassified position on raw ae ----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------- PLOT MISCLASSIFIED POINT + AE SIGNAL
 # # this is the correct label for each channels in AE data
 # actual_class_per_ch = [0, 0, 0, 0, 0, 0, 0]
 # label_to_dist = {0: 'nonLCP',

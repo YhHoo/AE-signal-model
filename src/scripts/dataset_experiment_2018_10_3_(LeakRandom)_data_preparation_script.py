@@ -6,7 +6,7 @@ from src.utils.helpers import *
 # CONFIG
 window_len = 6000
 shuffle_tdms_seq = True
-random_dataset_save_filename = direct_to_dir(where='result') + 'dataset_leak_random_1bar_3.csv'
+random_dataset_save_filename = direct_to_dir(where='result') + 'dataset_leak_random_2bar.csv'
 
 # all file name
 tdms_dir = 'F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'

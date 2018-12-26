@@ -22,8 +22,8 @@ window_size = (1000, 5000)
 sample_size_for_prediction = 10000
 
 # FILENAME CONFIG
-model_name_to_eval = 'LCP_Dist_Recog_3x5'
-df_pred_save_filename = direct_to_dir(where='result') + 'Pred_{}_(leak)25301_test_0052.csv'.format(model_name_to_eval)
+model_name_to_eval = 'LCP_Dist_Recog_3x6'
+df_pred_save_filename = direct_to_dir(where='result') + 'Pred_{}_(leak)_25301_test_0052.csv'.format(model_name_to_eval)
 
 # ------------------------------------------------------------------------------------------------------------ DATA PREP
 # file reading
