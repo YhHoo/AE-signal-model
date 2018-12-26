@@ -6,14 +6,14 @@ from src.utils.helpers import *
 # CONFIG
 window_len = 6000
 shuffle_tdms_seq = True
-random_dataset_save_filename = direct_to_dir(where='result') + 'dataset_leak_random_2bar_dec21_[-4,-2,2,4,6,8,10].csv'
+random_dataset_save_filename = direct_to_dir(where='result') + 'dataset_leak_random_2bar_[-4,-2,2,4,6,8,10].csv'
 
 # all file name
 tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-4,-2,2,4,6,8,10/2 bar/Leak/Train & Val data/'
 # tdms_dir = 'F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
 # tdms_dir = 'F:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/'  # discard faulty ch 20m
 all_tdms_file = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
-print(len(all_tdms_file))
+print('total file to extract: ', len(all_tdms_file))
 
 # shuffle
 if shuffle_tdms_seq:
@@ -29,7 +29,6 @@ with open(random_dataset_save_filename, 'w', newline='') as f:
     writer.writerow(header)
 
 for tdms_file in all_tdms_file:
-    print('Extracting --> ', tdms_file)
     n_channel_data = read_single_tdms(tdms_file)
     n_channel_data = np.swapaxes(n_channel_data, 0, 1)
 
@@ -45,7 +44,7 @@ for tdms_file in all_tdms_file:
     for ch_no in range(7):
         temp = []
         # truncate, meaning each tdms only contribute to 20 samples
-        for i in index[:500]:
+        for i in index[:150]:
             data_in_list = n_channel_data[ch_no, i:i+window_len].tolist() + [ch_no]
             temp.append(data_in_list)
 
