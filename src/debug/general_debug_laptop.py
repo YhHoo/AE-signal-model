@@ -36,18 +36,12 @@ from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recogniti
 from collections import deque
 from itertools import islice
 
-tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-4,-2,2,4,6,8,10/2 bar/Leak/Train & Val data/'
-all_tdms = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
+i = np.arange(0, 10).reshape((2, 5))
+j = np.arange(0, 10).reshape((2, 5))
 
-n_channel_data = read_single_tdms(filename=all_tdms[15])
-n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]
+x = np.concatenate((i, j), axis=0)
+print(x.shape)
 
-fig = plot_multiple_timeseries(input=n_channel_data,
-                               subplot_titles=['4', '-2', '2', '4', '6', '8', '10'],
-                               main_title='Test',
-                               ylim=3)
-
-plt.show()
 
 # unseen_data_filename = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0017.tdms'
 # train_data_filename = 'E:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/test1_0017.tdms'

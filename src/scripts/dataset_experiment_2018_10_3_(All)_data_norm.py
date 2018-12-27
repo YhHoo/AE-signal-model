@@ -5,9 +5,11 @@ normalize them into [-1, 1].
 
 from src.utils.helpers import *
 
-dataset_dir = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/'
-dataset_to_norm = dataset_dir + 'dataset_leak_random_1bar_3.csv'
-dataset_norma_save_filename = dataset_dir + 'dataset_leak_random_1bar_3_norm.csv'
+dataset_dir = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/leak_noleak_preprocessed_dataset/'  # *
+filename = 'dataset_noleak_random_2bar_[4]'  # *
+
+dataset_to_norm = dataset_dir + filename + '.csv'
+dataset_norma_save_filename = dataset_dir + '{}_norm.csv'.format(filename)
 
 # change the filename to the one we wish to norm
 print('Reading --> ', dataset_to_norm)
