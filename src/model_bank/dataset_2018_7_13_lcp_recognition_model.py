@@ -219,6 +219,8 @@ def lcp_by_dist_recognition_multi_model_2():
     model.add(Dropout(0.5))
 
     model.add(Dense(128, activation='relu'))  # try tanh
-    model.add(Dense(6, activation='softmax'))
+    model.add(Dense(2, activation='softmax'))
+
+    print(model.summary())
 
     return model

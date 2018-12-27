@@ -5,8 +5,8 @@ normalize them into [-1, 1].
 
 from src.utils.helpers import *
 
-dataset_dir = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/leak_noleak_preprocessed_dataset/'  # *
-filename = 'dataset_noleak_random_2bar_[4]'  # *
+dataset_dir = 'F:/Experiment_21_12_2018/leak_noleak_preprocessed_dataset/'  # *
+filename = 'dataset_noleak_random_2bar_[-4,-2,2,6,8,10]'  # *
 
 dataset_to_norm = dataset_dir + filename + '.csv'
 dataset_norma_save_filename = dataset_dir + '{}_norm.csv'.format(filename)

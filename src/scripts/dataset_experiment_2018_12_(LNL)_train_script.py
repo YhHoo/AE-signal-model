@@ -3,7 +3,6 @@ import gc
 import tensorflow as tf
 from keras.callbacks import TensorBoard
 from keras.optimizers import RMSprop
-from src.experiment_dataset.dataset_experiment_2018_10_3 import AcousticEmissionDataSet_3_10_2018
 from src.experiment_dataset.dataset_experiment_mixture import AcousticEmissionDataSet
 from src.model_bank.dataset_2018_7_13_lcp_recognition_model import *
 from src.utils.helpers import *
@@ -20,12 +19,14 @@ train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_dec_july(train_spl
 train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
 test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
 
-train_y_cat = to_categorical(train_y, num_classes=6)
-test_y_cat = to_categorical(test_y, num_classes=6)
+train_y_cat = to_categorical(train_y, num_classes=2)
+test_y_cat = to_categorical(test_y, num_classes=2)
+
+print(train_y_cat[:5])
 
 # ------------------------------------------------------------------------------------------------------- MODEL TRAINING
 lcp_model = lcp_by_dist_recognition_multi_model_2()
-lcp_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['acc'])
+lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
 # saving best weight setting
 model_name_to_save = 'LNL_1x1'
@@ -33,7 +34,7 @@ logger = ModelLogger(model=lcp_model, model_name=model_name_to_save)  # *** chg 
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # start training
-total_epoch = 1000
+total_epoch = 500
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,
@@ -104,13 +105,10 @@ print('Lowest Validation Loss: {:.4f} at Epoch {}/{}'.format(history.history['va
                                                              total_epoch))
 print('Time taken to execute 1 sample: {}s'.format(time_predict / len(test_x_reshape)))
 print('Time taken to complete {} epoch: {:.4f}s'.format(total_epoch, time_train))
-logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1, 2, 3, 4, 5])
+logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1])
 
 print('\nDist and Labels')
-print('[nonLCP] -> class_0')
-print('[-2, 2m] -> class_1')
-print('[-4.5m]  -> class_2')
-print('[5m]     -> class_3')
-print('[8m]     -> class_4')
-print('[10m]    -> class_5')
-gc.collect()
+print('[NoLeak] -> class_0')
+print('[Leak] -> class_1')
+
+
