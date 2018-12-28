@@ -23,218 +23,193 @@ sample_size_for_prediction = 10000
 
 # saving naming
 model_name = 'LNL_1x1'  # *
-
-# file reading
-# near -3,-2,2,4,6,8,10,12
-noleak_1bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/No_Leak/test_0020.tdms'
-leak_1bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/1 bar/Leak/test_0010.tdms'
-noleak_2bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0040.tdms'
-leak_2bar_near = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/Leak/test_0010.tdms'
-
-# far -3,-2,10,14,16,18,20,22
-noleak_1bar_far = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/1 bar/No_Leak/'
-leak_1bar_far = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/1 bar/Leak/'
-noleak_2bar_far = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/2 bar/No_Leak/'
-leak_2bar_far = 'F:/Experiment_13_7_2018/Experiment 1/-3,-2,10,14,16,18,20,22/1 bar/Leak/'
-
-# ------------------------------------------------------------------------------------------------------------ DATA PREP
-# saving naming
-file_to_test = noleak_2bar_near  # *
-
-x = file_to_test.split(sep='/')[-4:]
-# discard the .tdms
-x = x[:3] + [x[-1].split(sep='.')[0]]
-
-filename_to_save = 'pred_result_[{}]_{}'.format(model_name, x)
-
-# SAVING CONFIG
-df_pred_save_filename = direct_to_dir(where='result') + filename_to_save + '.csv'
-
-# test for near
-n_channel_data = read_single_tdms(file_to_test)
-n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1]  # drop ch@12m
-print('TDMS data dim: ', n_channel_data.shape)
-total_len = n_channel_data.shape[1]
-total_ch = len(n_channel_data)
-
-# ensure enough length of data input
-assert total_len > (window_size[0] + window_size[1]), 'Data length is too short, mz be at least {}'.\
-    format(window_size[0] + window_size[1])
-window_index = np.arange(window_size[0], (total_len - window_size[1]), window_stride)
-print('Window Index Len: ', len(window_index))
-print('Window Index: ', window_index)
-
-# ----------------------------------------------------------------------------------------------- LOAD AND EXECUTE MODEL
 lcp_model = load_model(model_name=model_name)
-lcp_model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
+lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
 
-# creating index of sliding windows [index-1000, index+5000]
-scaler = MinMaxScaler(feature_range=(-1, 1))
+# file reading
+all_tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-4,-2,2,4,6,8,10/2 bar/NoLeak/Test data/'
+all_tdms = [(all_tdms_dir + f) for f in listdir(all_tdms_dir) if f.endswith('.tdms')]
 
-prediction_all_ch = []
-# for all channels
-for ch_no in range(total_ch):
-    temp, model_pred = [], []
-    pb = ProgressBarForLoop(title='Iterating all Samples in ch[{}]'.format(ch_no), end=len(window_index))
-    progress = 0
-    for index in window_index:
-        pb.update(now=progress)
-        data = n_channel_data[ch_no, (index - window_size[0]):(index + window_size[1])]
-        data_norm = scaler.fit_transform(data.reshape(-1, 1)).ravel()
-        temp.append(data_norm)
+# ------------------------------------------------------------------------------------------------------------ DATA PREP
+for file_to_test in all_tdms:
+    x = file_to_test.split(sep='/')[-1]
+    # discard the .tdms
+    x = x.split(sep='.')[0]
 
-        # detect for last entry
-        if progress < (len(window_index) - 1):
+    filename_to_save = 'pred_result_[{}]_{}'.format(model_name, x)
 
-            if len(temp) < sample_size_for_prediction:
-                progress += 1
-                continue
+    # SAVING CONFIG
+    df_pred_save_filename = direct_to_dir(where='result') + filename_to_save + '.csv'
+
+    # test for near
+    n_channel_data = read_single_tdms(file_to_test)
+    n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1]  # drop useless channel 8
+    n_channel_data = np.delete(n_channel_data, 3, axis=0)  # drop broken channel 4m
+
+    print('TDMS data dim: ', n_channel_data.shape)
+    total_len = n_channel_data.shape[1]
+    total_ch = len(n_channel_data)
+
+    # ensure enough length of data input
+    assert total_len > (window_size[0] + window_size[1]), 'Data length is too short, mz be at least {}'.\
+        format(window_size[0] + window_size[1])
+    window_index = np.arange(window_size[0], (total_len - window_size[1]), window_stride)
+    print('Window Index Len: ', len(window_index))
+    print('Window Index: ', window_index)
+
+    # ---------------------------------------------------------------------------------------------------- EXECUTE MODEL
+    # creating index of sliding windows [index-1000, index+5000]
+    scaler = MinMaxScaler(feature_range=(-1, 1))
+
+    prediction_all_ch = []
+    # for all channels
+    for ch_no in range(total_ch):
+        temp, model_pred = [], []
+        pb = ProgressBarForLoop(title='Iterating all Samples in ch[{}]'.format(ch_no), end=len(window_index))
+        progress = 0
+        for index in window_index:
+            pb.update(now=progress)
+            data = n_channel_data[ch_no, (index - window_size[0]):(index + window_size[1])]
+            data_norm = scaler.fit_transform(data.reshape(-1, 1)).ravel()
+            temp.append(data_norm)
+
+            # detect for last entry
+            if progress < (len(window_index) - 1):
+
+                if len(temp) < sample_size_for_prediction:
+                    progress += 1
+                    continue
+                else:
+                    progress += 1
+                    # print('temp full !')
+
+            # do tis when temp is full
+            # reshape
+            temp = np.array(temp)
+            temp = temp.reshape((temp.shape[0], temp.shape[1], 1))
+            # print(temp.shape)
+            time_predict_start = time.time()
+            prediction = np.argmax(lcp_model.predict(temp), axis=1)
+
+            # # estimation of dist using all class posterior probability
+            # estimation = []
+            # for p in lcp_model.predict(temp):
+            #     estimation.append(p[0]*0 + p[1]*2 + p[2]*4.5 + p[3]*5 + p[4]*8 + p[5]*10)
+
+            time_predict = time.time() - time_predict_start
+            model_pred.append(prediction)
+            # reset temp
+            temp = []
+            # free up memory
+            gc.collect()
+
+        pb.destroy()
+        model_pred = np.concatenate(model_pred, axis=0)
+        print('Model Prediction Dim: ', model_pred.shape)
+
+        prediction_all_ch.append(model_pred)
+
+    prediction_all_ch = np.array(prediction_all_ch).T
+    df_pred = pd.DataFrame(data=prediction_all_ch,
+                           columns=['ch0[-4m]', 'ch1[-2m]', 'ch2[2m]', 'ch3[6m]', 'ch4[8m]', 'ch5[10m]'])
+    df_pred.to_csv(df_pred_save_filename)
+    print('Saved --> ', df_pred_save_filename)
+    print('Reading --> ', df_pred_save_filename)
+    df_pred = pd.read_csv(df_pred_save_filename, index_col=0)
+    prediction_all_ch = df_pred.values.T.tolist()
+
+    # -------------------------------------------------------------------------------------------------- CONFUSION MARIX
+    conf_mat = []
+    acc_per_ch = []
+    # UPDATE PARAM HERE ***************************
+    actual_label = [0, 0, 0, 0, 0, 0]  # label we expect model to produce (multiple label is acceptable)
+    model_possible_label = [0, 1]
+    # the physical meaning of the model label
+    model_label_to_dist = {0: 'NoLeak',
+                           1: 'Leak'}
+    input_data_labels = ['sensor@[-4m]',  # the channels' dist of the input data
+                         'sensor@[-2m]',
+                         'sensor@[2m]',
+                         'sensor@[6m]',
+                         'sensor@[8m]',
+                         'sensor@[10m]']
+    # ***************************************
+
+    # for all channel
+    for ch, actual in zip(prediction_all_ch, actual_label):
+        acc = 0
+        label_count_per_ch = []
+        # count for all labels
+        for label in range(6):
+            count = ch.count(label)
+            label_count_per_ch.append(count)
+            # for actual class
+            if isinstance(actual, tuple):
+                if label in actual:
+                    acc += count
             else:
-                progress += 1
-                # print('temp full !')
+                if label is actual:
+                    acc += count
+        # calc each channel classification acc
+        acc_per_ch.append(acc / len(ch))
+        # record the class count
+        conf_mat.append(label_count_per_ch)
 
-        # do tis when temp is full
-        # reshape
-        temp = np.array(temp)
-        temp = temp.reshape((temp.shape[0], temp.shape[1], 1))
-        # print(temp.shape)
-        time_predict_start = time.time()
-        prediction = np.argmax(lcp_model.predict(temp), axis=1)
+    conf_mat = np.array(conf_mat).T
 
-        # # estimation of dist using all class posterior probability
-        # estimation = []
-        # for p in lcp_model.predict(temp):
-        #     estimation.append(p[0]*0 + p[1]*2 + p[2]*4.5 + p[3]*5 + p[4]*8 + p[5]*10)
+    # merge col label with class accuracy
+    col_label_w_acc = []
+    for i, j in zip(input_data_labels, acc_per_ch):
+        col_label_w_acc.append(i + '\nacc: {:.4f}'.format(j))
 
-        time_predict = time.time() - time_predict_start
-        model_pred.append(prediction)
-        # reset temp
-        temp = []
-        # free up memory
-        gc.collect()
+    fig_cm = plot_confusion_matrix(cm=conf_mat,
+                                   col_label=col_label_w_acc,
+                                   row_label=['No Leak',
+                                              'Leak'],
+                                   title='confusion mat (5-Test Data)')  # **
+    fig_cm_save_filename = direct_to_dir(where='result') + 'cm_' + filename_to_save + '.png'
+    fig_cm.savefig(fig_cm_save_filename)
 
-    pb.destroy()
-    model_pred = np.concatenate(model_pred, axis=0)
-    print('Model Prediction Dim: ', model_pred.shape)
+    plt.close('all')
+    print('Confusion Mat. fig saved -->', fig_cm_save_filename)
+    print('\n------------------------------------------------------------\n')
 
-    prediction_all_ch.append(model_pred)
-
-prediction_all_ch = np.array(prediction_all_ch).T
-df_pred = pd.DataFrame(data=prediction_all_ch,
-                       columns=['ch0[3m]', 'ch1[2m]', 'ch2[2m]', 'ch3[4m]', 'ch4[6m]', 'ch5[8m]', 'ch6[10m]'])
-df_pred.to_csv(df_pred_save_filename)
-print('Saved --> ', df_pred_save_filename)
-print('Reading --> ', df_pred_save_filename)
-df_pred = pd.read_csv(df_pred_save_filename, index_col=0)
-prediction_all_ch = df_pred.values.T.tolist()
-
-# ------------------------------------------------------------------------------------------------------ CONFUSION MARIX
-conf_mat = []
-acc_per_ch = []
-# UPDATE PARAM HERE ***************************
-# leak case
-# actual_label = [(1, 2), 1, 1, (1, 2), (3, 4), 4, 5]  # label we expect model to produce (multiple label is acceptable)
-# noleak case
-actual_label = [0, 0, 0, 0, 0, 0, 0]  # label we expect model to produce (multiple label is acceptable)
-model_possible_label = [0, 1, 2, 3, 4, 5]
-# the physical meaning of the model label
-model_label_to_dist = {0: 'NoLeak',
-                       1: '2m',
-                       2: '4.5m',
-                       3: '5m',
-                       4: '8m',
-                       5: '10m'}
-input_data_labels = ['sensor@[-3m]',  # the channels' dist of the input data
-                     'sensor@[-2m]',
-                     'sensor@[2m]',
-                     'sensor@[4m]',
-                     'sensor@[6m]',
-                     'sensor@[8m]',
-                     'sensor@[10m]']
-# ***************************************
-
-# for all channel
-for ch, actual in zip(prediction_all_ch, actual_label):
-    acc = 0
-    label_count_per_ch = []
-    # count for all labels
-    for label in range(6):
-        count = ch.count(label)
-        label_count_per_ch.append(count)
-        # for actual class
-        if isinstance(actual, tuple):
-            if label in actual:
-                acc += count
-        else:
-            if label is actual:
-                acc += count
-    # calc each channel classification acc
-    acc_per_ch.append(acc / len(ch))
-    # record the class count
-    conf_mat.append(label_count_per_ch)
-
-conf_mat = np.array(conf_mat).T
-col_label = ['sensor@[-3m]',
-             'sensor@[-2m]',
-             'sensor@[2m]',
-             'sensor@[4m]',
-             'sensor@[6m]',
-             'sensor@[8m]',
-             'sensor@[10m]']
-
-# merge col label with class accuracy
-col_label_w_acc = []
-for i, j in zip(col_label, acc_per_ch):
-    col_label_w_acc.append(i + '\nacc: {:.4f}'.format(j))
-
-fig_cm = plot_confusion_matrix(cm=conf_mat,
-                               col_label=col_label_w_acc,
-                               row_label=['No Leak',
-                                          'Leak@[2m]',
-                                          'Leak@[4.5m]',
-                                          'Leak@[5m]',
-                                          'Leak@[8m]',
-                                          'Leak@[10m]'],
-                               title='confusion mat (4-UNSEEN-)')  # **
-
-plt.show()
-
-# ------------------------------------------------------------------------------- PLOT CLASSIFICATION RESULT IN SEQUENCE
-# multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries()
-# config
-multiple_timeseries = prediction_all_ch
-main_title = 'Model prediction (4) 2bar by 6k Sliding Window, Stride: {}'.format(window_stride)
-subplot_titles = ['-3m', '-2m', '2m', '4m', '6m', '8m', '10m']
-
-# do the work
-time_plot_start = time.time()
-no_of_plot = len(multiple_timeseries)
-fig = plt.figure(figsize=(5, 8))
-fig.suptitle(main_title, fontweight="bold", size=8)
-fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
-# first plot
-ax1 = fig.add_subplot(no_of_plot, 1, 1)
-ax1.plot(multiple_timeseries[0])
-ax1.set_title(subplot_titles[0], size=8)
-ax1.set_ylim(bottom=0, top=5)
-ax1.yaxis.set_ticks([0, 1, 2, 3, 4, 5])
-ax1.grid('on')
-
-# the rest of the plot
-for i in range(1, no_of_plot, 1):
-    ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1)
-    ax.plot(multiple_timeseries[i])
-    ax.set_title(subplot_titles[i], size=8)
-    ax.set_ylim(bottom=0, top=5)
-    ax.yaxis.set_ticks([0, 1, 2, 3, 4, 5])
-    ax.grid('on')
-
-
-plt.show()
-
-time_plot = time.time() - time_plot_start
-print('Time taken to plot: {:.4f}'.format(time_plot))
+# # ----------------------------------------------------------------------------- PLOT CLASSIFICATION RESULT IN SEQUENCE
+# # multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries()
+# # config
+# multiple_timeseries = prediction_all_ch
+# main_title = 'Model prediction (4) 2bar by 6k Sliding Window, Stride: {}'.format(window_stride)
+# subplot_titles = ['-3m', '-2m', '2m', '4m', '6m', '8m', '10m']
+#
+# # do the work
+# time_plot_start = time.time()
+# no_of_plot = len(multiple_timeseries)
+# fig = plt.figure(figsize=(5, 8))
+# fig.suptitle(main_title, fontweight="bold", size=8)
+# fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
+# # first plot
+# ax1 = fig.add_subplot(no_of_plot, 1, 1)
+# ax1.plot(multiple_timeseries[0])
+# ax1.set_title(subplot_titles[0], size=8)
+# ax1.set_ylim(bottom=0, top=5)
+# ax1.yaxis.set_ticks([0, 1, 2, 3, 4, 5])
+# ax1.grid('on')
+#
+# # the rest of the plot
+# for i in range(1, no_of_plot, 1):
+#     ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1)
+#     ax.plot(multiple_timeseries[i])
+#     ax.set_title(subplot_titles[i], size=8)
+#     ax.set_ylim(bottom=0, top=5)
+#     ax.yaxis.set_ticks([0, 1, 2, 3, 4, 5])
+#     ax.grid('on')
+#
+#
+# plt.show()
+#
+# time_plot = time.time() - time_plot_start
+# print('Time taken to plot: {:.4f}'.format(time_plot))
 
 # --------------------------------------------------------------------------------- PLOT MISCLASSIFIED POINT + AE SIGNAL
 # # this is the correct label for each channels in AE data
