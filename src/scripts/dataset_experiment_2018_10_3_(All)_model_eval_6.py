@@ -1,7 +1,7 @@
 '''
 THIS SCRIPT IS TO FEED THE LCP RECOGNITION MODEL WITH RAW AE DATA, AND SEE WHETHER IT WILL RECORGNIZE IT WELL. MODEL
 WILL SLIDE THROUGH ONE 5M POINT AE RAW DATA, USING A WINDOW, WITH A STRIDE.
-DATASET: BINARY CLASSIFICATION MODEL LNL (NoLeak)
+DATASET: BINARY CLASSIFICATION MODEL LNL (Leak)
 '''
 
 import gc
@@ -28,18 +28,19 @@ lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
 
 # file reading
-all_tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-4,-2,2,4,6,8,10/2 bar/NoLeak/Test data/'
+all_tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-4,-2,2,4,6,8,10/2 bar/Leak/Test data/'
 all_tdms = [(all_tdms_dir + f) for f in listdir(all_tdms_dir) if f.endswith('.tdms')]
 
 # UPDATE PARAM HERE ***************************
-actual_label = [0, 0, 0, 0, 0, 0]  # label we expect model to produce (multiple label is acceptable)
+actual_label = [0, 0, 0, 0, 0, 0, 0]  # label we expect model to produce (multiple label is acceptable)
 model_possible_label = [0, 1]
 # the physical meaning of the model label
 model_label_to_dist = {0: 'NoLeak',
                        1: 'Leak'}
-input_data_labels = ['sensor@[-4m]',  # the channels' dist of the input data
+input_data_labels = ['sensor@[-4m]',  # the channels' dist of the input data **
                      'sensor@[-2m]',
                      'sensor@[2m]',
+                     'sensor@[4m]',
                      'sensor@[6m]',
                      'sensor@[8m]',
                      'sensor@[10m]']
@@ -52,7 +53,7 @@ for file_to_test in all_tdms:
     # discard the .tdms
     x = x.split(sep='.')[-2]
 
-    filename_to_save = 'pred_result_[{}]_[{}]_NL'.format(model_name, x)
+    filename_to_save = 'pred_result_[{}]_[{}]_L'.format(model_name, x)  # **
 
     # SAVING CONFIG
     df_pred_save_filename = direct_to_dir(where='result') + filename_to_save + '.csv'
@@ -60,7 +61,7 @@ for file_to_test in all_tdms:
     # test for near
     n_channel_data = read_single_tdms(file_to_test)
     n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1]  # drop useless channel 8
-    n_channel_data = np.delete(n_channel_data, 3, axis=0)  # drop broken channel 4m
+    # n_channel_data = np.delete(n_channel_data, 3, axis=0)  # drop broken channel 4m (for NoLeak ONLY)
 
     print('TDMS data dim: ', n_channel_data.shape)
     total_len = n_channel_data.shape[1]
@@ -127,7 +128,7 @@ for file_to_test in all_tdms:
 
     prediction_all_ch = np.array(prediction_all_ch).T
     df_pred = pd.DataFrame(data=prediction_all_ch,
-                           columns=['ch0[-4m]', 'ch1[-2m]', 'ch2[2m]', 'ch3[6m]', 'ch4[8m]', 'ch5[10m]'])
+                           columns=input_data_labels)
     df_pred.to_csv(df_pred_save_filename)
     print('Saved --> ', df_pred_save_filename)
     print('Reading --> ', df_pred_save_filename)
@@ -169,7 +170,7 @@ for file_to_test in all_tdms:
                                    col_label=col_label_w_acc,
                                    row_label=['No Leak',
                                               'Leak'],
-                                   title='confusion mat (5-NoLEAK Test Data)')  # **
+                                   title='confusion mat (5-LEAK Test Data)')  # **
     fig_cm_save_filename = direct_to_dir(where='result') + 'cm_' + filename_to_save + '.png'
     fig_cm.savefig(fig_cm_save_filename)
 
