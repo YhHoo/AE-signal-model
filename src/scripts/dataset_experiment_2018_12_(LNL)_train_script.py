@@ -22,8 +22,6 @@ test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
 train_y_cat = to_categorical(train_y, num_classes=2)
 test_y_cat = to_categorical(test_y, num_classes=2)
 
-print(train_y_cat[:5])
-
 # ------------------------------------------------------------------------------------------------------- MODEL TRAINING
 lcp_model = lcp_by_dist_recognition_multi_model_2()
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
@@ -94,7 +92,7 @@ ax_evaluate.legend()
 fig_lr_save_filename = direct_to_dir(where='result') + '{}.png'.format(evaluate_name)
 fig_evaluate.savefig(fig_lr_save_filename)
 
-print('\n---------- EVALUATION RESULT SCRIPT 2 -----------')
+print('\n---------- EVALUATION RESULT SCRIPT LNL 1 -----------')
 print('**Param in tuning --> []')
 print('Model Trainable params: {}'.format(trainable_count))
 print('Best Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],

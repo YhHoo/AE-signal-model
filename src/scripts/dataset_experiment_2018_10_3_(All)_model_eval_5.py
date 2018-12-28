@@ -35,9 +35,9 @@ all_tdms = [(all_tdms_dir + f) for f in listdir(all_tdms_dir) if f.endswith('.td
 for file_to_test in all_tdms:
     x = file_to_test.split(sep='/')[-1]
     # discard the .tdms
-    x = x.split(sep='.')[0]
+    x = x.split(sep='.')[-2]
 
-    filename_to_save = 'pred_result_[{}]_{}'.format(model_name, x)
+    filename_to_save = 'pred_result_[{}]_[{}]'.format('LNL_1x1', x)
 
     # SAVING CONFIG
     df_pred_save_filename = direct_to_dir(where='result') + filename_to_save + '.csv'

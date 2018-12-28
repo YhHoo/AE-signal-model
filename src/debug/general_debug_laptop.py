@@ -36,30 +36,45 @@ from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recogniti
 from collections import deque
 from itertools import islice
 
-tdms_dir_leak = ''
-tdms_dir_leak_2 =''
-all_tdms = [(tdms_dir_leak + f) for f in listdir(tdms_dir_leak) if f.endswith('.tdms')]
+tdms_dir = 'E:/Experiment_21_12_2018/8ch/-4,-2,2,4,6,8,10/2 bar/Leak/Test data/'
+all_tdms = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
 
-n_channel_data = read_single_tdms(filename=all_tdms[30])
-n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]
+for tdms in all_tdms:
+    print(tdms)
 
-fig1 = plot_multiple_timeseries(input=n_channel_data,
-                                subplot_titles=['-4', '-2', '2', '4', '6', '8', '10'],
-                                main_title='Leak 21 Dec',
-                                ylim=3)
+    x = tdms.split(sep='/')[-1]
+    # discard the .tdms
+    x = x.split(sep='.')[-2]
 
-# ----
-all_tdms = [(tdms_dir_leak_2 + f) for f in listdir(tdms_dir_leak_2) if f.endswith('.tdms')]
+    filename_to_save = 'pred_result_[{}]_[{}]'.format('LNL_1x1', x)
+    print(filename_to_save)
 
-n_channel_data = read_single_tdms(filename=all_tdms[30])
-n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]
 
-fig2 = plot_multiple_timeseries(input=n_channel_data,
-                                subplot_titles=['-3', '-2', '2', '4', '6', '8', '10', '12'],
-                                main_title='Leak 13 July',
-                                ylim=3)
 
-plt.show()
+# tdms_dir_leak = ''
+# tdms_dir_leak_2 =''
+# all_tdms = [(tdms_dir_leak + f) for f in listdir(tdms_dir_leak) if f.endswith('.tdms')]
+#
+# n_channel_data = read_single_tdms(filename=all_tdms[30])
+# n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]
+#
+# fig1 = plot_multiple_timeseries(input=n_channel_data,
+#                                 subplot_titles=['-4', '-2', '2', '4', '6', '8', '10'],
+#                                 main_title='Leak 21 Dec',
+#                                 ylim=3)
+#
+# # ----
+# all_tdms = [(tdms_dir_leak_2 + f) for f in listdir(tdms_dir_leak_2) if f.endswith('.tdms')]
+#
+# n_channel_data = read_single_tdms(filename=all_tdms[30])
+# n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]
+#
+# fig2 = plot_multiple_timeseries(input=n_channel_data,
+#                                 subplot_titles=['-3', '-2', '2', '4', '6', '8', '10', '12'],
+#                                 main_title='Leak 13 July',
+#                                 ylim=3)
+#
+# plt.show()
 
 # unseen_data_filename = 'E:/Experiment_13_7_2018/Experiment 1/-3,-2,2,4,6,8,10,12/2 bar/No_Leak/test_0017.tdms'
 # train_data_filename = 'E:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/test1_0017.tdms'
