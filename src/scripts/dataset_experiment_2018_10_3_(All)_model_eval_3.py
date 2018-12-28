@@ -131,7 +131,7 @@ for ch, actual in zip(prediction_all_ch, actual_label):
     acc = 0
     label_count_per_ch = []
     # count for all labels
-    for label in range(6):
+    for label in model_possible_label:
         count = ch.count(label)
         label_count_per_ch.append(count)
         # for actual class
