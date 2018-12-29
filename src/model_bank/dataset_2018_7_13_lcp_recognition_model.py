@@ -1,3 +1,7 @@
+# this is for bash to know the path of the src
+import sys
+sys.path.append('C:/Users/YH/PycharmProjects/AE-signal-model')
+
 from keras.layers import *
 from keras.models import Sequential, Model
 from keras.utils import plot_model
@@ -224,3 +228,156 @@ def lcp_by_dist_recognition_multi_model_2():
     print(model.summary())
 
     return model
+
+
+# LEAK NO LEAK BY DISTANCE------------------------------------------------------------------------------------------
+
+def LNL_binary_model():
+    model = Sequential()
+
+    model.add(Conv1D(filters=16, kernel_size=3, activation='relu', input_shape=(6000, 1)))
+    model.add(Conv1D(filters=16, kernel_size=3, activation='relu'))
+    model.add(MaxPooling1D(3, strides=2))
+
+    model.add(Conv1D(filters=32, kernel_size=3, activation='relu'))
+    model.add(Conv1D(filters=32, kernel_size=3, activation='relu'))
+    model.add(MaxPooling1D(3, strides=2))
+
+    model.add(Conv1D(filters=64, kernel_size=3, activation='relu'))
+    model.add(Conv1D(filters=64, kernel_size=3, activation='relu'))
+    model.add(MaxPooling1D(3, strides=2))
+
+    model.add(Conv1D(filters=128, kernel_size=3, activation='relu'))
+    model.add(Conv1D(filters=128, kernel_size=3, activation='relu'))
+    model.add(MaxPooling1D(3, strides=2))
+
+    model.add(Conv1D(filters=256, kernel_size=3, activation='relu'))
+    model.add(Conv1D(filters=256, kernel_size=3, activation='relu'))
+
+    model.add(GlobalMaxPooling1D())
+    model.add(Dropout(0.5))
+
+    model.add(Dense(128, activation='relu'))  # try tanh
+    model.add(Dense(2, activation='softmax'))
+
+    print(model.summary())
+
+    return model
+
+
+def dexter_model():
+    inp = Input((6000, 1))
+    # 256
+    x = BatchNormalization()(inp)
+    # 256
+    x = Conv1D(32, kernel_size=3, dilation_rate=3, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x = Conv1D(32, kernel_size=3, dilation_rate=2, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)
+
+    #  128
+    x = Conv1D(64, kernel_size=3, dilation_rate=3, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x_prev = x
+    x = Conv1D(64, kernel_size=3, dilation_rate=2, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x = Add()([x, x_prev])
+    x_prev = x
+
+    x = Conv1D(64, kernel_size=3, dilation_rate=1, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x = Add()([x, x_prev])
+    x_prev = x
+
+    x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)
+
+    # 64
+    x = Conv1D(128, kernel_size=3, dilation_rate=3, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x_prev = x
+    x = Conv1D(128, kernel_size=3, dilation_rate=2, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x = Add()([x, x_prev])
+    x_prev = x
+
+    x = Conv1D(128, kernel_size=3, dilation_rate=1, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x = Add()([x, x_prev])
+    x_prev = x
+
+    x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)
+
+    #  32
+    x = Conv1D(128, kernel_size=3, dilation_rate=3, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x_prev = x
+    x = Conv1D(128, kernel_size=3, dilation_rate=2, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x = Add()([x, x_prev])
+    x_prev = x
+
+    x = Conv1D(128, kernel_size=3, dilation_rate=1, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x = Add()([x, x_prev])
+    x_prev = x
+
+    x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)
+
+    #  16
+    x = Conv1D(256, kernel_size=3, dilation_rate=3, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x_prev = x
+    x = Conv1D(256, kernel_size=3, dilation_rate=2, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x = Add()([x, x_prev])
+    x_prev = x
+
+    x = Conv1D(256, kernel_size=3, dilation_rate=1, padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x = Add()([x, x_prev])
+
+    x = GlobalMaxPooling1D()(x)
+
+    x = Dropout(0.55)(x)
+
+    x = Dense(128)(x)
+    x = BatchNormalization()(x)
+    x = Activation('tanh')(x)
+
+    out = Dense(2, activation='softmax')(x)
+
+    model = Model(inp, out)
+    print(model.summary())
+
+    return model
+
+

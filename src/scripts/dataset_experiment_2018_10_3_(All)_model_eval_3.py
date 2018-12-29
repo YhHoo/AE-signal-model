@@ -3,6 +3,9 @@ THIS SCRIPT IS TO FEED THE LCP RECOGNITION MODEL WITH RAW AE DATA, AND SEE WHETH
 WILL SLIDE THROUGH ONE 5M POINT AE RAW DATA, USING A WINDOW, WITH A STRIDE.
 DATASET: NO LEAK DATA FR F:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/test1.tdms
 '''
+# this is for bash to know the path of the src
+import sys
+sys.path.append('C:/Users/YH/PycharmProjects/AE-signal-model')
 
 import gc
 import time

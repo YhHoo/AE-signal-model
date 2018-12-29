@@ -1,3 +1,7 @@
+# this is for bash to know the path of the src
+import sys
+sys.path.append('C:/Users/YH/PycharmProjects/AE-signal-model')
+
 import time
 import gc
 import tensorflow as tf
@@ -23,16 +27,16 @@ train_y_cat = to_categorical(train_y, num_classes=2)
 test_y_cat = to_categorical(test_y, num_classes=2)
 
 # ------------------------------------------------------------------------------------------------------- MODEL TRAINING
-lcp_model = lcp_by_dist_recognition_multi_model_2()
+lcp_model = LNL_binary_model()
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
 # saving best weight setting
-model_name_to_save = 'LNL_1x1'
+model_name_to_save = 'LNL_2x1'
 logger = ModelLogger(model=lcp_model, model_name=model_name_to_save)  # *** chg name
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # start training
-total_epoch = 500
+total_epoch = 200
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,

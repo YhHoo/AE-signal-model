@@ -1,7 +1,7 @@
 '''
 THIS SCRIPT IS TO FEED THE LCP RECOGNITION MODEL WITH RAW AE DATA, AND SEE WHETHER IT WILL RECORGNIZE IT WELL. MODEL
 WILL SLIDE THROUGH ONE 5M POINT AE RAW DATA, USING A WINDOW, WITH A STRIDE.
-DATASET: BINARY CLASSIFICATION MODEL LNL (UNSEEN leak)
+DATASET: BINARY CLASSIFICATION MODEL LNL (UNSEEN noleak)
 '''
 
 import gc
@@ -27,11 +27,11 @@ lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
 
 # file reading
-all_tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-3,-2,0,5,7,15,16/2 bar/Leak/Test data/'
+all_tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-3,-2,0,5,7,15,16/2 bar/NoLeak/Test data/'
 all_tdms = [(all_tdms_dir + f) for f in listdir(all_tdms_dir) if f.endswith('.tdms')]
 
 # UPDATE PARAM HERE ***************************
-actual_label = [1, 1, 1, 1, 1, 1, 1]  # label we expect model to produce (multiple label is acceptable)
+actual_label = [0, 0, 0, 0, 0, 0, 0]  # label we expect model to produce (multiple label is acceptable)
 model_possible_label = [0, 1]
 # the physical meaning of the model label
 model_label_to_dist = {0: 'NoLeak',
@@ -43,7 +43,7 @@ input_data_labels = ['sensor@[-3m]',  # the channels' dist of the input data **
                      'sensor@[7m]',
                      'sensor@[15m]',
                      'sensor@[16m]']
-fig_cm_title = 'confusion mat (6-LEAK Test Data)'
+fig_cm_title = 'confusion mat (7-NoLEAK Test Data)'
 # ***************************************
 
 # ------------------------------------------------------------------------------------------------------------ DATA PREP
@@ -52,7 +52,7 @@ for file_to_test in all_tdms:
     # discard the .tdms
     x = x.split(sep='.')[-2]
 
-    filename_to_save = 'pred_result_[{}]_[{}]_L'.format(model_name, x)  # **
+    filename_to_save = 'pred_result_[{}]_[{}]_NL'.format(model_name, x)  # **
 
     # SAVING CONFIG
     df_pred_save_filename = direct_to_dir(where='result') + filename_to_save + '.csv'
