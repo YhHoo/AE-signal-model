@@ -43,7 +43,7 @@ history = lcp_model.fit(x=train_x_reshape,
                         validation_data=(test_x_reshape, test_y_cat),
                         callbacks=[save_weight_checkpoint],
                         epochs=total_epoch,
-                        batch_size=500,
+                        batch_size=250,
                         shuffle=True,
                         verbose=2)
 time_train = time.time() - time_train_start

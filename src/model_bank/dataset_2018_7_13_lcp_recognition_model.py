@@ -381,3 +381,19 @@ def dexter_model():
     return model
 
 
+# from src.utils.helpers import *
+# data = np.random.rand(100, 6000)
+# data = data.reshape((data.shape[0], data.shape[1], 1))
+# label = np.ones(100).reshape((100, -1))
+# label = to_categorical(label, num_classes=2)
+#
+#
+# model = dexter_model()
+# model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
+# model.fit(x=data,
+#           y=label,
+#           validation_split=0.7,
+#           epochs=100,
+#           shuffle=True,
+#           batch_size=10, verbose=True)
+
