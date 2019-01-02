@@ -265,6 +265,51 @@ def LNL_binary_model():
     return model
 
 
+def LNL_binary_model_2():
+    inp = Input((6000, 1))
+
+    x = BatchNormalization()(inp)
+
+    # conv 1
+    x = Conv1D(filters=64, kernel_size=32, strides=1, activation='relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
+
+    # conv 2
+    x = Conv1D(filters=128, kernel_size=32, strides=1, activation='relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
+
+    # conv 3
+    x = Conv1D(filters=192, kernel_size=32, strides=1, activation='relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
+
+    # conv 4
+    x = Conv1D(filters=256, kernel_size=32, strides=1, activation='relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
+
+    x = Flatten()(x)
+    x = Dropout(0.55)(x)
+
+    x = Dense(5120, activation='relu')(x)
+    x = Dense(1024, activation='relu')(x)
+    x = Dense(2, activation='softmax')(x)
+
+    out = Dense(2, activation='softmax')(x)
+
+    model = Model(inp, out)
+
+    print(model.summary())
+
+    return model
+
+
 def dexter_model():
     inp = Input((6000, 1))
     # 256
@@ -277,7 +322,6 @@ def dexter_model():
     x = Conv1D(32, kernel_size=3, dilation_rate=2, padding='same')(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-
     x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)
 
     #  128
@@ -289,7 +333,6 @@ def dexter_model():
     x = Conv1D(64, kernel_size=3, dilation_rate=2, padding='same')(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-
     x = Add()([x, x_prev])
     x_prev = x
 
@@ -380,6 +423,8 @@ def dexter_model():
 
     return model
 
+
+LNL_binary_model_2()
 
 # from src.utils.helpers import *
 # data = np.random.rand(100, 6000)
