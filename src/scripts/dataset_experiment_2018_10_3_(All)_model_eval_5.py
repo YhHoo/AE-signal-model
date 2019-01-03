@@ -19,10 +19,10 @@ sess = tf.Session(config=config)
 # SLIDING WINDOW CONFIG
 window_stride = 10
 window_size = (1000, 5000)
-sample_size_for_prediction = 10000
+sample_size_for_prediction = 100000
 
 # saving naming
-model_name = 'LNL_3x1'  # *
+model_name = 'LNL_3x2'  # *
 lcp_model = load_model(model_name=model_name)
 lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
@@ -87,8 +87,8 @@ for file_to_test in all_tdms:
         for index in window_index:
             pb.update(now=progress)
             data = n_channel_data[ch_no, (index - window_size[0]):(index + window_size[1])]
-            data_norm = scaler.fit_transform(data.reshape(-1, 1)).ravel()
-            temp.append(data_norm)
+            # data_norm = scaler.fit_transform(data.reshape(-1, 1)).ravel()
+            temp.append(data)
 
             # detect for last entry
             if progress < (len(window_index) - 1):
