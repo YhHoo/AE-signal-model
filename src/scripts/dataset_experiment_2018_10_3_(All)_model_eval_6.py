@@ -21,7 +21,7 @@ window_size = (1000, 5000)
 sample_size_for_prediction = 10000
 
 # saving naming
-model_name = 'LNL_4x1'  # *
+model_name = 'LNL_5x1'  # *
 lcp_model = load_model(model_name=model_name)
 lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())

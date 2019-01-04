@@ -31,7 +31,7 @@ lcp_model = LNL_binary_model_2()
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
 # saving best weight setting
-model_name_to_save = 'LNL_4x1'
+model_name_to_save = 'LNL_5x1'
 logger = ModelLogger(model=lcp_model, model_name=model_name_to_save)  # *** chg name
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
