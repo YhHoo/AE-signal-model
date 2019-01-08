@@ -370,7 +370,7 @@ class AcousticEmissionDataSet:
         train_y.append(tr_y)
         test_y.append(te_y)
 
-        # for 0m ----------------------------------------------------------------------------------------------------
+        # for 0m -------------------------------------------------------------------------------------------------------
         mat_of_selected_ch = df_leak_rand_2.loc[df_leak_rand_2['channel'] == 0].values[:, :-1]
         if shuffle_b4_split:
             mat_of_selected_ch = mat_of_selected_ch[np.random.permutation(len(mat_of_selected_ch))]

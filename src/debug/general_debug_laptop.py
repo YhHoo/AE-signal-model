@@ -26,7 +26,7 @@ from scipy.interpolate import interp1d
 import keras.backend as K
 from keras.utils import plot_model
 from itertools import islice
-
+from scipy.signal import decimate
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import fft_scipy, spectrogram_scipy, one_dim_xcor_2d_input, detect_ae_event_by_v_sensor, dwt_smoothing
@@ -36,18 +36,58 @@ from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recogniti
 from collections import deque
 from itertools import islice
 
-tdms_dir = 'E:/Experiment_21_12_2018/8ch/-4,-2,2,4,6,8,10/2 bar/Leak/Test data/'
-all_tdms = [(tdms_dir + f) for f in listdir(tdms_dir) if f.endswith('.tdms')]
+tdms_test = 'E:/2019.01.03_101036_003.tdms'
+n_channel_data = read_single_tdms(filename=tdms_test)
+n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]
+print(n_channel_data.shape)
 
-for tdms in all_tdms:
-    print(tdms)
+# fig1 = plot_multiple_timeseries(input=n_channel_data,
+#                                 subplot_titles=['-4', '-2', '2', '4', '6', '8', '10'],
+#                                 main_title='B4 Downsample')
 
-    x = tdms.split(sep='/')[-1]
-    # discard the .tdms
-    x = x.split(sep='.')[-2]
+n_channel_data_downsampled = []
+time_start = time.time()
+for channel in n_channel_data:
+    n_channel_data_downsampled.append(decimate(x=channel, q=5))
+n_channel_data_downsampled = np.array(n_channel_data_downsampled)
 
-    filename_to_save = 'pred_result_[{}]_[{}]'.format('LNL_1x1', x)
-    print(filename_to_save)
+# print('Time taken to downsample: {}s'.format(time.time()-time_start))
+# print('Dime: ', n_channel_data_downsampled.shape)
+# fig2 = plot_multiple_timeseries(input=n_channel_data_downsampled,
+#                                 subplot_titles=['-4', '-2', '2', '4', '6', '8', '10'],
+#                                 main_title='AFTER Downsample')
+#
+# plt.show()
+
+n_channel_data_downsampled_fft = []
+for channel in n_channel_data_downsampled:
+    f_mag_unseen, _, f_axis = fft_scipy(sampled_data=channel, fs=int(200e3), visualize=False)
+    n_channel_data_downsampled_fft.append(f_mag_unseen)
+label = ['-4', '-2', '2', '4', '6', '8', '10']
+
+for channel, l, index in zip(n_channel_data_downsampled, label, range(7)):
+    f_mag_unseen, _, f_axis = fft_scipy(sampled_data=channel, fs=int(200e3), visualize=False)
+    fig_fft = plt.figure(figsize=(14, 8))
+    ax_fft = fig_fft.add_subplot(1, 1, 1)
+    ax_fft.grid('on')
+    ax_fft.plot(f_axis[10:], f_mag_unseen[10:], alpha=0.5)
+    ax_fft.set_ylim(bottom=0, top=0.001)
+    ax_fft.set_title('FFT_{}'.format(l))
+    save_filename = direct_to_dir(where='result') + 'FFT_{}.png'.format(index)
+    fig_fft.savefig(save_filename)
+
+    plt.close('all')
+
+plt.show()
+
+
+# n_channel_data_downsampled_fft = np.array(n_channel_data_downsampled_fft)
+# fig = heatmap_visualizer(x_axis=f_axis,
+#                          y_axis=[-4, -2, 2, 4, 6, 8, 10],
+#                          zxx=n_channel_data_downsampled_fft,
+#                          label=['position', 'frequency', 'amplitude'], output='3d')
+#
+# plt.show()
 
 
 
@@ -240,39 +280,39 @@ for tdms in all_tdms:
 # print(data_selected)
 
 # ----------------------------------------------------------------------------------
-max_vec_list = np.linspace(0, 10, 44).reshape((11, 2, 2))
-print(max_vec_list.shape)
-
-all_class = {}
-for i in range(0, 11, 1):
-    all_class['class_[{}]'.format(i)] = []
-    all_class['class_[{}]'.format(i)].append(max_vec_list[i])
-
-# just to display the dict full dim
-temp = []
-for _, value in all_class.items():
-    temp.append(value[0])
-temp = np.array(temp)
-# print(temp)
-print('all_class dim: ', temp.shape)
-
-dataset = []
-label = []
-for i in range(0, 11, 1):
-    for sample in all_class['class_[{}]'.format(i)][0]:
-        print(sample)
-        dataset.append(sample)
-        label.append(i)
-
-# convert to array
-dataset = np.array(dataset)
-label = np.array(label)
-print('Dataset Dim: ', dataset.shape)
-print('Label Dim: ', label.shape)
-
-# save to csv
-label = label.reshape((-1, 1))
-all_in_one = np.concatenate([dataset, label], axis=1)
-print(all_in_one.shape)
+# max_vec_list = np.linspace(0, 10, 44).reshape((11, 2, 2))
+# print(max_vec_list.shape)
+#
+# all_class = {}
+# for i in range(0, 11, 1):
+#     all_class['class_[{}]'.format(i)] = []
+#     all_class['class_[{}]'.format(i)].append(max_vec_list[i])
+#
+# # just to display the dict full dim
+# temp = []
+# for _, value in all_class.items():
+#     temp.append(value[0])
+# temp = np.array(temp)
+# # print(temp)
+# print('all_class dim: ', temp.shape)
+#
+# dataset = []
+# label = []
+# for i in range(0, 11, 1):
+#     for sample in all_class['class_[{}]'.format(i)][0]:
+#         print(sample)
+#         dataset.append(sample)
+#         label.append(i)
+#
+# # convert to array
+# dataset = np.array(dataset)
+# label = np.array(label)
+# print('Dataset Dim: ', dataset.shape)
+# print('Label Dim: ', label.shape)
+#
+# # save to csv
+# label = label.reshape((-1, 1))
+# all_in_one = np.concatenate([dataset, label], axis=1)
+# print(all_in_one.shape)
 # ----------------------------------------------------------------------------------
 

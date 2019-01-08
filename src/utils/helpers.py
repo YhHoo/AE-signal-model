@@ -342,9 +342,10 @@ def heatmap_visualizer(x_axis, y_axis, zxx, label=('x', 'y', 'z'), output='2d',
     :param title: title on top of the plot
     :return: plot()
     '''
+
     # make sure the axes are of equal sizes for zxx
-    assert x_axis.size == zxx.shape[1], 'axis [1] of zxx differ from x_axis.size'
-    assert y_axis.size == zxx.shape[0], 'axis [0] of zxx differ from y_axis.size'
+    assert len(x_axis) == zxx.shape[1], 'axis [1] of zxx differ from x_axis.size'
+    assert len(y_axis) == zxx.shape[0], 'axis [0] of zxx differ from y_axis.size'
     assert output is not None, 'Please specify Output'
     # print('Visualizing...')
 
@@ -352,7 +353,7 @@ def heatmap_visualizer(x_axis, y_axis, zxx, label=('x', 'y', 'z'), output='2d',
         fig = plt.figure()
         fig.suptitle(title)
         ax = fig.add_subplot(111, projection='3d')
-        for i in range(y_axis.size):
+        for i in range(len(y_axis)):
             ax.bar(x_axis, zxx[i], zs=y_axis[i], zdir='y', alpha=0.8)
         ax.set_xlabel(label[0])
         ax.set_ylabel(label[1])
