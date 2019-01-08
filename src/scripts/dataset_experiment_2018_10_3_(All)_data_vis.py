@@ -6,13 +6,14 @@ data_preparation_script.py.
 from src.utils.helpers import *
 
 
-dataset_dir = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/'
-dataset_to_visualize = dataset_dir + 'dataset_leak_random_1bar_3.csv'
+dataset_dir = 'G:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/'
+dataset_to_visualize = dataset_dir + 'dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10].csv'
 
-input_data_labels = ['sensor@[-4.5m]',  # the channels' dist of the input data
+input_data_labels = ['sensor@[-4m]',  # the channels' dist of the input data
                      'sensor@[-2m]',
                      'sensor@[2m]',
-                     'sensor@[5m]',
+                     'sensor@[4m]',
+                     'sensor@[6m]',
                      'sensor@[8m]',
                      'sensor@[10m]']
 
@@ -23,7 +24,7 @@ print(data_df.values.shape)
 
 scaler = MinMaxScaler(feature_range=(-1, 1))
 
-for ch in range(0, 6, 1):
+for ch in range(0, 7, 1):
     selected_ch_df = data_df[data_df['channel'] == ch]
     print('ch_{} sample size: {}'.format(ch, len(selected_ch_df.values)))
     temp_arr = selected_ch_df.values[:, :-1]

@@ -240,39 +240,39 @@ for tdms in all_tdms:
 # print(data_selected)
 
 # ----------------------------------------------------------------------------------
-# max_vec_list = np.linspace(0, 10, 44).reshape((11, 2, 2))
-# print(max_vec_list.shape)
-#
-# all_class = {}
-# for i in range(0, 11, 1):
-#     all_class['class_[{}]'.format(i)] = []
-#     all_class['class_[{}]'.format(i)].append(max_vec_list[i])
-#
-# # just to display the dict full dim
-# temp = []
-# for _, value in all_class.items():
-#     temp.append(value[0])
-# temp = np.array(temp)
-# # print(temp)
-# print('all_class dim: ', temp.shape)
-#
-# dataset = []
-# label = []
-# for i in range(0, 11, 1):
-#     for sample in all_class['class_[{}]'.format(i)][0]:
-#         print(sample)
-#         dataset.append(sample)
-#         label.append(i)
-#
-# # convert to array
-# dataset = np.array(dataset)
-# label = np.array(label)
-# print('Dataset Dim: ', dataset.shape)
-# print('Label Dim: ', label.shape)
-#
-# # save to csv
-# label = label.reshape((-1, 1))
-# all_in_one = np.concatenate([dataset, label], axis=1)
-# print(all_in_one.shape)
+max_vec_list = np.linspace(0, 10, 44).reshape((11, 2, 2))
+print(max_vec_list.shape)
+
+all_class = {}
+for i in range(0, 11, 1):
+    all_class['class_[{}]'.format(i)] = []
+    all_class['class_[{}]'.format(i)].append(max_vec_list[i])
+
+# just to display the dict full dim
+temp = []
+for _, value in all_class.items():
+    temp.append(value[0])
+temp = np.array(temp)
+# print(temp)
+print('all_class dim: ', temp.shape)
+
+dataset = []
+label = []
+for i in range(0, 11, 1):
+    for sample in all_class['class_[{}]'.format(i)][0]:
+        print(sample)
+        dataset.append(sample)
+        label.append(i)
+
+# convert to array
+dataset = np.array(dataset)
+label = np.array(label)
+print('Dataset Dim: ', dataset.shape)
+print('Label Dim: ', label.shape)
+
+# save to csv
+label = label.reshape((-1, 1))
+all_in_one = np.concatenate([dataset, label], axis=1)
+print(all_in_one.shape)
 # ----------------------------------------------------------------------------------
 

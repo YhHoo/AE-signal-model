@@ -7,10 +7,10 @@ from src.utils.helpers import *
 window_len = 6000
 shuffle_tdms_seq = True
 
-random_dataset_save_filename = direct_to_dir(where='result') + 'dataset_noleak_random_2bar_[-4,-2,2,6,8,10].csv'
+random_dataset_save_filename = direct_to_dir(where='result') + 'dataset_leak_random_1.5bar_[0].csv'
 
 # all file name
-tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-4,-2,2,4,6,8,10/2 bar/NoLeak/Train & Val data/'
+tdms_dir = 'G:/Experiment_3_1_2019/-3,-2,0,5,7,16,17/1.5 bar/Leak/Train & Val data/'
 # tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-3,-2,0,5,7,15,16/2 bar/Leak/Train & Val data/'
 # tdms_dir = 'F:/Experiment_3_10_2018/-4.5, -2, 2, 5, 8, 10, 17 (leak 1bar)/'
 # tdms_dir = 'F:/Experiment_2_10_2018/-4.5,-2,2,5,8,17,20,23/no_leak/'  # discard faulty ch 20m
@@ -32,12 +32,12 @@ with open(random_dataset_save_filename, 'w', newline='') as f:
 
 for tdms_file in all_tdms_file:
     n_channel_data = read_single_tdms(tdms_file)
-    n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]
+    n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]  # drop last channel, due to no sensor
 
     # put this line for -4.5,-2,2,5,8,17,20,23/no_leak/ data, this drop ch @ 20m
-    n_channel_data = np.delete(n_channel_data, 3, axis=0)
+    # n_channel_data = np.delete(n_channel_data, 3, axis=0)
 
-    print(n_channel_data.shape)
+    print('Dim before extraction: ', n_channel_data.shape)
 
     # index for start sampling
     index = np.arange(0, n_channel_data.shape[1] - window_len, 1)
@@ -45,7 +45,7 @@ for tdms_file in all_tdms_file:
     index = index[np.random.permutation(len(index))]
 
     # for all channels or for specific channel only
-    for ch_no in range(6):
+    for ch_no in [2]:
         temp = []
         # truncate, meaning each tdms only contribute to 20 samples
         for i in index[:150]:

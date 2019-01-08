@@ -7,8 +7,7 @@ from sklearn.model_selection import train_test_split
 class AcousticEmissionDataSet:
     '''
         The sensor position are (-4.5, -2, 2, 5, 8, 10)m
-        The leak position is always at 0m, at 10mm diameter. The LCP and nonLCP is collected at 1bar.
-        raw data -> find_peak_for_all_script() -> data_preparation_script() -> .csv
+        The leak position is always at 0m, at 10mm diameter.
     '''
     def __init__(self, drive):
         self.drive = drive + ':/'
