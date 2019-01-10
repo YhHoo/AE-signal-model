@@ -18,7 +18,7 @@ sess = tf.Session(config=config)
 
 # ------------------------------------------------------------------------------------------------------------ DATA PREP
 ae_data = AcousticEmissionDataSet(drive='G')
-train_x, train_y, test_x, test_y = ae_data.random_leak_noleak(train_split=0.7)
+train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_downsampled(train_split=0.7)
 
 train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
 test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
@@ -31,7 +31,7 @@ lcp_model = LNL_binary_model_2()
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
 # saving best weight setting
-model_name_to_save = 'LNL_6x1'
+model_name_to_save = 'LNL_8x1'
 logger = ModelLogger(model=lcp_model, model_name=model_name_to_save)  # *** chg name
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
@@ -43,7 +43,7 @@ history = lcp_model.fit(x=train_x_reshape,
                         validation_data=(test_x_reshape, test_y_cat),
                         callbacks=[save_weight_checkpoint],
                         epochs=total_epoch,
-                        batch_size=250,
+                        batch_size=500,
                         shuffle=True,
                         verbose=2)
 time_train = time.time() - time_train_start

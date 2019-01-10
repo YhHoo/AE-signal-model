@@ -3,7 +3,7 @@ THIS SCRIPT IS TO FEED THE LCP RECOGNITION MODEL WITH RAW AE DATA, AND SEE WHETH
 WILL SLIDE THROUGH ONE 5M POINT AE RAW DATA, USING A WINDOW, WITH A STRIDE.
 DATASET: BINARY CLASSIFICATION MODEL LNL (Leak)
 '''
-
+from scipy.signal import decimate
 import gc
 import time
 import matplotlib.patches as mpatches
@@ -18,8 +18,11 @@ sess = tf.Session(config=config)
 
 # SLIDING WINDOW CONFIG
 window_stride = 10
-window_size = (1000, 5000)
+window_size = (1000, 1000)
 sample_size_for_prediction = 100000
+
+# downsample
+downsample_by_5 = True
 
 # saving naming
 model_name = 'LNL_3x2'  # *
@@ -64,6 +67,14 @@ for file_to_test in all_tdms:
     # n_channel_data = np.delete(n_channel_data, 3, axis=0)  # drop broken channel 4m (for NoLeak ONLY)
 
     print('TDMS data dim: ', n_channel_data.shape)
+
+    temp = []
+    if downsample_by_5:
+        for channel in n_channel_data:
+            temp.append(decimate(x=channel, q=5))
+        n_channel_data = np.array(temp)
+        print('Dim After Downsample: ', n_channel_data.shape)
+
     total_len = n_channel_data.shape[1]
     total_ch = len(n_channel_data)
 

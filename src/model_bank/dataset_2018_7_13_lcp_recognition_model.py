@@ -380,27 +380,27 @@ def dexter_model():
 
 
 def LNL_binary_model_2():
-    inp = Input((6000, 1))
+    inp = Input((2000, 1))
 
     x = BatchNormalization()(inp)
 
     # conv 1
-    x = Conv1D(filters=128, kernel_size=96, strides=1, activation='relu')(x)
+    x = Conv1D(filters=32, kernel_size=1000, strides=1, activation='relu', padding='same')(x)  # kernel size of 0.0005s
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-    x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
+    x = MaxPooling1D(pool_size=8, strides=2, padding='same')(x)  # time half
 
-    # conv 2
-    x = Conv1D(filters=192, kernel_size=96, strides=1, activation='relu')(x)
+    # # conv 2
+    x = Conv1D(filters=64, kernel_size=500, strides=1, activation='relu', padding='same')(x)  # kernel size of 0.0001s
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-    x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
+    x = MaxPooling1D(pool_size=8, strides=2, padding='same')(x)  # time half
 
-    # # conv 3
-    # x = Conv1D(filters=192, kernel_size=96, strides=1, activation='relu')(x)
-    # x = BatchNormalization()(x)
-    # x = Activation('relu')(x)
-    # x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
+    # conv 3
+    x = Conv1D(filters=128, kernel_size=250, strides=1, activation='relu', padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=8, strides=2, padding='same')(x)
 
     # # conv 4
     # x = Conv1D(filters=256, kernel_size=96, strides=1, activation='relu')(x)
@@ -408,11 +408,11 @@ def LNL_binary_model_2():
     # x = Activation('relu')(x)
     # x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
 
-    x = Flatten()(x)
+    x = GlobalAveragePooling1D()(x)
     x = Dropout(0.50)(x)
 
-    # x = Dense(5120, activation='relu')(x)
-    x = Dense(1024, activation='relu')(x)
+    x = Dense(240, activation='relu')(x)
+    x = Dense(120, activation='relu')(x)
     x = Dense(2, activation='softmax')(x)
 
     out = Dense(2, activation='softmax')(x)
@@ -424,21 +424,24 @@ def LNL_binary_model_2():
     return model
 
 
-# LNL_binary_model_2()
+# model = LNL_binary_model_2()
 
+
+# --------------------HERE FOR TESTING THE MODEL ALLOWABLE BATCH SIZE FOR GPU MEMORY LIMIT -----------------------------
 # from src.utils.helpers import *
-# data = np.random.rand(100, 6000)
+# data = np.random.rand(100000, 2000)
 # data = data.reshape((data.shape[0], data.shape[1], 1))
-# label = np.ones(100).reshape((100, -1))
+# label = np.ones(100000).reshape((100000, -1))
 # label = to_categorical(label, num_classes=2)
 #
 #
-# model = dexter_model()
+# model = LNL_binary_model_2()
 # model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 # model.fit(x=data,
 #           y=label,
 #           validation_split=0.7,
 #           epochs=100,
 #           shuffle=True,
-#           batch_size=10, verbose=True)
+#           verbose=2,
+#           batch_size=500)
 

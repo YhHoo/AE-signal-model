@@ -3,7 +3,7 @@ THIS SCRIPT IS TO FEED THE LCP RECOGNITION MODEL WITH RAW AE DATA, AND SEE WHETH
 WILL SLIDE THROUGH ONE 5M POINT AE RAW DATA, USING A WINDOW, WITH A STRIDE.
 DATASET: BINARY CLASSIFICATION MODEL LNL (UNSEEN leak)
 '''
-
+from scipy.signal import decimate
 import gc
 import time
 import tensorflow as tf
@@ -17,17 +17,20 @@ sess = tf.Session(config=config)
 
 # SLIDING WINDOW CONFIG
 window_stride = 10
-window_size = (1000, 5000)
+window_size = (1000, 1000)
 sample_size_for_prediction = 10000
 
+# downsample
+downsample_by_5 = True
+
 # saving naming
-model_name = 'LNL_5x1'  # *
+model_name = 'LNL_7x1'  # *
 lcp_model = load_model(model_name=model_name)
 lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
 
 # file reading
-all_tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-3,-2,0,5,7,15,16/2 bar/Leak/Test data/'
+all_tdms_dir = 'G:/Experiment_3_1_2019/-3,-2,0,5,7,16,17/1.5 bar/Leak/Test data/'
 all_tdms = [(all_tdms_dir + f) for f in listdir(all_tdms_dir) if f.endswith('.tdms')]
 
 # UPDATE PARAM HERE ***************************
@@ -41,9 +44,9 @@ input_data_labels = ['sensor@[-3m]',  # the channels' dist of the input data **
                      'sensor@[0m]',
                      'sensor@[5m]',
                      'sensor@[7m]',
-                     'sensor@[15m]',
-                     'sensor@[16m]']
-fig_cm_title = 'confusion mat (6-LEAK Test Data)'
+                     'sensor@[16m]',
+                     'sensor@[17m]']
+fig_cm_title = 'confusion mat (6-Unseen LEAK Test Data)'
 # ***************************************
 
 # ------------------------------------------------------------------------------------------------------------ DATA PREP
@@ -63,6 +66,14 @@ for file_to_test in all_tdms:
     # n_channel_data = np.delete(n_channel_data, 3, axis=0)  # drop broken channel 4m (for NoLeak ONLY)
 
     print('TDMS data dim: ', n_channel_data.shape)
+
+    temp = []
+    if downsample_by_5:
+        for channel in n_channel_data:
+            temp.append(decimate(x=channel, q=5))
+        n_channel_data = np.array(temp)
+        print('Dim After Downsample: ', n_channel_data.shape)
+
     total_len = n_channel_data.shape[1]
     total_ch = len(n_channel_data)
 
