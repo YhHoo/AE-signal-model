@@ -25,13 +25,13 @@ sample_size_for_prediction = 100000
 downsample_by_5 = True
 
 # saving naming
-model_name = 'LNL_3x2'  # *
+model_name = 'LNL_8x1'  # *
 lcp_model = load_model(model_name=model_name)
 lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
 
 # file reading
-all_tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-4,-2,2,4,6,8,10/2 bar/Leak/Test data/'
+all_tdms_dir = 'F:/Experiment_3_1_2019/-4,-2,2,4,6,8,10/1.5 bar/Leak/Test data/'
 all_tdms = [(all_tdms_dir + f) for f in listdir(all_tdms_dir) if f.endswith('.tdms')]
 
 # UPDATE PARAM HERE ***************************

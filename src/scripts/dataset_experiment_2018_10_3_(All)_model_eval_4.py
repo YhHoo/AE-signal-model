@@ -28,17 +28,17 @@ sample_size_for_prediction = 100000
 downsample_by_5 = True
 
 # saving naming
-model_name = 'LNL_3x2'  # *
+model_name = 'LNL_8x1'  # *
 lcp_model = load_model(model_name=model_name)
 lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
 
 # file reading
-all_tdms_dir = 'F:/Experiment_21_12_2018/8Ch/-4,-2,2,4,6,8,10/2 bar/NoLeak/Test data/'
+all_tdms_dir = 'F:/Experiment_3_1_2019/-4,-2,2,4,6,8,10/1.5 bar/NoLeak/Test data/'
 all_tdms = [(all_tdms_dir + f) for f in listdir(all_tdms_dir) if f.endswith('.tdms')]
 
 # UPDATE PARAM HERE ***************************
-actual_label = [0, 0, 0, 0, 0, 0]  # label we expect model to produce (multiple label is acceptable)
+actual_label = [0, 0, 0, 0, 0, 0, 0]  # label we expect model to produce (multiple label is acceptable)
 model_possible_label = [0, 1]
 # the physical meaning of the model label
 model_label_to_dist = {0: 'NoLeak',
@@ -46,6 +46,7 @@ model_label_to_dist = {0: 'NoLeak',
 input_data_labels = ['sensor@[-4m]',  # the channels' dist of the input data
                      'sensor@[-2m]',
                      'sensor@[2m]',
+                     'sensor@[4m]',
                      'sensor@[6m]',
                      'sensor@[8m]',
                      'sensor@[10m]']
@@ -66,7 +67,7 @@ for file_to_test in all_tdms:
     # test for near
     n_channel_data = read_single_tdms(file_to_test)
     n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1]  # drop useless channel 8
-    n_channel_data = np.delete(n_channel_data, 3, axis=0)  # drop broken channel 4m
+    # n_channel_data = np.delete(n_channel_data, 3, axis=0)  # drop broken channel 4m
 
     print('TDMS data dim: ', n_channel_data.shape)
 
