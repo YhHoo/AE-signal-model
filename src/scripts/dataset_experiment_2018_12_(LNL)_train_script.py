@@ -3,7 +3,6 @@ import sys
 sys.path.append('C:/Users/YH/PycharmProjects/AE-signal-model')
 
 import time
-import gc
 import tensorflow as tf
 from keras.callbacks import TensorBoard
 from keras.optimizers import RMSprop

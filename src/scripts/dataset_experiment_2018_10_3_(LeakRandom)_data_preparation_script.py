@@ -8,7 +8,7 @@ from scipy.signal import decimate
 from src.utils.helpers import *
 
 
-# argparse
+# -------------------------------------------------------------------------------------------------------------ARG PARSE
 parser = argparse.ArgumentParser(description='Input some parameters.')
 parser.add_argument('--fts', metavar='FS', default=None, type=str, help='Filename to save')
 parser.add_argument('--ftr', metavar='FR', default=None, type=str, help='Filename to process')
@@ -18,32 +18,27 @@ parser.add_argument('--dsf', metavar='DF', default=1, type=int, help='Downsample
 
 args = parser.parse_args()
 
+# CONFIG (changes param here ONLY ***)
 FILENAME_TO_SAVE = args.fts
 FOLDER_TO_READ = args.ftr
 CHANNEL_TO_EXTRACT = args.cth
 SAMPLE_VECTOR_LENGTH = args.svs
 DOWNSAMPLE_FACTOR = args.dsf
+SAMPLE_EXTRACTED_PER_TDMS = 150
+SHUFFLE_TDMS_SEQ = True
 
 print('Filename to save: ', FILENAME_TO_SAVE)
 print('Filename to process: ', FOLDER_TO_READ)
 print('Channel no to extract: ', CHANNEL_TO_EXTRACT)
-print('sample vector size: ', SAMPLE_VECTOR_LENGTH)
+print('Sample vector size: ', SAMPLE_VECTOR_LENGTH)
 print('Downsample factor: ', DOWNSAMPLE_FACTOR)
 
-
-# CONFIG
-shuffle_tdms_seq = True
-downsample_factor_status = True
-if DOWNSAMPLE_FACTOR is 1:
-    downsample_factor_status = False
-
-
-# all file name
+# --------------------------------------------------------------------------------------------------------- FILE READING
 all_tdms_file = [(FOLDER_TO_READ + f) for f in listdir(FOLDER_TO_READ) if f.endswith('.tdms')]
 print('total file to extract: ', len(all_tdms_file))
 
 # shuffle
-if shuffle_tdms_seq:
+if SHUFFLE_TDMS_SEQ:
     all_tdms_file = np.array(all_tdms_file)[np.random.permutation(len(all_tdms_file))]
 
 # setup header for csv
@@ -55,12 +50,15 @@ with open(FILENAME_TO_SAVE, 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(header)
 
+file_count = 1
 for tdms_file in all_tdms_file:
+    print('File No: ', file_count)
     n_channel_data = read_single_tdms(tdms_file)
     n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]  # drop last channel, due to no sensor
 
     temp = []
-    if downsample_factor_status:
+
+    if DOWNSAMPLE_FACTOR is not 1:
         for channel in n_channel_data:
             temp.append(decimate(x=channel, q=DOWNSAMPLE_FACTOR))
         n_channel_data = np.array(temp)
@@ -79,10 +77,10 @@ for tdms_file in all_tdms_file:
 
     # for all channels or for specific channel only
     for ch_no in CHANNEL_TO_EXTRACT:
-        print('Extracting channel {}'.format(ch_no))
+        print('Extracting channel {} --> {} samples'.format(ch_no, SAMPLE_EXTRACTED_PER_TDMS))
         temp = []
         # truncate, meaning each tdms only contribute to 20 samples
-        for i in index[:150]:
+        for i in index[:SAMPLE_EXTRACTED_PER_TDMS]:
             data_in_list = n_channel_data[ch_no, i:i + SAMPLE_VECTOR_LENGTH].tolist() + [ch_no]
             temp.append(data_in_list)
 
@@ -96,6 +94,8 @@ for tdms_file in all_tdms_file:
     print('Extraction Complete')
 
     gc.collect()
+
+    file_count += 1
 
 
 

@@ -36,7 +36,7 @@ from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recogniti
 from collections import deque
 from itertools import islice
 
-tdms_test = direct_to_dir(where='result') + 'dataset_noleak_random_1.5bar_[0]_ds2.csv'
+tdms_test = direct_to_dir(where='result') + 'dataset_leak_random_1.5bar_[0]_ds2.csv'
 test_df = pd.read_csv(tdms_test)
 
 print('Main Df DIM: ', test_df.values.shape)
