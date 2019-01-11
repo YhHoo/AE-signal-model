@@ -1,7 +1,6 @@
 import argparse
 import time
 
-time.sleep(2)
 
 # argparse
 parser = argparse.ArgumentParser(description='Input some parameters.')

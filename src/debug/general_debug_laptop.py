@@ -36,20 +36,23 @@ from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recogniti
 from collections import deque
 from itertools import islice
 
-tdms_test = 'E:/2019.01.03_101036_003.tdms'
-n_channel_data = read_single_tdms(filename=tdms_test)
-n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]
-print(n_channel_data.shape)
+tdms_test = direct_to_dir(where='result') + 'dataset_noleak_random_1.5bar_[0]_ds2.csv'
+test_df = pd.read_csv(tdms_test)
+
+print('Main Df DIM: ', test_df.values.shape)
+for i in range(7):
+    x = test_df.loc[test_df['channel'] == i].values[:, :-1]
+    print('Index[{}]: '.format(i), x.shape)
 
 # fig1 = plot_multiple_timeseries(input=n_channel_data,
 #                                 subplot_titles=['-4', '-2', '2', '4', '6', '8', '10'],
 #                                 main_title='B4 Downsample')
 
-n_channel_data_downsampled = []
-time_start = time.time()
-for channel in n_channel_data:
-    n_channel_data_downsampled.append(decimate(x=channel, q=5))
-n_channel_data_downsampled = np.array(n_channel_data_downsampled)
+# n_channel_data_downsampled = []
+# time_start = time.time()
+# for channel in n_channel_data:
+#     n_channel_data_downsampled.append(decimate(x=channel, q=5))
+# n_channel_data_downsampled = np.array(n_channel_data_downsampled)
 
 # print('Time taken to downsample: {}s'.format(time.time()-time_start))
 # print('Dime: ', n_channel_data_downsampled.shape)
@@ -59,26 +62,26 @@ n_channel_data_downsampled = np.array(n_channel_data_downsampled)
 #
 # plt.show()
 
-n_channel_data_downsampled_fft = []
-for channel in n_channel_data_downsampled:
-    f_mag_unseen, _, f_axis = fft_scipy(sampled_data=channel, fs=int(200e3), visualize=False)
-    n_channel_data_downsampled_fft.append(f_mag_unseen)
-label = ['-4', '-2', '2', '4', '6', '8', '10']
-
-for channel, l, index in zip(n_channel_data_downsampled, label, range(7)):
-    f_mag_unseen, _, f_axis = fft_scipy(sampled_data=channel, fs=int(200e3), visualize=False)
-    fig_fft = plt.figure(figsize=(14, 8))
-    ax_fft = fig_fft.add_subplot(1, 1, 1)
-    ax_fft.grid('on')
-    ax_fft.plot(f_axis[10:], f_mag_unseen[10:], alpha=0.5)
-    ax_fft.set_ylim(bottom=0, top=0.001)
-    ax_fft.set_title('FFT_{}'.format(l))
-    save_filename = direct_to_dir(where='result') + 'FFT_{}.png'.format(index)
-    fig_fft.savefig(save_filename)
-
-    plt.close('all')
-
-plt.show()
+# n_channel_data_downsampled_fft = []
+# for channel in n_channel_data_downsampled:
+#     f_mag_unseen, _, f_axis = fft_scipy(sampled_data=channel, fs=int(200e3), visualize=False)
+#     n_channel_data_downsampled_fft.append(f_mag_unseen)
+# label = ['-4', '-2', '2', '4', '6', '8', '10']
+#
+# for channel, l, index in zip(n_channel_data_downsampled, label, range(7)):
+#     f_mag_unseen, _, f_axis = fft_scipy(sampled_data=channel, fs=int(200e3), visualize=False)
+#     fig_fft = plt.figure(figsize=(14, 8))
+#     ax_fft = fig_fft.add_subplot(1, 1, 1)
+#     ax_fft.grid('on')
+#     ax_fft.plot(f_axis[10:], f_mag_unseen[10:], alpha=0.5)
+#     ax_fft.set_ylim(bottom=0, top=0.001)
+#     ax_fft.set_title('FFT_{}'.format(l))
+#     save_filename = direct_to_dir(where='result') + 'FFT_{}.png'.format(index)
+#     fig_fft.savefig(save_filename)
+#
+#     plt.close('all')
+#
+# plt.show()
 
 
 # n_channel_data_downsampled_fft = np.array(n_channel_data_downsampled_fft)
