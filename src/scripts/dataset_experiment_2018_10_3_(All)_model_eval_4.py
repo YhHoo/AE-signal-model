@@ -28,7 +28,7 @@ sample_size_for_prediction = 100000
 downsample_by_5 = True
 
 # saving naming
-model_name = 'LNL_8x1'  # *
+model_name = 'LNL_9x1'  # *
 lcp_model = load_model(model_name=model_name)
 lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
@@ -142,7 +142,7 @@ for file_to_test in all_tdms:
 
     prediction_all_ch = np.array(prediction_all_ch).T
     df_pred = pd.DataFrame(data=prediction_all_ch,
-                           columns=['ch0[-4m]', 'ch1[-2m]', 'ch2[2m]', 'ch3[6m]', 'ch4[8m]', 'ch5[10m]'])
+                           columns=input_data_labels)
     df_pred.to_csv(df_pred_save_filename)
     print('Saved --> ', df_pred_save_filename)
     print('Reading --> ', df_pred_save_filename)

@@ -385,19 +385,19 @@ def LNL_binary_model_2():
     x = BatchNormalization()(inp)
 
     # conv 1
-    x = Conv1D(filters=32, kernel_size=1000, strides=1, activation='relu', padding='same')(x)  # kernel size of 0.0005s
+    x = Conv1D(filters=32, kernel_size=500, strides=1, activation='relu', padding='same')(x)  # kernel size of 0.0005s
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=8, strides=2, padding='same')(x)  # time half
 
     # # conv 2
-    x = Conv1D(filters=64, kernel_size=500, strides=1, activation='relu', padding='same')(x)  # kernel size of 0.0001s
+    x = Conv1D(filters=64, kernel_size=250, strides=1, activation='relu', padding='same')(x)  # kernel size of 0.0001s
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=8, strides=2, padding='same')(x)  # time half
 
     # conv 3
-    x = Conv1D(filters=128, kernel_size=250, strides=1, activation='relu', padding='same')(x)
+    x = Conv1D(filters=128, kernel_size=125, strides=1, activation='relu', padding='same')(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=8, strides=2, padding='same')(x)
@@ -427,7 +427,7 @@ def LNL_binary_model_2():
 # model = LNL_binary_model_2()
 
 
-# --------------------HERE FOR TESTING THE MODEL ALLOWABLE BATCH SIZE FOR GPU MEMORY LIMIT -----------------------------
+# # --------------------HERE FOR TESTING THE MODEL ALLOWABLE BATCH SIZE FOR GPU MEMORY LIMIT -----------------------------
 # from src.utils.helpers import *
 # data = np.random.rand(100000, 2000)
 # data = data.reshape((data.shape[0], data.shape[1], 1))
@@ -443,5 +443,5 @@ def LNL_binary_model_2():
 #           epochs=100,
 #           shuffle=True,
 #           verbose=2,
-#           batch_size=500)
+#           batch_size=1000)
 

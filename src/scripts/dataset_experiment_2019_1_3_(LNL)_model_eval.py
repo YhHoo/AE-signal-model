@@ -15,21 +15,34 @@ from src.utils.helpers import *
 
 # -------------------------------------------------------------------------------------------------------------ARG PARSE
 parser = argparse.ArgumentParser(description='Input some parameters.')
-parser.add_argument('--fts', metavar='FS', default=None, type=str, help='Filename to save')
-parser.add_argument('--ftr', metavar='FR', default=None, type=str, help='Filename to process')
-parser.add_argument('--cth', metavar='CH', default=None, type=int, nargs='+', help='Channel no to extract')
-parser.add_argument('--svs', metavar='S', default=None, type=int, help='sample vector size')
-parser.add_argument('--dsf', metavar='DF', default=1, type=int, help='Downsample factor')
+parser.add_argument('--model', default=None, type=str, help='model name to test')
+parser.add_argument('--inlen', default=1, type=int, help='Model Input length')
+parser.add_argument('--mpl', default=None, type=int, nargs='+', help='model possible label')
+parser.add_argument('--testdir', default=None, type=str, help='dir of tdms to test')
+parser.add_argument('--dsf', default=None, type=int, help='Downsample factor')
+parser.add_argument('--actlabel', default=1, type=int, nargs='+', help='actual label')
+parser.add_argument('--inlabel', default=None, type=str, nargs='+', help='input label')
+parser.add_argument('--figname', default=1, type=str, help='Fig name')
 
 args = parser.parse_args()
 
-MODEL_NAME_TO_TEST
-MODEL_POSSIBLE_LABEL
-TEST_TDMS_FOLDER
-DOWNSAMPLE_FACTOR
-ACTUAL_LABEL_ALL_CH
-INPUT_DATA_LABEL
-FIG_CM_TITLE = 'Unseen-Leak' / 'Seen Noleak'...
+MODEL_NAME_TO_TEST = args.model
+MODEL_INPUT_LEN = args.inlen
+MODEL_POSSIBLE_LABEL = args.mpl
+TEST_TDMS_FOLDER = args.testdir
+DOWNSAMPLE_FACTOR = args.dsf
+ACTUAL_LABEL_ALL_CH = args.actlabel
+INPUT_DATA_LABEL = args.inlabel
+FIG_CM_TITLE = args.figname  # 'Unseen-Leak' / 'Seen-Noleak'...
+
+print('Model Name to Test: ', MODEL_NAME_TO_TEST)
+print('Model Input Length: ', MODEL_INPUT_LEN)
+print('Model Possible Label: ', MODEL_POSSIBLE_LABEL)
+print('Dir of Test TDMS : ', TEST_TDMS_FOLDER)
+print('Downsample Factor: ', DOWNSAMPLE_FACTOR)
+print('Actual Label: ', ACTUAL_LABEL_ALL_CH)
+print('Input Data Label: ', INPUT_DATA_LABEL)
+print('Fig Title/filename: ', FIG_CM_TITLE)
 
 
 # instruct GPU to allocate only sufficient memory for this script
@@ -39,35 +52,22 @@ sess = tf.Session(config=config)
 
 # SLIDING WINDOW CONFIG
 window_stride = 10
-window_size = (1000, 1000)
+window_size = (1000, MODEL_INPUT_LEN - 1000)
 sample_size_for_prediction = 10000
 
-# downsample
-downsample_by_5 = True
-
 # saving naming
-model_name = 'LNL_8x1'  # *
+model_name = MODEL_NAME_TO_TEST
 lcp_model = load_model(model_name=model_name)
 lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 print(lcp_model.summary())
 
 # file reading
-all_tdms_dir = 'G:/Experiment_3_1_2019/-3,-2,0,5,7,16,17/1.5 bar/Leak/Test data/'
-all_tdms = [(all_tdms_dir + f) for f in listdir(all_tdms_dir) if f.endswith('.tdms')]
+all_tdms = [(TEST_TDMS_FOLDER + f) for f in listdir(TEST_TDMS_FOLDER) if f.endswith('.tdms')]
 
-# UPDATE PARAM HERE ***************************
-actual_label = [1, 1, 1, 1, 1, 1, 1]  # label we expect model to produce (multiple label is acceptable)
-model_possible_label = [0, 1]
+# OTHER PARAM ***************************
 # the physical meaning of the model label
 model_label_to_dist = {0: 'NoLeak',
                        1: 'Leak'}
-input_data_labels = ['sensor@[-3m]',  # the channels' dist of the input data **
-                     'sensor@[-2m]',
-                     'sensor@[0m]',
-                     'sensor@[5m]',
-                     'sensor@[7m]',
-                     'sensor@[16m]',
-                     'sensor@[17m]']
 fig_cm_title = 'confusion mat (Test Data: {})'.format(FIG_CM_TITLE)
 # ***************************************
 
@@ -77,7 +77,7 @@ for file_to_test in all_tdms:
     # discard the .tdms
     x = x.split(sep='.')[-2]
 
-    filename_to_save = 'pred_result_[{}]_[{}]_L'.format(model_name, x)  # **
+    filename_to_save = 'pred_result_[{}]_[{}]_{}'.format(model_name, x, FIG_CM_TITLE)  # **
 
     # SAVING CONFIG
     df_pred_save_filename = direct_to_dir(where='result') + filename_to_save + '.csv'
@@ -90,9 +90,9 @@ for file_to_test in all_tdms:
     print('TDMS data dim: ', n_channel_data.shape)
 
     temp = []
-    if downsample_by_5:
+    if DOWNSAMPLE_FACTOR is not 1:
         for channel in n_channel_data:
-            temp.append(decimate(x=channel, q=5))
+            temp.append(decimate(x=channel, q=DOWNSAMPLE_FACTOR))
         n_channel_data = np.array(temp)
         print('Dim After Downsample: ', n_channel_data.shape)
 
@@ -160,7 +160,7 @@ for file_to_test in all_tdms:
 
     prediction_all_ch = np.array(prediction_all_ch).T
     df_pred = pd.DataFrame(data=prediction_all_ch,
-                           columns=input_data_labels)
+                           columns=INPUT_DATA_LABEL)
     df_pred.to_csv(df_pred_save_filename)
     print('Saved --> ', df_pred_save_filename)
     print('Reading --> ', df_pred_save_filename)
@@ -172,11 +172,11 @@ for file_to_test in all_tdms:
     acc_per_ch = []
 
     # for all channel
-    for ch, actual in zip(prediction_all_ch, actual_label):
+    for ch, actual in zip(prediction_all_ch, ACTUAL_LABEL_ALL_CH):
         acc = 0
         label_count_per_ch = []
         # count for all labels
-        for label in model_possible_label:
+        for label in MODEL_POSSIBLE_LABEL:
             count = ch.count(label)
             label_count_per_ch.append(count)
             # for actual class
@@ -195,7 +195,7 @@ for file_to_test in all_tdms:
 
     # merge col label with class accuracy
     col_label_w_acc = []
-    for i, j in zip(input_data_labels, acc_per_ch):
+    for i, j in zip(INPUT_DATA_LABEL, acc_per_ch):
         col_label_w_acc.append(i + '\nacc: {:.4f}'.format(j))
 
     fig_cm = plot_confusion_matrix(cm=conf_mat,
@@ -209,6 +209,7 @@ for file_to_test in all_tdms:
     plt.close('all')
     print('Confusion Mat. fig saved -->', fig_cm_save_filename)
     print('\n------------------------------------------------------------\n')
+
 
 # # ----------------------------------------------------------------------------- PLOT CLASSIFICATION RESULT IN SEQUENCE
 # # multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries()
