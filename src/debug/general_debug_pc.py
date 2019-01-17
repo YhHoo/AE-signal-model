@@ -69,106 +69,106 @@ print('File Read Time: {:.4f}s'.format(time.time() - time_start))
 print('Random no leak Dataset Dim: ', df_noleak_rand.values.shape)
 
 # [WARNING] PLOTTING TAKES FOREVER TO PLOT -----------------------------------------------------------------------------
-color_seq = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
-color_label = ['-4.5m', '-2m', '2m', '5m', '8m', '10m']
-color_dict = {0: 'r', 1: 'g', 2: 'b', 3: 'c', 4: 'm', 5: 'y'}
-r_leg = mpatches.Patch(color='r', label=color_label[0])
-g_leg = mpatches.Patch(color='g', label=color_label[1])
-b_leg = mpatches.Patch(color='b', label=color_label[2])
-c_leg = mpatches.Patch(color='c', label=color_label[3])
-m_leg = mpatches.Patch(color='m', label=color_label[4])
-y_leg = mpatches.Patch(color='y', label=color_label[5])
-
-figure_result = plt.figure(figsize=(5, 8))
-figure_result.suptitle('Model prediction by 6k Sliding Window, Stride: {}'.format(window_stride),
-                       fontweight="bold",
-                       size=8)
-figure_result.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
-ax1 = figure_result.add_subplot(6, 1, 1)
-ax1.set_title(color_label[0])
-ax1.plot(n_channel_data[0])
-
-# label the result
-for pred_index, pred in zip(window_index, prediction_all_ch[0]):
-    ax1.axvline(pred_index, color=color_dict[pred])
-
-for plot_no, plot_label, raw_signal, prediction_per_ch in zip(np.arange(2, 7, 1),
-                                                              color_label[1:],
-                                                              n_channel_data[1:],
-                                                              prediction_all_ch[1:]):
-    ax2 = figure_result.add_subplot(6, 1, plot_no, sharex=ax1)
-    ax2.set_title(plot_label)
-    ax2.plot(raw_signal)
-
-    # label the result
-    for pred_index, pred in zip(window_index, prediction_per_ch):
-        ax1.axvline(pred_index, color=color_dict[pred])
-
-
-plt.legend(handles=[r_leg, g_leg, b_leg, c_leg, m_leg, y_leg])
-plt.show()
-
-
-r_leg = mpatches.Patch(color='r', label='The red data')
-g_leg = mpatches.Patch(color='g', label='The green data')
-b_leg = mpatches.Patch(color='b', label='The blue data')
-c_leg = mpatches.Patch(color='c', label='The cyan data')
-m_leg = mpatches.Patch(color='m', label='The magenta data')
-y_leg = mpatches.Patch(color='y', label='The da data')
-k_leg = mpatches.Patch(color='k', label='The di data')
-
-l = np.linspace(0, 12, 100)
-print(l)
-x = [1, 5.4, 7, 11, 30, 40, 50]
-plt.plot(l)
-color = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
-for c, i in zip(color, x):
-    plt.axvline(i, color=c)
-plt.legend(handles=[r_leg, g_leg, b_leg, c_leg, m_leg, y_leg, k_leg])
-plt.show()
-
-color_dict = {0: 'r', 1: 'g', 2:'b', 3:'c', 4:'m', 5:'y'}
-
-print(color_dict[5])
-ogger.save_recall_precision_f1(y_pred=prediction, y_true=actual_argmax, all_class_label=[0, 1, 2, 3, 4, 5])
-dataset_dir = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/'
-dataset_lcp_filename = dataset_dir + 'dataset_lcp_1bar_seg4.csv'
-dataset_non_lcp_filename = dataset_dir + 'dataset_non_lcp_1bar_seg1_norm.csv'
-dataset_normalized_save_filename = direct_to_dir(where='result') + 'norm.csv'
-
-print('Reading --> ', dataset_non_lcp_filename)
-df_data = pd.read_csv(dataset_non_lcp_filename)
-column_label = df_data.columns.values
-
-print(df_data)
-print(df_data.values)
-print(df_data.values.shape)
-
-# drop rows that contains Nan
-df_data.dropna(inplace=True)
-
-df2 = pd.DataFrame(data=df_data.values, columns=column_label)
-df2.to_csv(dataset_normalized_save_filename, index=False)
-
-data_arr = df_data.values[:, :-1]
-label_arr = df_data.values[:, -1].reshape(-1, 1)
-
-temp = []
-scaler = MinMaxScaler(feature_range=(-1, 1))
-
-for row in data_arr:
-    temp.append(scaler.fit_transform(row.reshape(-1, 1)).ravel())
-
-temp = np.array(temp)
-
-print('INPUT DATA DIM:', df_data.values.shape)
-
-combine_arr = np.concatenate((temp, label_arr), axis=1)
-
-print('AFTER COMBINED DIM: ', combine_arr.shape)
-
-df_data_norm = pd.DataFrame(data=combine_arr, columns=column_label)
-df_data_norm.to_csv(dataset_normalized_save_filename, index=False)
+# color_seq = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
+# color_label = ['-4.5m', '-2m', '2m', '5m', '8m', '10m']
+# color_dict = {0: 'r', 1: 'g', 2: 'b', 3: 'c', 4: 'm', 5: 'y'}
+# r_leg = mpatches.Patch(color='r', label=color_label[0])
+# g_leg = mpatches.Patch(color='g', label=color_label[1])
+# b_leg = mpatches.Patch(color='b', label=color_label[2])
+# c_leg = mpatches.Patch(color='c', label=color_label[3])
+# m_leg = mpatches.Patch(color='m', label=color_label[4])
+# y_leg = mpatches.Patch(color='y', label=color_label[5])
+#
+# figure_result = plt.figure(figsize=(5, 8))
+# figure_result.suptitle('Model prediction by 6k Sliding Window, Stride: {}'.format(window_stride),
+#                        fontweight="bold",
+#                        size=8)
+# figure_result.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
+# ax1 = figure_result.add_subplot(6, 1, 1)
+# ax1.set_title(color_label[0])
+# ax1.plot(n_channel_data[0])
+#
+# # label the result
+# for pred_index, pred in zip(window_index, prediction_all_ch[0]):
+#     ax1.axvline(pred_index, color=color_dict[pred])
+#
+# for plot_no, plot_label, raw_signal, prediction_per_ch in zip(np.arange(2, 7, 1),
+#                                                               color_label[1:],
+#                                                               n_channel_data[1:],
+#                                                               prediction_all_ch[1:]):
+#     ax2 = figure_result.add_subplot(6, 1, plot_no, sharex=ax1)
+#     ax2.set_title(plot_label)
+#     ax2.plot(raw_signal)
+#
+#     # label the result
+#     for pred_index, pred in zip(window_index, prediction_per_ch):
+#         ax1.axvline(pred_index, color=color_dict[pred])
+#
+#
+# plt.legend(handles=[r_leg, g_leg, b_leg, c_leg, m_leg, y_leg])
+# plt.show()
+#
+#
+# r_leg = mpatches.Patch(color='r', label='The red data')
+# g_leg = mpatches.Patch(color='g', label='The green data')
+# b_leg = mpatches.Patch(color='b', label='The blue data')
+# c_leg = mpatches.Patch(color='c', label='The cyan data')
+# m_leg = mpatches.Patch(color='m', label='The magenta data')
+# y_leg = mpatches.Patch(color='y', label='The da data')
+# k_leg = mpatches.Patch(color='k', label='The di data')
+#
+# l = np.linspace(0, 12, 100)
+# print(l)
+# x = [1, 5.4, 7, 11, 30, 40, 50]
+# plt.plot(l)
+# color = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
+# for c, i in zip(color, x):
+#     plt.axvline(i, color=c)
+# plt.legend(handles=[r_leg, g_leg, b_leg, c_leg, m_leg, y_leg, k_leg])
+# plt.show()
+#
+# color_dict = {0: 'r', 1: 'g', 2:'b', 3:'c', 4:'m', 5:'y'}
+#
+# print(color_dict[5])
+# ogger.save_recall_precision_f1(y_pred=prediction, y_true=actual_argmax, all_class_label=[0, 1, 2, 3, 4, 5])
+# dataset_dir = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/'
+# dataset_lcp_filename = dataset_dir + 'dataset_lcp_1bar_seg4.csv'
+# dataset_non_lcp_filename = dataset_dir + 'dataset_non_lcp_1bar_seg1_norm.csv'
+# dataset_normalized_save_filename = direct_to_dir(where='result') + 'norm.csv'
+#
+# print('Reading --> ', dataset_non_lcp_filename)
+# df_data = pd.read_csv(dataset_non_lcp_filename)
+# column_label = df_data.columns.values
+#
+# print(df_data)
+# print(df_data.values)
+# print(df_data.values.shape)
+#
+# # drop rows that contains Nan
+# df_data.dropna(inplace=True)
+#
+# df2 = pd.DataFrame(data=df_data.values, columns=column_label)
+# df2.to_csv(dataset_normalized_save_filename, index=False)
+#
+# data_arr = df_data.values[:, :-1]
+# label_arr = df_data.values[:, -1].reshape(-1, 1)
+#
+# temp = []
+# scaler = MinMaxScaler(feature_range=(-1, 1))
+#
+# for row in data_arr:
+#     temp.append(scaler.fit_transform(row.reshape(-1, 1)).ravel())
+#
+# temp = np.array(temp)
+#
+# print('INPUT DATA DIM:', df_data.values.shape)
+#
+# combine_arr = np.concatenate((temp, label_arr), axis=1)
+#
+# print('AFTER COMBINED DIM: ', combine_arr.shape)
+#
+# df_data_norm = pd.DataFrame(data=combine_arr, columns=column_label)
+# df_data_norm.to_csv(dataset_normalized_save_filename, index=False)
 
 # ----------------------------------------------------------------------------------------------------------------------
 

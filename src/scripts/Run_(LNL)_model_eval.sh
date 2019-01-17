@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-declare -a model_name='LNL_9x4'
+declare -a model_name='LNL_15x1'
 
 declare -a in_length=2000
 
