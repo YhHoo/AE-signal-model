@@ -269,6 +269,7 @@ def dexter_model():
     inp = Input((6000, 1))
     # 256
     x = BatchNormalization()(inp)
+
     # 256
     x = Conv1D(32, kernel_size=3, dilation_rate=3, padding='same')(x)
     x = BatchNormalization()(x)

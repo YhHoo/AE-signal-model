@@ -5,6 +5,10 @@ data_preparation_script.py.
 
 from src.utils.helpers import *
 
+# correctly_classified_unseen_noleak_filename = 'E:/Experiment_3_1_2019/-3,-2,0,5,7,16,17/1.5 bar/NoLeak/' \
+#                                               'Test data/2019.01.03_110756_012.tdms'
+# wrongly_classified_unseen_noleak_filename = 'E:/Experiment_3_1_2019/-3,-2,0,5,7,16,17/1.5 bar/NoLeak/' \
+#                                               'Test data/2019.01.03_110741_009.tdms'
 
 dataset_dir = 'G:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/'
 dataset_to_visualize = dataset_dir + 'dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10].csv'
@@ -16,6 +20,13 @@ input_data_labels = ['sensor@[-4m]',  # the channels' dist of the input data
                      'sensor@[6m]',
                      'sensor@[8m]',
                      'sensor@[10m]']
+input_data_labels_2 = ['sensor@[-3m]',
+                       'sensor@[-2m]',
+                       'sensor@[0m]',
+                       'sensor@[5m]',
+                       'sensor@[7m]',
+                       'sensor@[16m]',
+                       'sensor@[17m]']
 
 print('Reading --> ', dataset_to_visualize)
 data_df = pd.read_csv(dataset_to_visualize)

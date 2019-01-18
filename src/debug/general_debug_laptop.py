@@ -36,6 +36,12 @@ from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recogniti
 from collections import deque
 from itertools import islice
 
+# a = np.array([[1, 2, 3],
+#               [10, 5, 20]])
+#
+# print(np.mean(a, axis=0))
+
+
 tdms_test = 'G:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds2.csv'
 test_df = pd.read_csv(tdms_test)
 
