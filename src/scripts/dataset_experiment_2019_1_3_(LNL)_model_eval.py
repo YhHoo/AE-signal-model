@@ -72,6 +72,7 @@ fig_cm_title = 'confusion mat (Test Data: {})'.format(FIG_CM_TITLE)
 # ***************************************
 
 # ------------------------------------------------------------------------------------------------------------ DATA PREP
+acc_per_ch_al_tdms = []
 for file_to_test in all_tdms:
     x = file_to_test.split(sep='/')[-1]
     # discard the .tdms
@@ -192,7 +193,7 @@ for file_to_test in all_tdms:
         conf_mat.append(label_count_per_ch)
 
     conf_mat = np.array(conf_mat).T
-
+    acc_per_ch_al_tdms.append(acc_per_ch)
     # merge col label with class accuracy
     col_label_w_acc = []
     for i, j in zip(INPUT_DATA_LABEL, acc_per_ch):
@@ -209,6 +210,14 @@ for file_to_test in all_tdms:
     plt.close('all')
     print('Confusion Mat. fig saved -->', fig_cm_save_filename)
     print('\n------------------------------------------------------------\n')
+
+# conclude overall acc for al class
+acc_per_ch_al_tdms = np.array(acc_per_ch_al_tdms)
+avg_acc_per_ch = np.mean(acc_per_ch_al_tdms, axis=0)
+print('AVERAGE ACCURACY ----------------------')
+for i, j in zip(INPUT_DATA_LABEL, avg_acc_per_ch):
+    print(i + ' acc: {:.4f}'.format(j))
+
 
 
 # # ----------------------------------------------------------------------------- PLOT CLASSIFICATION RESULT IN SEQUENCE

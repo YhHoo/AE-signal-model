@@ -237,12 +237,12 @@ class AcousticEmissionDataSet:
         leak_data_p1 = df_leak_rand_p1.loc[df_leak_rand_p1['channel'].isin([2, 3, 4, 5, 6])].values[:, :-1]
         if shuffle_b4_split:
             leak_data_p1 = leak_data_p1[np.random.permutation(len(leak_data_p1))]
-            leak_data_p1 = leak_data_p1[:(len(leak_data_p1)//2)]
+            leak_data_p1 = leak_data_p1[:(len(leak_data_p1)//2)]  # **to balance the class
 
         leak_data_p2 = df_leak_rand_p2.values[:, :-1]
         if shuffle_b4_split:
             leak_data_p2 = leak_data_p2[np.random.permutation(len(leak_data_p2))]
-            leak_data_p2 = leak_data_p2[:(len(leak_data_p2)//2)]
+            leak_data_p2 = leak_data_p2[:(len(leak_data_p2)//2)]  # **to balance the class
 
         # merging all noleak scenario
         label = [1] * (len(leak_data_p1) + len(leak_data_p2))
@@ -388,6 +388,6 @@ class AcousticEmissionDataSet:
         return train_x, train_y, test_x, test_y
 
 
-data = AcousticEmissionDataSet(drive='G')
-data2 = data.random_leak_noleak_downsampled()
+# data = AcousticEmissionDataSet(drive='G')
+# data2 = data.random_leak_noleak_downsampled()
 

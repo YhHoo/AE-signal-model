@@ -386,25 +386,25 @@ def LNL_binary_model_2():
     x = BatchNormalization()(inp)
 
     # conv 1
-    x = Conv1D(filters=32, kernel_size=500, strides=1, activation='relu', padding='same')(x)  # kernel size of 0.0005s
+    x = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=2, activation='relu', padding='same')(x)  # kernel size of 0.0005s
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-    x = MaxPooling1D(pool_size=8, strides=2, padding='same')(x)  # time half
+    x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)  # time half
 
     # # conv 2
-    x = Conv1D(filters=64, kernel_size=250, strides=1, activation='relu', padding='same')(x)  # kernel size of 0.0001s
+    x = Conv1D(filters=64, kernel_size=200, strides=1, dilation_rate=2, activation='relu', padding='same')(x)  # kernel size of 0.0001s
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-    x = MaxPooling1D(pool_size=8, strides=2, padding='same')(x)  # time half
+    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)  # time half
 
     # conv 3
-    x = Conv1D(filters=128, kernel_size=125, strides=1, activation='relu', padding='same')(x)
+    x = Conv1D(filters=128, kernel_size=100, strides=1, dilation_rate=2, activation='relu', padding='same')(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-    x = MaxPooling1D(pool_size=8, strides=2, padding='same')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
     # # conv 4
-    # x = Conv1D(filters=256, kernel_size=96, strides=1, activation='relu')(x)
+    # x = Conv1D(filters=256, kernel_size=100, strides=1, activation='relu')(x)
     # x = BatchNormalization()(x)
     # x = Activation('relu')(x)
     # x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
