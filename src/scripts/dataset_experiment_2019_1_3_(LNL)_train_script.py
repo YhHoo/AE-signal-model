@@ -30,12 +30,12 @@ lcp_model = LNL_binary_model_2()
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
 # saving best weight setting
-model_name_to_save = 'LNL_15x1'
+model_name_to_save = 'LNL_17x1'
 logger = ModelLogger(model=lcp_model, model_name=model_name_to_save)  # *** chg name
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # start training
-total_epoch = 300
+total_epoch = 200
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,
@@ -96,7 +96,7 @@ fig_lr_save_filename = direct_to_dir(where='result') + '{}.png'.format(evaluate_
 fig_evaluate.savefig(fig_lr_save_filename)
 
 print('\n---------- EVALUATION RESULT SCRIPT LNL 1 -----------')
-print('**Param in tuning --> [pool:(4, 3, 2)]')
+print('**Param in tuning --> [pool:(3, 2, 2)]')
 print('Model Trainable params: {}'.format(trainable_count))
 print('Best Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
                                                                best_val_acc_index,
