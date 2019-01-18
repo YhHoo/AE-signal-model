@@ -136,9 +136,9 @@ class ModelLogger:
         :return: None, but it will save 2 csv of confusion matrix and recall_precision table
         '''
         # Consider this as a wrapper for the recall_precision_multiclass(), for easy saving purpose
-        mat, r, p, f1 = compute_recall_precision_multiclass(y_true=y_true,
-                                                            y_pred=y_pred,
-                                                            all_class_label=all_class_label)
+        mat, r, p, f1, fax = compute_recall_precision_multiclass(y_true=y_true,
+                                                                 y_pred=y_pred,
+                                                                 all_class_label=all_class_label)
 
         mat_filename = self.path + '_confusion_mat.csv'
         recall_precision_df_filename = self.path + '_recall_prec_f1.csv'
@@ -155,6 +155,7 @@ class ModelLogger:
         recall_precision_df.iloc[2, 0] = f1
         recall_precision_df.to_csv(recall_precision_df_filename)
 
+        return fax
 
 def load_model(model_name=None):
     '''
@@ -1235,6 +1236,8 @@ def compute_recall_precision_multiclass(y_true, y_pred, all_class_label, verbose
     :param y_pred: list or 1d array of model prediction (after argmax())
     :param all_class_label: list or 1d array of integers for labelling the class, e.g. 0, 1, 2, 3, ...
     :param verbose: Print out the recall and precision for each class
+    :param fax_result: if true, it will put all string under verbose into a list and return. this is for other saving
+                      purposes.
     :return: conf_mat --> a square dataframe of pandas
              recall_each_class --> list or 1d array of integers (follow order of all_class_label)
              precision_each_class --> list or 1d array of integers (follow order of all_class_label)
@@ -1270,7 +1273,15 @@ def compute_recall_precision_multiclass(y_true, y_pred, all_class_label, verbose
         print('Average precision: ', precision_avg)
         print('Overall F1-score: ', f1_score)
 
-    return conf_mat, recall_each_class, precision_each_class, f1_score
+    # put all verbose into list of string this is for other saving purposes
+    fax = list()
+    fax.append('class recall: {}'.format(recall_each_class))
+    fax.append('Average recall: {}'.format(recall_avg))
+    fax.append('class precision: {}'.format(precision_each_class))
+    fax.append('Average precision: {}'.format(precision_avg))
+    fax.append('Overall F1-score: {}'.format(f1_score))
+
+    return conf_mat, recall_each_class, precision_each_class, f1_score, fax
 
 
 # plot confusion matrix

@@ -36,21 +36,33 @@ from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recogniti
 from collections import deque
 from itertools import islice
 
+FILENAME_TO_SAVE = 'result.txt'
+result_1 = 'acc2: 0.875'
+result_2 = 'acc3: 0.174'
+with open(FILENAME_TO_SAVE, 'a') as f:
+    f.write('\n' + result_1)
 
-test_df = pd.read_csv(tdms_test)
-print('dataset_leak_random_1.5bar_[0]_ds.csv DIM: ', test_df.values.shape)
+with open(FILENAME_TO_SAVE, 'a') as f:
+    f.write('\n' + result_2)
 
-tdms_test = direct_to_dir(where='result') + 'dataset_noleak_random_1.5bar_[0]_ds.csv'
-test_df = pd.read_csv(tdms_test)
-print('dataset_noleak_random_1.5bar_[0]_ds.csv DIM: ', test_df.values.shape)
 
-tdms_test = direct_to_dir(where='result') + 'dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds.csv'
-test_df = pd.read_csv(tdms_test)
-print('dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds.csv DIM: ', test_df.values.shape)
-
-tdms_test = direct_to_dir(where='result') + 'dataset_noleak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds.csv'
-test_df = pd.read_csv(tdms_test)
-print('dataset_noleak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds.csv DIM: ', test_df.values.shape)
+# tdms_test = direct_to_dir(where='result') + 'dataset_leak_random_1.5bar_[0]_ds.csv'
+#
+#
+# test_df = pd.read_csv(tdms_test)
+# print('dataset_leak_random_1.5bar_[0]_ds.csv DIM: ', test_df.values.shape)
+#
+# tdms_test = direct_to_dir(where='result') + 'dataset_noleak_random_1.5bar_[0]_ds.csv'
+# test_df = pd.read_csv(tdms_test)
+# print('dataset_noleak_random_1.5bar_[0]_ds.csv DIM: ', test_df.values.shape)
+#
+# tdms_test = direct_to_dir(where='result') + 'dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds.csv'
+# test_df = pd.read_csv(tdms_test)
+# print('dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds.csv DIM: ', test_df.values.shape)
+#
+# tdms_test = direct_to_dir(where='result') + 'dataset_noleak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds.csv'
+# test_df = pd.read_csv(tdms_test)
+# print('dataset_noleak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds.csv DIM: ', test_df.values.shape)
 
 
 # print('Main Df DIM: ', test_df.values.shape)

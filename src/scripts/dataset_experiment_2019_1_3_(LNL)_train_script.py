@@ -4,12 +4,20 @@ sys.path.append('C:/Users/YH/PycharmProjects/AE-signal-model')
 
 import time
 import tensorflow as tf
-from keras.callbacks import TensorBoard
-from keras.optimizers import RMSprop
+import argparse
 from src.experiment_dataset.dataset_experiment_2019_1_3 import AcousticEmissionDataSet
 from src.model_bank.dataset_2018_7_13_lcp_recognition_model import *
 from src.utils.helpers import *
 
+# ------------------------------------------------------------------------------------------------------------ ARG PARSE
+parser = argparse.ArgumentParser(description='Input some parameters.')
+parser.add_argument('--rfname', default=1, type=str, help='Result File name')
+
+args = parser.parse_args()
+RESULT_SAVE_FILENAME = args.rfname
+print('Result saving filename: ', RESULT_SAVE_FILENAME)
+
+# ----------------------------------------------------------------------------------------------------------- GPU CONFIG
 # instruct GPU to allocate only sufficient memory for this script
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
@@ -106,10 +114,28 @@ print('Lowest Validation Loss: {:.4f} at Epoch {}/{}'.format(history.history['va
                                                              total_epoch))
 print('Time taken to execute 1 sample: {}s'.format(time_predict / len(test_x_reshape)))
 print('Time taken to complete {} epoch: {:.4f}s'.format(total_epoch, time_train))
-logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1])
+rpf_result = logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1])
 
 print('\nDist and Labels')
 print('[NoLeak] -> class_0')
 print('[Leak] -> class_1')
 
+# saving the printed result again
+with open(RESULT_SAVE_FILENAME, 'w') as f:
+    f.write('\n---------- EVALUATION RESULT SCRIPT LNL 1 -----------')
+    f.write('\nModel Trainable params: {}'.format(trainable_count))
+    f.write('\nBest Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
+                                                                   best_val_acc_index,
+                                                                   total_epoch))
+    f.write('\nLowest Validation Loss: {:.4f} at Epoch {}/{}'.format(history.history['val_loss'][best_val_loss_index],
+                                                                 best_val_loss_index,
+                                                                 total_epoch))
+    f.write('\nTime taken to execute 1 sample: {}s'.format(time_predict / len(test_x_reshape)))
+    f.write('\nTime taken to complete {} epoch: {:.4f}s'.format(total_epoch, time_train))
 
+    for i in rpf_result:
+        f.write('\n' + i)
+
+    f.write('\n\nDist and Labels')
+    f.write('[NoLeak] -> class_0')
+    f.write('[Leak] -> class_1')

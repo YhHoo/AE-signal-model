@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-declare -a model_name='LNL_16x1'
+declare -a model_name='LNL_18x1'  # **
 
-declare -a model_name_2='LNL_17x1'
+declare -a result_save_filename='C:/Users/YH/PycharmProjects/AE-signal-model/result/LNL_18x1_result.txt'  # **
 
 declare -a in_length=2000
 
@@ -48,89 +48,50 @@ declare -a leak_label=(1 1 1 1 1 1 1)
 
 declare -a model_possible_input=(0 1)
 
-#echo ------------------------------------------------------------------------------------------- Training
-#python dataset_experiment_2019_1_3_\(LNL\)_train_script.py
-
-echo ------------------------------------------------------------------------------------------- Unseen leak
-python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"\
-                                                         --inlen ${in_length}\
-                                                         --mpl ${model_possible_input[*]}\
-                                                         --testdir "${test_tdms_dir[0]}"\
-                                                         --dsf ${downsample_factor}\
-                                                         --actlabel ${leak_label[*]}\
-                                                         --inlabel ${unseen_data_labels[*]}\
-                                                         --figname ${fig_label[0]}
-
-echo ------------------------------------------------------------------------------------------- Unseen Noleak
-python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"\
-                                                         --inlen ${in_length}\
-                                                         --mpl ${model_possible_input[*]}\
-                                                         --testdir "${test_tdms_dir[1]}"\
-                                                         --dsf ${downsample_factor}\
-                                                         --actlabel ${noleak_label[*]}\
-                                                         --inlabel ${unseen_data_labels[*]}\
-                                                         --figname ${fig_label[1]}
-
-echo ------------------------------------------------------------------------------------------- Seen leak
-python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"\
-                                                         --inlen ${in_length}\
-                                                         --mpl ${model_possible_input[*]}\
-                                                         --testdir "${test_tdms_dir[2]}"\
-                                                         --dsf ${downsample_factor}\
-                                                         --actlabel ${leak_label[*]}\
-                                                         --inlabel ${seen_data_labels[*]}\
-                                                         --figname ${fig_label[2]}
-
-echo ------------------------------------------------------------------------------------------- Seen Noleak
-python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"\
-                                                         --inlen ${in_length}\
-                                                         --mpl ${model_possible_input[*]}\
-                                                         --testdir "${test_tdms_dir[3]}"\
-                                                         --dsf ${downsample_factor}\
-                                                         --actlabel ${noleak_label[*]}\
-                                                         --inlabel ${seen_data_labels[*]}\
-                                                         --figname ${fig_label[3]}
-
 echo ------------------------------------------------------------------------------------------- Training
-python dataset_experiment_2019_1_3_\(LNL\)_train_script.py
-
+python dataset_experiment_2019_1_3_\(LNL\)_train_script.py --rfname "${result_save_filename}"
 
 echo ------------------------------------------------------------------------------------------- Unseen leak
-python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name_2}"\
+python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"\
                                                          --inlen ${in_length}\
                                                          --mpl ${model_possible_input[*]}\
                                                          --testdir "${test_tdms_dir[0]}"\
                                                          --dsf ${downsample_factor}\
                                                          --actlabel ${leak_label[*]}\
                                                          --inlabel ${unseen_data_labels[*]}\
-                                                         --figname ${fig_label[0]}
+                                                         --figname ${fig_label[0]}\
+                                                         --rfname "${result_save_filename}"
 
 echo ------------------------------------------------------------------------------------------- Unseen Noleak
-python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name_2}"\
+python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"\
                                                          --inlen ${in_length}\
                                                          --mpl ${model_possible_input[*]}\
                                                          --testdir "${test_tdms_dir[1]}"\
                                                          --dsf ${downsample_factor}\
                                                          --actlabel ${noleak_label[*]}\
                                                          --inlabel ${unseen_data_labels[*]}\
-                                                         --figname ${fig_label[1]}
+                                                         --figname ${fig_label[1]}\
+                                                         --rfname "${result_save_filename}"
 
 echo ------------------------------------------------------------------------------------------- Seen leak
-python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name_2}"\
+python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"\
                                                          --inlen ${in_length}\
                                                          --mpl ${model_possible_input[*]}\
                                                          --testdir "${test_tdms_dir[2]}"\
                                                          --dsf ${downsample_factor}\
                                                          --actlabel ${leak_label[*]}\
                                                          --inlabel ${seen_data_labels[*]}\
-                                                         --figname ${fig_label[2]}
+                                                         --figname ${fig_label[2]}\
+                                                         --rfname "${result_save_filename}"
 
 echo ------------------------------------------------------------------------------------------- Seen Noleak
-python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name_2}"\
+python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"\
                                                          --inlen ${in_length}\
                                                          --mpl ${model_possible_input[*]}\
                                                          --testdir "${test_tdms_dir[3]}"\
                                                          --dsf ${downsample_factor}\
                                                          --actlabel ${noleak_label[*]}\
                                                          --inlabel ${seen_data_labels[*]}\
-                                                         --figname ${fig_label[3]}
+                                                         --figname ${fig_label[3]}\
+                                                         --rfname "${result_save_filename}"
+

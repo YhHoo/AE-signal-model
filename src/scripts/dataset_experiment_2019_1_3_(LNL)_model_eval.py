@@ -23,6 +23,7 @@ parser.add_argument('--dsf', default=None, type=int, help='Downsample factor')
 parser.add_argument('--actlabel', default=1, type=int, nargs='+', help='actual label')
 parser.add_argument('--inlabel', default=None, type=str, nargs='+', help='input label')
 parser.add_argument('--figname', default=1, type=str, help='Fig name')
+parser.add_argument('--rfname', default=1, type=str, help='Result File name')
 
 args = parser.parse_args()
 
@@ -34,6 +35,7 @@ DOWNSAMPLE_FACTOR = args.dsf
 ACTUAL_LABEL_ALL_CH = args.actlabel
 INPUT_DATA_LABEL = args.inlabel
 FIG_CM_TITLE = args.figname  # 'Unseen-Leak' / 'Seen-Noleak'...
+RESULT_SAVE_FILENAME = args.rfname
 
 print('Model Name to Test: ', MODEL_NAME_TO_TEST)
 print('Model Input Length: ', MODEL_INPUT_LEN)
@@ -43,7 +45,7 @@ print('Downsample Factor: ', DOWNSAMPLE_FACTOR)
 print('Actual Label: ', ACTUAL_LABEL_ALL_CH)
 print('Input Data Label: ', INPUT_DATA_LABEL)
 print('Fig Title/filename: ', FIG_CM_TITLE)
-
+print('Result saving filename: ', RESULT_SAVE_FILENAME)
 
 # instruct GPU to allocate only sufficient memory for this script
 config = tf.ConfigProto()
@@ -211,6 +213,7 @@ for file_to_test in all_tdms:
     print('Confusion Mat. fig saved -->', fig_cm_save_filename)
     print('\n------------------------------------------------------------\n')
 
+
 # conclude overall acc for al class
 acc_per_ch_al_tdms = np.array(acc_per_ch_al_tdms)
 avg_acc_per_ch = np.mean(acc_per_ch_al_tdms, axis=0)
@@ -218,7 +221,10 @@ print('AVERAGE ACCURACY ----------------------')
 for i, j in zip(INPUT_DATA_LABEL, avg_acc_per_ch):
     print(i + ' acc: {:.4f}'.format(j))
 
-
+with open(RESULT_SAVE_FILENAME, 'a') as f:
+    f.write('\n\nAVERAGE ACCURACY ----------------------' + FIG_CM_TITLE)
+    for i, j in zip(INPUT_DATA_LABEL, avg_acc_per_ch):
+        f.write(i + ' acc: {:.4f}'.format(j))
 
 # # ----------------------------------------------------------------------------- PLOT CLASSIFICATION RESULT IN SEQUENCE
 # # multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries()
