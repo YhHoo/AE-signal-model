@@ -13,6 +13,7 @@ import pandas as pd
 import pywt
 import time
 import peakutils
+import os
 from os import listdir
 from scipy.signal import correlate
 from keras.utils import to_categorical
@@ -20,6 +21,7 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, La
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 from sklearn.model_selection import StratifiedKFold, train_test_split
 import csv
+import argparse
 from sklearn.metrics import confusion_matrix
 # self lib
 # from src.controlled_dataset.ideal_dataset import white_noise
@@ -29,44 +31,77 @@ import matplotlib.patches as mpatches
 from src.utils.helpers import *
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
+parser = argparse.ArgumentParser(description='Input some parameters.')
+parser.add_argument('--savedircm', default=1, type=str, help='dir to save the cm file')
+args = parser.parse_args()
+DIR_TO_SAVE_CM = args.savedircm
+print('Dir saving cm: ', DIR_TO_SAVE_CM)
+
+filename_to_save = 'pred_result_[{}]_[{}]_{}'.format('LNL_XxX', '123_4567', 'unseen-leak')
+fig_cm_save_filename = '{}cm_{}.png'.format(DIR_TO_SAVE_CM, filename_to_save)
+
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+fig.savefig(fig_cm_save_filename)
+
+
+# directory = direct_to_dir(where='result') + 'new_one/'
+# if not os.path.exists(directory):
+#     os.makedirs(directory)
+#
+# df_pred = pd.DataFrame(data=np.arange(9).reshape((3, 3)),
+#                        columns=[1, 2, 3])
+# directory = direct_to_dir(where='result') + 'new_one/'
+#
+# for i in range(4, 5, 1):
+#     if not os.path.exists(directory):
+#         os.makedirs(directory)
+#         filename = directory + 'x_{}.csv'.format(i)
+#         df_pred.to_csv(filename)
+#     else:
+#         filename = directory + 'x_{}.csv'.format(i)
+#         df_pred.to_csv(filename)
+
+
+
 # change the filename to the one we wish to norm
-dataset_noleak_rand_filename = direct_to_dir(where='result') + 'dataset_leak_random_1bar_2.csv'
-print('Reading --> ', dataset_noleak_rand_filename)
-df_data = pd.read_csv(dataset_noleak_rand_filename)
-print(df_data.values.shape)
-
-label_to_dist = {0: 'nonLCP',
-                 1: '2m',
-                 2: '4.5m',
-                 3: '5m',
-                 4: '8m',
-                 5: '10m'}
-
-lcp_dataset_filename = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/' \
-                       'dataset_lcp_1bar_seg4_norm.csv'
-non_lcp_dataset_filename = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/' \
-                           'dataset_non_lcp_1bar_seg1_norm.csv'
-
-random_leak_dataset_filename = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/' \
-                               'dataset_leak_random_1bar_norm.csv'
-random_noleak_dataset_filename = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/' \
-                               'dataset_noleak_random_2bar_norm.csv'
-
-# reading lcp data fr csv
-time_start = time.time()
-print('Reading --> ', lcp_dataset_filename)
-df_leak_rand = pd.read_csv(lcp_dataset_filename)
-
-print('File Read Time: {:.4f}s'.format(time.time() - time_start))
-print('Random Leak Dataset Dim: ', df_leak_rand.values.shape)
-
-print(df_leak_rand.head(100))
-
-print('Reading --> ', random_noleak_dataset_filename)
-df_noleak_rand = pd.read_csv(random_noleak_dataset_filename)
-
-print('File Read Time: {:.4f}s'.format(time.time() - time_start))
-print('Random no leak Dataset Dim: ', df_noleak_rand.values.shape)
+# dataset_noleak_rand_filename = direct_to_dir(where='result') + 'dataset_leak_random_1bar_2.csv'
+# print('Reading --> ', dataset_noleak_rand_filename)
+# df_data = pd.read_csv(dataset_noleak_rand_filename)
+# print(df_data.values.shape)
+#
+# label_to_dist = {0: 'nonLCP',
+#                  1: '2m',
+#                  2: '4.5m',
+#                  3: '5m',
+#                  4: '8m',
+#                  5: '10m'}
+#
+# lcp_dataset_filename = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/' \
+#                        'dataset_lcp_1bar_seg4_norm.csv'
+# non_lcp_dataset_filename = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/' \
+#                            'dataset_non_lcp_1bar_seg1_norm.csv'
+#
+# random_leak_dataset_filename = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/' \
+#                                'dataset_leak_random_1bar_norm.csv'
+# random_noleak_dataset_filename = 'F:/Experiment_3_10_2018/LCP x NonLCP DATASET/' \
+#                                'dataset_noleak_random_2bar_norm.csv'
+#
+# # reading lcp data fr csv
+# time_start = time.time()
+# print('Reading --> ', lcp_dataset_filename)
+# df_leak_rand = pd.read_csv(lcp_dataset_filename)
+#
+# print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+# print('Random Leak Dataset Dim: ', df_leak_rand.values.shape)
+#
+# print(df_leak_rand.head(100))
+#
+# print('Reading --> ', random_noleak_dataset_filename)
+# df_noleak_rand = pd.read_csv(random_noleak_dataset_filename)
+#
+# print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+# print('Random no leak Dataset Dim: ', df_noleak_rand.values.shape)
 
 # [WARNING] PLOTTING TAKES FOREVER TO PLOT -----------------------------------------------------------------------------
 # color_seq = ['r', 'g', 'b', 'c', 'm', 'y', 'k']

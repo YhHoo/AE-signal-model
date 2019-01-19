@@ -11,9 +11,12 @@ from src.utils.helpers import *
 
 # ------------------------------------------------------------------------------------------------------------ ARG PARSE
 parser = argparse.ArgumentParser(description='Input some parameters.')
+parser.add_argument('--model', default=1, type=str, help='Model Name')
 parser.add_argument('--rfname', default=1, type=str, help='Result File name')
 
+
 args = parser.parse_args()
+MODEL_SAVE_FILENAME = args.model
 RESULT_SAVE_FILENAME = args.rfname
 print('Result saving filename: ', RESULT_SAVE_FILENAME)
 
@@ -25,7 +28,7 @@ sess = tf.Session(config=config)
 
 # ------------------------------------------------------------------------------------------------------------ DATA PREP
 ae_data = AcousticEmissionDataSet(drive='G')
-train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_downsampled(train_split=0.7)
+train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_downsampled_include_unseen(train_split=0.8)
 
 train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
 test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
@@ -38,12 +41,11 @@ lcp_model = LNL_binary_model_2()
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
 # saving best weight setting
-model_name_to_save = 'LNL_17x1'
-logger = ModelLogger(model=lcp_model, model_name=model_name_to_save)  # *** chg name
+logger = ModelLogger(model=lcp_model, model_name=MODEL_SAVE_FILENAME)  # *** chg name
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # start training
-total_epoch = 200
+total_epoch = 500
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,
@@ -59,7 +61,7 @@ logger.save_architecture(save_readable=True)
 
 # ------------------------------------------------------------------------------------------------------- LEARNING CURVE
 # name for fig suptitle and filename
-lr_name = '{}_LrCurve'.format(model_name_to_save)
+lr_name = '{}_LrCurve'.format(MODEL_SAVE_FILENAME)
 fig_lr = plt.figure(figsize=(10, 7))
 fig_lr.subplots_adjust(left=0.08, bottom=0.07, right=0.96, top=0.89)
 fig_lr.suptitle(lr_name)
@@ -81,7 +83,7 @@ best_val_acc_index = np.argmax(history.history['val_acc'])
 best_val_loss_index = np.argmin(history.history['val_loss'])
 
 # loading best model saved
-lcp_best_model = load_model(model_name=model_name_to_save)
+lcp_best_model = load_model(model_name=MODEL_SAVE_FILENAME)
 
 # test with val data
 time_predict_start = time.time()
@@ -92,7 +94,7 @@ prediction_argmax = np.argmax(prediction, axis=1)
 actual_argmax = np.argmax(test_y_cat, axis=1)
 
 # plot validation data
-evaluate_name = '{}_Evaluate'.format(model_name_to_save)
+evaluate_name = '{}_Evaluate'.format(MODEL_SAVE_FILENAME)
 fig_evaluate = plt.figure(figsize=(10, 7))
 fig_evaluate.subplots_adjust(left=0.08, bottom=0.07, right=0.96, top=0.89)
 fig_evaluate.suptitle(evaluate_name)
@@ -104,7 +106,7 @@ fig_lr_save_filename = direct_to_dir(where='result') + '{}.png'.format(evaluate_
 fig_evaluate.savefig(fig_lr_save_filename)
 
 print('\n---------- EVALUATION RESULT SCRIPT LNL 1 -----------')
-print('**Param in tuning --> [pool:(3, 2, 2)]')
+print('**Param in tuning --> [pool:(3, 2, 2), split=0.8, val_included_test]')
 print('Model Trainable params: {}'.format(trainable_count))
 print('Best Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
                                                                best_val_acc_index,
@@ -137,5 +139,5 @@ with open(RESULT_SAVE_FILENAME, 'w') as f:
         f.write('\n' + i)
 
     f.write('\n\nDist and Labels')
-    f.write('[NoLeak] -> class_0')
-    f.write('[Leak] -> class_1')
+    f.write('\n[NoLeak] -> class_0')
+    f.write('\n[Leak] -> class_1')

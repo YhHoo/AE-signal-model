@@ -4,6 +4,7 @@ WILL SLIDE THROUGH ONE 5M POINT AE RAW DATA, USING A WINDOW, WITH A STRIDE.
 DATASET: BINARY CLASSIFICATION MODEL LNL (SEEN & UNSEEN leak and no leak)
 '''
 import sys
+import os
 sys.path.append('C:/Users/YH/PycharmProjects/AE-signal-model')
 
 from scipy.signal import decimate
@@ -24,6 +25,8 @@ parser.add_argument('--actlabel', default=1, type=int, nargs='+', help='actual l
 parser.add_argument('--inlabel', default=None, type=str, nargs='+', help='input label')
 parser.add_argument('--figname', default=1, type=str, help='Fig name')
 parser.add_argument('--rfname', default=1, type=str, help='Result File name')
+parser.add_argument('--savedircm', default=1, type=str, help='dir to save the confusion matrix png file')
+parser.add_argument('--savedirpredcsv', default=1, type=str, help='dir to save the prediction csv file')
 
 args = parser.parse_args()
 
@@ -36,6 +39,9 @@ ACTUAL_LABEL_ALL_CH = args.actlabel
 INPUT_DATA_LABEL = args.inlabel
 FIG_CM_TITLE = args.figname  # 'Unseen-Leak' / 'Seen-Noleak'...
 RESULT_SAVE_FILENAME = args.rfname
+DIR_TO_SAVE_CM = args.savedircm
+DIR_TO_SAVE_PREDCV = args.savedirpredcsv
+
 
 print('Model Name to Test: ', MODEL_NAME_TO_TEST)
 print('Model Input Length: ', MODEL_INPUT_LEN)
@@ -44,8 +50,10 @@ print('Dir of Test TDMS : ', TEST_TDMS_FOLDER)
 print('Downsample Factor: ', DOWNSAMPLE_FACTOR)
 print('Actual Label: ', ACTUAL_LABEL_ALL_CH)
 print('Input Data Label: ', INPUT_DATA_LABEL)
-print('Fig Title/filename: ', FIG_CM_TITLE)
+print('Fig Title filename: ', FIG_CM_TITLE)
 print('Result saving filename: ', RESULT_SAVE_FILENAME)
+print('Dir saving cm: ', DIR_TO_SAVE_CM)
+print('Dir saving pred result csv: ', DIR_TO_SAVE_PREDCV)
 
 # instruct GPU to allocate only sufficient memory for this script
 config = tf.ConfigProto()
@@ -83,7 +91,7 @@ for file_to_test in all_tdms:
     filename_to_save = 'pred_result_[{}]_[{}]_{}'.format(model_name, x, FIG_CM_TITLE)  # **
 
     # SAVING CONFIG
-    df_pred_save_filename = direct_to_dir(where='result') + filename_to_save + '.csv'
+    df_pred_save_filename = DIR_TO_SAVE_PREDCV + filename_to_save + '.csv'
 
     # test for near
     n_channel_data = read_single_tdms(file_to_test)
@@ -164,7 +172,13 @@ for file_to_test in all_tdms:
     prediction_all_ch = np.array(prediction_all_ch).T
     df_pred = pd.DataFrame(data=prediction_all_ch,
                            columns=INPUT_DATA_LABEL)
+
+    # check the dir exist or nt
+    if not os.path.exists(DIR_TO_SAVE_PREDCV):
+        os.makedirs(DIR_TO_SAVE_PREDCV)
+
     df_pred.to_csv(df_pred_save_filename)
+
     print('Saved --> ', df_pred_save_filename)
     print('Reading --> ', df_pred_save_filename)
     df_pred = pd.read_csv(df_pred_save_filename, index_col=0)
@@ -206,8 +220,18 @@ for file_to_test in all_tdms:
                                    row_label=['No Leak',
                                               'Leak'],
                                    title=fig_cm_title)  # **
+
     fig_cm_save_filename = direct_to_dir(where='result') + 'cm_' + filename_to_save + '.png'
+    # fig_cm_save_filename = '{}cm_{}.png'.format(DIR_TO_SAVE_CM, filename_to_save)  # too long to save, error
+
+    # check the dir exist or nt
+    if not os.path.exists(DIR_TO_SAVE_CM):
+        os.makedirs(DIR_TO_SAVE_CM)
+
     fig_cm.savefig(fig_cm_save_filename)
+
+    # fig_cm_save_filename = DIR_TO_SAVE_CM + 'cm_' + filename_to_save + '.png'
+    # fig_cm.savefig(fig_cm_save_filename)
 
     plt.close('all')
     print('Confusion Mat. fig saved -->', fig_cm_save_filename)
@@ -222,9 +246,9 @@ for i, j in zip(INPUT_DATA_LABEL, avg_acc_per_ch):
     print(i + ' acc: {:.4f}'.format(j))
 
 with open(RESULT_SAVE_FILENAME, 'a') as f:
-    f.write('\n\nAVERAGE ACCURACY ----------------------' + FIG_CM_TITLE)
+    f.write('\n\n{}\nAVERAGE ACCURACY ----------------------'.format(FIG_CM_TITLE))
     for i, j in zip(INPUT_DATA_LABEL, avg_acc_per_ch):
-        f.write(i + ' acc: {:.4f}'.format(j))
+        f.write('\n' + i + ' acc: {:.4f}'.format(j))
 
 # # ----------------------------------------------------------------------------- PLOT CLASSIFICATION RESULT IN SEQUENCE
 # # multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries()

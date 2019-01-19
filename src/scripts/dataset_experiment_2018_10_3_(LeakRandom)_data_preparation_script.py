@@ -1,3 +1,7 @@
+'''
+this file is for preparing seen datasets.
+'''
+
 import sys
 sys.path.append('C:/Users/YH/PycharmProjects/AE-signal-model')
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-declare -a model_name='LNL_18x1'  # **
+declare -a model_name='LNL_20x1'  # **
 
-declare -a result_save_filename='C:/Users/YH/PycharmProjects/AE-signal-model/result/LNL_18x1_result.txt'  # **
+declare -a result_save_filename='C:/Users/YH/PycharmProjects/AE-signal-model/result/LNL_20x1_result.txt'  # **
 
 declare -a in_length=2000
 
@@ -41,6 +41,21 @@ declare -a fig_label=(
                       'Seen-Leak'
                       'Seen-NoLeak'
                      )
+#                                                                                    ********
+declare -a pred_result_save_dir=(
+                                 'G:/Experiment_3_1_2019/LNL_model_Evaluation_Result/LNL_20x1 evaluate with Experiment_21_12_2018_8Ch_-3,-2,0,5,7,16,17_1.5 bar_Leak_Test data/'
+                                 'G:/Experiment_3_1_2019/LNL_model_Evaluation_Result/LNL_20x1 evaluate with Experiment_21_12_2018_8Ch_-3,-2,0,5,7,16,17_1.5 bar_NoLeak_Test data/'
+                                 'G:/Experiment_3_1_2019/LNL_model_Evaluation_Result/LNL_20x1 evaluate with Experiment_21_12_2018_8Ch_-4,-2,2,4,6,8,10_1.5 bar_Leak_Test data/'
+                                 'G:/Experiment_3_1_2019/LNL_model_Evaluation_Result/LNL_20x1 evaluate with Experiment_21_12_2018_8Ch_-4,-2,2,4,6,8,10_1.5 bar_NoLeak_Test data/'
+                                )
+#                                                                                                                                           **>                                 ********
+declare -a cm_save_dir=(
+                        'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/Preprocessed Dataset recognition result/LNL model (dataset Dec)/LNL_20x1 evaluate with Experiment_21_12_2018_8Ch_-3,-2,0,5,7,16,17_1.5 bar_Leak_Test data/'
+                        'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/Preprocessed Dataset recognition result/LNL model (dataset Dec)/LNL_20x1 evaluate with Experiment_21_12_2018_8Ch_-3,-2,0,5,7,16,17_1.5 bar_NoLeak_Test data/'
+                        'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/Preprocessed Dataset recognition result/LNL model (dataset Dec)/LNL_20x1 evaluate with Experiment_21_12_2018_8Ch_-4,-2,2,4,6,8,10_1.5 bar_Leak_Test data/'
+                        'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/Preprocessed Dataset recognition result/LNL model (dataset Dec)/LNL_20x1 evaluate with Experiment_21_12_2018_8Ch_-4,-2,2,4,6,8,10_1.5 bar_NoLeak_Test data/'
+                       )
+
 
 declare -a noleak_label=(0 0 0 0 0 0 0)
 
@@ -48,8 +63,9 @@ declare -a leak_label=(1 1 1 1 1 1 1)
 
 declare -a model_possible_input=(0 1)
 
+
 echo ------------------------------------------------------------------------------------------- Training
-python dataset_experiment_2019_1_3_\(LNL\)_train_script.py --rfname "${result_save_filename}"
+python dataset_experiment_2019_1_3_\(LNL\)_train_script.py --model "${model_name}" --rfname "${result_save_filename}"
 
 echo ------------------------------------------------------------------------------------------- Unseen leak
 python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"\
@@ -60,8 +76,10 @@ python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"
                                                          --actlabel ${leak_label[*]}\
                                                          --inlabel ${unseen_data_labels[*]}\
                                                          --figname ${fig_label[0]}\
-                                                         --rfname "${result_save_filename}"
-
+                                                         --rfname "${result_save_filename}"\
+                                                         --savedircm "${cm_save_dir[0]}"\
+                                                         --savedirpredcsv "${pred_result_save_dir[0]}"
+#
 echo ------------------------------------------------------------------------------------------- Unseen Noleak
 python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"\
                                                          --inlen ${in_length}\
@@ -71,7 +89,9 @@ python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"
                                                          --actlabel ${noleak_label[*]}\
                                                          --inlabel ${unseen_data_labels[*]}\
                                                          --figname ${fig_label[1]}\
-                                                         --rfname "${result_save_filename}"
+                                                         --rfname "${result_save_filename}"\
+                                                         --savedircm "${cm_save_dir[1]}"\
+                                                         --savedirpredcsv "${pred_result_save_dir[1]}"
 
 echo ------------------------------------------------------------------------------------------- Seen leak
 python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"\
@@ -82,7 +102,9 @@ python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"
                                                          --actlabel ${leak_label[*]}\
                                                          --inlabel ${seen_data_labels[*]}\
                                                          --figname ${fig_label[2]}\
-                                                         --rfname "${result_save_filename}"
+                                                         --rfname "${result_save_filename}"\
+                                                         --savedircm "${cm_save_dir[2]}"\
+                                                         --savedirpredcsv "${pred_result_save_dir[2]}"
 
 echo ------------------------------------------------------------------------------------------- Seen Noleak
 python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"\
@@ -93,5 +115,7 @@ python dataset_experiment_2019_1_3_\(LNL\)_model_eval.py --model "${model_name}"
                                                          --actlabel ${noleak_label[*]}\
                                                          --inlabel ${seen_data_labels[*]}\
                                                          --figname ${fig_label[3]}\
-                                                         --rfname "${result_save_filename}"
+                                                         --rfname "${result_save_filename}"\
+                                                         --savedircm "${cm_save_dir[3]}"\
+                                                         --savedirpredcsv "${pred_result_save_dir[3]}"
 
