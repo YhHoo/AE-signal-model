@@ -408,7 +408,7 @@ def LNL_binary_model_2():
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
     # # conv 4
-    x = Conv1D(filters=256, kernel_size=100, strides=1, activation='relu', kernel_regularizer=regularizers.l2(0.01),
+    x = Conv1D(filters=256, kernel_size=100, strides=1, kernel_regularizer=regularizers.l2(0.01),
                padding='same')(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
