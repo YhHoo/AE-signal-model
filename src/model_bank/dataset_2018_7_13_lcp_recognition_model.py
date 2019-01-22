@@ -6,6 +6,7 @@ from keras.layers import *
 from keras.models import Sequential, Model
 from keras.utils import plot_model
 from keras import regularizers
+from keras import regularizers
 # self lib
 from src.utils.helpers import direct_to_dir
 
@@ -386,31 +387,35 @@ def LNL_binary_model_2():
     x = BatchNormalization()(inp)
 
     # conv 1
-    x = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, activation='relu', padding='same')(x)  # kernel size of 0.0005s
+    x = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, kernel_regularizer=regularizers.l2(0.01),
+               activation='relu', padding='same')(x)  # kernel size of 0.0005s
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)  # time half
 
     # # conv 2
-    x = Conv1D(filters=64, kernel_size=200, strides=1, dilation_rate=1, activation='relu', padding='same')(x)  # kernel size of 0.0001s
+    x = Conv1D(filters=64, kernel_size=200, strides=1, dilation_rate=1, kernel_regularizer=regularizers.l2(0.01),
+               activation='relu', padding='same')(x)  # kernel size of 0.0001s
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)  # time half
 
     # conv 3
-    x = Conv1D(filters=128, kernel_size=100, strides=1, dilation_rate=1, activation='relu', padding='same')(x)
+    x = Conv1D(filters=128, kernel_size=100, strides=1, dilation_rate=1, kernel_regularizer=regularizers.l2(0.01),
+               activation='relu', padding='same')(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
     # # conv 4
-    # x = Conv1D(filters=256, kernel_size=100, strides=1, activation='relu', padding='same')(x)
-    # x = BatchNormalization()(x)
-    # x = Activation('relu')(x)
-    # x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
+    x = Conv1D(filters=256, kernel_size=100, strides=1, activation='relu', kernel_regularizer=regularizers.l2(0.01),
+               padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
     x = GlobalAveragePooling1D()(x)
-    x = Dropout(0.40)(x)
+    x = Dropout(0.55)(x)
 
     x = Dense(240, activation='relu')(x)
     x = Dense(120, activation='relu')(x)
@@ -425,7 +430,7 @@ def LNL_binary_model_2():
     return model
 
 
-model = LNL_binary_model_2()
+# model = LNL_binary_model_2()
 
 
 # # --------------------HERE FOR TESTING THE MODEL ALLOWABLE BATCH SIZE FOR GPU MEMORY LIMIT -----------------------------
