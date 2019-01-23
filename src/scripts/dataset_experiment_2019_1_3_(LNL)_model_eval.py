@@ -84,6 +84,7 @@ fig_cm_title = 'confusion mat (Test Data: {})'.format(FIG_CM_TITLE)
 # ------------------------------------------------------------------------------------------------------------ DATA PREP
 acc_per_ch_al_tdms = []
 for file_to_test in all_tdms:
+    time_per_file_start = time.time()
     x = file_to_test.split(sep='/')[-1]
     # discard the .tdms
     x = x.split(sep='.')[-2]
@@ -98,14 +99,14 @@ for file_to_test in all_tdms:
     n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1]  # drop useless channel 8
     # n_channel_data = np.delete(n_channel_data, 3, axis=0)  # drop broken channel 4m (for NoLeak ONLY)
 
-    print('TDMS data dim: ', n_channel_data.shape)
+    # print('TDMS data dim: ', n_channel_data.shape)
 
     temp = []
     if DOWNSAMPLE_FACTOR is not 1:
         for channel in n_channel_data:
             temp.append(decimate(x=channel, q=DOWNSAMPLE_FACTOR))
         n_channel_data = np.array(temp)
-        print('Dim After Downsample: ', n_channel_data.shape)
+        # print('Dim After Downsample: ', n_channel_data.shape)
 
     total_len = n_channel_data.shape[1]
     total_ch = len(n_channel_data)
@@ -114,8 +115,8 @@ for file_to_test in all_tdms:
     assert total_len > (window_size[0] + window_size[1]), 'Data length is too short, mz be at least {}'.\
         format(window_size[0] + window_size[1])
     window_index = np.arange(window_size[0], (total_len - window_size[1]), window_stride)
-    print('Window Index Len: ', len(window_index))
-    print('Window Index: ', window_index)
+    # print('Window Index Len: ', len(window_index))
+    # print('Window Index: ', window_index)
 
     # ---------------------------------------------------------------------------------------------------- EXECUTE MODEL
     # creating index of sliding windows [index-1000, index+5000]
@@ -125,10 +126,10 @@ for file_to_test in all_tdms:
     # for all channels
     for ch_no in range(total_ch):
         temp, model_pred = [], []
-        pb = ProgressBarForLoop(title='Iterating all Samples in ch[{}]'.format(ch_no), end=len(window_index))
+        # pb = ProgressBarForLoop(title='Iterating all Samples in ch[{}]'.format(ch_no), end=len(window_index))
         progress = 0
         for index in window_index:
-            pb.update(now=progress)
+            # pb.update(now=progress)
             data = n_channel_data[ch_no, (index - window_size[0]):(index + window_size[1])]
             # data_norm = scaler.fit_transform(data.reshape(-1, 1)).ravel()  # **normalize
             temp.append(data)
@@ -163,9 +164,9 @@ for file_to_test in all_tdms:
             # free up memory
             gc.collect()
 
-        pb.destroy()
+        # pb.destroy()
         model_pred = np.concatenate(model_pred, axis=0)
-        print('Model Prediction Dim: ', model_pred.shape)
+        # print('Model Prediction Dim: ', model_pred.shape)
 
         prediction_all_ch.append(model_pred)
 
@@ -179,8 +180,8 @@ for file_to_test in all_tdms:
 
     df_pred.to_csv(df_pred_save_filename)
 
-    print('Saved --> ', df_pred_save_filename)
-    print('Reading --> ', df_pred_save_filename)
+    # print('Saved --> ', df_pred_save_filename)
+    # print('Reading --> ', df_pred_save_filename)
     df_pred = pd.read_csv(df_pred_save_filename, index_col=0)
     prediction_all_ch = df_pred.values.T.tolist()
 
@@ -234,9 +235,9 @@ for file_to_test in all_tdms:
     # fig_cm.savefig(fig_cm_save_filename)
 
     plt.close('all')
-    print('Confusion Mat. fig saved -->', fig_cm_save_filename)
-    print('\n------------------------------------------------------------\n')
-
+    # print('Confusion Mat. fig saved -->', fig_cm_save_filename)
+    # print('\n------------------------------------------------------------\n')
+    print('Time taken: {:.4f}s'.format(time.time() - time_per_file_start))
 
 # conclude overall acc for al class
 acc_per_ch_al_tdms = np.array(acc_per_ch_al_tdms)

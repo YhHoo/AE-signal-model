@@ -284,14 +284,9 @@ class AcousticEmissionDataSet:
 
     def random_leak_noleak_downsampled_include_unseen(self, shuffle_b4_split=True, train_split=0.7):
         '''
-        The leak of p1 contains 109 tdms files, and noleak of p1 only contains 49 tdms files. So we wil half the samples
-        size from leak p1.
-        The leak of p2 also contains 117 tdms files and noleak of p2 only containes 57 tdms files. to ensure balance
-        class in training, half the sample size of leak p2.
-
-        Also, remove the signals from channel -4m and -2m. we only want to train the model on recognizing leak no leak
-        from 0m up to 10m, assuming the leak is always a one side of the sensor.
+        This is same as above except added in unseen dataset into test set.
         '''
+        print('DATASET: 2019-1-3 random_leak_noleak_downsampled_include_unseen()\n')
         # read leak @ -4, -2, 2, 4, 6, 8, 10m
         time_start = time.time()
         print('Reading --> ', self.leak_dataset_filename_p1_ds)
@@ -403,21 +398,45 @@ class AcousticEmissionDataSet:
         if shuffle_b4_split:
             noleak_data_p3 = noleak_data_p3[np.random.permutation(len(noleak_data_p3))]
 
-        label = [0] * len(noleak_data_p3)
-
-        test_x.append(noleak_data_p3)
-        test_y.append(label)
-
         # leak
         leak_data_p3 = df_leak_rand_p3.values[:, :-1]
         if shuffle_b4_split:
             leak_data_p3 = leak_data_p3[np.random.permutation(len(leak_data_p3))]
-        leak_data_p3 = leak_data_p3[:(len(leak_data_p3) // 2)]  # **to balance the class
+        leak_data_p3 = leak_data_p3[:(len(leak_data_p3) // 2)]  # **to balance the class, leak sample is twice noleak
 
-        label = [1] * len(leak_data_p3)
+        # merging all noleak scenario
+        label = [0] * len(noleak_data_p3) + [1] * len(leak_data_p3)
+        all = np.concatenate((noleak_data_p3, leak_data_p3), axis=0)
 
-        test_x.append(leak_data_p3)
-        test_y.append(label)
+        tr_x, te_x, tr_y, te_y = train_test_split(all,
+                                                  label,
+                                                  train_size=train_split,
+                                                  shuffle=True)
+
+        test_x.append(te_x)
+        test_y.append(te_y)
+
+
+        # # noleak
+        # noleak_data_p3 = df_noleak_rand_p3.values[:, :-1]
+        # if shuffle_b4_split:
+        #     noleak_data_p3 = noleak_data_p3[np.random.permutation(len(noleak_data_p3))]
+        #
+        # label = [0] * len(noleak_data_p3)
+        #
+        # test_x.append(noleak_data_p3)
+        # test_y.append(label)
+        #
+        # # leak
+        # leak_data_p3 = df_leak_rand_p3.values[:, :-1]
+        # if shuffle_b4_split:
+        #     leak_data_p3 = leak_data_p3[np.random.permutation(len(leak_data_p3))]
+        # leak_data_p3 = leak_data_p3[:(len(leak_data_p3) // 2)]  # **to balance the class
+        #
+        # label = [1] * len(leak_data_p3)
+
+        # test_x.append(leak_data_p3)
+        # test_y.append(label)
 
         print('Preprocessed noleak p3 dim: ', noleak_data_p3.shape)
         print('Preprocessed leak p3 dim: ', leak_data_p3.shape)
@@ -438,6 +457,9 @@ class AcousticEmissionDataSet:
 
     def random_leak_noleak_downsampled_2(self, shuffle_b4_split=True, train_split=0.7):
         '''
+        DOWNSAMPLE FACTOR: 10
+        SAMPLING RATE: 100kHz
+
         The leak of p1 contains 109 tdms files, and noleak of p1 only contains 49 tdms files. So we wil half the samples
         size from leak p1.
         The leak of p2 also contains 117 tdms files and noleak of p2 only containes 57 tdms files. to ensure balance
@@ -549,6 +571,9 @@ class AcousticEmissionDataSet:
         return train_x, train_y, test_x, test_y
 
 
-# data = AcousticEmissionDataSet(drive='G')
-# data2 = data.random_leak_noleak_downsampled_include_unseen()
+data = AcousticEmissionDataSet(drive='G')
+data2 = data.random_leak_noleak_downsampled_include_unseen()
+
+
+
 
