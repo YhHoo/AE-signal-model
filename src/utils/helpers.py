@@ -1288,7 +1288,7 @@ def compute_recall_precision_multiclass(y_true, y_pred, all_class_label, verbose
 def plot_confusion_matrix(cm, col_label, row_label,
                           normalize=False,
                           title='Confusion matrix',
-                          cmap=plt.cm.Blues):
+                          cmap=plt.cm.Blues, verbose=True):
     """
     col_label and row_label starts from top left of the matrix
     Normalization can be applied by setting `normalize=True`.
@@ -1300,7 +1300,8 @@ def plot_confusion_matrix(cm, col_label, row_label,
     else:
         print('Confusion matrix, without normalization')
 
-    print(cm)
+    if verbose:
+        print(cm)
 
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)

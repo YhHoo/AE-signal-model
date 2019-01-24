@@ -220,7 +220,8 @@ for file_to_test in all_tdms:
                                    col_label=col_label_w_acc,
                                    row_label=['No Leak',
                                               'Leak'],
-                                   title=fig_cm_title)  # **
+                                   title=fig_cm_title,
+                                   verbose=False)  # **
 
     fig_cm_save_filename = direct_to_dir(where='result') + 'cm_' + filename_to_save + '.png'
     # fig_cm_save_filename = '{}cm_{}.png'.format(DIR_TO_SAVE_CM, filename_to_save)  # too long to save, error

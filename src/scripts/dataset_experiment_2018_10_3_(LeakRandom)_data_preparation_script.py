@@ -41,6 +41,9 @@ print('Downsample factor: ', DOWNSAMPLE_FACTOR)
 all_tdms_file = [(FOLDER_TO_READ + f) for f in listdir(FOLDER_TO_READ) if f.endswith('.tdms')]
 print('total file to extract: ', len(all_tdms_file))
 
+# fix the random sequence
+np.random.seed(43)
+
 # shuffle
 if SHUFFLE_TDMS_SEQ:
     all_tdms_file = np.array(all_tdms_file)[np.random.permutation(len(all_tdms_file))]

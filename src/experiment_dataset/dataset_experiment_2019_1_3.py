@@ -571,8 +571,8 @@ class AcousticEmissionDataSet:
         return train_x, train_y, test_x, test_y
 
 
-data = AcousticEmissionDataSet(drive='G')
-data2 = data.random_leak_noleak_downsampled_include_unseen()
+# data = AcousticEmissionDataSet(drive='G')
+# data2 = data.random_leak_noleak_downsampled_include_unseen()
 
 
 

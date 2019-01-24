@@ -390,21 +390,21 @@ def LNL_binary_model_2():
     x = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, padding='same', activation='relu',
                kernel_regularizer=regularizers.l2(0.01))(x)
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)  # time half
 
     # # conv 2
     x = Conv1D(filters=64, kernel_size=200, strides=1, dilation_rate=1, padding='same', activation='relu',
                kernel_regularizer=regularizers.l2(0.01))(x)
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)  # time half
 
     # conv 3
     x = Conv1D(filters=128, kernel_size=100, strides=1, dilation_rate=1, padding='same', activation='relu',
                kernel_regularizer=regularizers.l2(0.01))(x)
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
     # # conv 4
@@ -430,6 +430,55 @@ def LNL_binary_model_2():
 
 
 def LNL_binary_model_3():
+    inp = Input((2000, 1))
+
+    x = BatchNormalization()(inp)
+
+    # conv 1
+    x = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, padding='same', activation='relu',
+               kernel_regularizer=regularizers.l2(0.01))(x)
+    x = BatchNormalization()(x)
+    # x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)  # time half
+
+    # # conv 2
+    x = Conv1D(filters=64, kernel_size=200, strides=1, dilation_rate=1, padding='same', activation='relu',
+               kernel_regularizer=regularizers.l2(0.01))(x)
+    x = BatchNormalization()(x)
+    # x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)  # time half
+
+    # conv 3
+    x = Conv1D(filters=128, kernel_size=100, strides=1, dilation_rate=1, padding='same', activation='relu',
+               kernel_regularizer=regularizers.l2(0.01))(x)
+    x = BatchNormalization()(x)
+    # x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
+
+    # # conv 4
+    # x = Conv1D(filters=256, kernel_size=100, strides=1, dilation_rate=1, padding='same')(x)
+    # x = BatchNormalization()(x)
+    # x = Activation('relu')(x)
+    # x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
+
+    x = GlobalAveragePooling1D()(x)
+    x = Dropout(0.55)(x)
+
+    x = Dense(240, activation='relu')(x)
+    x = Dropout(0.3)(x)
+    x = Dense(120, activation='relu')(x)
+    x = Dense(2, activation='softmax')(x)
+
+    out = Dense(2, activation='softmax')(x)
+
+    model = Model(inp, out)
+
+    print(model.summary())
+
+    return model
+
+
+def LNL_binary_model_4():
     '''
     A multipath
     :return:
@@ -442,47 +491,48 @@ def LNL_binary_model_3():
 
     # path 1 -----
     x_1 = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, padding='same')(x_1)
-    x_1 = BatchNormalization()(x_1)
     x_1 = Activation('relu')(x_1)
+    x_1 = BatchNormalization()(x_1)
     x_1 = MaxPooling1D(pool_size=3, strides=2, padding='same')(x_1)
 
     x_1 = Conv1D(filters=64, kernel_size=200, strides=1, dilation_rate=1, padding='same')(x_1)
-    x_1 = BatchNormalization()(x_1)
     x_1 = Activation('relu')(x_1)
+    x_1 = BatchNormalization()(x_1)
     x_1 = MaxPooling1D(pool_size=2, strides=2, padding='same')(x_1)
 
     x_1 = Conv1D(filters=128, kernel_size=100, strides=1, dilation_rate=1, padding='same')(x_1)
-    x_1 = BatchNormalization()(x_1)
     x_1 = Activation('relu')(x_1)
+    x_1 = BatchNormalization()(x_1)
     x_1 = MaxPooling1D(pool_size=2, strides=2, padding='same')(x_1)
 
     # path 2 -----
     x_2 = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, padding='same')(x_2)
-    x_2 = BatchNormalization()(x_2)
     x_2 = Activation('relu')(x_2)
+    x_2 = BatchNormalization()(x_2)
     x_2 = MaxPooling1D(pool_size=3, strides=2, padding='same')(x_2)
 
     x_2 = Conv1D(filters=64, kernel_size=200, strides=1, dilation_rate=1, padding='same')(x_2)
-    x_2 = BatchNormalization()(x_2)
     x_2 = Activation('relu')(x_2)
+    x_2 = BatchNormalization()(x_2)
     x_2 = MaxPooling1D(pool_size=2, strides=2, padding='same')(x_2)
 
     x_2 = Conv1D(filters=128, kernel_size=100, strides=1, dilation_rate=1, padding='same')(x_2)
-    x_2 = BatchNormalization()(x_2)
     x_2 = Activation('relu')(x_2)
+    x_2 = BatchNormalization()(x_2)
     x_2 = MaxPooling1D(pool_size=2, strides=2, padding='same')(x_2)
 
     # concate
     x_c = concatenate([x_1, x_2])
-    # x_c = Flatten()(x_c)
-    x_c = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, padding='same')(x_c)
     x_c = BatchNormalization()(x_c)
+
+    x_c = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, padding='same')(x_c)
     x_c = Activation('relu')(x_c)
+    x_c = BatchNormalization()(x_c)
     x_c = MaxPooling1D(pool_size=3, strides=2, padding='same')(x_c)
 
     x_c = Conv1D(filters=64, kernel_size=100, strides=1, dilation_rate=1, padding='same')(x_c)
-    x_c = BatchNormalization()(x_c)
     x_c = Activation('relu')(x_c)
+    x_c = BatchNormalization()(x_c)
     x_c = MaxPooling1D(pool_size=3, strides=2, padding='same')(x_c)
 
     x_c = GlobalAveragePooling1D()(x_c)
