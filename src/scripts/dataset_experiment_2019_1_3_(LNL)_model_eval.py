@@ -252,6 +252,19 @@ with open(RESULT_SAVE_FILENAME, 'a') as f:
     for i, j in zip(INPUT_DATA_LABEL, avg_acc_per_ch):
         f.write('\n' + i + ' acc: {:.4f}'.format(j))
 
+# saving the values to buffer, for overall calculation
+file_dir = direct_to_dir(where='result') + '{}_acc_buffer.csv'.format(model_name)
+
+if not os.path.exists(file_dir):
+    df = pd.DataFrame(data=avg_acc_per_ch, columns=[FIG_CM_TITLE])
+    df.to_csv(file_dir)
+else:
+    df = pd.read_csv(file_dir, index_col=0)
+    print(df)
+    df[FIG_CM_TITLE] = avg_acc_per_ch
+    df.to_csv(file_dir)
+
+
 # # ----------------------------------------------------------------------------- PLOT CLASSIFICATION RESULT IN SEQUENCE
 # # multiple graph plot - retrieved and modified from helper.plot_multiple_timeseries()
 # # config

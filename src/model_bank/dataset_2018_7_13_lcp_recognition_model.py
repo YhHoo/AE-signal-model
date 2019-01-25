@@ -383,7 +383,7 @@ def dexter_model():
 
 def LNL_binary_model_2():
     '''
-        L1 REGULARIZED
+        L2 LIGHT REGULARIZED
     '''
     inp = Input((2000, 1))
 
@@ -391,21 +391,21 @@ def LNL_binary_model_2():
 
     # conv 1
     x = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, padding='same', activation='relu',
-               kernel_regularizer=regularizers.l1(0.01))(x)
+               kernel_regularizer=regularizers.l2(0.001))(x)
     x = BatchNormalization()(x)
     # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)  # time half
 
     # # conv 2
     x = Conv1D(filters=64, kernel_size=200, strides=1, dilation_rate=1, padding='same', activation='relu',
-               kernel_regularizer=regularizers.l1(0.01))(x)
+               kernel_regularizer=regularizers.l2(0.001))(x)
     x = BatchNormalization()(x)
     # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)  # time half
 
     # conv 3
     x = Conv1D(filters=128, kernel_size=100, strides=1, dilation_rate=1, padding='same', activation='relu',
-               kernel_regularizer=regularizers.l1(0.01))(x)
+               kernel_regularizer=regularizers.l2(0.001))(x)
     x = BatchNormalization()(x)
     # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
@@ -434,7 +434,7 @@ def LNL_binary_model_2():
 
 def LNL_binary_model_3():
     '''
-    HEAVILY REGULARIZED
+    L1 VRY LIGHT REGULARIZED
     '''
     inp = Input((2000, 1))
 
@@ -442,21 +442,20 @@ def LNL_binary_model_3():
 
     # conv 1
     x = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, padding='same', activation='relu',
-               kernel_regularizer=regularizers.l1_l2(0.01, 0.01))(x)
+               kernel_regularizer=regularizers.l2(0.001))(x)
     x = BatchNormalization()(x)
     # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)  # time half
 
     # # conv 2
-    x = Conv1D(filters=64, kernel_size=200, strides=1, dilation_rate=1, padding='same', activation='relu',
-               kernel_regularizer=regularizers.l1_l2(0.01, 0.01))(x)
+    x = Conv1D(filters=64, kernel_size=200, strides=1, dilation_rate=1, padding='same', activation='relu')(x)
     x = BatchNormalization()(x)
     # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)  # time half
 
     # conv 3
     x = Conv1D(filters=128, kernel_size=100, strides=1, dilation_rate=1, padding='same', activation='relu',
-               kernel_regularizer=regularizers.l1_l2(0.01, 0.01))(x)
+               kernel_regularizer=regularizers.l2(0.001))(x)
     x = BatchNormalization()(x)
     # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
@@ -471,7 +470,7 @@ def LNL_binary_model_3():
     x = Dropout(0.5)(x)
 
     x = Dense(240, activation='relu')(x)
-    x = Dropout(0.2)(x)
+    x = Dropout(0.1)(x)
     x = Dense(120, activation='relu')(x)
     x = Dense(2, activation='softmax')(x)
 

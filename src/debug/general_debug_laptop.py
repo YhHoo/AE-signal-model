@@ -26,6 +26,7 @@ from scipy.interpolate import interp1d
 import keras.backend as K
 from keras.utils import plot_model
 from itertools import islice
+import os
 from scipy.signal import decimate
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
@@ -36,14 +37,75 @@ from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recogniti
 from collections import deque
 from itertools import islice
 
-FILENAME_TO_SAVE = 'result.txt'
-result_1 = 'acc2: 0.875'
-result_2 = 'acc3: 0.174'
-with open(FILENAME_TO_SAVE, 'a') as f:
-    f.write('\n' + result_1)
+# l = [1, 4, 7, 1]
+# file_dir = direct_to_dir(where='result') + 'test.csv'
+#
+# if not os.path.exists(file_dir):
+#     df = pd.DataFrame(data=l, columns=['unseen_leak'])
+#     df.to_csv(file_dir)
+# else:
+#     df = pd.read_csv(file_dir, index_col=0)
+#     print(df)
+#     df['seen_leak'] = l
+#     df.to_csv(file_dir)
 
-with open(FILENAME_TO_SAVE, 'a') as f:
-    f.write('\n' + result_2)
+unseen_data_labels = [
+                      'sensor@[-3m]',
+                      'sensor@[-2m]',
+                      'sensor@[0m]',
+                      'sensor@[5m]',
+                      'sensor@[7m]',
+                      'sensor@[16m]',
+                      'sensor@[17m]'
+                     ]
+
+seen_data_labels = [
+                    'sensor@[-4m]',
+                    'sensor@[-2m]',
+                    'sensor@[2m]',
+                    'sensor@[4m]',
+                    'sensor@[6m]',
+                    'sensor@[8m]',
+                    'sensor@[10m]'
+                   ]
+
+file_dir = direct_to_dir(where='result') + 'test.csv'
+df = pd.read_csv(file_dir)
+
+# calc mean unseen score
+unseen_mean_acc = np.mean([df['unseen_leak'].values, df['unseen_noleak']], axis=0)
+seen_mean_acc = np.mean([df['seen_leak'].values, df['seen_noleak']], axis=0)
+
+
+# print(df['unseen_leak'].values)
+# print(df['unseen_leak'].values.shape)
+
+
+
+
+
+
+# file_dir = direct_to_dir(where='result') + 'LNL_25x1_result.txt'
+#
+# with open(file_dir) as file:
+#     file_contents = file.read()
+#     print(file_contents)
+
+
+# FILENAME_TO_SAVE = 'result.txt'
+# result_1 = 'acc2: 0.875'
+# result_2 = 'acc3: 0.174'
+# with open(FILENAME_TO_SAVE, 'a') as f:
+#     f.write('\n' + result_1)
+#
+# with open(FILENAME_TO_SAVE, 'a') as f:
+#     f.write('\n' + result_2)
+
+
+# np.random.seed(42)
+# print(np.random.permutation(10))
+# print(np.random.permutation(37))
+
 
 
 # tdms_test = direct_to_dir(where='result') + 'dataset_leak_random_1.5bar_[0]_ds.csv'
