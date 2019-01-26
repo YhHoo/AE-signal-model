@@ -1,9 +1,8 @@
 import argparse
-from src.utils.helpers import *
-
 import sys
 sys.path.append('C:/Users/YH/PycharmProjects/AE-signal-model')
 
+from src.utils.helpers import *
 parser = argparse.ArgumentParser(description='Input some parameters.')
 
 parser.add_argument('--model', default=None, type=str, help='model name to test')
@@ -18,17 +17,17 @@ INPUT_DATA_LABEL_SEEN = args.inlabel_seen
 
 file_dir = direct_to_dir(where='result') + '{}_acc_buffer.csv'.format(MODEL_NAME_TO_TEST)
 df = pd.read_csv(file_dir)
-
+print(df)
 # calc mean unseen score
-unseen_mean_acc = np.mean([df['unseen_leak'].values, df['unseen_noleak']], axis=0)
-seen_mean_acc = np.mean([df['seen_leak'].values, df['seen_noleak']], axis=0)
+unseen_mean_acc = np.mean([df['Unseen-Leak'].values, df['Unseen-NoLeak']], axis=0)
+seen_mean_acc = np.mean([df['Seen-Leak'].values, df['Seen-NoLeak']], axis=0)
 
 # append to the result files
 with open(RESULT_SAVE_FILENAME, 'a') as f:
-    f.write('\n\n{}\nOVERALL ACCURACY ---------------------- UNSEEN')
+    f.write('\n\nOVERALL ACCURACY ---------------------- UNSEEN')
     for i, j in zip(INPUT_DATA_LABEL_UNSEEN, unseen_mean_acc):
         f.write('\n' + i + ' acc: {:.4f}'.format(j))
 
-    f.write('\n\n{}\nOVERALL ACCURACY ---------------------- SEEN')
+    f.write('\n\nOVERALL ACCURACY ---------------------- SEEN')
     for i, j in zip(INPUT_DATA_LABEL_SEEN, seen_mean_acc):
         f.write('\n' + i + ' acc: {:.4f}'.format(j))
