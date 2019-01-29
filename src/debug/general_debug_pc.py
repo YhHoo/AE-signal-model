@@ -31,19 +31,10 @@ import matplotlib.patches as mpatches
 from src.utils.helpers import *
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-parser = argparse.ArgumentParser(description='Input some parameters.')
-parser.add_argument('--savedircm', default=1, type=str, help='dir to save the cm file')
-args = parser.parse_args()
-DIR_TO_SAVE_CM = args.savedircm
-print('Dir saving cm: ', DIR_TO_SAVE_CM)
+l = np.array([12, 34, 5])
+m = np.array([1, 2, 3])
 
-filename_to_save = 'pred_result_[{}]_[{}]_{}'.format('LNL_XxX', '123_4567', 'unseen-leak')
-fig_cm_save_filename = '{}cm_{}.png'.format(DIR_TO_SAVE_CM, filename_to_save)
-
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-fig.savefig(fig_cm_save_filename)
-
+print(np.sum([l, m], axis=0))
 
 # directory = direct_to_dir(where='result') + 'new_one/'
 # if not os.path.exists(directory):

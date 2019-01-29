@@ -19,8 +19,8 @@ file_dir = direct_to_dir(where='result') + '{}_acc_buffer.csv'.format(MODEL_NAME
 df = pd.read_csv(file_dir)
 print(df)
 # calc mean unseen score
-unseen_mean_acc = np.mean([df['Unseen-Leak'].values, df['Unseen-NoLeak']], axis=0)
-seen_mean_acc = np.mean([df['Seen-Leak'].values, df['Seen-NoLeak']], axis=0)
+unseen_mean_acc = np.sum([df['Unseen-Leak'].values, df['Unseen-NoLeak']], axis=0)
+seen_mean_acc = np.sum([df['Seen-Leak'].values, df['Seen-NoLeak']], axis=0)
 
 # append to the result files
 with open(RESULT_SAVE_FILENAME, 'a') as f:
