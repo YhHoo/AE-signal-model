@@ -45,18 +45,25 @@ class AcousticEmissionDataSet:
         self.noleak_dataset_filename_p3_ds = self.drive + 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/' \
                                                          'dataset_noleak_random_1.5bar_[-3,5,7,16,17]_ds.csv'
 
-        # No Normalized & Downsampled to fs=100kHz (6000 points per sample) --------------------------------------------
-        # leak
+        # No Normalized & Downsampled to fs=100kHz (2000 points per sample) --------------------------------------------
+        # Seen leak
         self.leak_dataset_filename_p1_ds2 = self.drive + 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/' \
                                                         'dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds2.csv'
         self.leak_dataset_filename_p2_ds2 = self.drive + 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/' \
                                                         'dataset_leak_random_1.5bar_[0]_ds2.csv'
 
-        # no leak
+        # Seen no leak
         self.noleak_dataset_filename_p1_ds2 = self.drive + 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/' \
                                                           'dataset_noleak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds2.csv'
         self.noleak_dataset_filename_p2_ds2 = self.drive + 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/' \
                                                           'dataset_noleak_random_1.5bar_[0]_ds2.csv'
+
+        # unseen leak
+        self.leak_dataset_filename_p3_ds2 = self.drive + 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/' \
+                                                        'dataset_leak_random_1.5bar_[-3,5,7,16,17]_ds2.csv'
+        # unseen no leak
+        self.noleak_dataset_filename_p3_ds2 = self.drive + 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/' \
+                                                          'dataset_noleak_random_1.5bar_[-3,5,7,16,17]_ds2.csv'
 
     def random_leak_noleak(self, shuffle_b4_split=True, train_split=0.7):
         '''
@@ -325,14 +332,14 @@ class AcousticEmissionDataSet:
         df_noleak_rand_p3 = pd.read_csv(self.noleak_dataset_filename_p3_ds)
 
         print('File Read Time: {:.4f}s'.format(time.time() - time_start))
-        print('Random NoLeak p2 Dataset Dim: ', df_noleak_rand_p3.values.shape)
+        print('Random NoLeak p3 Dataset Dim: ', df_noleak_rand_p3.values.shape)
 
         # read leak @ -3,5,7,16,17m
         time_start = time.time()
         print('Reading --> ', self.leak_dataset_filename_p3_ds)
         df_leak_rand_p3 = pd.read_csv(self.leak_dataset_filename_p3_ds)
         print('File Read Time: {:.4f}s'.format(time.time() - time_start))
-        print('Random NoLeak p2 Dataset Dim: ', df_leak_rand_p3.values.shape)
+        print('Random NoLeak p3 Dataset Dim: ', df_leak_rand_p3.values.shape)
 
         train_x, train_y, test_x, test_y = [], [], [], []
 
@@ -455,7 +462,7 @@ class AcousticEmissionDataSet:
 
         return train_x, train_y, test_x, test_y
 
-    def random_leak_noleak_downsampled_2(self, shuffle_b4_split=True, train_split=0.7):
+    def random_leak_noleak_downsampled_2_include_unseen(self, shuffle_b4_split=True, train_split=0.7):
         '''
         DOWNSAMPLE FACTOR: 10
         SAMPLING RATE: 100kHz
@@ -468,6 +475,7 @@ class AcousticEmissionDataSet:
         Also, remove the signals from channel -4m and -2m. we only want to train the model on recognizing leak no leak
         from 0m up to 10m, assuming the leak is always a one side of the sensor.
         '''
+        print('DATASET: 2019-1-3 random_leak_noleak_downsampled_include_unseen()\n')
         # read leak @ -4, -2, 2, 4, 6, 8, 10m
         time_start = time.time()
         print('Reading --> ', self.leak_dataset_filename_p1_ds2)
@@ -499,6 +507,21 @@ class AcousticEmissionDataSet:
 
         print('File Read Time: {:.4f}s'.format(time.time() - time_start))
         print('Random NoLeak p2 Dataset Dim: ', df_noleak_rand_p2.values.shape)
+
+        # read noleak @ -3,5,7,16,17m
+        time_start = time.time()
+        print('Reading --> ', self.noleak_dataset_filename_p3_ds2)
+        df_noleak_rand_p3 = pd.read_csv(self.noleak_dataset_filename_p3_ds2)
+
+        print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+        print('Random NoLeak p3 Dataset Dim: ', df_noleak_rand_p3.values.shape)
+
+        # read leak @ -3,5,7,16,17m
+        time_start = time.time()
+        print('Reading --> ', self.leak_dataset_filename_p3_ds2)
+        df_leak_rand_p3 = pd.read_csv(self.leak_dataset_filename_p3_ds2)
+        print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+        print('Random NoLeak p3 Dataset Dim: ', df_leak_rand_p3.values.shape)
 
         train_x, train_y, test_x, test_y = [], [], [], []
 
@@ -534,10 +557,12 @@ class AcousticEmissionDataSet:
         leak_data_p1 = df_leak_rand_p1.loc[df_leak_rand_p1['channel'].isin([2, 3, 4, 5, 6])].values[:, :-1]
         if shuffle_b4_split:
             leak_data_p1 = leak_data_p1[np.random.permutation(len(leak_data_p1))]
+        leak_data_p1 = leak_data_p1[:(len(leak_data_p1) // 2)]  # **to balance the class
 
         leak_data_p2 = df_leak_rand_p2.values[:, :-1]
         if shuffle_b4_split:
             leak_data_p2 = leak_data_p2[np.random.permutation(len(leak_data_p2))]
+        leak_data_p2 = leak_data_p2[:(len(leak_data_p2) // 2)]  # **to balance the class
 
         # merging all noleak scenario
         label = [1] * (len(leak_data_p1) + len(leak_data_p2))
@@ -555,6 +580,33 @@ class AcousticEmissionDataSet:
 
         print('Preprocessed leak p1 dim: ', leak_data_p1.shape)
         print('Preprocessed leak p2 dim: ', leak_data_p2.shape)
+
+        # for unseen leak noleak on val data ---------------------------------------------------------------------------
+        # noleak
+        noleak_data_p3 = df_noleak_rand_p3.values[:, :-1]
+        if shuffle_b4_split:
+            noleak_data_p3 = noleak_data_p3[np.random.permutation(len(noleak_data_p3))]
+
+        # leak
+        leak_data_p3 = df_leak_rand_p3.values[:, :-1]
+        if shuffle_b4_split:
+            leak_data_p3 = leak_data_p3[np.random.permutation(len(leak_data_p3))]
+        leak_data_p3 = leak_data_p3[:(len(leak_data_p3) // 2)]  # **to balance the class, leak sample is twice noleak
+
+        # merging all noleak scenario
+        label = [0] * len(noleak_data_p3) + [1] * len(leak_data_p3)
+        all = np.concatenate((noleak_data_p3, leak_data_p3), axis=0)
+
+        tr_x, te_x, tr_y, te_y = train_test_split(all,
+                                                  label,
+                                                  train_size=train_split,
+                                                  shuffle=True)
+
+        test_x.append(te_x)
+        test_y.append(te_y)
+
+        print('Preprocessed noleak p3 dim: ', noleak_data_p3.shape)
+        print('Preprocessed leak p3 dim: ', leak_data_p3.shape)
 
         # concatenate all ----------------------------------------------------------------------------------------------
         train_x = np.concatenate(train_x, axis=0)
