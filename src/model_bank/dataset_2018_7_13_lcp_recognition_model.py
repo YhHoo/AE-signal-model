@@ -384,6 +384,7 @@ def dexter_model():
 def LNL_binary_model_2():
     '''
     kernel & bias l2 reg, 3 conv layer (BEST MODEL SO FAR, UNDER LNL_21x3 & LNL_29x1)
+    BEST MODEL FOR ds dataset
     '''
     print('MODEL: LNL_29x1 Best MODEL')
     inp = Input((2000, 1))
