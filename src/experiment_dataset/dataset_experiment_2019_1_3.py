@@ -475,7 +475,7 @@ class AcousticEmissionDataSet:
         Also, remove the signals from channel -4m and -2m. we only want to train the model on recognizing leak no leak
         from 0m up to 10m, assuming the leak is always a one side of the sensor.
         '''
-        print('DATASET: 2019-1-3 random_leak_noleak_downsampled_include_unseen()\n')
+        print('DATASET: 2019-1-3 random_leak_noleak_downsampled_2_include_unseen()\n')
         # read leak @ -4, -2, 2, 4, 6, 8, 10m
         time_start = time.time()
         print('Reading --> ', self.leak_dataset_filename_p1_ds2)
@@ -624,7 +624,7 @@ class AcousticEmissionDataSet:
 
 
 # data = AcousticEmissionDataSet(drive='G')
-# data2 = data.random_leak_noleak_downsampled_include_unseen()
+# data2 = data.random_leak_noleak_downsampled_2_include_unseen()
 
 
 

@@ -385,6 +385,7 @@ def LNL_binary_model_2():
     '''
     kernel & bias l2 reg, 3 conv layer (BEST MODEL SO FAR, UNDER LNL_21x3 & LNL_29x1)
     '''
+    print('MODEL: LNL_29x1 Best MODEL')
     inp = Input((2000, 1))
 
     x = BatchNormalization()(inp)
@@ -430,39 +431,30 @@ def LNL_binary_model_2():
 
 def LNL_binary_model_3():
     '''
-    kernel & bias l2 reg, 4 conv layer
+    Duplicate of LNL_29x1, except a smaller kernel size, for ds2
     '''
     inp = Input((2000, 1))
 
     x = BatchNormalization()(inp)
 
     # conv 1
-    x = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, padding='same',
-               kernel_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01))(x)
+    x = Conv1D(filters=32, kernel_size=20, strides=1, dilation_rate=1, padding='same')(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)
 
     # # conv 2
-    x = Conv1D(filters=64, kernel_size=200, strides=1, dilation_rate=1, padding='same',
-               kernel_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01))(x)
+    x = Conv1D(filters=64, kernel_size=20, strides=1, dilation_rate=1, padding='same',
+               kernel_regularizer=regularizers.l2(0.01))(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
     # conv 3
-    x = Conv1D(filters=128, kernel_size=100, strides=1, dilation_rate=1, padding='same',
-               kernel_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01))(x)
-    x = Activation('relu')(x)
-    x = BatchNormalization()(x)
-    x = Activation('relu')(x)
-    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
-
-    # conv 4
-    x = Conv1D(filters=256, kernel_size=100, strides=1, dilation_rate=1, padding='same',
-               kernel_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01))(x)
+    x = Conv1D(filters=128, kernel_size=10, strides=1, dilation_rate=1, padding='same',
+               kernel_regularizer=regularizers.l2(0.01))(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
@@ -471,8 +463,7 @@ def LNL_binary_model_3():
     x = GlobalAveragePooling1D()(x)
     x = Dropout(0.55)(x)
 
-    x = Dense(240, activation='relu')(x)
-    # x = Dropout(0.1)(x)
+    x = Dense(240, activation='relu', )(x)
     x = Dense(120, activation='relu')(x)
     x = Dense(2, activation='softmax')(x)
 
@@ -486,6 +477,60 @@ def LNL_binary_model_3():
 
 
 def LNL_binary_model_4():
+    '''
+
+    '''
+    inp = Input((2000, 1))
+
+    x = BatchNormalization()(inp)
+
+    # conv 1
+    x = Conv1D(filters=32, kernel_size=20, strides=1, dilation_rate=1, padding='same')(x)
+    x = Activation('relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)
+
+    # # conv 2
+    x = Conv1D(filters=64, kernel_size=20, strides=1, dilation_rate=1, padding='same',
+               kernel_regularizer=regularizers.l2(0.01))(x)
+    x = Activation('relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
+
+    # conv 3
+    x = Conv1D(filters=128, kernel_size=10, strides=1, dilation_rate=1, padding='same',
+               kernel_regularizer=regularizers.l2(0.01))(x)
+    x = Activation('relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
+
+    x = Conv1D(filters=128, kernel_size=10, strides=1, dilation_rate=1, padding='same',
+               kernel_regularizer=regularizers.l2(0.01))(x)
+    x = Activation('relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
+
+    x = GlobalAveragePooling1D()(x)
+    x = Dropout(0.55)(x)
+
+    x = Dense(240, activation='relu', )(x)
+    x = Dense(120, activation='relu')(x)
+    x = Dense(2, activation='softmax')(x)
+
+    out = Dense(2, activation='softmax')(x)
+
+    model = Model(inp, out)
+
+    print(model.summary())
+
+    return model
+
+
+def LNL_binary_model_5():
     '''
     A multipath
     :return:
@@ -558,7 +603,7 @@ def LNL_binary_model_4():
     return model
 
 
-def LNL_binary_model_5():
+def LNL_binary_model_6():
     '''
     RESNET shortcut connection and using preactivation
     '''
