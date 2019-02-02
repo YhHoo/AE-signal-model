@@ -479,7 +479,7 @@ def LNL_binary_model_3():
 
 def LNL_binary_model_4():
     '''
-
+    dual activation, 4 conv layer with l2 reg, kernel for ds2
     '''
     inp = Input((2000, 1))
 
