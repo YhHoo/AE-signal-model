@@ -45,7 +45,7 @@ logger = ModelLogger(model=lcp_model, model_name=MODEL_SAVE_FILENAME)  # *** chg
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # start training
-total_epoch = 1300
+total_epoch = 1200
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,
@@ -106,7 +106,7 @@ fig_lr_save_filename = direct_to_dir(where='result') + '{}.png'.format(evaluate_
 fig_evaluate.savefig(fig_lr_save_filename)
 
 print('\n---------- EVALUATION RESULT SCRIPT LNL 1 -----------')
-print('**Param in tuning --> [pool:(3, 2, 2), split=0.8, val_included_test]')
+print('**Param in tuning --> [pool:(20, 20, 10, 10, 10), split=0.8, val_included_test, ds2]')
 print('Model Trainable params: {}'.format(trainable_count))
 print('Best Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
                                                                best_val_acc_index,
