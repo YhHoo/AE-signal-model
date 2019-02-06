@@ -37,7 +37,7 @@ train_y_cat = to_categorical(train_y, num_classes=2)
 test_y_cat = to_categorical(test_y, num_classes=2)
 
 # ------------------------------------------------------------------------------------------------------- MODEL TRAINING
-lcp_model = LNL_binary_model_3()
+lcp_model = LNL_binary_model_6()
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
 # saving best weight setting
@@ -45,7 +45,7 @@ logger = ModelLogger(model=lcp_model, model_name=MODEL_SAVE_FILENAME)  # *** chg
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # start training
-total_epoch = 1000
+total_epoch = 2500
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,

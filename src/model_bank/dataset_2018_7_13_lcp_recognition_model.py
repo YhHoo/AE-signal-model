@@ -622,18 +622,18 @@ def LNL_binary_model_6():
 
     # conv block 1
     x = Activation('relu')(x)
-    x = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, padding='same')(x)
+    x = Conv1D(filters=32, kernel_size=20, strides=1, dilation_rate=1, padding='same')(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     x_store = x
-    x = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, padding='same')(x)
+    x = Conv1D(filters=32, kernel_size=20, strides=1, dilation_rate=1, padding='same')(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     x = Add()([x, x_store])
     x_store = x
-    x = Conv1D(filters=32, kernel_size=200, strides=1, dilation_rate=1, padding='same')(x)
+    x = Conv1D(filters=32, kernel_size=20, strides=1, dilation_rate=1, padding='same')(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
@@ -642,7 +642,7 @@ def LNL_binary_model_6():
     x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)  # -------
 
     # # conv 2
-    x = Conv1D(filters=64, kernel_size=200, strides=1, dilation_rate=1, padding='same',
+    x = Conv1D(filters=64, kernel_size=10, strides=1, dilation_rate=1, padding='same',
                kernel_regularizer=regularizers.l2(0.01))(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
@@ -650,7 +650,7 @@ def LNL_binary_model_6():
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
     # conv 3
-    x = Conv1D(filters=128, kernel_size=100, strides=1, dilation_rate=1, padding='same',
+    x = Conv1D(filters=128, kernel_size=10, strides=1, dilation_rate=1, padding='same',
                kernel_regularizer=regularizers.l2(0.01))(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
