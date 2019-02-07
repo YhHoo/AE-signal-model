@@ -13,12 +13,17 @@ from src.utils.helpers import *
 parser = argparse.ArgumentParser(description='Input some parameters.')
 parser.add_argument('--model', default=1, type=str, help='Model Name')
 parser.add_argument('--rfname', default=1, type=str, help='Result File name')
-
+parser.add_argument('--kernel_size', default=1, type=int, nargs='+', help='kernel size')
+parser.add_argument('--fc_size', default=1, type=int, nargs='+', help='fully connected size')
 
 args = parser.parse_args()
 MODEL_SAVE_FILENAME = args.model
 RESULT_SAVE_FILENAME = args.rfname
+KERNEL_SIZE = args.kernel_size
+FC_SIZE = args.fc_size
 print('Result saving filename: ', RESULT_SAVE_FILENAME)
+print('Conv Kernel size: ', KERNEL_SIZE)
+print('FC neuron size: ', FC_SIZE)
 
 # ----------------------------------------------------------------------------------------------------------- GPU CONFIG
 # instruct GPU to allocate only sufficient memory for this script
@@ -28,7 +33,7 @@ sess = tf.Session(config=config)
 
 # ------------------------------------------------------------------------------------------------------------ DATA PREP
 ae_data = AcousticEmissionDataSet(drive='G')
-train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_downsampled_3_include_unseen(train_split=0.8)
+train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_downsampled_2_include_unseen(train_split=0.8)
 
 train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
 test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
@@ -37,15 +42,15 @@ train_y_cat = to_categorical(train_y, num_classes=2)
 test_y_cat = to_categorical(test_y, num_classes=2)
 
 # ------------------------------------------------------------------------------------------------------- MODEL TRAINING
-lcp_model = LNL_binary_model_3()
+lcp_model = LNL_binary_model_4(kernel_size=KERNEL_SIZE, fc_size=FC_SIZE)
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
 # saving best weight setting
-logger = ModelLogger(model=lcp_model, model_name=MODEL_SAVE_FILENAME)  # *** chg name
+logger = ModelLogger(model=lcp_model, model_name=MODEL_SAVE_FILENAME)
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # start training
-total_epoch = 500
+total_epoch = 1200
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,
@@ -125,13 +130,14 @@ print('[Leak] -> class_1')
 # saving the printed result again
 with open(RESULT_SAVE_FILENAME, 'w') as f:
     f.write('\n---------- EVALUATION RESULT SCRIPT LNL 1 -----------')
+    f.write('\nModel Conv Kernels Size: {}, FC Size: {}'.format(KERNEL_SIZE, FC_SIZE))
     f.write('\nModel Trainable params: {}'.format(trainable_count))
     f.write('\nBest Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
-                                                                   best_val_acc_index,
-                                                                   total_epoch))
+                                                                       best_val_acc_index,
+                                                                       total_epoch))
     f.write('\nLowest Validation Loss: {:.4f} at Epoch {}/{}'.format(history.history['val_loss'][best_val_loss_index],
-                                                                 best_val_loss_index,
-                                                                 total_epoch))
+                                                                     best_val_loss_index,
+                                                                     total_epoch))
     f.write('\nTime taken to execute 1 sample: {}s'.format(time_predict / len(test_x_reshape)))
     f.write('\nTime taken to complete {} epoch: {:.4f}s'.format(total_epoch, time_train))
 
