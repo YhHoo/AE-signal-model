@@ -308,21 +308,21 @@ python dataset_experiment_2019_1_3_\(LNL\)_avg_acc.py --model "${model_name}"\
 # -------------------------------------------------------------------------------------------------------------- JOB 4
 declare -a model_name='LNL_36x6'  # **
 
-declare -a result_save_filename='C:/Users/YH/PycharmProjects/AE-signal-model/result/LNL_36x6_result.txt'  # **
+declare -a result_save_filename='C:/Users/YH/PycharmProjects/AE-signal-model/result/LNL_36x7_result.txt'  # **
 
 #                                                                                    ********
 declare -a pred_result_save_dir=(
-                                 'G:/Experiment_3_1_2019/LNL_model_Evaluation_Result/LNL_36x6 evaluate with Experiment_21_12_2018_8Ch_-3,-2,0,5,7,16,17_1.5 bar_Leak_Test data/'
-                                 'G:/Experiment_3_1_2019/LNL_model_Evaluation_Result/LNL_36x6 evaluate with Experiment_21_12_2018_8Ch_-3,-2,0,5,7,16,17_1.5 bar_NoLeak_Test data/'
-                                 'G:/Experiment_3_1_2019/LNL_model_Evaluation_Result/LNL_36x6 evaluate with Experiment_21_12_2018_8Ch_-4,-2,2,4,6,8,10_1.5 bar_Leak_Test data/'
-                                 'G:/Experiment_3_1_2019/LNL_model_Evaluation_Result/LNL_36x6 evaluate with Experiment_21_12_2018_8Ch_-4,-2,2,4,6,8,10_1.5 bar_NoLeak_Test data/'
+                                 'G:/Experiment_3_1_2019/LNL_model_Evaluation_Result/LNL_36x7 evaluate with Experiment_21_12_2018_8Ch_-3,-2,0,5,7,16,17_1.5 bar_Leak_Test data/'
+                                 'G:/Experiment_3_1_2019/LNL_model_Evaluation_Result/LNL_36x7 evaluate with Experiment_21_12_2018_8Ch_-3,-2,0,5,7,16,17_1.5 bar_NoLeak_Test data/'
+                                 'G:/Experiment_3_1_2019/LNL_model_Evaluation_Result/LNL_36x7 evaluate with Experiment_21_12_2018_8Ch_-4,-2,2,4,6,8,10_1.5 bar_Leak_Test data/'
+                                 'G:/Experiment_3_1_2019/LNL_model_Evaluation_Result/LNL_36x7 evaluate with Experiment_21_12_2018_8Ch_-4,-2,2,4,6,8,10_1.5 bar_NoLeak_Test data/'
                                 )
 #                                                                                                                                           **>                                 ********
 declare -a cm_save_dir=(
-                        'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/Preprocessed Dataset recognition result/LNL model (dataset Dec)/LNL_36x6 evaluate with Experiment_21_12_2018_8Ch_-3,-2,0,5,7,16,17_1.5 bar_Leak_Test data/'
-                        'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/Preprocessed Dataset recognition result/LNL model (dataset Dec)/LNL_36x6 evaluate with Experiment_21_12_2018_8Ch_-3,-2,0,5,7,16,17_1.5 bar_NoLeak_Test data/'
-                        'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/Preprocessed Dataset recognition result/LNL model (dataset Dec)/LNL_36x6 evaluate with Experiment_21_12_2018_8Ch_-4,-2,2,4,6,8,10_1.5 bar_Leak_Test data/'
-                        'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/Preprocessed Dataset recognition result/LNL model (dataset Dec)/LNL_36x6 evaluate with Experiment_21_12_2018_8Ch_-4,-2,2,4,6,8,10_1.5 bar_NoLeak_Test data/'
+                        'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/Preprocessed Dataset recognition result/LNL model (dataset Dec)/LNL_36x7 evaluate with Experiment_21_12_2018_8Ch_-3,-2,0,5,7,16,17_1.5 bar_Leak_Test data/'
+                        'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/Preprocessed Dataset recognition result/LNL model (dataset Dec)/LNL_36x7 evaluate with Experiment_21_12_2018_8Ch_-3,-2,0,5,7,16,17_1.5 bar_NoLeak_Test data/'
+                        'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/Preprocessed Dataset recognition result/LNL model (dataset Dec)/LNL_36x7 evaluate with Experiment_21_12_2018_8Ch_-4,-2,2,4,6,8,10_1.5 bar_Leak_Test data/'
+                        'C:/Users/YH/Desktop/hooyuheng.master/MASTER_PAPERWORK/My Practical Work------------/Preprocessed Dataset recognition result/LNL model (dataset Dec)/LNL_36x7 evaluate with Experiment_21_12_2018_8Ch_-4,-2,2,4,6,8,10_1.5 bar_NoLeak_Test data/'
                        )
 
 echo ------------------------------------------------------------------------------------------- Training_JOB4
