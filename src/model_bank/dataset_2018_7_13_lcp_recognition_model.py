@@ -5,8 +5,10 @@ sys.path.append('C:/Users/YH/PycharmProjects/AE-signal-model')
 from keras.layers import *
 from keras.models import Sequential, Model
 from keras.utils import plot_model
+from sklearn import svm
+from sklearn.metrics import accuracy_score
 from keras import regularizers
-from keras import regularizers
+import time
 # self lib
 from src.utils.helpers import direct_to_dir
 
@@ -722,9 +724,121 @@ def LNL_binary_model_6():
     return model
 
 
-# LNL_binary_model_5()
+def LNL_COMPARE_model_by_KANG_et_al():
+    '''
+    Ensemble 1DCNN SVM
+    Data sampling rate = 2048 Hz
+    Epoch around 100
+    '''
+    inp = Input((2048, 1))
+
+    x = Conv1D(filters=64, kernel_size=32, strides=1, padding='valid')(inp)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
+
+    x = Conv1D(filters=128, kernel_size=32, strides=1, padding='valid')(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
+
+    x = Conv1D(filters=192, kernel_size=32, strides=1, padding='valid')(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
+
+    x = Flatten()(x)
+
+    x = Dense(5120, activation='relu', )(x)
+    x = Dense(1024, activation='relu')(x)
+    out = Dense(2, activation='softmax')(x)
+
+    model = Model(inp, out)
+
+    print(model.summary())
+
+    return model
+
+
+def LNL_COMPARE_model_by_Abdeljaber_et_al():
+    '''
+    1DCNN
+    Data sampling rate = 1024 Hz
+    Epoch around 100
+    '''
+    inp = Input((128, 1))
+
+    x = Conv1D(filters=64, kernel_size=41, strides=1, padding='valid')(inp)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='valid')(x)
+
+    x = Conv1D(filters=32, kernel_size=41, strides=1, padding='valid')(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='valid')(x)
+
+    x = Flatten()(x)
+
+    x = Dense(10, activation='relu', )(x)
+    x = Dense(10, activation='relu')(x)
+    out = Dense(2, activation='softmax')(x)
+
+    model = Model(inp, out)
+
+    print(model.summary())
+
+    return model
+
+
+def LNL_COMPARE_model_FC_only():
+    inp = Input(shape=(2000, 1))
+    x = Flatten()(inp)
+    x = Dense(240, activation='relu')(x)
+    x = Dense(120, activation='relu')(x)
+    x = Dense(2, activation='relu')(x)
+    out = Dense(2, activation='softmax')(x)
+
+    model = Model(inp, out)
+
+    print(model.summary())
+
+    return model
+
+
+# LNL_COMPARE_model_FC_only()
+
+
 # --------------------HERE FOR TESTING THE MODEL ALLOWABLE BATCH SIZE FOR GPU MEMORY LIMIT -----------------------------
 
+from src.utils.helpers import *
+data_1 = np.random.rand(10000, 2000)
+data_1 = data_1.reshape((data_1.shape[0], data_1.shape[1], 1))
+label_1 = np.concatenate((np.ones(5000), np.zeros(5000)), axis=0)
+
+# reduce the dimension from 3 to 2
+data_1 = data_1.reshape((data_1.shape[0], data_1.shape[1]))
+print(data_1.shape)
+print(label_1.shape)
+
+# SVM --------------------------------------------------------------------------------------------------------------
+model = svm.SVC(kernel='rbf', C=40, gamma=1)
+
+# training time
+time_train_start = time.time()
+model.fit(data_1, label_1)
+time_taken_train = time.time() - time_train_start
+print(time_taken_train)
+
+
+
+# model = LNL_COMPARE_model_FC_only()
+# model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
+# model.fit(x=data_1,
+#           y=label_1,
+#           validation_split=0.7,
+#           epochs=100,
+#           shuffle=True,
+#           verbose=2,
+#           batch_size=100)
+
+
+# # multipath model WORKS
 # from src.utils.helpers import *
 # data_1 = np.random.rand(10000, 2000)
 # data_1 = data_1.reshape((data_1.shape[0], data_1.shape[1], 1))
@@ -735,7 +849,7 @@ def LNL_binary_model_6():
 # label_1 = np.ones(10000).reshape((10000, -1))
 # label_1 = to_categorical(label_1, num_classes=2)
 #
-# model = LNL_binary_model_3()
+# model = LNL_binary_model_5()
 # model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 # model.fit(x=[data_1, data_2],
 #           y=label_1,
@@ -744,4 +858,3 @@ def LNL_binary_model_6():
 #           shuffle=True,
 #           verbose=2,
 #           batch_size=100)
-
