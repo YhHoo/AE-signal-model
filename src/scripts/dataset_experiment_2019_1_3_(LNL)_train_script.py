@@ -50,7 +50,7 @@ logger = ModelLogger(model=lcp_model, model_name=MODEL_SAVE_FILENAME)
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # start training
-total_epoch = 1200
+total_epoch = 500
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,

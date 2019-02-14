@@ -1,6 +1,3 @@
-import time
-from sklearn import svm
-from sklearn.metrics import accuracy_score
 from src.experiment_dataset.dataset_experiment_2019_1_3 import AcousticEmissionDataSet
 from src.model_bank.dataset_2018_7_13_lcp_recognition_model import *
 from src.utils.helpers import *
@@ -17,7 +14,7 @@ train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_downsampled_2_incl
 # test_y_cat = to_categorical(test_y, num_classes=2)
 
 # ------------------------------------------------------------------------------------------------------------------ SVM
-model = svm.SVC(kernel='linear', C=3, gamma=1)
+model = svm.SVC(kernel='linear', C=40, gamma=1)
 
 # training time
 time_train_start = time.time()

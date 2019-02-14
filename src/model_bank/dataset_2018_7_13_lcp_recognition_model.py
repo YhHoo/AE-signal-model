@@ -806,24 +806,24 @@ def LNL_COMPARE_model_FC_only():
 
 # --------------------HERE FOR TESTING THE MODEL ALLOWABLE BATCH SIZE FOR GPU MEMORY LIMIT -----------------------------
 
-from src.utils.helpers import *
-data_1 = np.random.rand(10000, 2000)
-data_1 = data_1.reshape((data_1.shape[0], data_1.shape[1], 1))
-label_1 = np.concatenate((np.ones(5000), np.zeros(5000)), axis=0)
-
-# reduce the dimension from 3 to 2
-data_1 = data_1.reshape((data_1.shape[0], data_1.shape[1]))
-print(data_1.shape)
-print(label_1.shape)
-
-# SVM --------------------------------------------------------------------------------------------------------------
-model = svm.SVC(kernel='rbf', C=40, gamma=1)
-
-# training time
-time_train_start = time.time()
-model.fit(data_1, label_1)
-time_taken_train = time.time() - time_train_start
-print(time_taken_train)
+# from src.utils.helpers import *
+# data_1 = np.random.rand(10000, 2000)
+# data_1 = data_1.reshape((data_1.shape[0], data_1.shape[1], 1))
+# label_1 = np.concatenate((np.ones(5000), np.zeros(5000)), axis=0)
+#
+# # reduce the dimension from 3 to 2
+# data_1 = data_1.reshape((data_1.shape[0], data_1.shape[1]))
+# print(data_1.shape)
+# print(label_1.shape)
+#
+# # SVM --------------------------------------------------------------------------------------------------------------
+# model = svm.SVC(kernel='rbf', C=40, gamma=1)
+#
+# # training time
+# time_train_start = time.time()
+# model.fit(data_1, label_1)
+# time_taken_train = time.time() - time_train_start
+# print(time_taken_train)
 
 
 
