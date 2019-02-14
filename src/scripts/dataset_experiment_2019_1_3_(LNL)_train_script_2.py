@@ -13,12 +13,18 @@ from src.utils.helpers import *
 parser = argparse.ArgumentParser(description='Input some parameters.')
 parser.add_argument('--model', default=1, type=str, help='Model Name')
 parser.add_argument('--rfname', default=1, type=str, help='Result File name')
-
+# parser.add_argument('--kernel_size', default=1, type=int, nargs='+', help='kernel size')
+parser.add_argument('--fc_size', default=1, type=int, nargs='+', help='fully connected size')
 
 args = parser.parse_args()
 MODEL_SAVE_FILENAME = args.model
 RESULT_SAVE_FILENAME = args.rfname
+# KERNEL_SIZE = args.kernel_size
+FC_SIZE = args.fc_size
+
 print('Result saving filename: ', RESULT_SAVE_FILENAME)
+# print('Conv Kernel size: ', KERNEL_SIZE)
+print('FC neuron size: ', FC_SIZE)
 
 # ----------------------------------------------------------------------------------------------------------- GPU CONFIG
 # instruct GPU to allocate only sufficient memory for this script
@@ -37,7 +43,7 @@ train_y_cat = to_categorical(train_y, num_classes=2)
 test_y_cat = to_categorical(test_y, num_classes=2)
 
 # ------------------------------------------------------------------------------------------------------- MODEL TRAINING
-lcp_model = LNL_binary_model_4()
+lcp_model = LNL_COMPARE_model_FC_only(fc_size=FC_SIZE)
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
 # saving best weight setting
@@ -45,7 +51,7 @@ logger = ModelLogger(model=lcp_model, model_name=MODEL_SAVE_FILENAME)  # *** chg
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # start training
-total_epoch = 1200
+total_epoch = 500
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,
@@ -106,7 +112,6 @@ fig_lr_save_filename = direct_to_dir(where='result') + '{}.png'.format(evaluate_
 fig_evaluate.savefig(fig_lr_save_filename)
 
 print('\n---------- EVALUATION RESULT SCRIPT LNL 1 -----------')
-print('**Param in tuning --> [pool:(20, 20, 10, 10, 10), split=0.8, val_included_test, ds2]')
 print('Model Trainable params: {}'.format(trainable_count))
 print('Best Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
                                                                best_val_acc_index,
@@ -125,6 +130,7 @@ print('[Leak] -> class_1')
 # saving the printed result again
 with open(RESULT_SAVE_FILENAME, 'w') as f:
     f.write('\n---------- EVALUATION RESULT SCRIPT LNL 1 -----------')
+    f.write('\nModel FC Size: {}'.format(FC_SIZE))
     f.write('\nModel Trainable params: {}'.format(trainable_count))
     f.write('\nBest Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
                                                                    best_val_acc_index,

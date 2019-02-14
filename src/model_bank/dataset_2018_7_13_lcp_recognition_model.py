@@ -786,12 +786,12 @@ def LNL_COMPARE_model_by_Abdeljaber_et_al():
     return model
 
 
-def LNL_COMPARE_model_FC_only():
+def LNL_COMPARE_model_FC_only(fc_size):
     inp = Input(shape=(2000, 1))
     x = Flatten()(inp)
-    x = Dense(240, activation='relu')(x)
-    x = Dense(120, activation='relu')(x)
-    x = Dense(2, activation='relu')(x)
+    x = Dense(fc_size[0], activation='relu')(x)
+    x = Dense(fc_size[1], activation='relu')(x)
+    x = Dense(fc_size[2], activation='relu')(x)
     out = Dense(2, activation='softmax')(x)
 
     model = Model(inp, out)
