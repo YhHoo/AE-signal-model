@@ -726,6 +726,7 @@ def LNL_binary_model_6():
 
 def LNL_COMPARE_model_by_KANG_et_al():
     '''
+    Pipe leakage detection
     Ensemble 1DCNN SVM
     Data sampling rate = 2048 Hz
     Epoch around 100
@@ -759,6 +760,7 @@ def LNL_COMPARE_model_by_KANG_et_al():
 
 def LNL_COMPARE_model_by_Abdeljaber_et_al():
     '''
+    Structural Vibrational Damage
     1DCNN
     Data sampling rate = 1024 Hz
     Epoch around 100
@@ -777,6 +779,34 @@ def LNL_COMPARE_model_by_Abdeljaber_et_al():
 
     x = Dense(10, activation='relu', )(x)
     x = Dense(10, activation='relu')(x)
+    out = Dense(2, activation='softmax')(x)
+
+    model = Model(inp, out)
+
+    print(model.summary())
+
+    return model
+
+
+def LNL_COMPARE_model_by_Giri_et_al():
+    '''
+    EEG stroke identification
+    1DCNN
+    Data sampling rate = 512 Hz
+    Epoch around 100
+    '''
+    inp = Input((24, 1))
+
+    x = Conv1D(filters=20, kernel_size=5, strides=1, padding='valid')(inp)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='valid')(x)
+
+    x = Conv1D(filters=12, kernel_size=3, strides=1, padding='valid')(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='valid')(x)
+    x = BatchNormalization()(x)
+
+    x = Dense(48, activation='relu')(x)
     out = Dense(2, activation='softmax')(x)
 
     model = Model(inp, out)
