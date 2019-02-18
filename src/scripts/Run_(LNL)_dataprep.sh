@@ -6,10 +6,10 @@
 
 # FOR data_preparation_script
 declare -a file_to_save=(
-                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_leak_random_1.5bar_[0]_ds3.csv'
-                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_noleak_random_1.5bar_[0]_ds3.csv'
-                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds3.csv'
-                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_noleak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds3.csv'
+                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_leak_random_1.5bar_[0]_ds6.csv'
+                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_noleak_random_1.5bar_[0]_ds6.csv'
+                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds6.csv'
+                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_noleak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds6.csv'
                         )
 
 declare -a folder_to_read=(
@@ -27,36 +27,36 @@ python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script.py --
                                                                               --ftr "${folder_to_read[0]}" \
                                                                               --cth ${all_even_channel[2]} \
                                                                               --svs 2000 \
-                                                                              --dsf 20
+                                                                              --dsf 1000
 
 echo ------------------------------------------------------------------------------------------- noleak [0]
 python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script.py --fts "${file_to_save[1]}" \
                                                                               --ftr "${folder_to_read[1]}" \
                                                                               --cth ${all_even_channel[2]} \
                                                                               --svs 2000 \
-                                                                              --dsf 20
+                                                                              --dsf 1000
 
 echo ------------------------------------------------------------------------------------------- leak [-4,-2,2,4,6,8,10]
 python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script.py --fts "${file_to_save[2]}" \
                                                                               --ftr "${folder_to_read[2]}" \
                                                                               --cth ${all_even_channel[*]} \
                                                                               --svs 2000 \
-                                                                              --dsf 20
+                                                                              --dsf 1000
 #
 echo ------------------------------------------------------------------------------------------- noleak [-4,-2,2,4,6,8,10]
 python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script.py --fts "${file_to_save[3]}" \
                                                                               --ftr "${folder_to_read[3]}" \
                                                                               --cth ${all_even_channel[*]} \
                                                                               --svs 2000 \
-                                                                              --dsf 20
+                                                                              --dsf 1000
 
 # FOR UNSEEN DATASETS -3,-2,0,5,7,16,17 ################################################################################
 
 
 # FOR data_preparation_script
 declare -a file_to_save_2=(
-                           'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_leak_random_1.5bar_[-3,5,7,16,17]_ds3.csv'
-                           'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_noleak_random_1.5bar_[-3,5,7,16,17]_ds3.csv'
+                           'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_leak_random_1.5bar_[-3,5,7,16,17]_ds6.csv'
+                           'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_noleak_random_1.5bar_[-3,5,7,16,17]_ds6.csv'
                           )
 
 declare -a folder_to_read_2=(
@@ -72,11 +72,11 @@ python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script.py --
                                                                               --ftr "${folder_to_read_2[0]}" \
                                                                               --cth ${all_even_channel_2[*]} \
                                                                               --svs 2000 \
-                                                                              --dsf 20
+                                                                              --dsf 1000
 
 echo ------------------------------------------------------------------------------------------- noleak [-3,5,7,16,17]
 python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script.py --fts "${file_to_save_2[1]}" \
                                                                               --ftr "${folder_to_read_2[1]}" \
                                                                               --cth ${all_even_channel_2[*]} \
                                                                               --svs 2000 \
-                                                                              --dsf 20
+                                                                              --dsf 1000

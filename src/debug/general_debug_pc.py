@@ -31,10 +31,16 @@ import matplotlib.patches as mpatches
 from src.utils.helpers import *
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
-l = np.array([12, 34, 5])
-m = np.array([1, 2, 3])
 
-print(np.sum([l, m], axis=0))
+tdms_dir = 'G:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[0]_ds5.csv'
+
+n_channel_data = pd.read_csv(tdms_dir)
+print('Dim before visualize: ', n_channel_data.shape)
+
+print(n_channel_data.values[594, :-1])
+
+# plt.plot(n_channel_data.values[1045, :-1])
+# plt.show()
 
 # directory = direct_to_dir(where='result') + 'new_one/'
 # if not os.path.exists(directory):

@@ -33,7 +33,7 @@ sess = tf.Session(config=config)
 
 # ------------------------------------------------------------------------------------------------------------ DATA PREP
 ae_data = AcousticEmissionDataSet(drive='G')
-train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_downsampled_2_include_unseen(train_split=0.8)
+train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_downsampled_4_include_unseen(train_split=0.8)
 
 train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
 test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))

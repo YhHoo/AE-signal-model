@@ -388,7 +388,6 @@ def LNL_binary_model_2():
     kernel & bias l2 reg, 3 conv layer (BEST MODEL SO FAR, UNDER LNL_21x3 & LNL_29x1)
     BEST MODEL FOR ds dataset
     '''
-    print('MODEL: LNL_29x1 Best MODEL')
     inp = Input((2000, 1))
 
     x = BatchNormalization()(inp)
@@ -482,6 +481,7 @@ def LNL_binary_model_3():
 def LNL_binary_model_4(kernel_size, fc_size):
     '''
     single activation, 5 conv layer with l2 reg except conv 1, kernel for ds2
+    BEST model so far for ds2 & 3
     '''
     inp = Input((2000, 1))
 
@@ -790,7 +790,9 @@ def LNL_COMPARE_model_FC_only(fc_size):
     inp = Input(shape=(2000, 1))
     x = Flatten()(inp)
     x = Dense(fc_size[0], activation='relu')(x)
+    x = Dropout(0.5)(x)
     x = Dense(fc_size[1], activation='relu')(x)
+    x = Dropout(0.5)(x)
     x = Dense(fc_size[2], activation='relu')(x)
     out = Dense(2, activation='softmax')(x)
 
@@ -801,7 +803,7 @@ def LNL_COMPARE_model_FC_only(fc_size):
     return model
 
 
-# LNL_COMPARE_model_FC_only()
+# LNL_COMPARE_model_FC_only(fc_size=(20, 20, 10))
 
 
 # --------------------HERE FOR TESTING THE MODEL ALLOWABLE BATCH SIZE FOR GPU MEMORY LIMIT -----------------------------
@@ -815,7 +817,7 @@ def LNL_COMPARE_model_FC_only(fc_size):
 # data_1 = data_1.reshape((data_1.shape[0], data_1.shape[1]))
 # print(data_1.shape)
 # print(label_1.shape)
-#
+
 # # SVM --------------------------------------------------------------------------------------------------------------
 # model = svm.SVC(kernel='rbf', C=40, gamma=1)
 #
@@ -825,9 +827,7 @@ def LNL_COMPARE_model_FC_only(fc_size):
 # time_taken_train = time.time() - time_train_start
 # print(time_taken_train)
 
-
-
-# model = LNL_COMPARE_model_FC_only()
+# model = LNL_COMPARE_model_FC_only(fc_size=(20, 20, 10))
 # model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 # model.fit(x=data_1,
 #           y=label_1,
