@@ -36,6 +36,27 @@ from src.utils.helpers import *
 from src.model_bank.dataset_2018_7_13_lcp_recognition_model import lcp_recognition_binary_model_2
 from collections import deque
 from itertools import islice
+from scipy.signal import decimate
+
+tdms_file = 'E:/Experiment_3_1_2019/-4,-2,2,4,6,8,10/1.5 bar/Leak/Train & Val data/2019.01.03_101026_001.tdms'
+
+n_channel_data = read_single_tdms(tdms_file)
+n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]  # drop last channel, due to no sensor
+
+temp, temp2 = [], []
+DOWNSAMPLE_FACTOR_1 = 50
+DOWNSAMPLE_FACTOR_2 = 10
+
+for channel in n_channel_data:
+    temp.append(decimate(x=channel, q=DOWNSAMPLE_FACTOR_1))
+
+for channel in temp:
+    temp2.append(decimate(x=channel, q=DOWNSAMPLE_FACTOR_2))
+
+temp2 = np.array(temp2)
+
+print(temp2.shape)
+print(temp2)
 
 # l = [1, 4, 7, 1]
 # file_dir = direct_to_dir(where='result') + 'test.csv'
@@ -49,32 +70,32 @@ from itertools import islice
 #     df['seen_leak'] = l
 #     df.to_csv(file_dir)
 
-unseen_data_labels = [
-                      'sensor@[-3m]',
-                      'sensor@[-2m]',
-                      'sensor@[0m]',
-                      'sensor@[5m]',
-                      'sensor@[7m]',
-                      'sensor@[16m]',
-                      'sensor@[17m]'
-                     ]
-
-seen_data_labels = [
-                    'sensor@[-4m]',
-                    'sensor@[-2m]',
-                    'sensor@[2m]',
-                    'sensor@[4m]',
-                    'sensor@[6m]',
-                    'sensor@[8m]',
-                    'sensor@[10m]'
-                   ]
-
-file_dir = direct_to_dir(where='result') + 'test.csv'
-df = pd.read_csv(file_dir)
-
-# calc mean unseen score
-unseen_mean_acc = np.mean([df['unseen_leak'].values, df['unseen_noleak']], axis=0)
-seen_mean_acc = np.mean([df['seen_leak'].values, df['seen_noleak']], axis=0)
+# unseen_data_labels = [
+#                       'sensor@[-3m]',
+#                       'sensor@[-2m]',
+#                       'sensor@[0m]',
+#                       'sensor@[5m]',
+#                       'sensor@[7m]',
+#                       'sensor@[16m]',
+#                       'sensor@[17m]'
+#                      ]
+#
+# seen_data_labels = [
+#                     'sensor@[-4m]',
+#                     'sensor@[-2m]',
+#                     'sensor@[2m]',
+#                     'sensor@[4m]',
+#                     'sensor@[6m]',
+#                     'sensor@[8m]',
+#                     'sensor@[10m]'
+#                    ]
+#
+# file_dir = direct_to_dir(where='result') + 'test.csv'
+# df = pd.read_csv(file_dir)
+#
+# # calc mean unseen score
+# unseen_mean_acc = np.mean([df['unseen_leak'].values, df['unseen_noleak']], axis=0)
+# seen_mean_acc = np.mean([df['seen_leak'].values, df['seen_noleak']], axis=0)
 
 
 # print(df['unseen_leak'].values)
