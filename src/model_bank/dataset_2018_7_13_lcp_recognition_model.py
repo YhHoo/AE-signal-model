@@ -518,14 +518,6 @@ def LNL_binary_model_4(kernel_size, fc_size):
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
-    # # conv 5
-    # x = Conv1D(filters=256, kernel_size=10, strides=1, dilation_rate=1, padding='same',
-    #            kernel_regularizer=regularizers.l2(0.01))(x)
-    # x = Activation('relu')(x)
-    # x = BatchNormalization()(x)
-    # x = Activation('relu')(x)
-    # x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
-
     x = GlobalAveragePooling1D()(x)
     x = Dropout(0.55)(x)
 
@@ -534,6 +526,61 @@ def LNL_binary_model_4(kernel_size, fc_size):
     x = Dense(2, activation='softmax')(x)
 
     out = Dense(2, activation='softmax')(x)
+
+    model = Model(inp, out)
+
+    print(model.summary())
+
+    return model
+
+
+def LD_multiclass_model_4(kernel_size, fc_size):
+    '''
+    single activation, 5 conv layer with l2 reg except conv 1, kernel for ds2
+    BEST model so far for ds2 & 3
+    '''
+    inp = Input((2000, 1))
+
+    x = BatchNormalization()(inp)
+
+    # conv 1
+    x = Conv1D(filters=32, kernel_size=kernel_size[0], strides=1, dilation_rate=1, padding='same')(x)
+    x = Activation('relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)
+
+    # conv 2
+    x = Conv1D(filters=64, kernel_size=kernel_size[1], strides=1, dilation_rate=1, padding='same',
+               kernel_regularizer=regularizers.l2(0.01))(x)
+    x = Activation('relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
+
+    # conv 3
+    x = Conv1D(filters=128, kernel_size=kernel_size[2], strides=1, dilation_rate=1, padding='same',
+               kernel_regularizer=regularizers.l2(0.01))(x)
+    x = Activation('relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
+
+    # conv 4
+    x = Conv1D(filters=128, kernel_size=kernel_size[3], strides=1, dilation_rate=1, padding='same',
+               kernel_regularizer=regularizers.l2(0.01))(x)
+    x = Activation('relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
+
+    x = GlobalAveragePooling1D()(x)
+    x = Dropout(0.55)(x)
+
+    x = Dense(fc_size[0], activation='relu', )(x)
+    x = Dense(fc_size[1], activation='relu')(x)
+
+    out = Dense(6, activation='softmax')(x)
 
     model = Model(inp, out)
 
@@ -731,24 +778,29 @@ def LNL_COMPARE_model_by_KANG_et_al():
     Data sampling rate = 2048 Hz
     Epoch around 100
     '''
-    inp = Input((2048, 1))
 
+    inp = Input((2000, 1))
+
+    x = BatchNormalization()(inp)
     x = Conv1D(filters=64, kernel_size=32, strides=1, padding='valid')(inp)
     x = Activation('relu')(x)
+    x = BatchNormalization()(x)
     x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
 
     x = Conv1D(filters=128, kernel_size=32, strides=1, padding='valid')(x)
     x = Activation('relu')(x)
+    x = BatchNormalization()(x)
     x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
 
     x = Conv1D(filters=192, kernel_size=32, strides=1, padding='valid')(x)
     x = Activation('relu')(x)
+    x = BatchNormalization()(x)
     x = MaxPooling1D(pool_size=8, strides=4, padding='valid')(x)
 
     x = Flatten()(x)
 
-    x = Dense(5120, activation='relu', )(x)
-    x = Dense(1024, activation='relu')(x)
+    x = Dense(240, activation='relu', )(x)
+    x = Dense(120, activation='relu')(x)
     out = Dense(2, activation='softmax')(x)
 
     model = Model(inp, out)
@@ -819,8 +871,10 @@ def LNL_COMPARE_model_by_Giri_et_al():
 def LNL_COMPARE_model_FC_only(fc_size):
     inp = Input(shape=(2000, 1))
     x = Flatten()(inp)
+    x = BatchNormalization()(x)
     x = Dense(fc_size[0], activation='relu')(x)
     x = Dropout(0.5)(x)
+    x = BatchNormalization()(x)
     x = Dense(fc_size[1], activation='relu')(x)
     x = Dropout(0.5)(x)
     x = Dense(fc_size[2], activation='relu')(x)
@@ -842,11 +896,28 @@ def LNL_COMPARE_model_FC_only(fc_size):
 # data_1 = np.random.rand(10000, 2000)
 # data_1 = data_1.reshape((data_1.shape[0], data_1.shape[1], 1))
 # label_1 = np.concatenate((np.ones(5000), np.zeros(5000)), axis=0)
+# label_1 = to_categorical(label_1, num_classes=2)
 #
+# print(data_1.shape)
+# print(label_1.shape)
+#
+# model = LNL_binary_model_4(kernel_size=[5, 5, 5, 5], fc_size=[240, 120, 2])
+# model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
+# model.fit(x=data_1,
+#           y=label_1,
+#           validation_split=0.7,
+#           epochs=100,
+#           shuffle=True,
+#           verbose=2,
+#           batch_size=100)
+
+
 # # reduce the dimension from 3 to 2
 # data_1 = data_1.reshape((data_1.shape[0], data_1.shape[1]))
 # print(data_1.shape)
 # print(label_1.shape)
+
+
 
 # # SVM --------------------------------------------------------------------------------------------------------------
 # model = svm.SVC(kernel='rbf', C=40, gamma=1)

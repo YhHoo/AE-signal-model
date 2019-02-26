@@ -2,14 +2,14 @@
 #!/bin/bash
 
 
-# FOR # FOR SEEN DATASETS -4,-2,2,4,6,8,10 ################################################################################
+# FOR # FOR SEEN DATASETS -4,-2,2,4,6,8,10 #############################################################################
 
 # FOR data_preparation_script
 declare -a file_to_save=(
-                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_leak_random_1.5bar_[0]_ds6.csv'
-                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_noleak_random_1.5bar_[0]_ds6.csv'
-                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds6.csv'
-                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_noleak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds6.csv'
+                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_leak_random_1.5bar_[0]_ds5.csv'
+                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_noleak_random_1.5bar_[0]_ds5.csv'
+                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds5.csv'
+                         'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_noleak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds5.csv'
                         )
 
 declare -a folder_to_read=(
@@ -28,7 +28,7 @@ python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script_2.py 
                                                                               --cth ${all_even_channel[2]} \
                                                                               --svs 2000 \
                                                                               --dsf1 50 \
-                                                                              --dsf2 20
+                                                                              --dsf2 10
 
 echo ------------------------------------------------------------------------------------------- noleak [0]
 python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script_2.py --fts "${file_to_save[1]}" \
@@ -36,7 +36,7 @@ python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script_2.py 
                                                                               --cth ${all_even_channel[2]} \
                                                                               --svs 2000 \
                                                                               --dsf1 50 \
-                                                                              --dsf2 20
+                                                                              --dsf2 10
 
 echo ------------------------------------------------------------------------------------------- leak [-4,-2,2,4,6,8,10]
 python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script_2.py --fts "${file_to_save[2]}" \
@@ -44,7 +44,7 @@ python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script_2.py 
                                                                               --cth ${all_even_channel[*]} \
                                                                               --svs 2000 \
                                                                               --dsf1 50 \
-                                                                              --dsf2 20
+                                                                              --dsf2 10
 #
 echo ------------------------------------------------------------------------------------------- noleak [-4,-2,2,4,6,8,10]
 python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script_2.py --fts "${file_to_save[3]}" \
@@ -52,15 +52,15 @@ python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script_2.py 
                                                                               --cth ${all_even_channel[*]} \
                                                                               --svs 2000 \
                                                                               --dsf1 50 \
-                                                                              --dsf2 20
+                                                                              --dsf2 10
 
 # FOR UNSEEN DATASETS -3,-2,0,5,7,16,17 ################################################################################
 
 
 # FOR data_preparation_script
 declare -a file_to_save_2=(
-                           'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_leak_random_1.5bar_[-3,5,7,16,17]_ds6.csv'
-                           'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_noleak_random_1.5bar_[-3,5,7,16,17]_ds6.csv'
+                           'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_leak_random_1.5bar_[-3,5,7,16,17]_ds5.csv'
+                           'C:/Users/YH/PycharmProjects/AE-signal-model/result/dataset_noleak_random_1.5bar_[-3,5,7,16,17]_ds5.csv'
                           )
 
 declare -a folder_to_read_2=(
@@ -77,7 +77,7 @@ python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script_2.py 
                                                                               --cth ${all_even_channel_2[*]} \
                                                                               --svs 2000 \
                                                                               --dsf1 50 \
-                                                                              --dsf2 20
+                                                                              --dsf2 10
 
 echo ------------------------------------------------------------------------------------------- noleak [-3,5,7,16,17]
 python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script_2.py --fts "${file_to_save_2[1]}" \
@@ -85,4 +85,4 @@ python dataset_experiment_2018_10_3_\(LeakRandom\)_data_preparation_script_2.py 
                                                                               --cth ${all_even_channel_2[*]} \
                                                                               --svs 2000 \
                                                                               --dsf1 50 \
-                                                                              --dsf2 20
+                                                                              --dsf2 10

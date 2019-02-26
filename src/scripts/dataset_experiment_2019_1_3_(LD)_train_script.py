@@ -33,17 +33,17 @@ sess = tf.Session(config=config)
 
 # ------------------------------------------------------------------------------------------------------------ DATA PREP
 ae_data = AcousticEmissionDataSet(drive='G')
-train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_downsampled_5_include_unseen(train_split=0.8)
+train_x, train_y, test_x, test_y = ae_data.random_leak_bydist_downsampled_4(train_split=0.8)
 
 train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
 test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
 
-train_y_cat = to_categorical(train_y, num_classes=2)
-test_y_cat = to_categorical(test_y, num_classes=2)
+train_y_cat = to_categorical(train_y, num_classes=6)
+test_y_cat = to_categorical(test_y, num_classes=6)
 
 # ------------------------------------------------------------------------------------------------------- MODEL TRAINING
 lcp_model = LNL_binary_model_4(kernel_size=KERNEL_SIZE, fc_size=FC_SIZE)
-lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
+lcp_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['acc'])
 
 # saving best weight setting
 logger = ModelLogger(model=lcp_model, model_name=MODEL_SAVE_FILENAME)
@@ -111,7 +111,6 @@ fig_lr_save_filename = direct_to_dir(where='result') + '{}.png'.format(evaluate_
 fig_evaluate.savefig(fig_lr_save_filename)
 
 print('\n---------- EVALUATION RESULT SCRIPT LNL 1 -----------')
-print('**Param in tuning --> [pool:(3, 2, 2), split=0.8, val_included_test, ds2]')
 print('Model Trainable params: {}'.format(trainable_count))
 print('Best Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
                                                                best_val_acc_index,
@@ -121,7 +120,8 @@ print('Lowest Validation Loss: {:.4f} at Epoch {}/{}'.format(history.history['va
                                                              total_epoch))
 print('Time taken to execute 1 sample: {}s'.format(time_predict / len(test_x_reshape)))
 print('Time taken to complete {} epoch: {:.4f}s'.format(total_epoch, time_train))
-rpf_result = logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=actual_argmax, all_class_label=[0, 1])
+rpf_result = logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=actual_argmax,
+                                             all_class_label=[0, 1, 2, 3, 4, 5])
 
 print('\nDist and Labels')
 print('[NoLeak] -> class_0')
@@ -145,5 +145,9 @@ with open(RESULT_SAVE_FILENAME, 'w') as f:
         f.write('\n' + i)
 
     f.write('\n\nDist and Labels')
-    f.write('\n[NoLeak] -> class_0')
-    f.write('\n[Leak] -> class_1')
+    f.write('\n[Leak @ 0m] -> class_0')
+    f.write('\n[Leak @ 2m] -> class_1')
+    f.write('\n[Leak @ 4m] -> class_2')
+    f.write('\n[Leak @ 6m] -> class_3')
+    f.write('\n[Leak @ 8m] -> class_4')
+    f.write('\n[Leak @ 10m] -> class_5')

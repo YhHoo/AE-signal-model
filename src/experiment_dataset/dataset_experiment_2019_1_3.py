@@ -859,8 +859,8 @@ class AcousticEmissionDataSet:
 
     def random_leak_noleak_downsampled_4_include_unseen(self, shuffle_b4_split=True, train_split=0.7):
         '''
-        DOWNSAMPLE FACTOR: 20
-        SAMPLING RATE: 50kHz
+        DOWNSAMPLE FACTOR: 40
+        SAMPLING RATE: 25kHz
         '''
         print('DATASET: 2019-1-3 random_leak_noleak_downsampled_3_include_unseen()\n')
 
@@ -1012,8 +1012,8 @@ class AcousticEmissionDataSet:
 
     def random_leak_noleak_downsampled_5_include_unseen(self, shuffle_b4_split=True, train_split=0.7):
         '''
-        DOWNSAMPLE FACTOR: 20
-        SAMPLING RATE: 50kHz
+        DOWNSAMPLE FACTOR: 500
+        SAMPLING RATE: 2kHz
 
         '''
         print('DATASET: 2019-1-3 random_leak_noleak_downsampled_3_include_unseen()\n')
@@ -1166,8 +1166,8 @@ class AcousticEmissionDataSet:
 
     def random_leak_noleak_downsampled_6_include_unseen(self, shuffle_b4_split=True, train_split=0.7):
         '''
-        DOWNSAMPLE FACTOR: 20
-        SAMPLING RATE: 50kHz
+        DOWNSAMPLE FACTOR: 1000
+        SAMPLING RATE: 1kHz
 
         '''
         print('DATASET: 2019-1-3 random_leak_noleak_downsampled_3_include_unseen()\n')
@@ -1318,9 +1318,180 @@ class AcousticEmissionDataSet:
 
         return train_x, train_y, test_x, test_y
 
+    def random_leak_bydist_downsampled_4(self, shuffle_b4_split=True, train_split=0.8):
+        '''
+                DOWNSAMPLE FACTOR: 40
+                SAMPLING RATE: 25kHz
+        '''
 
-# data = AcousticEmissionDataSet(drive='G')
-# data2 = data.random_leak_noleak_downsampled_5_include_unseen()
+        # read leak @ -4, -2, 2, 4, 6, 8, 10m
+        time_start = time.time()
+        print('Reading --> ', self.leak_dataset_filename_p1_ds4)
+        df_leak_rand_p1 = pd.read_csv(self.leak_dataset_filename_p1_ds4)
+
+        print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+        print('Random Leak p1 Dataset Dim: ', df_leak_rand_p1.values.shape)
+
+        # read leak @ 0m
+        time_start = time.time()
+        print('Reading --> ', self.leak_dataset_filename_p2_ds4)
+        df_leak_rand_p2 = pd.read_csv(self.leak_dataset_filename_p2_ds4)
+
+        print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+        print('Random Leak p2 Dataset Dim: ', df_leak_rand_p2.values.shape)
+
+        # # read leak @ -3,5,7,16,17m
+        # time_start = time.time()
+        # print('Reading --> ', self.leak_dataset_filename_p3_ds4)
+        # df_leak_rand_p3 = pd.read_csv(self.leak_dataset_filename_p3_ds4)
+        # print('File Read Time: {:.4f}s'.format(time.time() - time_start))
+        # print('Random NoLeak p3 Dataset Dim: ', df_leak_rand_p3.values.shape)
+
+        train_x, train_y, test_x, test_y = [], [], [], []
+
+        # for leak [0m] ----------------------------------------------------------------------------------------------
+        leak_data_p2 = df_leak_rand_p2.values[:, :-1]
+        if shuffle_b4_split:
+            leak_data_p2 = leak_data_p2[np.random.permutation(len(leak_data_p2))]
+        # leak_data_p2 = leak_data_p2[:(len(leak_data_p2) // 2)]  # **to reduce the class sample
+
+        leak_all = leak_data_p2
+        label = [0] * len(leak_data_p2)
+
+        print('Leak @ 0m: {} samples'.format(len(leak_all)))
+
+        tr_x, te_x, tr_y, te_y = train_test_split(leak_all,
+                                                  label,
+                                                  train_size=train_split,
+                                                  shuffle=True)
+
+        train_x.append(tr_x)
+        test_x.append(te_x)
+        train_y.append(tr_y)
+        test_y.append(te_y)
+
+        # for leak [2m] ----------------------------------------------------------------------------------------------
+        leak_data_p1 = df_leak_rand_p1.loc[df_leak_rand_p1['channel'] == 2].values[:, :-1]
+        if shuffle_b4_split:
+            leak_data_p1 = leak_data_p1[np.random.permutation(len(leak_data_p1))]
+        # leak_data_p1 = leak_data_p1[:(len(leak_data_p1) // 2)]  # **to balance the class
+
+        leak_all = leak_data_p1
+        label = [1] * len(leak_data_p1)
+
+        print('Leak @ 2m: {} samples'.format(len(leak_all)))
+
+        tr_x, te_x, tr_y, te_y = train_test_split(leak_all,
+                                                  label,
+                                                  train_size=train_split,
+                                                  shuffle=True)
+
+        train_x.append(tr_x)
+        test_x.append(te_x)
+        train_y.append(tr_y)
+        test_y.append(te_y)
+
+        # for leak [4m] ----------------------------------------------------------------------------------------------
+        leak_data_p1 = df_leak_rand_p1.loc[df_leak_rand_p1['channel'] == 3].values[:, :-1]
+        if shuffle_b4_split:
+            leak_data_p1 = leak_data_p1[np.random.permutation(len(leak_data_p1))]
+        # leak_data_p1 = leak_data_p1[:(len(leak_data_p1) // 2)]  # **to balance the class
+
+        leak_all = leak_data_p1
+        label = [2] * len(leak_data_p1)
+
+        print('Leak @ 4m: {} samples'.format(len(leak_all)))
+
+        tr_x, te_x, tr_y, te_y = train_test_split(leak_all,
+                                                  label,
+                                                  train_size=train_split,
+                                                  shuffle=True)
+
+        train_x.append(tr_x)
+        test_x.append(te_x)
+        train_y.append(tr_y)
+        test_y.append(te_y)
+
+        # for leak [6m] ----------------------------------------------------------------------------------------------
+        leak_data_p1 = df_leak_rand_p1.loc[df_leak_rand_p1['channel'] == 4].values[:, :-1]
+        if shuffle_b4_split:
+            leak_data_p1 = leak_data_p1[np.random.permutation(len(leak_data_p1))]
+        # leak_data_p1 = leak_data_p1[:(len(leak_data_p1) // 2)]  # **to balance the class
+
+        leak_all = leak_data_p1
+        label = [3] * len(leak_data_p1)
+
+        print('Leak @ 6m: {} samples'.format(len(leak_all)))
+
+        tr_x, te_x, tr_y, te_y = train_test_split(leak_all,
+                                                  label,
+                                                  train_size=train_split,
+                                                  shuffle=True)
+
+        train_x.append(tr_x)
+        test_x.append(te_x)
+        train_y.append(tr_y)
+        test_y.append(te_y)
+
+        # for leak [8m] ----------------------------------------------------------------------------------------------
+        leak_data_p1 = df_leak_rand_p1.loc[df_leak_rand_p1['channel'] == 5].values[:, :-1]
+        if shuffle_b4_split:
+            leak_data_p1 = leak_data_p1[np.random.permutation(len(leak_data_p1))]
+        # leak_data_p1 = leak_data_p1[:(len(leak_data_p1) // 2)]  # **to balance the class
+
+        leak_all = leak_data_p1
+        label = [4] * len(leak_data_p1)
+
+        print('Leak @ 8m: {} samples'.format(len(leak_all)))
+
+        tr_x, te_x, tr_y, te_y = train_test_split(leak_all,
+                                                  label,
+                                                  train_size=train_split,
+                                                  shuffle=True)
+
+        train_x.append(tr_x)
+        test_x.append(te_x)
+        train_y.append(tr_y)
+        test_y.append(te_y)
+
+        # for leak [10m] ----------------------------------------------------------------------------------------------
+        leak_data_p1 = df_leak_rand_p1.loc[df_leak_rand_p1['channel'] == 6].values[:, :-1]
+        if shuffle_b4_split:
+            leak_data_p1 = leak_data_p1[np.random.permutation(len(leak_data_p1))]
+        # leak_data_p1 = leak_data_p1[:(len(leak_data_p1) // 2)]  # **to balance the class
+
+        leak_all = leak_data_p1
+        label = [5] * len(leak_data_p1)
+
+        print('Leak @ 10m: {} samples'.format(len(leak_all)))
+
+        tr_x, te_x, tr_y, te_y = train_test_split(leak_all,
+                                                  label,
+                                                  train_size=train_split,
+                                                  shuffle=True)
+
+        train_x.append(tr_x)
+        test_x.append(te_x)
+        train_y.append(tr_y)
+        test_y.append(te_y)
+
+        # concatenate all ----------------------------------------------------------------------------------------------
+        train_x = np.concatenate(train_x, axis=0)
+        test_x = np.concatenate(test_x, axis=0)
+        train_y = np.concatenate(train_y, axis=0)
+        test_y = np.concatenate(test_y, axis=0)
+
+        print('\n----------TRAIN AND TEST SET---------')
+        print('Train_x Dim: ', train_x.shape)
+        print('Val_x Dim: ', test_x.shape)
+        print('Train_y Dim:', train_y.shape)
+        print('Val_y Dim:', test_y.shape)
+
+        return train_x, train_y, test_x, test_y
+
+
+data = AcousticEmissionDataSet(drive='G')
+data2 = data.random_leak_bydist_downsampled_4()
 
 
 

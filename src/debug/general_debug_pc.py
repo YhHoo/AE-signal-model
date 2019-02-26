@@ -14,6 +14,7 @@ import pywt
 import time
 import peakutils
 import os
+from scipy.signal import decimate
 from os import listdir
 from scipy.signal import correlate
 from keras.utils import to_categorical
@@ -32,12 +33,49 @@ from src.utils.helpers import *
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
 
-tdms_dir = 'G:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[0]_ds5.csv'
+tdms_file = 'G:/Experiment_3_1_2019/-4,-2,2,4,6,8,10/1.5 bar/Leak/Train & Val data/2019.01.03_101106_009.tdms'
 
-n_channel_data = pd.read_csv(tdms_dir)
-print('Dim before visualize: ', n_channel_data.shape)
+n_channel_data = read_single_tdms(tdms_file)
+n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]  # drop last channel, due to no sensor
+print(n_channel_data.shape)
 
-print(n_channel_data.values[594, :-1])
+fig1 = plot_multiple_timeseries(input=n_channel_data,
+                                subplot_titles=['-4', '-2', '2', '4', '6', '8', '10'],
+                                main_title='Fs=1MHz')
+temp, temp2, temp3 = [], [], []
+
+for channel in n_channel_data:
+    temp3.append(decimate(x=channel, q=20, ftype='iir'))
+
+fig3 = plot_multiple_timeseries(input=temp3,
+                                subplot_titles=['-4', '-2', '2', '4', '6', '8', '10'],
+                                main_title='single')
+
+# # first downsample
+# for channel in n_channel_data:
+#     temp.append(decimate(x=channel, q=50))
+# # second downsample
+# for channel in temp:
+#     temp2.append(decimate(x=channel, q=10))
+#
+# n_channel_data = np.array(temp2)
+# print('Dim After Downsample: ', n_channel_data.shape)
+#
+#
+# fig2 = plot_multiple_timeseries(input=n_channel_data,
+#                                 subplot_titles=['-4', '-2', '2', '4', '6', '8', '10'],
+#                                 main_title='double')
+
+plt.show()
+
+
+# filename = 'G:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[0]_ds5.csv'
+# data = pd.read_csv(filename)
+# print(data.values.shape)
+# print(data.head())
+
+
+
 
 # plt.plot(n_channel_data.values[1045, :-1])
 # plt.show()
