@@ -12,13 +12,12 @@ from src.utils.helpers import *
 # ------------------------------------------------------------------------------------------------------------ ARG PARSE
 parser = argparse.ArgumentParser(description='Input some parameters.')
 parser.add_argument('--model', default=1, type=str, help='Model Name')
-parser.add_argument('--rfname', default=1, type=str, help='Result File name')
 parser.add_argument('--kernel_size', default=1, type=int, nargs='+', help='kernel size')
 parser.add_argument('--fc_size', default=1, type=int, nargs='+', help='fully connected size')
 
 args = parser.parse_args()
 MODEL_SAVE_FILENAME = args.model
-RESULT_SAVE_FILENAME = args.rfname
+RESULT_SAVE_FILENAME = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/{}_result.txt'.format(MODEL_SAVE_FILENAME)
 KERNEL_SIZE = args.kernel_size
 FC_SIZE = args.fc_size
 print('Result saving filename: ', RESULT_SAVE_FILENAME)
@@ -42,7 +41,7 @@ train_y_cat = to_categorical(train_y, num_classes=6)
 test_y_cat = to_categorical(test_y, num_classes=6)
 
 # ------------------------------------------------------------------------------------------------------- MODEL TRAINING
-lcp_model = LNL_binary_model_4(kernel_size=KERNEL_SIZE, fc_size=FC_SIZE)
+lcp_model = LD_multiclass_model_4(kernel_size=KERNEL_SIZE, fc_size=FC_SIZE)
 lcp_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['acc'])
 
 # saving best weight setting
@@ -50,7 +49,7 @@ logger = ModelLogger(model=lcp_model, model_name=MODEL_SAVE_FILENAME)
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # start training
-total_epoch = 200
+total_epoch = 300
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,
@@ -123,9 +122,6 @@ print('Time taken to complete {} epoch: {:.4f}s'.format(total_epoch, time_train)
 rpf_result = logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=actual_argmax,
                                              all_class_label=[0, 1, 2, 3, 4, 5])
 
-print('\nDist and Labels')
-print('[NoLeak] -> class_0')
-print('[Leak] -> class_1')
 
 # saving the printed result again
 with open(RESULT_SAVE_FILENAME, 'w') as f:
