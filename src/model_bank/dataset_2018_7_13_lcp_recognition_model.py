@@ -590,6 +590,14 @@ def LD_multiclass_model_4(kernel_size, fc_size):
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
+    # conv 7
+    x = Conv1D(filters=128, kernel_size=kernel_size[6], strides=1, dilation_rate=1, padding='same',
+               kernel_regularizer=regularizers.l2(0.01))(x)
+    x = Activation('relu')(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
+
     x = GlobalAveragePooling1D()(x)
     x = Dropout(0.55)(x)
 

@@ -14,12 +14,15 @@ parser = argparse.ArgumentParser(description='Input some parameters.')
 parser.add_argument('--model', default=1, type=str, help='Model Name')
 parser.add_argument('--kernel_size', default=1, type=int, nargs='+', help='kernel size')
 parser.add_argument('--fc_size', default=1, type=int, nargs='+', help='fully connected size')
+parser.add_argument('--epoch', default=100, type=int, help='Number of training epoch')
 
 args = parser.parse_args()
 MODEL_SAVE_FILENAME = args.model
 RESULT_SAVE_FILENAME = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/{}_result.txt'.format(MODEL_SAVE_FILENAME)
 KERNEL_SIZE = args.kernel_size
 FC_SIZE = args.fc_size
+EPOCH = args.epoch
+
 print('Result saving filename: ', RESULT_SAVE_FILENAME)
 print('Conv Kernel size: ', KERNEL_SIZE)
 print('FC neuron size: ', FC_SIZE)
@@ -49,7 +52,7 @@ logger = ModelLogger(model=lcp_model, model_name=MODEL_SAVE_FILENAME)
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # start training
-total_epoch = 300
+total_epoch = EPOCH
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,
