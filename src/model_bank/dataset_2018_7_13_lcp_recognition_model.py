@@ -536,8 +536,7 @@ def LNL_binary_model_4(kernel_size, fc_size):
 
 def LD_multiclass_model_4(kernel_size, fc_size):
     '''
-    single activation, 5 conv layer with l2 reg except conv 1, kernel for ds2
-    BEST model so far for ds2 & 3
+    6 CONV, without double act
     '''
     inp = Input((2000, 1))
 
@@ -547,7 +546,7 @@ def LD_multiclass_model_4(kernel_size, fc_size):
     x = Conv1D(filters=32, kernel_size=kernel_size[0], strides=1, dilation_rate=1, padding='same')(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=3, strides=2, padding='same')(x)
 
     # conv 2
@@ -555,7 +554,7 @@ def LD_multiclass_model_4(kernel_size, fc_size):
                kernel_regularizer=regularizers.l2(0.01))(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
     # conv 3
@@ -563,7 +562,7 @@ def LD_multiclass_model_4(kernel_size, fc_size):
                kernel_regularizer=regularizers.l2(0.01))(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
     # conv 4
@@ -571,7 +570,7 @@ def LD_multiclass_model_4(kernel_size, fc_size):
                kernel_regularizer=regularizers.l2(0.01))(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
     # conv 5
@@ -579,7 +578,7 @@ def LD_multiclass_model_4(kernel_size, fc_size):
                kernel_regularizer=regularizers.l2(0.01))(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
     # conv 6
@@ -587,16 +586,16 @@ def LD_multiclass_model_4(kernel_size, fc_size):
                kernel_regularizer=regularizers.l2(0.01))(x)
     x = Activation('relu')(x)
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
-    # conv 7
-    x = Conv1D(filters=128, kernel_size=kernel_size[6], strides=1, dilation_rate=1, padding='same',
-               kernel_regularizer=regularizers.l2(0.01))(x)
-    x = Activation('relu')(x)
-    x = BatchNormalization()(x)
-    x = Activation('relu')(x)
-    x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
+    # # conv 7
+    # x = Conv1D(filters=128, kernel_size=kernel_size[6], strides=1, dilation_rate=1, padding='same',
+    #            kernel_regularizer=regularizers.l2(0.01))(x)
+    # x = Activation('relu')(x)
+    # x = BatchNormalization()(x)
+    # x = Activation('relu')(x)
+    # x = MaxPooling1D(pool_size=2, strides=2, padding='same')(x)
 
     x = GlobalAveragePooling1D()(x)
     x = Dropout(0.55)(x)
