@@ -5,6 +5,7 @@ sys.path.append('C:/Users/YH/PycharmProjects/AE-signal-model')
 import time
 import tensorflow as tf
 import argparse
+from keras.optimizers import RMSprop
 from src.experiment_dataset.dataset_experiment_2019_1_3 import AcousticEmissionDataSet
 from src.model_bank.dataset_2018_7_13_lcp_recognition_model import *
 from src.utils.helpers import *
@@ -15,6 +16,7 @@ parser.add_argument('--model', default=1, type=str, help='Model Name')
 parser.add_argument('--kernel_size', default=1, type=int, nargs='+', help='kernel size')
 parser.add_argument('--fc_size', default=1, type=int, nargs='+', help='fully connected size')
 parser.add_argument('--epoch', default=100, type=int, help='Number of training epoch')
+parser.add_argument('--rmsprop_rho', default=100, type=int, help='Exponentially Weight Average over the square of gradient')
 
 args = parser.parse_args()
 MODEL_SAVE_FILENAME = args.model
@@ -22,10 +24,12 @@ RESULT_SAVE_FILENAME = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/{}_re
 KERNEL_SIZE = args.kernel_size
 FC_SIZE = args.fc_size
 EPOCH = args.epoch
+RHO = args.rmsprop_rho
 
 print('Result saving filename: ', RESULT_SAVE_FILENAME)
 print('Conv Kernel size: ', KERNEL_SIZE)
 print('FC neuron size: ', FC_SIZE)
+print('rho of RMSProp: ', )
 
 # ----------------------------------------------------------------------------------------------------------- GPU CONFIG
 # instruct GPU to allocate only sufficient memory for this script
@@ -45,7 +49,8 @@ test_y_cat = to_categorical(test_y, num_classes=6)
 
 # ------------------------------------------------------------------------------------------------------- MODEL TRAINING
 lcp_model = LD_multiclass_model_4(kernel_size=KERNEL_SIZE, fc_size=FC_SIZE)
-lcp_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['acc'])
+optimizer = RMSprop(lr=0.0001, rho=RHO)
+lcp_model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['acc'])
 
 # saving best weight setting
 logger = ModelLogger(model=lcp_model, model_name=MODEL_SAVE_FILENAME)
