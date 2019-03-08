@@ -16,7 +16,7 @@ parser.add_argument('--model', default=1, type=str, help='Model Name')
 parser.add_argument('--kernel_size', default=1, type=int, nargs='+', help='kernel size')
 parser.add_argument('--fc_size', default=1, type=int, nargs='+', help='fully connected size')
 parser.add_argument('--epoch', default=100, type=int, help='Number of training epoch')
-parser.add_argument('--rmsprop_rho', default=100, type=int, help='Exponentially Weight Average over the square of gradient')
+parser.add_argument('--rmsprop_rho', default=100, type=float, help='Exponentially Weight Average over the square of gradient')
 
 args = parser.parse_args()
 MODEL_SAVE_FILENAME = args.model
@@ -26,10 +26,11 @@ FC_SIZE = args.fc_size
 EPOCH = args.epoch
 RHO = args.rmsprop_rho
 
+print('Model Name: ', MODEL_SAVE_FILENAME)
 print('Result saving filename: ', RESULT_SAVE_FILENAME)
 print('Conv Kernel size: ', KERNEL_SIZE)
 print('FC neuron size: ', FC_SIZE)
-print('rho of RMSProp: ', )
+print('rho of RMSProp: ', RHO)
 
 # ----------------------------------------------------------------------------------------------------------- GPU CONFIG
 # instruct GPU to allocate only sufficient memory for this script
