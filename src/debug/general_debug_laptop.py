@@ -38,25 +38,31 @@ from collections import deque
 from itertools import islice
 from scipy.signal import decimate
 
-tdms_file = 'E:/Experiment_3_1_2019/-4,-2,2,4,6,8,10/1.5 bar/Leak/Train & Val data/2019.01.03_101026_001.tdms'
+df = pd.DataFrame()
+df['apple'] = [1, 2, 3, 4]
+df['oren'] = [1, 2]
 
-n_channel_data = read_single_tdms(tdms_file)
-n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]  # drop last channel, due to no sensor
+print(df)
 
-temp, temp2 = [], []
-DOWNSAMPLE_FACTOR_1 = 50
-DOWNSAMPLE_FACTOR_2 = 10
-
-for channel in n_channel_data:
-    temp.append(decimate(x=channel, q=DOWNSAMPLE_FACTOR_1))
-
-for channel in temp:
-    temp2.append(decimate(x=channel, q=DOWNSAMPLE_FACTOR_2))
-
-temp2 = np.array(temp2)
-
-print(temp2.shape)
-print(temp2)
+# tdms_file = 'E:/Experiment_3_1_2019/-4,-2,2,4,6,8,10/1.5 bar/Leak/Train & Val data/2019.01.03_101026_001.tdms'
+#
+# n_channel_data = read_single_tdms(tdms_file)
+# n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]  # drop last channel, due to no sensor
+#
+# temp, temp2 = [], []
+# DOWNSAMPLE_FACTOR_1 = 50
+# DOWNSAMPLE_FACTOR_2 = 10
+#
+# for channel in n_channel_data:
+#     temp.append(decimate(x=channel, q=DOWNSAMPLE_FACTOR_1))
+#
+# for channel in temp:
+#     temp2.append(decimate(x=channel, q=DOWNSAMPLE_FACTOR_2))
+#
+# temp2 = np.array(temp2)
+#
+# print(temp2.shape)
+# print(temp2)
 
 # l = [1, 4, 7, 1]
 # file_dir = direct_to_dir(where='result') + 'test.csv'

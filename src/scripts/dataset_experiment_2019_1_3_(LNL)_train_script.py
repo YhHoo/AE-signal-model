@@ -1,4 +1,5 @@
 # this is for bash to know the path of the src
+# Iterative task
 import sys
 sys.path.append('C:/Users/YH/PycharmProjects/AE-signal-model')
 
@@ -12,13 +13,14 @@ from src.utils.helpers import *
 # ------------------------------------------------------------------------------------------------------------ ARG PARSE
 parser = argparse.ArgumentParser(description='Input some parameters.')
 parser.add_argument('--model', default=1, type=str, help='Model Name')
-parser.add_argument('--rfname', default=1, type=str, help='Result File name')
 parser.add_argument('--kernel_size', default=1, type=int, nargs='+', help='kernel size')
 parser.add_argument('--fc_size', default=1, type=int, nargs='+', help='fully connected size')
+parser.add_argument('--epoch', default=100, type=int, help='Number of training epoch')
 
 args = parser.parse_args()
 MODEL_SAVE_FILENAME = args.model
-RESULT_SAVE_FILENAME = args.rfname
+RESULT_SAVE_FILENAME = 'C:/Users/YH/PycharmProjects/AE-signal-model/result/{}_result.txt'.format(MODEL_SAVE_FILENAME)
+EPOCH = args.epoch
 KERNEL_SIZE = args.kernel_size
 FC_SIZE = args.fc_size
 print('Result saving filename: ', RESULT_SAVE_FILENAME)
@@ -50,7 +52,7 @@ logger = ModelLogger(model=lcp_model, model_name=MODEL_SAVE_FILENAME)
 save_weight_checkpoint = logger.save_best_weight_cheakpoint(monitor='val_loss', period=5)
 
 # start training
-total_epoch = 200
+total_epoch = EPOCH
 time_train_start = time.time()
 history = lcp_model.fit(x=train_x_reshape,
                         y=train_y_cat,
@@ -111,7 +113,7 @@ fig_lr_save_filename = direct_to_dir(where='result') + '{}.png'.format(evaluate_
 fig_evaluate.savefig(fig_lr_save_filename)
 
 print('\n---------- EVALUATION RESULT SCRIPT LNL 1 -----------')
-print('**Param in tuning --> [pool:(3, 2, 2), split=0.8, val_included_test, ds2]')
+print('**Param in tuning --> [pool:(3, 2, 2), split=0.8, val_included_test]')
 print('Model Trainable params: {}'.format(trainable_count))
 print('Best Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
                                                                best_val_acc_index,
