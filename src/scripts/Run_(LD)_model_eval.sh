@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
+# SINGLE TASK
 
 # -------------------------------------------------------------------------------------------------------- GLOBAL CONFIG
 declare -a in_length=2000
 
 declare -a downsample_factor=40
 
-declare -a epoch=600
+declare -a epoch=200
 
 # ------------------------------------------------------------------------------------------------------ ITERABLE PARAM
 declare -a kernel_op1=(40 40 20 20 10 5)
@@ -16,7 +17,7 @@ declare -a fc_op2=(240 120)
 declare -a fc_op3=(480 240)
 
 # -------------------------------------------------------------------------------------------------------------- JOB 1
-declare -a model_name='LD_9x3'  # **
+declare -a model_name='LD_3x8'  # **
 
 echo ------------------------------------------------------------------------------------------- Training_JOB1
 python dataset_experiment_2019_1_3_\(LD\)_train_script.py --model "${model_name}"\

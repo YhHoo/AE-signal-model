@@ -17,6 +17,7 @@ parser.add_argument('--kernel_size', default=1, type=int, nargs='+', help='kerne
 parser.add_argument('--fc_size', default=1, type=int, nargs='+', help='fully connected size')
 parser.add_argument('--epoch', default=100, type=int, help='Number of training epoch')
 parser.add_argument('--rmsprop_rho', default=100, type=float, help='Exponentially Weight Average over the square of gradient')
+parser.add_argument('--l2_layer', default=0, type=int, help='layer to put l2 reg of 0.01')
 
 args = parser.parse_args()
 MODEL_SAVE_FILENAME = args.model
@@ -25,12 +26,14 @@ KERNEL_SIZE = args.kernel_size
 FC_SIZE = args.fc_size
 EPOCH = args.epoch
 RHO = args.rmsprop_rho
+L2_LAYER = args.l2_layer
 
 print('Model Name: ', MODEL_SAVE_FILENAME)
 print('Result saving filename: ', RESULT_SAVE_FILENAME)
 print('Conv Kernel size: ', KERNEL_SIZE)
 print('FC neuron size: ', FC_SIZE)
 print('rho of RMSProp: ', RHO)
+print('Layer with l2 reg: ', L2_LAYER)
 
 # ----------------------------------------------------------------------------------------------------------- GPU CONFIG
 # instruct GPU to allocate only sufficient memory for this script
@@ -49,8 +52,8 @@ train_y_cat = to_categorical(train_y, num_classes=6)
 test_y_cat = to_categorical(test_y, num_classes=6)
 
 # ------------------------------------------------------------------------------------------------------- MODEL TRAINING
-lcp_model = LD_multiclass_model_4(kernel_size=KERNEL_SIZE, fc_size=FC_SIZE)
-optimizer = RMSprop(lr=0.0001, rho=RHO)
+lcp_model = LD_multiclass_model_4(kernel_size=KERNEL_SIZE, fc_size=FC_SIZE, l2_reg=L2_LAYER)
+optimizer = RMSprop(lr=0.005, rho=RHO)
 lcp_model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['acc'])
 
 # saving best weight setting
@@ -135,7 +138,7 @@ rpf_result = logger.save_recall_precision_f1(y_pred=prediction_argmax, y_true=ac
 # saving the printed result again
 with open(RESULT_SAVE_FILENAME, 'w') as f:
     f.write('\n---------- EVALUATION RESULT SCRIPT LNL 1 -----------')
-    f.write('\nModel Conv Kernels Size: {}, FC Size: {}'.format(KERNEL_SIZE, FC_SIZE))
+    f.write('\nModel Conv Kernels Size: {}, FC Size: {}, L2_layer: {}'.format(KERNEL_SIZE, FC_SIZE, L2_LAYER))
     f.write('\nModel Trainable params: {}'.format(trainable_count))
     f.write('\nBest Validation Accuracy: {:.4f} at Epoch {}/{}'.format(history.history['val_acc'][best_val_acc_index],
                                                                        best_val_acc_index,
