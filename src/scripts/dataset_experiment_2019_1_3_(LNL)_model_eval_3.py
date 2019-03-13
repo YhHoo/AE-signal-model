@@ -54,9 +54,11 @@ UNSEEN_DATA_LABELS = ['sensor@[-3m]',
                       'sensor@[-2m]',
                       'sensor@[0m]',
                       'sensor@[5m]',
-                      'sensor@[7m]']
-MODEL_POSSIBLE_OUTPUT = ['Leak',
-                         'NoLeak']
+                      'sensor@[7m]',
+                      'sensor@[16m]',
+                      'sensor@[17m]']
+MODEL_POSSIBLE_OUTPUT = ['NoLeak',
+                         'Leak']
 
 
 # instruct GPU to allocate only sufficient memory for this script
@@ -87,6 +89,7 @@ df_unseen = pd.DataFrame()
 
 # ----------------------------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------- EVALUATING SEEN LEAK DATA
+print('-----------------------------------------EVALUATE WITH SEEN LEAK')
 acc_per_ch_al_tdms = []
 for file_to_test in all_tdms_seen_leak:
     time_per_file_start = time.time()
@@ -254,6 +257,7 @@ df_seen['Leak'] = avg_acc_per_ch
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------- EVALUATING SEEN NOLEAK
+print('-----------------------------------------EVALUATE WITH SEEN UNLEAK')
 acc_per_ch_al_tdms = []
 for file_to_test in all_tdms_seen_noleak:
     time_per_file_start = time.time()
@@ -268,7 +272,7 @@ for file_to_test in all_tdms_seen_noleak:
 
     # test for near
     n_channel_data = read_single_tdms(file_to_test)
-    n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-3]  # drop useless channel 8 & sensor at 16, 17m.
+    n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1]  # drop useless channel 8 & sensor at 16, 17m.
     # n_channel_data = np.delete(n_channel_data, 3, axis=0)  # drop broken channel 4m (for NoLeak ONLY)
 
     # print('TDMS data dim: ', n_channel_data.shape)
@@ -418,6 +422,7 @@ df_seen['NoLeak'] = avg_acc_per_ch
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------ EVALUATING UNSEEN LEAK DATA
+print('-----------------------------------------EVALUATE WITH UNSEEN LEAK')
 acc_per_ch_al_tdms = []
 for file_to_test in all_tdms_unseen_leak:
     time_per_file_start = time.time()
@@ -585,8 +590,9 @@ df_unseen['Leak'] = avg_acc_per_ch
 
 # ----------------------------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------- EVALUATING UNSEEN NOLEAK
+print('-----------------------------------------EVALUATE WITH UNSEEN NOLEAK')
 acc_per_ch_al_tdms = []
-for file_to_test in all_tdms_seen_noleak:
+for file_to_test in all_tdms_unseen_noleak:
     time_per_file_start = time.time()
     x = file_to_test.split(sep='/')[-1]
     # discard the .tdms
@@ -599,7 +605,7 @@ for file_to_test in all_tdms_seen_noleak:
 
     # test for near
     n_channel_data = read_single_tdms(file_to_test)
-    n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-3]  # drop useless channel 8 & sensor at 16, 17m.
+    n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1]  # drop useless channel 8 & sensor at 16, 17m.
     # n_channel_data = np.delete(n_channel_data, 3, axis=0)  # drop broken channel 4m (for NoLeak ONLY)
 
     # print('TDMS data dim: ', n_channel_data.shape)
@@ -751,7 +757,7 @@ df_unseen['NoLeak'] = avg_acc_per_ch
 # Average all for Seen & Unseen ----------------------------------------------------------------------------------------
 # calc mean unseen score
 unseen_mean_acc = np.sum([df_unseen['Leak'].values, df_unseen['NoLeak']], axis=0)
-seen_mean_acc = np.sum([df_seen['Seen-Leak'].values, df_seen['Seen-NoLeak']], axis=0)
+seen_mean_acc = np.sum([df_seen['Leak'].values, df_seen['NoLeak']], axis=0)
 
 # append to the result files
 with open(RESULT_SAVE_FILENAME, 'a') as f:

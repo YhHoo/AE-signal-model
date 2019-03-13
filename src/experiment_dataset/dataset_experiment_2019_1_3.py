@@ -1685,7 +1685,7 @@ class AcousticEmissionDataSet:
 
 data = AcousticEmissionDataSet(drive='G')
 data1 = data.random_leak_noleak_include_unseen()
-data2 = data.random_leak_bydist_downsampled_4()
+data2 = data.random_leak_noleak_downsampled_2_include_unseen()
 
 
 

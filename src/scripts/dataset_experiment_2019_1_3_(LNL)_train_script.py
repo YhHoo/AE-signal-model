@@ -35,7 +35,7 @@ sess = tf.Session(config=config)
 
 # ------------------------------------------------------------------------------------------------------------ DATA PREP
 ae_data = AcousticEmissionDataSet(drive='G')
-train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_downsampled_5_include_unseen(train_split=0.8)
+train_x, train_y, test_x, test_y = ae_data.random_leak_noleak_include_unseen(train_split=0.8)
 
 train_x_reshape = train_x.reshape((train_x.shape[0], train_x.shape[1], 1))
 test_x_reshape = test_x.reshape((test_x.shape[0], test_x.shape[1], 1))
@@ -44,7 +44,7 @@ train_y_cat = to_categorical(train_y, num_classes=2)
 test_y_cat = to_categorical(test_y, num_classes=2)
 
 # ------------------------------------------------------------------------------------------------------- MODEL TRAINING
-lcp_model = LNL_binary_model_4(kernel_size=KERNEL_SIZE, fc_size=FC_SIZE)
+lcp_model = LNL_binary_model_2(kernel_size=KERNEL_SIZE, fc_size=FC_SIZE)
 lcp_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 
 # saving best weight setting
