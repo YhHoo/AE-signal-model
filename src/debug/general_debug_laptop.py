@@ -28,6 +28,8 @@ from keras.utils import plot_model
 from itertools import islice
 import os
 from scipy.signal import decimate
+import h5py
+import csv
 # self lib
 from src.controlled_dataset.ideal_dataset import white_noise
 from src.utils.dsp_tools import fft_scipy, spectrogram_scipy, one_dim_xcor_2d_input, detect_ae_event_by_v_sensor, dwt_smoothing
@@ -38,11 +40,62 @@ from collections import deque
 from itertools import islice
 from scipy.signal import decimate
 
-df = pd.DataFrame()
-df['apple'] = [1, 2, 3, 4]
-df['oren'] = [1, 2]
 
-print(df)
+dir = 'C:/Users/YH/Desktop/hooyuheng.master/YH private transfer/kernel/LNL_36x3/'
+conv_1 = False
+conv_filter = filter(lambda fname: 'conv4' in fname, os.listdir(dir))
+all_kernel, all_kernel_name = [], []
+
+for i in list(conv_filter):
+    fname = dir + i
+    print('reading-->', fname)
+
+    if conv_1:
+        with open(fname, 'r') as f:
+            kernel = [float(row[0]) for row in csv.reader(f, delimiter='\n')]
+            all_kernel.append(kernel)
+            all_kernel_name.append(i)
+
+    else:
+        kernel_no_of_prev_layer = 128
+        df = pd.read_csv(fname, delim_whitespace=True, names=np.arange(0, kernel_no_of_prev_layer, 1))
+        all_kernel.append(df[kernel_no_of_prev_layer//3].values.tolist())
+        all_kernel.append(df[kernel_no_of_prev_layer*2//3].values.tolist())
+        all_kernel_name.append(i)
+        all_kernel_name.append(i)
+
+
+fig = plot_multiple_timeseries(input=all_kernel, subplot_titles=all_kernel_name, main_title='Conv4 kernel')
+plt.show()
+
+all_kernel = np.array(all_kernel).T
+
+df2 = pd.DataFrame(data=all_kernel, columns=np.arange(0, 6, 1))
+save_filename = direct_to_dir(where='result') + 'conv_4.csv'
+df2.to_csv(save_filename)
+
+
+
+
+
+
+# print(f['model_weights']['conv1d_1'])
+#
+#
+# f = h5py.File(filename, 'r')
+#
+# # List all groups
+# print("Keys: %s" % f.keys())
+# a_group_key = list(f.keys())[0]
+#
+# # Get the data
+# data = list(f[a_group_key])
+
+# df = pd.DataFrame()
+# df['apple'] = [1, 2, 3, 4]
+# df['oren'] = [1, 2]
+#
+# print(df)
 
 # tdms_file = 'E:/Experiment_3_1_2019/-4,-2,2,4,6,8,10/1.5 bar/Leak/Train & Val data/2019.01.03_101026_001.tdms'
 #

@@ -32,24 +32,27 @@ import matplotlib.patches as mpatches
 from src.utils.helpers import *
 # from src.model_bank.dataset_2018_7_13_leak_localize_model import fc_leak_1bar_max_vec_v1
 
+print(10//3)
 
-tdms_file = 'G:/Experiment_3_1_2019/-4,-2,2,4,6,8,10/1.5 bar/Leak/Train & Val data/2019.01.03_101106_009.tdms'
 
-n_channel_data = read_single_tdms(tdms_file)
-n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]  # drop last channel, due to no sensor
-print(n_channel_data.shape)
 
-fig1 = plot_multiple_timeseries(input=n_channel_data,
-                                subplot_titles=['-4', '-2', '2', '4', '6', '8', '10'],
-                                main_title='Fs=1MHz')
-temp, temp2, temp3 = [], [], []
-
-for channel in n_channel_data:
-    temp3.append(decimate(x=channel, q=20, ftype='iir'))
-
-fig3 = plot_multiple_timeseries(input=temp3,
-                                subplot_titles=['-4', '-2', '2', '4', '6', '8', '10'],
-                                main_title='single')
+# tdms_file = 'G:/Experiment_3_1_2019/-4,-2,2,4,6,8,10/1.5 bar/Leak/Train & Val data/2019.01.03_101106_009.tdms'
+#
+# n_channel_data = read_single_tdms(tdms_file)
+# n_channel_data = np.swapaxes(n_channel_data, 0, 1)[:-1, :]  # drop last channel, due to no sensor
+# print(n_channel_data.shape)
+#
+# fig1 = plot_multiple_timeseries(input=n_channel_data,
+#                                 subplot_titles=['-4', '-2', '2', '4', '6', '8', '10'],
+#                                 main_title='Fs=1MHz')
+# temp, temp2, temp3 = [], [], []
+#
+# for channel in n_channel_data:
+#     temp3.append(decimate(x=channel, q=20, ftype='iir'))
+#
+# fig3 = plot_multiple_timeseries(input=temp3,
+#                                 subplot_titles=['-4', '-2', '2', '4', '6', '8', '10'],
+#                                 main_title='single')
 
 # # first downsample
 # for channel in n_channel_data:

@@ -457,13 +457,14 @@ def plot_multiple_timeseries(input, subplot_titles, main_title, ylim=1):
     ax1.plot(input[0])
     ax1.set_title(subplot_titles[0], size=8)
     ax1.set_ylim(bottom=-ylim, top=ylim)
-
+    ax1.grid('on')
     # the rest of the plot
     for i in range(1, no_of_plot, 1):
         ax = fig.add_subplot(no_of_plot, 1, i+1, sharex=ax1, sharey=ax1)  # add in sharey=ax1 if wan to share y axis too
         ax.plot(input[i])
         ax.set_title(subplot_titles[i], size=8)
         ax.set_ylim(bottom=-ylim, top=ylim)
+        ax.grid('on')
     return fig
 
 
