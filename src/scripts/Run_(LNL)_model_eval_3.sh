@@ -4,16 +4,14 @@
 # -------------------------------------------------------------------------------------------------------- GLOBAL CONFIG
 declare -a in_length=2000
 
-declare -a downsample_factor=40
+declare -a downsample_factor=1
 
 declare -a epoch=200
 
 # ------------------------------------------------------------------------------------------------------ ITERABLE PARAM
 
 declare -a model_name=(
-                       'LNL_1x1_r'
-                       'LNL_2x1_r'
-                       'LNL_3x1_r'
+                       'LNL_4x1_r'
                       )
 
 #declare -a rmsprop_rho=(0.8 0.6 0.4 0.2)
@@ -26,7 +24,7 @@ declare -a model_name=(
 #declare -a fc_op2=(240 120)
 #declare -a fc_op3=(480 240)
 
-declare -a kernel_op1=(500 400 300)
+declare -a kernel_op1=(500 400 300 300)
 declare -a kernel_op2=(200 200 100)
 declare -a kernel_op3=(100 80 50)
 declare -a fc_op1=(120 60)
@@ -34,6 +32,7 @@ declare -a fc_op2=(240 120)
 declare -a fc_op3=(480 240)
 
 
+# ---------------------------------------------------------------------------------------------------------- [ITERATIVE]
 
 #for ((i=0;i<5;i++));
 #do
@@ -48,6 +47,7 @@ declare -a fc_op3=(480 240)
 #                                                               --dsf ${downsample_factor}
 #done
 
+# ----------------------------------------------------------------------------------------------------------- [SINGLE]
 
 echo ----------------------------------TRAINING model "${model_name[0]}"
 python dataset_experiment_2019_1_3_\(LNL\)_train_script.py --model "${model_name[0]}"\
@@ -60,24 +60,24 @@ python dataset_experiment_2019_1_3_\(LNL\)_model_eval_3.py --model "${model_name
                                                            --dsf ${downsample_factor}
 
 
-echo ----------------------------------TRAINING model "${model_name[1]}"
-python dataset_experiment_2019_1_3_\(LNL\)_train_script.py --model "${model_name[1]}"\
-                                                           --kernel_size ${kernel_op2[*]}\
-                                                           --fc_size ${fc_op2[*]}\
-                                                           --epoch ${epoch}\
+#echo ----------------------------------TRAINING model "${model_name[1]}"
+#python dataset_experiment_2019_1_3_\(LNL\)_train_script.py --model "${model_name[1]}"\
+#                                                           --kernel_size ${kernel_op2[*]}\
+#                                                           --fc_size ${fc_op2[*]}\
+#                                                           --epoch ${epoch}\
 
-echo ----------------------------------EVALUATING model "${model_name[1]}"
-python dataset_experiment_2019_1_3_\(LNL\)_model_eval_3.py --model "${model_name[1]}"\
-                                                           --dsf ${downsample_factor}
+#echo ----------------------------------EVALUATING model "${model_name[1]}"
+#python dataset_experiment_2019_1_3_\(LNL\)_model_eval_3.py --model "${model_name[1]}"\
+#                                                           --dsf ${downsample_factor}
 
 
 
-echo ----------------------------------TRAINING model "${model_name[2]}"
-python dataset_experiment_2019_1_3_\(LNL\)_train_script.py --model "${model_name[2]}"\
-                                                           --kernel_size ${kernel_op3[*]}\
-                                                           --fc_size ${fc_op2[*]}\
-                                                           --epoch ${epoch}\
-
-echo ----------------------------------EVALUATING model "${model_name[2]}"
-python dataset_experiment_2019_1_3_\(LNL\)_model_eval_3.py --model "${model_name[2]}"\
-                                                           --dsf ${downsample_factor}
+#echo ----------------------------------TRAINING model "${model_name[2]}"
+#python dataset_experiment_2019_1_3_\(LNL\)_train_script.py --model "${model_name[2]}"\
+#                                                           --kernel_size ${kernel_op3[*]}\
+#                                                           --fc_size ${fc_op2[*]}\
+#                                                           --epoch ${epoch}\
+#
+#echo ----------------------------------EVALUATING model "${model_name[2]}"
+#python dataset_experiment_2019_1_3_\(LNL\)_model_eval_3.py --model "${model_name[2]}"\
+#                                                           --dsf ${downsample_factor}
