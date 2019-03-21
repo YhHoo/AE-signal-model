@@ -60,3 +60,12 @@ leak_all = np.concatenate((leak_data_p1[:500, :], leak_data_p2[:500, :], leak_da
 
 print('TOTAL NOLEAK:', noleak_all.shape)
 print('TOTAL LEAK:', leak_all.shape)
+
+lcp_model = load_model(model_name='LNL_44x6')
+lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
+
+activation = get_activations(lcp_model,
+                             model_inputs=[noleak_all[0].reshape((6000, 1))],
+                             print_shape_only=True)
+
+
