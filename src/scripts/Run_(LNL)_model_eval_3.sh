@@ -49,11 +49,11 @@ declare -a fc_op3=(480 240)
 
 # ----------------------------------------------------------------------------------------------------------- [SINGLE]
 
-echo ----------------------------------TRAINING model "${model_name[0]}"
-python dataset_experiment_2019_1_3_\(LNL\)_train_script.py --model "${model_name[0]}"\
-                                                           --kernel_size ${kernel_op1[*]}\
-                                                           --fc_size ${fc_op2[*]}\
-                                                           --epoch ${epoch}\
+#echo ----------------------------------TRAINING model "${model_name[0]}"
+#python dataset_experiment_2019_1_3_\(LNL\)_train_script.py --model "${model_name[0]}"\
+#                                                           --kernel_size ${kernel_op1[*]}\
+#                                                           --fc_size ${fc_op2[*]}\
+#                                                           --epoch ${epoch}\
 
 echo ----------------------------------EVALUATING model "${model_name[0]}"
 python dataset_experiment_2019_1_3_\(LNL\)_model_eval_3.py --model "${model_name[0]}"\

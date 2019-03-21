@@ -3,13 +3,13 @@ from src.utils.helpers import *
 from src.utils.dsp_tools import *
 
 # No Normalized & Downsampled to fs=25kHz (2000 points per sample) --------------------------------------------
-leak_p1 = 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds4.csv'
-leak_p2 = 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[0]_ds4.csv'
-leak_p3 = 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[-3,5,7,16,17]_ds4.csv'
+leak_p1 = 'G:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds4.csv'
+leak_p2 = 'G:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[0]_ds4.csv'
+leak_p3 = 'G:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[-3,5,7,16,17]_ds4.csv'
 
-noleak_p1 = 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_noleak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds4.csv'
-noleak_p2 = 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_noleak_random_1.5bar_[0]_ds4.csv'
-noleak_p3 = 'Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_noleak_random_1.5bar_[-3,5,7,16,17]_ds4.csv'
+noleak_p1 = 'G:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_noleak_random_1.5bar_[-4,-2,2,4,6,8,10]_ds4.csv'
+noleak_p2 = 'G:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_noleak_random_1.5bar_[0]_ds4.csv'
+noleak_p3 = 'G:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_noleak_random_1.5bar_[-3,5,7,16,17]_ds4.csv'
 
 df_leak_rand_p1 = pd.read_csv(leak_p1)
 df_leak_rand_p2 = pd.read_csv(leak_p2)
