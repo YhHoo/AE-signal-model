@@ -71,6 +71,7 @@ activation = get_activations(lcp_model,
                              print_shape_only=True)
 conv_1_act = activation[3]  # dim: (4, 2000, 32)
 conv_1_act = np.swapaxes(conv_1_act, 1, 2)  # dim: (4, 32, 2000)
+kernel_no_to_visualize = 0
 
 # plotting
 fig = plt.figure(figsize=(12, 5))
@@ -92,10 +93,10 @@ ax1.legend([handle for i, handle in enumerate(handles) if i in display],
 # first plot
 ax2 = fig.add_subplot(2, 1, 2)
 ax2.set_title('After Conv1')
-ax2.plot(conv_1_act[0], color='blue', label='No Leak', alpha=0.5)
-ax2.plot(conv_1_act[1], color='blue', label='No Leak', alpha=0.5)
-ax2.plot(conv_1_act[2], color='red', label='Leak')
-ax2.plot(conv_1_act[3], color='red', label='Leak')
+ax2.plot(conv_1_act[0, kernel_no_to_visualize, :], color='blue', label='No Leak', alpha=0.5)
+ax2.plot(conv_1_act[1, kernel_no_to_visualize, :], color='blue', label='No Leak', alpha=0.5)
+ax2.plot(conv_1_act[2, kernel_no_to_visualize, :], color='red', label='Leak')
+ax2.plot(conv_1_act[3, kernel_no_to_visualize, :], color='red', label='Leak')
 handles, labels = ax2.get_legend_handles_labels()
 display = (0, 2)
 ax2.legend([handle for i, handle in enumerate(handles) if i in display],
