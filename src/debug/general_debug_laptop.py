@@ -40,39 +40,74 @@ from collections import deque
 from itertools import islice
 from scipy.signal import decimate
 
-
-dir = 'C:/Users/YH/Desktop/hooyuheng.master/YH private transfer/kernel/LNL_36x3/'
-conv_1 = False
-conv_filter = filter(lambda fname: 'conv4' in fname, os.listdir(dir))
-all_kernel, all_kernel_name = [], []
-
-for i in list(conv_filter):
-    fname = dir + i
-    print('reading-->', fname)
-
-    if conv_1:
-        with open(fname, 'r') as f:
-            kernel = [float(row[0]) for row in csv.reader(f, delimiter='\n')]
-            all_kernel.append(kernel)
-            all_kernel_name.append(i)
-
-    else:
-        kernel_no_of_prev_layer = 128
-        df = pd.read_csv(fname, delim_whitespace=True, names=np.arange(0, kernel_no_of_prev_layer, 1))
-        all_kernel.append(df[kernel_no_of_prev_layer//3].values.tolist())
-        all_kernel.append(df[kernel_no_of_prev_layer*2//3].values.tolist())
-        all_kernel_name.append(i)
-        all_kernel_name.append(i)
+data = np.random.random((50, 2000))
 
 
-fig = plot_multiple_timeseries(input=all_kernel, subplot_titles=all_kernel_name, main_title='Conv4 kernel')
+fig = plt.figure(figsize=(12, 5))
+fig.suptitle('conv1_activation', fontweight="bold", size=8)
+fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
+
+# before conv
+ax1 = fig.add_subplot(2, 1, 1)
+ax1.plot(data[0], color='blue', label='No Leak', alpha=0.5)
+ax1.plot(data[1], color='blue', label='No Leak', alpha=0.5)
+ax1.plot(data[5], color='red', label='Leak')
+ax1.plot(data[6], color='red', label='Leak')
+handles, labels = ax1.get_legend_handles_labels()
+display = (0, 2)
+ax1.legend([handle for i, handle in enumerate(handles) if i in display],
+           [label for i, label in enumerate(labels) if i in display], loc='best')
+
+# first plot
+ax2 = fig.add_subplot(2, 1, 2)
+ax2.plot(data[0], color='blue', label='No Leak', alpha=0.5)
+ax2.plot(data[1], color='blue', label='No Leak', alpha=0.5)
+ax2.plot(data[5], color='red', label='Leak')
+ax2.plot(data[6], color='red', label='Leak')
+handles, labels = ax2.get_legend_handles_labels()
+display = (0, 2)
+ax2.legend([handle for i, handle in enumerate(handles) if i in display],
+           [label for i, label in enumerate(labels) if i in display], loc='best')
+
 plt.show()
 
-all_kernel = np.array(all_kernel).T
+# ax1.set_title(subplot_titles[0], size=8)
+# ax1.set_ylim(bottom=-ylim, top=ylim)
+# ax1.grid('on')
 
-df2 = pd.DataFrame(data=all_kernel, columns=np.arange(0, 6, 1))
-save_filename = direct_to_dir(where='result') + 'conv_4.csv'
-df2.to_csv(save_filename)
+
+# dir = 'C:/Users/YH/Desktop/hooyuheng.master/YH private transfer/kernel/LNL_36x3/'
+# conv_1 = False
+# conv_filter = filter(lambda fname: 'conv4' in fname, os.listdir(dir))
+# all_kernel, all_kernel_name = [], []
+#
+# for i in list(conv_filter):
+#     fname = dir + i
+#     print('reading-->', fname)
+#
+#     if conv_1:
+#         with open(fname, 'r') as f:
+#             kernel = [float(row[0]) for row in csv.reader(f, delimiter='\n')]
+#             all_kernel.append(kernel)
+#             all_kernel_name.append(i)
+#
+#     else:
+#         kernel_no_of_prev_layer = 128
+#         df = pd.read_csv(fname, delim_whitespace=True, names=np.arange(0, kernel_no_of_prev_layer, 1))
+#         all_kernel.append(df[kernel_no_of_prev_layer//3].values.tolist())
+#         all_kernel.append(df[kernel_no_of_prev_layer*2//3].values.tolist())
+#         all_kernel_name.append(i)
+#         all_kernel_name.append(i)
+#
+#
+# fig = plot_multiple_timeseries(input=all_kernel, subplot_titles=all_kernel_name, main_title='Conv4 kernel')
+# plt.show()
+#
+# all_kernel = np.array(all_kernel).T
+#
+# df2 = pd.DataFrame(data=all_kernel, columns=np.arange(0, 6, 1))
+# save_filename = direct_to_dir(where='result') + 'conv_4.csv'
+# df2.to_csv(save_filename)
 
 
 
