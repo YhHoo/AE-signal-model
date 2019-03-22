@@ -36,7 +36,7 @@ noleak_data_p3 = df_noleak_rand_p3.values[:, :-1]
 noleak_data_p3 = noleak_data_p3[np.random.permutation(len(noleak_data_p3))]
 
 # link all
-noleak_all = np.concatenate((noleak_data_p1[:500, :], noleak_data_p2[:500, :], noleak_data_p3[:500, :]), axis=0)
+noleak_all = np.concatenate((noleak_data_p1[:50, :], noleak_data_p2[:50, :], noleak_data_p3[:50, :]), axis=0)
 
 # LEAK -----------------------------------------------------------------------------------------------------------------
 # [-4,-2,2,4,6,8,10]
@@ -55,7 +55,7 @@ leak_data_p3 = df_leak_rand_p3.values[:, :-1]
 leak_data_p3 = leak_data_p3[np.random.permutation(len(leak_data_p3))]
 
 # link all
-leak_all = np.concatenate((leak_data_p1[:500, :], leak_data_p2[:500, :], leak_data_p3[:500, :]), axis=0)
+leak_all = np.concatenate((leak_data_p1[:50, :], leak_data_p2[:50, :], leak_data_p3[:50, :]), axis=0)
 
 
 print('TOTAL NOLEAK:', noleak_all.shape)
@@ -64,8 +64,10 @@ print('TOTAL LEAK:', leak_all.shape)
 lcp_model = load_model(model_name='LNL_44x6')
 lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 
+noleak_all_reshaped = noleak_all.reshape((noleak_all.shape[0], noleak_all.shape[1], 1))
+
 activation = get_activations(lcp_model,
-                             model_inputs=[noleak_all[0].reshape((6000, 1))],
+                             model_inputs=noleak_all_reshaped,
                              print_shape_only=True)
 
 
