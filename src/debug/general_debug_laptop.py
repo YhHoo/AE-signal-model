@@ -40,36 +40,50 @@ from collections import deque
 from itertools import islice
 from scipy.signal import decimate
 
-data = np.random.random((50, 2000))
+leak_p2 = 'E:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[0]_ds4.csv'
+noleak_p2 = 'E:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_noleak_random_1.5bar_[0]_ds4.csv'
+
+df_leak_rand_p2 = pd.read_csv(leak_p2)
+df_noleak_rand_p2 = pd.read_csv(noleak_p2)
+
+temp = np.concatenate((df_leak_rand_p2.values[100:200, :-1].reshape((100, 2000)),
+                       df_noleak_rand_p2.values[100:200, :-1].reshape((100, 2000))), axis=0)
+df = pd.DataFrame(data=temp)
+df.to_csv('E:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/ds4_extract2.csv')
 
 
-fig = plt.figure(figsize=(12, 5))
-fig.suptitle('conv1_activation', fontweight="bold", size=8)
-fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
 
-# before conv
-ax1 = fig.add_subplot(2, 1, 1)
-ax1.plot(data[0], color='blue', label='No Leak', alpha=0.5)
-ax1.plot(data[1], color='blue', label='No Leak', alpha=0.5)
-ax1.plot(data[5], color='red', label='Leak')
-ax1.plot(data[6], color='red', label='Leak')
-handles, labels = ax1.get_legend_handles_labels()
-display = (0, 2)
-ax1.legend([handle for i, handle in enumerate(handles) if i in display],
-           [label for i, label in enumerate(labels) if i in display], loc='best')
 
-# first plot
-ax2 = fig.add_subplot(2, 1, 2)
-ax2.plot(data[0], color='blue', label='No Leak', alpha=0.5)
-ax2.plot(data[1], color='blue', label='No Leak', alpha=0.5)
-ax2.plot(data[5], color='red', label='Leak')
-ax2.plot(data[6], color='red', label='Leak')
-handles, labels = ax2.get_legend_handles_labels()
-display = (0, 2)
-ax2.legend([handle for i, handle in enumerate(handles) if i in display],
-           [label for i, label in enumerate(labels) if i in display], loc='best')
-
-plt.show()
+# data = np.random.random((50, 2000))
+#
+#
+# fig = plt.figure(figsize=(12, 5))
+# fig.suptitle('conv1_activation', fontweight="bold", size=8)
+# fig.subplots_adjust(hspace=0.7, top=0.9, bottom=0.03)
+#
+# # before conv
+# ax1 = fig.add_subplot(2, 1, 1)
+# ax1.plot(data[0], color='blue', label='No Leak', alpha=0.5)
+# ax1.plot(data[1], color='blue', label='No Leak', alpha=0.5)
+# ax1.plot(data[5], color='red', label='Leak')
+# ax1.plot(data[6], color='red', label='Leak')
+# handles, labels = ax1.get_legend_handles_labels()
+# display = (0, 2)
+# ax1.legend([handle for i, handle in enumerate(handles) if i in display],
+#            [label for i, label in enumerate(labels) if i in display], loc='best')
+#
+# # first plot
+# ax2 = fig.add_subplot(2, 1, 2)
+# ax2.plot(data[0], color='blue', label='No Leak', alpha=0.5)
+# ax2.plot(data[1], color='blue', label='No Leak', alpha=0.5)
+# ax2.plot(data[5], color='red', label='Leak')
+# ax2.plot(data[6], color='red', label='Leak')
+# handles, labels = ax2.get_legend_handles_labels()
+# display = (0, 2)
+# ax2.legend([handle for i, handle in enumerate(handles) if i in display],
+#            [label for i, label in enumerate(labels) if i in display], loc='best')
+#
+# plt.show()
 
 # ax1.set_title(subplot_titles[0], size=8)
 # ax1.set_ylim(bottom=-ylim, top=ylim)
