@@ -40,16 +40,25 @@ from collections import deque
 from itertools import islice
 from scipy.signal import decimate
 
-leak_p2 = 'E:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[0]_ds4.csv'
-noleak_p2 = 'E:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_noleak_random_1.5bar_[0]_ds4.csv'
 
-df_leak_rand_p2 = pd.read_csv(leak_p2)
-df_noleak_rand_p2 = pd.read_csv(noleak_p2)
 
-temp = np.concatenate((df_leak_rand_p2.values[100:200, :-1].reshape((100, 2000)),
-                       df_noleak_rand_p2.values[100:200, :-1].reshape((100, 2000))), axis=0)
-df = pd.DataFrame(data=temp)
-df.to_csv('E:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/ds4_extract2.csv')
+
+# x = [0,5,9,10,15]
+# y = [0,1,2,3,4]
+# plt.plot(y)
+# plt.xticks([0, 1, 2, 3, 4], [0,5,9,10,15])
+# plt.show()
+
+# leak_p2 = 'E:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_leak_random_1.5bar_[0]_ds4.csv'
+# noleak_p2 = 'E:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/dataset_noleak_random_1.5bar_[0]_ds4.csv'
+#
+# df_leak_rand_p2 = pd.read_csv(leak_p2)
+# df_noleak_rand_p2 = pd.read_csv(noleak_p2)
+#
+# temp = np.concatenate((df_leak_rand_p2.values[100:200, :-1].reshape((100, 2000)),
+#                        df_noleak_rand_p2.values[100:200, :-1].reshape((100, 2000))), axis=0)
+# df = pd.DataFrame(data=temp)
+# df.to_csv('E:/Experiment_3_1_2019/leak_noleak_preprocessed_dataset/ds4_extract2.csv')
 
 
 
