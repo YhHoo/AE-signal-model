@@ -68,9 +68,9 @@ data_leak_noleak = pd.read_csv(data_leak_noleak_filename).values[:, 1:]
 lcp_model = load_model(model_name='LNL_29x1')
 print(lcp_model.summary())
 lcp_model.compile(loss='binary_crossentropy', optimizer='rmsprop')
-# activation = get_activations(lcp_model,
-#                              model_inputs=data_leak_noleak.reshape((200, 2000, 1)),
-#                              print_shape_only=True)
+activation = get_activations(lcp_model,
+                             model_inputs=data_leak_noleak.reshape((200, 2000, 1)),
+                             print_shape_only=True)
 
 # FOR CONV KERNELS -----------------------------------------------------------------------------------------------------
 # conv_1_act = activation[18]  # ** dim: (2, 2000, 32),  conv[3, 8, 13, 18]
