@@ -15,7 +15,7 @@ from src.utils.helpers import *
 # -------------------------------------------------------------------------------------------------------------ARG PARSE
 parser = argparse.ArgumentParser(description='Input some parameters.')
 parser.add_argument('--fts', metavar='FS', default=None, type=str, help='Filename to save')
-parser.add_argument('--ftr', metavar='FR', default=None, type=str, help='Filename to process')
+parser.add_argument('--ftr', metavar='FR', default=None, type=str, help='Folder to process')
 parser.add_argument('--cth', metavar='CH', default=None, type=int, nargs='+', help='Channel no to extract')
 parser.add_argument('--svs', metavar='S', default=None, type=int, help='sample vector size')
 parser.add_argument('--dsf', metavar='DF', default=1, type=int, help='Downsample factor')
@@ -32,7 +32,7 @@ SAMPLE_EXTRACTED_PER_TDMS = 150
 SHUFFLE_TDMS_SEQ = True
 
 print('Filename to save: ', FILENAME_TO_SAVE)
-print('Filename to process: ', FOLDER_TO_READ)
+print('Folder to process: ', FOLDER_TO_READ)
 print('Channel no to extract: ', CHANNEL_TO_EXTRACT)
 print('Sample vector size: ', SAMPLE_VECTOR_LENGTH)
 print('Downsample factor: ', DOWNSAMPLE_FACTOR)
@@ -86,7 +86,7 @@ for tdms_file in all_tdms_file:
     for ch_no in CHANNEL_TO_EXTRACT:
         print('Extracting channel {} --> {} samples'.format(ch_no, SAMPLE_EXTRACTED_PER_TDMS))
         temp = []
-        # truncate, meaning each tdms only contribute to 20 samples
+        # truncate
         for i in index[:SAMPLE_EXTRACTED_PER_TDMS]:
             data_in_list = n_channel_data[ch_no, i:i + SAMPLE_VECTOR_LENGTH].tolist() + [ch_no]
             temp.append(data_in_list)
